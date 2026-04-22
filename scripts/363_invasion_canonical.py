@@ -107,10 +107,20 @@ JSON_KEYS_PATH = REPO_ROOT / f"invasion_llm_json_keys_{BUILD_TS}.md"
 CPM_AUDIT_PATH = REPO_ROOT / "invasion_cpm_feeder_repoint_plan.md"
 CLOSEOUT_PATH = REPO_ROOT / f"script_363_closeout_{BUILD_TS}.md"
 
-# 7 invasion types
+# 10 invasion types (v3 — per Logan rejection of v2 'local' bundling
+# bug + V/L aggregation bug). Direct-extension findings only;
+# mass-effect entities (tracheal_deviation, substernal_extension,
+# esophageal_compression, vascular_encasement, airway_compromise_grade,
+# vocal_cord_imaging, mass_effect) are EXCISED — they belong in a
+# future mass-effect canonical or in 364 complications, not here.
 INVASION_TYPES = [
-    "gross_ete", "microscopic_ete", "tracheal", "esophageal",
-    "vascular_microscopic", "airway", "local",
+    "gross_ete", "microscopic_ete",
+    "vascular_microscopic",       # vascular_invasion ONLY (not lymphatic)
+    "lymphatic_microscopic",      # NEW v3 — split from vascular
+    "capsular",                   # NEW v3 — split from 'local'
+    "perineural",                 # NEW v3 — split from 'local'
+    "soft_tissue",                # NEW v3 — split from 'local'
+    "airway", "tracheal", "esophageal",
 ]
 
 # Strip targets (Step 7) — operative canonical only.
@@ -132,12 +142,15 @@ NEW_VIEWS = [
     ("invasion_patient_rollup_VIEW_v1", "canonical_invasion_patient_rollup_v1"),
 ]
 
-# Archive table name patterns (resolved deterministically in Step 0.a).
-ARCHIVE_PATTERNS = {
-    "synoptic_path_primary": "canonical_tumor_characteristics_v1_pre361_%",
-    "narrative_path_synoptic": "synoptic_tumor_long_v1_pre361_%",
-    "narrative_path_episode": "tumor_episode_master_v2_pre361_%",
-}
+# Archive table name patterns. v3 has NO source archives (Pattern 8
+# REJECTED per Logan; cross-DB FROM archive_pub_v1_0.* is forbidden).
+# This dict is kept empty to surface that fact to anyone reading the
+# code; the archive_* CTE-builder branches and Step 0.a archive
+# resolution are intentionally vestigial — they no-op when the dict is
+# empty. The Step 0.g + Step 7 pre-strip-snapshot helpers still write
+# TO archive_pub_v1_0 (that's archiving, not sourcing — different
+# semantics, allowed).
+ARCHIVE_PATTERNS: dict[str, str] = {}
 
 _LOG_LINES: list[str] = []
 
@@ -289,40 +302,60 @@ EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 ENTITY_TYPE_TO_INVASION_TYPE: dict[str, str] = {
-    # airway_invasion table
-    "ete_on_imaging": "gross_ete",
-    "extrathyroidal_extension": "gross_ete",
-    "extrathyroidal_extension_present": "gross_ete",
-    "tracheal_invasion": "tracheal",
-    "tracheal_involvement": "tracheal",
-    "tracheal_compression": "tracheal",
-    "tracheal_deviation": "local",
-    "esophageal_invasion": "esophageal",
-    "esophageal_involvement": "esophageal",
-    "esophageal_compression": "esophageal",
+    # ==================================================================
+    # v3 mapping per Logan's rejection findings (CHECKPOINT 1
+    # follow-up). The v2 'local' bundling bug is fixed by:
+    #   1. Splitting vascular vs lymphatic (clinically distinct AJCC
+    #      descriptors).
+    #   2. Routing capsular / perineural / soft_tissue to their own
+    #      invasion_types instead of dumping them into 'local'.
+    #   3. EXCISING mass-effect entity_types entirely (return NULL via
+    #      "not in dict" → CTE filter drops the row). They route to a
+    #      future mass-effect canonical or 364 complications scope.
+    #
+    # Excised entity_types (do NOT add to this dict — they are NOT
+    # invasion findings):
+    #   * tracheal_deviation, tracheal_displacement, tracheal_narrowing
+    #     (compression, not invasion)
+    #   * substernal_extension (anatomic extension, not invasion)
+    #   * esophageal_compression (compression, not invasion)
+    #   * vascular_encasement (tumor-around-vessel, not vessel-wall
+    #     invasion — different pathophysiology)
+    #   * mass_effect (compression/displacement)
+    #   * airway_compromise_grade (severity descriptor)
+    #   * vocal_cord_imaging (finding category, not invasion)
+    #   * vascular_invasion_type, vessel_count, mitotic_rate, necrosis,
+    #     ptnm_stage, dedifferentiation (not invasion findings at all)
+    # ==================================================================
+    # ----- airway_invasion table (DIRECT-INVASION entities only)
     "airway_invasion": "airway",
     "laryngeal_invasion": "airway",
     "hypopharyngeal_invasion": "airway",
-    "soft_tissue_invasion": "local",
-    "substernal_extension": "local",
-    "rln_involvement": "local",
-    # vascular_invasion table
+    "tracheal_invasion": "tracheal",
+    "tracheal_involvement": "tracheal",
+    "esophageal_invasion": "esophageal",
+    "esophageal_involvement": "esophageal",
+    # ETE entities — disambiguated via entity_value modifier in CTE
+    # (entity_value containing 'minimal'/'microscopic'/'focal' →
+    # microscopic_ete; else gross_ete). Default mapping here is
+    # gross_ete; the CTE overrides when modifier is present.
+    "ete_on_imaging": "gross_ete",
+    "extrathyroidal_extension": "gross_ete",
+    "extrathyroidal_extension_present": "gross_ete",
+    "extranodal_extension": "gross_ete",
+    "strap_muscle_invasion": "gross_ete",
+    # ----- vascular_invasion table (V/L SPLIT per v3)
     "vascular_invasion": "vascular_microscopic",
     "vascular_invasion_extensive": "vascular_microscopic",
     "vascular_invasion_focal": "vascular_microscopic",
     "angioinvasion": "vascular_microscopic",
-    "lymphatic_invasion": "vascular_microscopic",
-    "perineural_invasion": "local",
-    "perineural_invasion_detailed": "local",
-    # Q4=C: capsular_invasion (LLM) parallels structured capsular_invasion
-    # VARCHAR which is mapped to 'local'. Other unmapped entity_types
-    # (mass_effect, vascular_encasement, tracheal_narrowing,
-    # vocal_cord_imaging, vascular_invasion_type, vessel_count,
-    # mitotic_rate, necrosis, ptnm_stage, dedifferentiation,
-    # airway_compromise_grade) are intentionally left UNMAPPED — they
-    # are compression / staging / general histology findings, NOT
-    # invasion. Carry-forward for clinical review.
-    "capsular_invasion": "local",
+    "lymphatic_invasion": "lymphatic_microscopic",
+    "lymphovascular_invasion": "vascular_microscopic",  # rare composite
+    # capsular / perineural / soft_tissue — split from v2 'local'
+    "capsular_invasion": "capsular",
+    "perineural_invasion": "perineural",
+    "perineural_invasion_detailed": "perineural",
+    "soft_tissue_invasion": "soft_tissue",
 }
 
 # ---------------------------------------------------------------------------
@@ -364,8 +397,13 @@ MODALITY_PLAN: list[dict[str, Any]] = [
      "flag_col": "esophageal_involvement_flag", "row_id_col": "surgery_episode_id",
      "date_col": "surgery_date_native", "rid_col": "research_id",
      "links_directly": True},
+    # v3: local_invasion_flag → soft_tissue (intra-op surgeon-noted
+    # direct extension into adjacent tissue; clinically the gross
+    # equivalent of pathology's soft_tissue_invasion — the surgeon
+    # doesn't differentiate capsular vs perineural at gross
+    # inspection). Was 'local' in v2; removed from vocabulary.
     {"modality": "op_note", "source_kind": "structured",
-     "invasion_type": "local", "kind": "structured_bool",
+     "invasion_type": "soft_tissue", "kind": "structured_bool",
      "source_schema": "main", "source_table": "canonical_operative_events_v1",
      "flag_col": "local_invasion_flag", "row_id_col": "surgery_episode_id",
      "date_col": "surgery_date_native", "rid_col": "research_id",
@@ -403,25 +441,23 @@ MODALITY_PLAN: list[dict[str, Any]] = [
      "row_id_col": "path_surgery_id", "date_col": "surgery_date",
      "rid_col": "research_id"},
     {"modality": "synoptic_path", "source_kind": "structured",
-     "invasion_type": "vascular_microscopic", "kind": "live_varchar",
+     "invasion_type": "lymphatic_microscopic", "kind": "live_varchar",
      "source_schema": "main", "source_table": "canonical_path_malignant_events_v1",
      "value_col": "lymphatic_invasion",
      "row_id_col": "path_surgery_id", "date_col": "surgery_date",
-     "rid_col": "research_id",
-     "value_suffix": "lymph"},
+     "rid_col": "research_id"},
     {"modality": "synoptic_path", "source_kind": "structured",
-     "invasion_type": "local", "kind": "live_varchar",
+     "invasion_type": "perineural", "kind": "live_varchar",
      "source_schema": "main", "source_table": "canonical_path_malignant_events_v1",
      "value_col": "perineural_invasion",
      "row_id_col": "path_surgery_id", "date_col": "surgery_date",
      "rid_col": "research_id"},
     {"modality": "synoptic_path", "source_kind": "structured",
-     "invasion_type": "local", "kind": "live_varchar",
+     "invasion_type": "capsular", "kind": "live_varchar",
      "source_schema": "main", "source_table": "canonical_path_malignant_events_v1",
      "value_col": "capsular_invasion",
      "row_id_col": "path_surgery_id", "date_col": "surgery_date",
-     "rid_col": "research_id",
-     "value_suffix": "capsular"},
+     "rid_col": "research_id"},
     # ===== synoptic_path (LLM) — note_entities_llm_*_invasion path_synoptics
     {"modality": "synoptic_path", "source_kind": "llm",
      "kind": "llm_json_unnest",
@@ -434,64 +470,11 @@ MODALITY_PLAN: list[dict[str, Any]] = [
      "source_table": "note_entities_llm_vascular_invasion",
      "note_type_filter": "path_synoptics",
      "table_suffix": "vasc"},
-    # ===== narrative_path (structured) — synoptic_tumor_long_v1_pre361_*
-    #       (Pattern 8: archive as permanent source — no live equivalent)
-    #       Uses synoptic_row_ix (not path_surgery_id) as the row_id
-    #       (probed 2026-04-22; this archive's row identifier scheme).
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "ete_split", "kind": "archive_varchar_ete",
-     "archive_table_key": "narrative_path_synoptic",
-     "value_col": "extrathyroidal_extension",
-     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
-     "rid_col": "research_id"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "vascular_microscopic", "kind": "archive_varchar",
-     "archive_table_key": "narrative_path_synoptic",
-     "value_col": "angioinvasion",
-     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
-     "rid_col": "research_id"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "vascular_microscopic", "kind": "archive_varchar",
-     "archive_table_key": "narrative_path_synoptic",
-     "value_col": "lymphatic_invasion",
-     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
-     "rid_col": "research_id",
-     "value_suffix": "lymph"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "local", "kind": "archive_varchar",
-     "archive_table_key": "narrative_path_synoptic",
-     "value_col": "perineural_invasion",
-     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
-     "rid_col": "research_id"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "local", "kind": "archive_varchar",
-     "archive_table_key": "narrative_path_synoptic",
-     "value_col": "capsular_invasion",
-     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
-     "rid_col": "research_id",
-     "value_suffix": "capsular"},
-    # ===== narrative_path (structured) — tumor_episode_master_v2_pre361_*
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "ete_split", "kind": "archive_varchar_ete",
-     "archive_table_key": "narrative_path_episode",
-     "value_col": "extrathyroidal_extension",
-     "row_id_col": "surgery_episode_id", "date_col": "surgery_date",
-     "rid_col": "research_id",
-     "value_suffix": "tem"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "gross_ete", "kind": "archive_bigint",
-     "archive_table_key": "narrative_path_episode",
-     "value_col": "gross_ete",
-     "row_id_col": "surgery_episode_id", "date_col": "surgery_date",
-     "rid_col": "research_id",
-     "value_suffix": "tem"},
-    {"modality": "narrative_path", "source_kind": "structured",
-     "invasion_type": "vascular_microscopic", "kind": "archive_varchar",
-     "archive_table_key": "narrative_path_episode",
-     "value_col": "vascular_invasion",
-     "row_id_col": "surgery_episode_id", "date_col": "surgery_date",
-     "rid_col": "research_id",
-     "value_suffix": "tem"},
+    # ===== narrative_path REMOVED in v3 (Logan rejection):
+    # cross-DB sourcing from archive_pub_v1_0.* is forbidden. The 48
+    # patients with gross_ete only in narrative_path archives (0.44%
+    # cohort coverage loss) all have alternate gross_ete coverage from
+    # other modalities. Acceptable per Logan's CHECKPOINT 1 follow-up.
     # ===== ct + mri (LLM only, from airway_invasion table)
     {"modality": "ct", "source_kind": "llm",
      "kind": "llm_json_unnest",
@@ -695,15 +678,39 @@ def _ete_subtype_case_sql(norm_expr: str) -> str:
     return "\n".join(parts)
 
 
-def _entity_invasion_case_sql(et_expr: str) -> str:
-    """Build CASE WHEN ladder for ENTITY_TYPE_TO_INVASION_TYPE."""
+def _entity_invasion_case_sql(et_expr: str,
+                              ev_expr: str | None = None) -> str:
+    """Build CASE WHEN ladder for ENTITY_TYPE_TO_INVASION_TYPE.
+
+    When `ev_expr` (entity_value SQL expression) is provided, ETE
+    entity_types disambiguate to gross_ete vs microscopic_ete via the
+    entity_value modifier ('minimal' / 'microscopic' / 'focal' →
+    microscopic_ete; else gross_ete). v3 fix per Logan: ETE imaging
+    findings shouldn't blanket-default to gross_ete; the modifier in
+    entity_value carries the subtype.
+    """
+    ete_entities = [k for k, v in ENTITY_TYPE_TO_INVASION_TYPE.items()
+                    if v == "gross_ete"]
     by_invtype: dict[str, list[str]] = {}
     for k, v in ENTITY_TYPE_TO_INVASION_TYPE.items():
         by_invtype.setdefault(v, []).append(k.replace("'", "''"))
     parts = ["CASE"]
+    if ev_expr is not None and ete_entities:
+        ete_in = ", ".join(f"'{v}'" for v in ete_entities)
+        parts.append(
+            f"  WHEN {et_expr} IN ({ete_in}) THEN CASE"
+        )
+        parts.append(
+            f"    WHEN LOWER({ev_expr}) LIKE '%microscopic%' "
+            f"OR LOWER({ev_expr}) LIKE '%minimal%' "
+            f"OR LOWER({ev_expr}) LIKE '%focal%' "
+            f"THEN 'microscopic_ete' ELSE 'gross_ete' END"
+        )
     for invtype in INVASION_TYPES:
         if invtype not in by_invtype:
             continue
+        if invtype == "gross_ete" and ev_expr is not None:
+            continue  # already handled above
         in_list = ", ".join(f"'{v}'" for v in by_invtype[invtype])
         parts.append(f"  WHEN {et_expr} IN ({in_list}) THEN '{invtype}'")
     parts.append("  ELSE NULL")
@@ -744,17 +751,22 @@ def step_0_preflight(
     if missing:
         raise SystemExit(f"Missing dependencies: {missing}")
 
+    # v3: ARCHIVE_PATTERNS is intentionally empty (Pattern 8 REJECTED).
+    # No source archive resolution needed.
     archive_resolved: dict[str, str | None] = {}
-    for key, pattern in ARCHIVE_PATTERNS.items():
-        name = resolve_archive(con, pattern)
-        archive_resolved[key] = name
-        if name is None:
-            raise SystemExit(
-                f"No archive matched LIKE {pattern!r} — required for "
-                f"synoptic_path / narrative_path source data."
-            )
-        n = row_count(con, ARCHIVE_SCHEMA, name, db=ARCHIVE_DB)
-        log(f"  resolved archive {key}: {name} ({n:,} rows)")
+    if ARCHIVE_PATTERNS:
+        for key, pattern in ARCHIVE_PATTERNS.items():
+            name = resolve_archive(con, pattern)
+            archive_resolved[key] = name
+            if name is None:
+                raise SystemExit(
+                    f"No archive matched LIKE {pattern!r}"
+                )
+            n = row_count(con, ARCHIVE_SCHEMA, name, db=ARCHIVE_DB)
+            log(f"  resolved archive {key}: {name} ({n:,} rows)")
+    else:
+        log("  ARCHIVE_PATTERNS empty — no source archives "
+            "(v3: Pattern 8 rejected; cross-DB sourcing forbidden)")
 
     # 0.b Modality coverage census.
     log("STEP 0.b — Modality coverage census")
@@ -838,43 +850,13 @@ def step_0_preflight(
             llm_coverage_per_modality.get(modality, 0) + p
         )
 
-    # narrative_path / structured — pre361 archives
-    archive_value_cols = {
-        "narrative_path_synoptic": ["extrathyroidal_extension", "capsular_invasion",
-                                    "angioinvasion", "lymphatic_invasion",
-                                    "perineural_invasion"],
-        "narrative_path_episode": ["extrathyroidal_extension", "capsular_invasion",
-                                   "vascular_invasion", "lymphatic_invasion",
-                                   "perineural_invasion", "gross_ete"],
-    }
-    for key, cols in archive_value_cols.items():
-        archive_name = archive_resolved.get(key)
-        if not archive_name:
-            continue
-        present_cols = list_columns(con, ARCHIVE_SCHEMA, archive_name,
-                                    db=ARCHIVE_DB)
-        for col in cols:
-            if col not in present_cols:
-                log(f"  archive {key}.{col} missing — skipping in census")
-                continue
-            con.execute(f'USE "{ARCHIVE_DB}"')
-            n = int(con.execute(
-                f'SELECT COUNT(*) FROM "{ARCHIVE_SCHEMA}"."{archive_name}" '
-                f'WHERE "{col}" IS NOT NULL'
-            ).fetchone()[0])
-            p = int(con.execute(
-                f'SELECT COUNT(DISTINCT research_id) FROM '
-                f'"{ARCHIVE_SCHEMA}"."{archive_name}" '
-                f'WHERE "{col}" IS NOT NULL'
-            ).fetchone()[0])
-            con.execute(f'USE "{CANONICAL_DB}"')
-            census.append({"modality": "narrative_path",
-                           "source_kind": "structured",
-                           "source": f"ARCHIVE.{archive_name}.{col}",
-                           "n_mentions": n, "n_patients": p})
-            log(f"  narrative_path/structured / "
-                f"ARCHIVE.{archive_name}.{col}: "
-                f"{n:,} non-null / {p:,} patients")
+    # v3: narrative_path REMOVED. archive_value_cols dict kept empty
+    # so the categorical vocab probe loop in 0.e doesn't reference
+    # narrative archives. Pattern 8 rejected; cross-DB sourcing
+    # forbidden. The 48 patients with gross_ete only in narrative
+    # archives (0.44% cohort) have alternate gross_ete coverage from
+    # other modalities — acceptable per Logan CHECKPOINT 1 follow-up.
+    archive_value_cols: dict[str, list[str]] = {}
 
     # frozen_section probe
     fs_cols = list_columns(con, "main", "canonical_frozen_section_events_v1")
@@ -1114,10 +1096,83 @@ def step_0_preflight(
                 f"`{v}`×{n}" for v, n in items
             ))
 
+    # v3 CHECKPOINT 1.G — count rows that WILL be excised by the v3
+    # entity_type filter (mass-effect entities + non-invasion findings).
+    # Probes the LLM tables directly with full json_extract to get
+    # actual counts (not just sample counts).
+    log("STEP 0.f.2 — Excised entity_type row counts (v3)")
+    excised_targets = [
+        "tracheal_deviation", "tracheal_displacement",
+        "tracheal_compression", "tracheal_narrowing",
+        "substernal_extension", "esophageal_compression",
+        "vascular_encasement", "mass_effect",
+        "airway_compromise_grade", "vocal_cord_imaging",
+        "rln_involvement", "vascular_invasion_type", "vessel_count",
+        "necrosis", "mitotic_rate", "ptnm_stage", "dedifferentiation",
+    ]
+    excised_counts: dict[str, dict[str, int]] = {}
+    json_md_lines.extend([
+        "",
+        "## v3 EXCISED entity_type row counts (Logan CHECKPOINT 1.G)",
+        "",
+        "These entity_types are intentionally dropped from CTEs in v3 — "
+        "they describe mass-effect / compression / staging / general "
+        "histology, NOT invasion findings. Per Logan's rejection: "
+        "tracheal_deviation, substernal_extension, esophageal_compression "
+        "etc. belong in a future mass-effect canonical or 364 "
+        "complications scope, not here.",
+        "",
+        "| source_table | entity_type | n_rows | n_patients |",
+        "|---|---|---:|---:|",
+    ])
+    total_excised_rows = 0
+    total_excised_patients_sources: dict[str, set[int]] = {}
+    for tbl in ("note_entities_llm_airway_invasion",
+                "note_entities_llm_vascular_invasion"):
+        for et in excised_targets:
+            try:
+                row = con.execute(
+                    f"""
+                    WITH unnested AS (
+                        SELECT TRY_CAST(research_id AS BIGINT) AS rid,
+                               UNNEST(json_extract(result_json,
+                                                   '$.entities')::JSON[])
+                                 AS entity_json
+                        FROM {fq('main', tbl)}
+                        WHERE result_json LIKE '{{"entities":%'
+                          AND LENGTH(result_json) > 100
+                    )
+                    SELECT COUNT(*) AS n_rows,
+                           COUNT(DISTINCT rid) AS n_patients
+                    FROM unnested
+                    WHERE json_extract_string(entity_json,
+                                              '$.entity_type') = ?
+                    """, [et]
+                ).fetchone()
+            except duckdb.Error as exc:
+                log_warn(f"  excised count probe failed for {tbl}.{et}: {exc}")
+                continue
+            n_rows, n_pats = row[0] or 0, row[1] or 0
+            if n_rows == 0:
+                continue
+            excised_counts.setdefault(tbl, {})[et] = n_rows
+            total_excised_rows += n_rows
+            total_excised_patients_sources.setdefault(et, set())
+            json_md_lines.append(
+                f"| `{tbl}` | `{et}` | {n_rows:,} | {n_pats:,} |"
+            )
+            log(f"  EXCISED {tbl}.{et}: {n_rows:,} rows / "
+                f"{n_pats:,} patients")
+    json_md_lines.extend([
+        "",
+        f"**Total excised rows: {total_excised_rows:,}**",
+    ])
+
     JSON_KEYS_PATH.write_text("\n".join(json_md_lines) + "\n",
                               encoding="utf-8")
     log(f"  LLM JSON key report -> {JSON_KEYS_PATH}")
     log(f"  unmapped entity_type sources: {len(unmapped_entity_types)}")
+    log(f"  v3 excised entity_type total rows: {total_excised_rows:,}")
 
     # 0.g Pre-flight archive (only when Step 7 is in scope).
     archive_snapshot: str | None = None
@@ -1420,7 +1475,8 @@ def _build_cte_llm_json(plan: dict[str, Any]) -> str:
     cte_final = (f"cte_{plan['modality']}_{plan['source_kind']}_"
                  f"{table}{('_' + suffix) if suffix else ''}")
     invasion_case = _entity_invasion_case_sql(
-        "json_extract_string(entity_json, '$.entity_type')"
+        "json_extract_string(entity_json, '$.entity_type')",
+        "json_extract_string(entity_json, '$.entity_value')",
     )
     return f"""
 {cte_unnest} AS (
@@ -1682,7 +1738,7 @@ SELECT
     evidence_qualifier,
     extraction_run_id,
     '363'::VARCHAR AS build_script,
-    CURRENT_TIMESTAMP AS build_ts
+    CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS build_ts
 FROM linked
 WHERE research_id IS NOT NULL
   AND invasion_type IS NOT NULL
@@ -1806,7 +1862,7 @@ SELECT
     research_id,
     {select_csv},
     '363'::VARCHAR AS build_script,
-    CURRENT_TIMESTAMP AS build_ts
+    CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS build_ts
 FROM {fq('main','canonical_invasion_events_v1')}
 GROUP BY research_id
 """
@@ -2088,8 +2144,8 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
         log_warn("  events table missing — remaining gates skipped")
         return qa
 
-    # 3. backbone_modalities_present
-    backbone = ["op_note", "synoptic_path", "narrative_path"]
+    # 3. backbone_modalities_present (v3: narrative_path REMOVED)
+    backbone = ["op_note", "synoptic_path"]
     rows = con.execute(
         f"SELECT source_modality, COUNT(*) FROM "
         f"{fq('main','canonical_invasion_events_v1')} "
@@ -2098,11 +2154,12 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
     ).fetchall()
     seen_backbone = {r[0] for r in rows}
     gate("backbone_modalities_present",
-         len(seen_backbone) >= 1,
+         seen_backbone == set(backbone),
          seen_backbone=sorted(seen_backbone),
          missing_backbone=sorted(set(backbone) - seen_backbone))
 
-    # 4. invasion_type_coverage
+    # 4. invasion_type_coverage (v3: 10 types incl. lymphatic_microscopic
+    # / capsular / perineural / soft_tissue; 'local' REMOVED)
     rows = con.execute(
         f"SELECT invasion_type, COUNT(*) FROM "
         f"{fq('main','canonical_invasion_events_v1')} GROUP BY 1"
@@ -2113,13 +2170,72 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
          not missing_types,
          seen_types=sorted(seen_types),
          missing_types=sorted(missing_types))
+    # 4b. v3 local-invasion-type EXTINCTION gate
+    gate("local_invasion_type_extinct",
+         "local" not in seen_types,
+         seen_types_includes_local=("local" in seen_types))
+
+    # 4c. v3 NO cross-DB sourcing gate (Pattern 8 rejected)
+    n_archive_src = int(con.execute(
+        f"SELECT COUNT(*) FROM "
+        f"{fq('main','canonical_invasion_events_v1')} "
+        f"WHERE source_table LIKE 'archive_pub_v1_0.%'"
+    ).fetchone()[0])
+    gate("no_cross_db_archive_sourcing",
+         n_archive_src == 0,
+         archive_source_row_count=n_archive_src)
+
+    # 4d. v3 vascular vs lymphatic patient-count gates per Logan
+    # forecast (vascular_microscopic ≥ 682 / 6.27%; lymphatic_microscopic
+    # ≥ 783 / 7.20%; both ≥ 293).
+    n_vasc = int(con.execute(
+        f"SELECT COUNT(DISTINCT research_id) FROM "
+        f"{fq('main','canonical_invasion_events_v1')} "
+        f"WHERE invasion_type='vascular_microscopic' "
+        f"AND finding_status='present'"
+    ).fetchone()[0])
+    n_lymph = int(con.execute(
+        f"SELECT COUNT(DISTINCT research_id) FROM "
+        f"{fq('main','canonical_invasion_events_v1')} "
+        f"WHERE invasion_type='lymphatic_microscopic' "
+        f"AND finding_status='present'"
+    ).fetchone()[0])
+    n_both = int(con.execute(
+        f"SELECT COUNT(*) FROM ("
+        f"  SELECT research_id FROM "
+        f"  {fq('main','canonical_invasion_events_v1')} "
+        f"  WHERE invasion_type='vascular_microscopic' "
+        f"  AND finding_status='present' "
+        f"  INTERSECT "
+        f"  SELECT research_id FROM "
+        f"  {fq('main','canonical_invasion_events_v1')} "
+        f"  WHERE invasion_type='lymphatic_microscopic' "
+        f"  AND finding_status='present'"
+        f")"
+    ).fetchone()[0])
+    gate("vl_split_vascular_min", n_vasc >= 682,
+         n_patients=n_vasc, forecast_min=682)
+    gate("vl_split_lymphatic_min", n_lymph >= 783,
+         n_patients=n_lymph, forecast_min=783)
+    gate("vl_split_intersection_min", n_both >= 293,
+         n_patients=n_both, forecast_min=293)
 
     # 5. preservation_op_note (per flag)
+    # v3: dropped local_invasion_flag → 'local' mapping (no longer in
+    # vocabulary). The structured op_note flag still captures local
+    # invasion mentions, but in v3 they route to soft_tissue if the
+    # surgeon recorded soft-tissue language. For preservation, we
+    # check that the op_note structured BOOL flag count matches the
+    # union of soft_tissue+capsular+perineural+gross_ete events from
+    # op_note/structured (since local_invasion_flag in operative
+    # canonical is a generic flag that could be any of these).
+    # Conservative gate: just verify counts for the 3 type-specific
+    # flags (gross_ete, tracheal, esophageal); local_invasion_flag is
+    # logged informationally.
     for col, inv_type in [
         ("gross_ete_flag", "gross_ete"),
         ("tracheal_involvement_flag", "tracheal"),
         ("esophageal_involvement_flag", "esophageal"),
-        ("local_invasion_flag", "local"),
     ]:
         if col not in step_0_result.get("strip_cols_present", []):
             info(f"preservation_op_note_{inv_type}_skipped",
@@ -2140,6 +2256,27 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
              n_src_true == n_events_present,
              source_true_count=n_src_true,
              events_present_count=n_events_present)
+
+    # 5b. v3 — local_invasion_flag now routed to soft_tissue
+    if "local_invasion_flag" in step_0_result.get("strip_cols_present", []):
+        n_src_true = int(con.execute(
+            f"SELECT COUNT(*) FROM "
+            f"{fq('main','canonical_operative_events_v1')} "
+            f"WHERE local_invasion_flag = TRUE"
+        ).fetchone()[0])
+        n_events_present = int(con.execute(
+            f"SELECT COUNT(DISTINCT research_id || '|' || source_row_id) "
+            f"FROM {fq('main','canonical_invasion_events_v1')} "
+            f"WHERE invasion_type='soft_tissue' "
+            f"AND source_modality='op_note' "
+            f"AND source_kind='structured' "
+            f"AND finding_status='present'"
+        ).fetchone()[0])
+        gate("preservation_op_note_local_routed_to_soft_tissue",
+             n_src_true == n_events_present,
+             source_true_count=n_src_true,
+             events_present_count=n_events_present,
+             routing_note="v3: local_invasion_flag → soft_tissue")
 
     # 6. view_resolves
     for view_name, _ in NEW_VIEWS:
@@ -2460,12 +2597,36 @@ def step_8_closeout(
     lines.extend([
         "",
         "## New patterns introduced (for AGENTS.md / project memory)",
-        "- **Pattern 8**: archive_pub_v1_0 as permanent source dependency.",
-        "- **Pattern 9**: VARCHAR vocab → finding_status normalisation.",
-        "- **Pattern 10**: result_json UNNEST + json_extract_string design.",
+        "- ~~**Pattern 8**: archive_pub_v1_0 as permanent source "
+        "dependency~~ — REJECTED in v3 per Logan's "
+        "`feedback_no_cross_db_canonical_sourcing.md`. "
+        "Master canonicals are standalone live objects in `main`; "
+        "no `FROM archive_pub_v1_0.*` allowed in build scripts.",
+        "- **Pattern 9**: VARCHAR vocab → finding_status normalisation. "
+        "v3 fix: `'x'` → absent (synoptic placeholder, not missing); "
+        "build_ts must be `CAST(CURRENT_TIMESTAMP AS TIMESTAMP)` not "
+        "TIMESTAMPTZ (per `reference_duckdb_timestamp_tz.md`).",
+        "- **Pattern 10**: result_json UNNEST + json_extract_string "
+        "design.",
         "- **Pattern 11**: modality coverage census → placeholder.",
-        "- **Pattern 12**: idempotent registry DELETE-WHERE-canonical_version "
-        "before INSERT.",
+        "- **Pattern 12**: orthogonal source_modality × source_kind "
+        "(structured / llm) on cross-modal canonicals.",
+        "- **Pattern 13**: idempotent registry "
+        "DELETE-WHERE-canonical_version before INSERT.",
+        "- **Pattern 14**: LLM `result_json` UNNEST template with "
+        "`WHERE result_json LIKE '{\"entities\":%'` filter for error "
+        "rows. Reusable for 364 / 365 / 366 / 367 — all "
+        "`note_entities_llm_*` tables share the same JSON shape.",
+        "- **Pattern 15** (NEW v3): EXCISE non-invasion entity_types "
+        "from invasion canonical. Mass-effect / compression / staging "
+        "/ general-histology entities (tracheal_deviation, "
+        "substernal_extension, esophageal_compression, "
+        "vascular_encasement, mass_effect, airway_compromise_grade, "
+        "vocal_cord_imaging, vascular_invasion_type, vessel_count, "
+        "necrosis, mitotic_rate, ptnm_stage, dedifferentiation) get "
+        "row-counted into the JSON keys probe report and explicitly "
+        "DROPPED from CTEs (NULL invasion_type → CTE filter excludes). "
+        "Logan's CHECKPOINT 1.G requirement.",
     ])
 
     body = "\n".join(lines) + "\n"
