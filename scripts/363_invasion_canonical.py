@@ -148,75 +148,99 @@ _LOG_LINES: list[str] = []
 # Lowercase + trailing-punctuation-stripped lookup. Anything not here →
 # 'indeterminate' + log to unmapped_categorical_values.
 VARCHAR_TO_FINDING_STATUS: dict[str, str] = {
-    # Present (clean)
+    # ------------------------------------------------------------------
+    # AUTHORITATIVE per Logan (CHECKPOINT 1, 2026-04-22):
+    # 'x' / 'X' is the synoptic template's ABSENT placeholder, NOT
+    # missing data. Logan validated this against per-field cardinality:
+    #   vascular_invasion: 'x' = 3,122 absent placeholder
+    #     vs ~672 patients with present-flavored values
+    #     → ~6.2% of cohort, clinically realistic.
+    # Mapping 'x' → indeterminate would over-report uncertainty;
+    # mapping any-non-null → present would massively over-report.
+    # ------------------------------------------------------------------
+    # ----- ABSENT
+    "x": "absent", "no": "absent", "false": "absent", "none": "absent",
+    "n/s": "absent", "n/a": "absent", "0": "absent",
+    "not identified": "absent",
+    # ----- PRESENT — clean keywords
     "present": "present", "yes": "present", "true": "present",
-    "minimal": "present", "microscopic": "present",
-    "extensive": "present", "focal": "present",
-    "multifocal": "present", "infiltrative": "present",
+    "identified": "present",
+    "extensive": "present", "focal": "present", "minimal": "present",
     "minimally invasive": "present", "widely invasive": "present",
-    "yes (minimal)": "present", "yes, minimal": "present",
-    "yes (focal)": "present", "yes, extensive": "present",
+    "infiltrative": "present", "invasive": "present",
+    "microscopic": "present", "microscopic extension": "present",
+    "minimal extension": "present",
+    "multifocal": "present", "multiple foci": "present", "1 focus": "present",
+    "single focus": "present", "into but not through": "present",
+    "yes (minimal)": "present", "yes (focal)": "present",
+    "yes, minimal": "present", "yes, extensive": "present",
     "yes (extensive)": "present",
-    "1 focus": "present", "identified": "present", "prominent": "present",
-    "limited": "present", "invasive": "present", "s": "present",
-    "infiltrative?": "present",
-    "minimal extension": "present", "microscopic extension": "present",
-    "present, minimal": "present", "present (minimal)": "present",
-    "present (perithyroidal fibroadipose tissue involved)": "present",
+    "prominent": "present", "limited": "present", "s": "present",
     "yes;minimal": "present",
-    # Present — narrative descriptors (Q3=B expansion)
+    "present, minimal": "present", "present (minimal)": "present",
+    # ----- PRESENT — typos (all map to present per Logan)
+    "preesent": "present", "preent": "present", "presnt": "present",
+    "preseent": "present", "prewent": "present", "preewnt": "present",
+    "miinimally invasive": "present", "minimallyinvasive": "present",
+    "minimally invasvie": "present", "minimally invasivre": "present",
+    "widely invasvie": "present", "widely invasivre": "present",
+    "extensivre": "present", "extensiver": "present",
+    "estensive": "present", "extrensive": "present", "extesive": "present",
+    "foacl": "present", "minimal (1 focus)": "present",
+    "minimal microscopic": "present", "minimal into fat": "present",
+    "microscopiic": "present",
+    # ----- PRESENT — descriptive narratives (raw text captured into
+    # evidence_qualifier column for later clinical review per Logan)
     "focal early extension into perithyroidal fat": "present",
-    "present (microscopic perithyroidal soft tissue only with no "
-    "clinical or macroscopic evidence of invasion)": "present",
+    "focal right side": "present", "right side focal": "present",
     "present, widely invasive": "present",
-    "multifocal invasion": "present", "multiple foci": "present",
-    "minimal (1 focus)": "present", "single focus": "present",
-    "minimal into fat": "present",
-    "minimal microscopic": "present",
+    "multifocal invasion": "present",
     "x\n(single microscopic focus of extension)": "present",
-    "into but not through": "present",
     "yes;capsular invasion into but not through capsule": "present",
     "yes;capsular invasion into but not through capsule;": "present",
-    # Absent
-    "no": "absent", "false": "absent", "none": "absent",
-    "not identified": "absent",
-    "none?": "absent",
-    # Indeterminate / suspected
-    "indeterminate": "indeterminate", "indetermiante": "indeterminate",
-    "indeterminent": "indeterminate", "indeeterminate": "indeterminate",
-    "suspicious": "suspected",
+    "present (perithyroidal fibroadipose tissue involved)": "present",
+    "present (microscopic perithyroidal soft tissue only with no "
+    "clinical or macroscopic evidence of invasion)": "present",
+    # ----- SUSPECTED — hedged language (Logan: 'Infiltrative?' is
+    # suspected, not present — the question mark matters)
+    "suspicious": "suspected", "infiltrative?": "suspected",
+    # ----- INDETERMINATE
+    "indeterminate": "indeterminate", "equivocal": "indeterminate",
     "c/a": "indeterminate",
-    "n/s": "indeterminate",
-    "n/a": "indeterminate", "cannot be assessed": "indeterminate",
-    "equivocal": "indeterminate", "classical": "indeterminate",
-    "m": "indeterminate",
-    # Synoptic placeholder values
-    "x": "indeterminate", "*": "indeterminate",
-    "* (see margin comment)": "indeterminate", "`x": "indeterminate",
-    # Common typos seen in archive vocab probes
-    "preesent": "present", "presnt": "present", "preent": "present",
-    "preseent": "present", "prewent": "present",
-    "extensivre": "present", "extensiver": "present",
-    "extrensive": "present", "estensive": "present",
-    "extesive": "present",
-    "foacl": "present",
-    "widely invasivre": "present", "widely invasvie": "present",
-    "minimally invasivre": "present",
-    "minimallyinvasive": "present", "miinimally invasive": "present",
-    "minimally invasvie": "present",
-    "microscopiic": "present",
-    # Cannot-be-determined narrative
+    "cannot be assessed": "indeterminate",
+    "cannot be determined": "indeterminate",
     "cannot be determined: focal interstitial psammomatoid calcification "
     "present": "indeterminate",
-    # focal regional descriptors
-    "focal right side": "present", "right side focal": "present",
+    "indeeterminate": "indeterminate", "indetermiante": "indeterminate",
+    "indeterminent": "indeterminate", "none?": "indeterminate",
+    # ----- INDETERMINATE — synoptic margin annotation placeholders
+    # (kept for completeness; clearly margin cross-references, not
+    # findings)
+    "*": "indeterminate", "* (see margin comment)": "indeterminate",
+    "`x": "indeterminate", "classical": "indeterminate", "m": "indeterminate",
 }
+
+# gross_ete is BIGINT: only value 1 ever observed in the archive
+# (1,571 rows). Per Logan: 1 → present; 0 → absent in source schema
+# (NULL → unknown / not asked).
+GROSS_ETE_BIGINT_MAP: dict[int, str] = {1: "present", 0: "absent"}
 
 # ETE subtype mapping (used only when source column is
 # extrathyroidal_extension; default 'present'-ish values without
 # microscopic indicator → gross_ete).
 EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE: dict[str, str] = {
-    # Microscopic ETE
+    # ------------------------------------------------------------------
+    # Subtype only applies to PRESENT findings. Values that map to
+    # 'absent' / 'indeterminate' / 'suspected' in
+    # VARCHAR_TO_FINDING_STATUS are NOT in this dict. The Step 1 SQL
+    # only consults this dict when finding_status='present'; if the
+    # value isn't found here, default invasion_type='gross_ete'.
+    # 'Infiltrative?' is suspected (not present), so it doesn't appear
+    # here — the suspected row gets invasion_type='gross_ete' by
+    # default since suspicion of ETE without a microscopic qualifier
+    # is treated as gross-suspicious.
+    # ------------------------------------------------------------------
+    # ----- MICROSCOPIC_ETE (minimal/microscopic/focal qualifiers)
     "minimal": "microscopic_ete", "microscopic": "microscopic_ete",
     "yes (minimal)": "microscopic_ete", "yes, minimal": "microscopic_ete",
     "minimally invasive": "microscopic_ete",
@@ -236,24 +260,24 @@ EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE: dict[str, str] = {
     "single focus": "microscopic_ete",
     "x\n(single microscopic focus of extension)": "microscopic_ete",
     "yes;minimal": "microscopic_ete",
-    "yes;minimal;": "microscopic_ete",
     "present, minimal": "microscopic_ete",
     "present (minimal)": "microscopic_ete",
     "present (microscopic perithyroidal soft tissue only with no "
     "clinical or macroscopic evidence of invasion)": "microscopic_ete",
     "into but not through": "microscopic_ete",
-    # Gross ETE
+    # ----- GROSS_ETE (extensive/wide qualifiers OR unspecified-present)
     "extensive": "gross_ete", "widely invasive": "gross_ete",
     "yes, extensive": "gross_ete", "yes (extensive)": "gross_ete",
     "extensiver": "gross_ete", "extensivre": "gross_ete",
     "extrensive": "gross_ete", "estensive": "gross_ete",
     "extesive": "gross_ete",
     "widely invasivre": "gross_ete", "widely invasvie": "gross_ete",
+    # Unspecified-present → gross by default (per spec convention)
     "yes": "gross_ete", "true": "gross_ete", "present": "gross_ete",
     "preesent": "gross_ete", "presnt": "gross_ete",
     "preent": "gross_ete", "preseent": "gross_ete", "prewent": "gross_ete",
+    "preewnt": "gross_ete",
     "infiltrative": "gross_ete", "invasive": "gross_ete",
-    "infiltrative?": "gross_ete",
     "present, widely invasive": "gross_ete",
     "multifocal invasion": "gross_ete",
     "multiple foci": "gross_ete",
@@ -412,36 +436,38 @@ MODALITY_PLAN: list[dict[str, Any]] = [
      "table_suffix": "vasc"},
     # ===== narrative_path (structured) — synoptic_tumor_long_v1_pre361_*
     #       (Pattern 8: archive as permanent source — no live equivalent)
+    #       Uses synoptic_row_ix (not path_surgery_id) as the row_id
+    #       (probed 2026-04-22; this archive's row identifier scheme).
     {"modality": "narrative_path", "source_kind": "structured",
      "invasion_type": "ete_split", "kind": "archive_varchar_ete",
      "archive_table_key": "narrative_path_synoptic",
      "value_col": "extrathyroidal_extension",
-     "row_id_col": "path_surgery_id", "date_col": "surg_date",
+     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
      "rid_col": "research_id"},
     {"modality": "narrative_path", "source_kind": "structured",
      "invasion_type": "vascular_microscopic", "kind": "archive_varchar",
      "archive_table_key": "narrative_path_synoptic",
      "value_col": "angioinvasion",
-     "row_id_col": "path_surgery_id", "date_col": "surg_date",
+     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
      "rid_col": "research_id"},
     {"modality": "narrative_path", "source_kind": "structured",
      "invasion_type": "vascular_microscopic", "kind": "archive_varchar",
      "archive_table_key": "narrative_path_synoptic",
      "value_col": "lymphatic_invasion",
-     "row_id_col": "path_surgery_id", "date_col": "surg_date",
+     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
      "rid_col": "research_id",
      "value_suffix": "lymph"},
     {"modality": "narrative_path", "source_kind": "structured",
      "invasion_type": "local", "kind": "archive_varchar",
      "archive_table_key": "narrative_path_synoptic",
      "value_col": "perineural_invasion",
-     "row_id_col": "path_surgery_id", "date_col": "surg_date",
+     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
      "rid_col": "research_id"},
     {"modality": "narrative_path", "source_kind": "structured",
      "invasion_type": "local", "kind": "archive_varchar",
      "archive_table_key": "narrative_path_synoptic",
      "value_col": "capsular_invasion",
-     "row_id_col": "path_surgery_id", "date_col": "surg_date",
+     "row_id_col": "synoptic_row_ix", "date_col": "surg_date",
      "rid_col": "research_id",
      "value_suffix": "capsular"},
     # ===== narrative_path (structured) — tumor_episode_master_v2_pre361_*
@@ -1236,6 +1262,7 @@ def _build_cte_structured_bool(plan: dict[str, Any]) -> str:
         TRY_CAST({date_col} AS DATE) AS finding_date,
         NULL::DOUBLE AS confidence,
         NULL::VARCHAR AS evidence_span_hash,
+        NULL::VARCHAR AS evidence_qualifier,
         NULL::VARCHAR AS extraction_run_id,
         TRY_CAST({row_id_col} AS BIGINT) AS exact_linked_episode_id
     FROM {fq(schema, table)}
@@ -1287,6 +1314,7 @@ def _build_cte_varchar_generic(plan: dict[str, Any],
         TRY_CAST("{date_col}" AS DATE) AS finding_date,
         NULL::DOUBLE AS confidence,
         NULL::VARCHAR AS evidence_span_hash,
+        "{value_col}" AS evidence_qualifier,
         NULL::VARCHAR AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
     FROM {table_fq}
@@ -1321,6 +1349,7 @@ def _build_cte_varchar_ete_generic(plan: dict[str, Any],
         TRY_CAST("{date_col}" AS DATE) AS finding_date,
         NULL::DOUBLE AS confidence,
         NULL::VARCHAR AS evidence_span_hash,
+        "{value_col}" AS evidence_qualifier,
         NULL::VARCHAR AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
     FROM {table_fq}
@@ -1358,6 +1387,7 @@ def _build_cte_bigint_generic(plan: dict[str, Any],
         TRY_CAST("{date_col}" AS DATE) AS finding_date,
         NULL::DOUBLE AS confidence,
         NULL::VARCHAR AS evidence_span_hash,
+        CAST("{value_col}" AS VARCHAR) AS evidence_qualifier,
         NULL::VARCHAR AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
     FROM {table_fq}
@@ -1366,6 +1396,21 @@ def _build_cte_bigint_generic(plan: dict[str, Any],
 
 
 def _build_cte_llm_json(plan: dict[str, Any]) -> str:
+    """Pattern 14 (LLM result_json UNNEST template).
+
+    Reusable across 363 / 364 / 365 / 366 / 367 — every
+    note_entities_llm_* table follows the same JSON shape:
+        {"entities": [{
+            "entity_type", "entity_value", "entity_date",
+            "date_confidence", "date_source_keyword",
+            "present_or_negated", "confidence",
+            "evidence_text", "source_line"
+        }]}
+
+    Some rows contain {"error": "..."} instead of {"entities": [...]}
+    (extraction failures). The `result_json LIKE '{"entities":%'`
+    filter skips them so UNNEST doesn't blow up on null arrays.
+    """
     schema = plan["source_schema"]
     table = plan["source_table"]
     note_type = plan["note_type_filter"]
@@ -1388,6 +1433,8 @@ def _build_cte_llm_json(plan: dict[str, Any]) -> str:
         UNNEST(json_extract(result_json, '$.entities')::JSON[]) AS entity_json
     FROM {fq(schema, table)}
     WHERE note_type = '{note_type}'
+      -- Pattern 14: skip {{"error":...}} rows so UNNEST doesn't break
+      AND result_json LIKE '{{"entities":%'
       AND LENGTH(result_json) > 100
 ),
 {cte_final} AS (
@@ -1430,6 +1477,8 @@ def _build_cte_llm_json(plan: dict[str, Any]) -> str:
         md5(COALESCE(
             json_extract_string(entity_json, '$.evidence_text'), ''
         )) AS evidence_span_hash,
+        json_extract_string(entity_json, '$.entity_value')
+            AS evidence_qualifier,
         COALESCE(extracted_at, '') || '|' || COALESCE(llm_model, '')
             AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
@@ -1630,6 +1679,7 @@ SELECT
      AND exact_linked_episode_id IS NULL) AS linkage_ambiguous_multi_episode,
     confidence,
     evidence_span_hash,
+    evidence_qualifier,
     extraction_run_id,
     '363'::VARCHAR AS build_script,
     CURRENT_TIMESTAMP AS build_ts
@@ -1705,17 +1755,10 @@ def step_2_build_rollup(
     })
     log(f"  live (modality, source_kind) combos: {live_source_kinds}")
 
-    # Build the SELECT clause programmatically
-    per_combo_clauses: list[str] = []
-    for inv in INVASION_TYPES:
-        for mod in live_modalities:
-            col_name = f"any_{inv}_in_{mod}"
-            per_combo_clauses.append(
-                f"BOOL_OR(invasion_type='{inv}' "
-                f"AND source_modality='{mod}' "
-                f"AND finding_status='present') AS {col_name}"
-            )
-
+    # Per Logan's CHECKPOINT 1 trim: rollup is cross-modal BOOL flags
+    # ONLY. Drop per-(type,modality) cols + drop earliest/latest dates +
+    # drop n_modalities_with_<type>. Consumers needing those breakdowns
+    # query the events table directly. Keeps the rollup at ~21 cols.
     op_or_path_modalities = [
         m for m in ["op_note", "synoptic_path", "narrative_path",
                     "frozen_section"]
@@ -1740,7 +1783,9 @@ def step_2_build_rollup(
                 f"AS any_{inv}_in_op_or_path"
             )
         else:
-            cross_modal_clauses.append(f"FALSE::BOOLEAN AS any_{inv}_in_op_or_path")
+            cross_modal_clauses.append(
+                f"FALSE::BOOLEAN AS any_{inv}_in_op_or_path"
+            )
         if imaging_modalities:
             mods_in = ", ".join(f"'{m}'" for m in imaging_modalities)
             cross_modal_clauses.append(
@@ -1749,22 +1794,11 @@ def step_2_build_rollup(
                 f"AS any_{inv}_in_imaging"
             )
         else:
-            cross_modal_clauses.append(f"FALSE::BOOLEAN AS any_{inv}_in_imaging")
-        cross_modal_clauses.append(
-            f"MIN(CASE WHEN invasion_type='{inv}' AND finding_status='present' "
-            f"THEN finding_date END) AS earliest_{inv}_date"
-        )
-        cross_modal_clauses.append(
-            f"MAX(CASE WHEN invasion_type='{inv}' AND finding_status='present' "
-            f"THEN finding_date END) AS latest_{inv}_date"
-        )
-        cross_modal_clauses.append(
-            f"COUNT(DISTINCT CASE WHEN invasion_type='{inv}' "
-            f"AND finding_status='present' THEN source_modality END) "
-            f"AS n_modalities_with_{inv}"
-        )
+            cross_modal_clauses.append(
+                f"FALSE::BOOLEAN AS any_{inv}_in_imaging"
+            )
 
-    select_csv = ",\n        ".join(per_combo_clauses + cross_modal_clauses)
+    select_csv = ",\n        ".join(cross_modal_clauses)
 
     sql = f"""
 CREATE OR REPLACE TABLE {fq('main','canonical_invasion_patient_rollup_v1')} AS
@@ -1776,12 +1810,13 @@ SELECT
 FROM {fq('main','canonical_invasion_events_v1')}
 GROUP BY research_id
 """
-    log(f"  SQL built ({len(per_combo_clauses)} per-combo + "
-        f"{len(cross_modal_clauses)} cross-modal columns)")
+    log(f"  SQL built ({len(cross_modal_clauses)} cross-modal "
+        f"BOOL flag columns)")
     if not do_writes:
-        log("  [dry-run] would CREATE OR REPLACE canonical_invasion_patient_rollup_v1")
+        log("  [dry-run] would CREATE OR REPLACE "
+            "canonical_invasion_patient_rollup_v1")
         return {"created": False, "rows": -1,
-                "n_per_combo_cols": len(per_combo_clauses),
+                "n_per_combo_cols": 0,
                 "n_cross_modal_cols": len(cross_modal_clauses)}
     con.execute(sql)
     n = row_count(con, "main", "canonical_invasion_patient_rollup_v1")
@@ -1798,7 +1833,7 @@ GROUP BY research_id
     except duckdb.Error as exc:
         log_warn(f"  COMMENT failed: {exc}")
     return {"created": True, "rows": n,
-            "n_per_combo_cols": len(per_combo_clauses),
+            "n_per_combo_cols": 0,
             "n_cross_modal_cols": len(cross_modal_clauses)}
 
 
@@ -2138,6 +2173,66 @@ def step_6_qa(con: duckdb.DuckDBPyConnection,
 
     info("placeholder_modalities",
          items=step_0_result.get("placeholder_modalities", []))
+
+    # Sidecar QA breakdown — full per-(modality, kind, type, status)
+    # counts for clinical sanity check (per Logan CHECKPOINT 1: confirm
+    # 'present' counts match clinical realism, e.g. ~6.2% vascular,
+    # ~7.2% lymphatic, ~5.4% ETE).
+    breakdown_path = QA_DIR / f"qa_script_363_invasion_breakdown_{BUILD_TS}.md"
+    cohort_size = int(con.execute(
+        "SELECT COUNT(DISTINCT research_id) FROM "
+        f"{fq('main','canonical_patient_master')}"
+    ).fetchone()[0]) if table_exists(con, "main",
+                                     "canonical_patient_master") else 0
+    rows = con.execute(
+        f"SELECT source_modality, source_kind, invasion_type, "
+        f"finding_status, COUNT(*) AS n_mentions, "
+        f"COUNT(DISTINCT research_id) AS n_patients "
+        f"FROM {fq('main','canonical_invasion_events_v1')} "
+        f"GROUP BY 1,2,3,4 ORDER BY 1,2,3,4"
+    ).fetchall()
+    bd = [
+        f"# Script 363 invasion breakdown — {RUN_DATE}",
+        f"BUILD_TS: `{BUILD_TS}`  cohort_size (canonical_patient_master): "
+        f"{cohort_size:,}",
+        "",
+        "Per-(source_modality × source_kind × invasion_type × "
+        "finding_status) counts. **Compare 'present' percentages against "
+        "Logan's clinical realism table** (~6.2% vascular, ~7.2% "
+        "lymphatic, ~5.4% ETE, ~0.9% perineural) before signing off on "
+        "the cascade strip.",
+        "",
+        "| modality | source_kind | invasion_type | finding_status | "
+        "n_mentions | n_patients | % cohort |",
+        "|---|---|---|---|---:|---:|---:|",
+    ]
+    for mod, kind, inv, status, nm, np_ in rows:
+        pct = (np_ / cohort_size * 100.0) if cohort_size else 0.0
+        bd.append(
+            f"| `{mod}` | `{kind}` | `{inv}` | `{status}` | {nm:,} | "
+            f"{np_:,} | {pct:.2f}% |"
+        )
+    # Cross-modal anywhere summary per invasion_type
+    bd.extend([
+        "",
+        "## Cross-modal `present anywhere` per invasion_type",
+        "(consumed by canonical_invasion_patient_rollup_v1.any_<type>_anywhere)",
+        "",
+        "| invasion_type | n_patients_present_anywhere | % cohort |",
+        "|---|---:|---:|",
+    ])
+    cm_rows = con.execute(
+        f"SELECT invasion_type, "
+        f"COUNT(DISTINCT research_id) AS n_patients "
+        f"FROM {fq('main','canonical_invasion_events_v1')} "
+        f"WHERE finding_status='present' "
+        f"GROUP BY 1 ORDER BY 1"
+    ).fetchall()
+    for inv, np_ in cm_rows:
+        pct = (np_ / cohort_size * 100.0) if cohort_size else 0.0
+        bd.append(f"| `{inv}` | {np_:,} | {pct:.2f}% |")
+    breakdown_path.write_text("\n".join(bd) + "\n", encoding="utf-8")
+    log(f"  Sidecar breakdown report -> {breakdown_path}")
 
     # Save QA
     QA_DIR.mkdir(parents=True, exist_ok=True)
