@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "name": "malignant_patient_count_matches_legacy",
+      "passed": true,
+      "rollup_count": 4137,
+      "archive_count": 4137,
+      "legacy_row_count": 4441
+    },
+    {
+      "name": "benign_patient_count_geq_legacy",
+      "passed": true,
+      "rollup_count": 8846,
+      "archive_count": 6734
+    },
+    {
+      "name": "malignant_events_rowcount_matches_ctc_archive_filtered",
+      "passed": true,
+      "events_count": 6689,
+      "archive_count_filtered": 6689
+    },
+    {
+      "name": "no_research_ids_lost",
+      "passed": true,
+      "n_before": 10871,
+      "n_after": 10871,
+      "n_lost": 0,
+      "sample_lost": []
+    },
+    {
+      "name": "bethesda_preserved_union_check",
+      "passed": true,
+      "archive_count": 5249,
+      "union_rollup_count": 5249
+    },
+    {
+      "name": "malignant_linkage_population_geq_50pct",
+      "passed": true,
+      "rows_with_specimen_focus_id": 3663,
+      "malignant_events_total": 6689,
+      "actual_pct": 0.5476,
+      "target_threshold_50pct": 3344,
+      "upstream_ceiling_pct": 0.672
+    },
+    {
+      "name": "benign_events_full_linkage_rate_geq_60pct",
+      "passed": true,
+      "n_total": 11688,
+      "n_full": 7299,
+      "full_pct": 0.6245,
+      "n_ambiguous_multi_specimen": 1082
+    },
+    {
+      "name": "view_resolves_path_malignant_events_VIEW_v1",
+      "passed": true
+    },
+    {
+      "name": "view_resolves_path_benign_events_VIEW_v1",
+      "passed": true
+    },
+    {
+      "name": "view_resolves_path_gland_events_VIEW_v1",
+      "passed": true
+    },
+    {
+      "name": "view_resolves_path_malignant_patient_rollup_VIEW_v1",
+      "passed": true
+    },
+    {
+      "name": "view_resolves_path_benign_patient_rollup_VIEW_v1",
+      "passed": true
+    },
+    {
+      "name": "view_resolves_path_gland_patient_rollup_VIEW_v1",
+      "passed": true
+    }
+  ],
+  "passed": true
+}
