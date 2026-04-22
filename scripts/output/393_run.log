@@ -1,0 +1,11 @@
+2026-04-22T23:58:15.567046+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=env:MOTHERDUCK_TOKEN)
+2026-04-22T23:58:19.938849+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/393_prestate_probe_report.md
+2026-04-22T23:58:19.939124+00:00 2A: CREATE OR REPLACE "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."cpm_stage_group_pre393_20260422_235819" AS ...
+2026-04-22T23:58:20.356350+00:00 2A OK — 9 rows
+2026-04-22T23:58:20.356684+00:00 2B: UPDATE ajcc8_stage_group ...
+2026-04-22T23:58:20.462335+00:00 2B done
+2026-04-22T23:58:20.462689+00:00 2C: mirror ajcc8_stage_group_corrected (T3b base + snapshot ids; not stage_group IS NULL) ...
+2026-04-22T23:58:20.578955+00:00 2C done
+2026-04-22T23:58:20.579293+00:00 2D: __readme
+2026-04-22T23:58:21.006352+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/393_close_out_report.md
+2026-04-22T23:58:21.006563+00:00 Script 393 apply + verify complete.
