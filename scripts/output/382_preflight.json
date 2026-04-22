@@ -1,0 +1,29 @@
+{
+  "domain": "cervical_ln_detail",
+  "raw_rows": 10084,
+  "deduped_rows": 10084,
+  "outcome_split": {
+    "err": 180,
+    "empty": 7830,
+    "has_entities": 2074
+  },
+  "entity_type_counts": {
+    "ln_level": 3966,
+    "ln_laterality": 73,
+    "fna_of_ln": 91,
+    "ln_size": 160,
+    "microcalcifications_ln": 12,
+    "hilum_status": 34,
+    "ln_number_per_level": 44,
+    "ln_morphology": 80,
+    "hypervascularity": 7,
+    "suspicious_features_count": 12,
+    "cystic_change": 7,
+    "washout_tg": 13
+  },
+  "source_llm_model_tags": [
+    "qwen2.5-32b"
+  ],
+  "merged_at": "2026-04-22T13:29:53.685913+00:00",
+  "parquet_path": "/Users/ros/THyroid 2026/runs/round2_20260421/cervical_ln_detail/output/note_entities_llm_cervical_ln_detail.parquet"
+}

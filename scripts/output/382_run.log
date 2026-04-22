@@ -1,0 +1,119 @@
+[13:29:53.001Z] Script 382 — phase=all — 2026-04-22T13:29:53.001008+00:00
+[13:29:53.078Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:29:53.597Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:29:53.597Z] ======================================================================
+[13:29:53.597Z] PHASE MERGE — read ckpt JSONL → dedup → write parquet (cervical_ln_detail)
+[13:29:53.597Z] ======================================================================
+[13:29:53.597Z]   gate OK: ckpt exists: note_entities_llm_cervical_ln_detail.ckpt.jsonl
+[13:29:53.625Z]   Raw checkpoint rows: 10,084
+[13:29:53.627Z]   After dedup: 10,084 unique note_row_ids (0 dups removed)
+[13:29:53.657Z]   Outcome split: err=180 | empty=7,830 | has_entities=2,074
+[13:29:53.657Z]   Entity-type histogram:
+[13:29:53.657Z]     ln_level: 3,966
+[13:29:53.657Z]     ln_size: 160
+[13:29:53.657Z]     fna_of_ln: 91
+[13:29:53.657Z]     ln_morphology: 80
+[13:29:53.657Z]     ln_laterality: 73
+[13:29:53.657Z]     ln_number_per_level: 44
+[13:29:53.657Z]     hilum_status: 34
+[13:29:53.657Z]     washout_tg: 13
+[13:29:53.657Z]     microcalcifications_ln: 12
+[13:29:53.657Z]     suspicious_features_count: 12
+[13:29:53.657Z]     hypervascularity: 7
+[13:29:53.657Z]     cystic_change: 7
+[13:29:53.658Z]   Source-tag llm_model values (preserved as-is): ['qwen2.5-32b']
+[13:29:53.685Z]   Written: note_entities_llm_cervical_ln_detail.parquet (10,084 rows, 0.78 MB)
+[13:29:53.686Z]   Preflight: 382_preflight.json
+[13:29:53.686Z] PHASE MERGE complete
+[13:29:53.688Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:29:53.689Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:29:53.689Z] ======================================================================
+[13:29:53.689Z] PHASE 0 — parquet audit (cervical_ln_detail) (READ-ONLY)
+[13:29:53.689Z] ======================================================================
+[13:29:53.689Z]   gate OK: merged parquet exists: /Users/ros/THyroid 2026/runs/round2_20260421/cervical_ln_detail/output/note_entities_llm_cervical_ln_detail.parquet
+[13:29:53.703Z]   Rows: 10,084 | distinct note_row_ids: 10,084 | distinct RIDs: 5,106
+[13:29:53.703Z]   gate OK: no duplicate note_row_ids in parquet
+[13:29:53.703Z]   gate OK: parquet row count >= 9,000 (got 10,084)
+[13:29:53.716Z]   Entity-type distribution in parquet:
+[13:29:53.716Z]     ln_level: 3,966
+[13:29:53.716Z]     ln_size: 160
+[13:29:53.716Z]     fna_of_ln: 91
+[13:29:53.716Z]     ln_morphology: 80
+[13:29:53.716Z]     ln_laterality: 73
+[13:29:53.716Z]     ln_number_per_level: 44
+[13:29:53.716Z]     hilum_status: 34
+[13:29:53.716Z]     washout_tg: 13
+[13:29:53.716Z]     microcalcifications_ln: 12
+[13:29:53.716Z]     suspicious_features_count: 12
+[13:29:53.716Z]     hypervascularity: 7
+[13:29:53.716Z]     cystic_change: 7
+[13:29:53.716Z]   gate OK: ln_level entity type present (top type for cervical_ln_detail)
+[13:29:54.213Z]   Current MD main.note_entities_llm_cervical_ln_detail: 11,037 rows, models=['qwen3:32b']
+[13:29:54.213Z] PHASE 0 complete
+[13:29:54.213Z] ======================================================================
+[13:29:54.213Z] PHASE 1 — archive current main.note_entities_llm_cervical_ln_detail → archive_pub_v1_0
+[13:29:54.213Z] ======================================================================
+[13:29:54.275Z]   archiving 11,037 rows main.note_entities_llm_cervical_ln_detail -> "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_cervical_ln_detail_pre382_20260422
+[13:29:55.367Z]   gate OK: archive row-count parity (11,037)
+[13:29:55.367Z] PHASE 1 complete
+[13:29:55.367Z] ======================================================================
+[13:29:55.367Z] PHASE 2 — load merged parquet → main.note_entities_llm_cervical_ln_detail
+[13:29:55.367Z] ======================================================================
+[13:29:55.367Z]   gate OK: merged parquet exists
+[13:29:55.382Z]   Loaded parquet: 10,084 rows
+[13:29:55.398Z]   gate OK: staging parity (10,084 == 10,084)
+[13:29:55.819Z]   gate OK: MD load parity (10,084 == 10,084)
+[13:29:55.819Z]   Loaded 10,084 rows into main.note_entities_llm_cervical_ln_detail
+[13:29:55.858Z]   gate OK: all expected columns present (missing: [])
+[13:29:55.858Z]   Columns verified: 17 cols
+[13:29:55.858Z] PHASE 2 complete
+[13:29:55.859Z] ======================================================================
+[13:29:55.859Z] PHASE 3 — post-load parity
+[13:29:55.859Z] ======================================================================
+[13:29:55.891Z]   MD: 10,084 rows | 5,106 RIDs | 10,084 note_row_ids
+[13:29:55.891Z]   Parquet: 10,084 rows | 5,106 RIDs
+[13:29:55.891Z]   gate OK: row-count parity (10,084)
+[13:29:55.891Z]   gate OK: RID-count parity (5,106)
+[13:29:55.891Z]   gate OK: no duplicate note_row_ids in MD
+[13:29:55.891Z] PHASE 3 complete
+[13:29:55.891Z] ======================================================================
+[13:29:55.891Z] PHASE 4 — CPM snapshot + ALTER ADD COLUMN IF NOT EXISTS
+[13:29:55.891Z] ======================================================================
+[13:29:56.048Z]   No pre-existing CPM nlp_cervln_* cols (all new)
+[13:29:56.216Z]   added CPM column: nlp_cervln_has_data BOOLEAN
+[13:29:56.389Z]   added CPM column: nlp_cervln_n_entities INTEGER
+[13:29:56.554Z]   added CPM column: nlp_cervln_positive_mentioned BOOLEAN
+[13:29:56.727Z]   added CPM column: nlp_cervln_confidence_tier VARCHAR
+[13:29:56.727Z] PHASE 4 complete
+[13:29:56.727Z] ======================================================================
+[13:29:56.727Z] PHASE 5 — build canonicals + UPDATE CPM nlp_cervln_*
+[13:29:56.727Z] ======================================================================
+[13:29:57.010Z]   Built main.canonical_cervical_ln_clinical_events_v1: 4,493 rows
+[13:29:57.010Z]   gate OK: events table populated
+[13:29:57.187Z]   Built main.canonical_cervical_ln_clinical_patient_rollup_v1: 1,643 rows (RIDs with any entity)
+[13:29:57.276Z]   CPM zero-out pass complete
+[13:29:57.392Z]   Post-rollup CPM: has_data TRUE=1,643 FALSE=9,228 n_entities_sum=4493 positive_mentioned_t=974
+[13:29:57.393Z]   gate OK: all 10,871 CPM rows accounted for
+[13:29:57.393Z]   gate OK: at least one RID has nlp_cervln_has_data=TRUE
+[13:29:57.393Z] PHASE 5 complete
+[13:29:57.393Z] ======================================================================
+[13:29:57.393Z] PHASE 6 — invariants A-F + US LN / frozen-section guards
+[13:29:57.393Z] ======================================================================
+[13:29:57.423Z]   gate OK: CPM row count == 10,871 (got 10,871)
+[13:29:57.456Z]   gate OK: zero NULLs on nlp_cervln_has_data/n_entities/positive_mentioned (got 0)
+[13:29:57.486Z]   gate OK: confidence_tier iff has_data=TRUE (mismatches: 0)
+[13:29:57.518Z]   gate OK: source table populated (got 10,084)
+[13:29:57.548Z]   gate OK: nlp_cervln_n_entities >= 0 everywhere (negative: 0)
+[13:29:57.604Z]   gate OK: sum(nlp_cervln_n_entities)=4493 == events rows=4493
+[13:29:57.634Z]   gate OK: US LN domain untouched (exam-id portability lock): main.canonical_us_lymph_node_v2 row count == 6,801 (got 6,801)
+[13:29:57.661Z]   gate OK: frozen-section domain untouched: main.canonical_frozen_section_events_v1 row count == 7,081 (got 7,081)
+[13:29:57.661Z] PHASE 6 complete
+[13:29:57.662Z] ======================================================================
+[13:29:57.662Z] PHASE 7 — registry + __readme sync
+[13:29:57.662Z] ======================================================================
+[13:29:57.925Z]   registry upsert: canonical_cervical_ln_clinical_events_v1 (rows=4,493, patients=1,643)
+[13:29:58.031Z]   registry upsert: canonical_cervical_ln_clinical_patient_rollup_v1 (rows=1,643, patients=1,643)
+[13:29:58.150Z]   registry upsert: note_entities_llm_cervical_ln_detail (rows=10,084, patients=5,106)
+[13:29:58.194Z]   __readme append: script=382_cervical_ln_clinical_merge_load_rollup
+[13:29:58.195Z] PHASE 7 complete
+[13:29:58.195Z] Done.
