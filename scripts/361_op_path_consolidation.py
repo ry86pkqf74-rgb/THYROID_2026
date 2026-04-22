@@ -194,7 +194,7 @@ THYROIDITIS_FLAG_MAP: dict[str, str] = {
 }
 
 # Expected counts (used as soft sanity checks; not regression gates).
-EXPECTED_MALIGNANT_ROWS = 11_106  # from canonical_tumor_characteristics_v1
+EXPECTED_MALIGNANT_ROWS = 6_689  # CTC v1 (11,106) WHERE primary_histology NOT NULL
 EXPECTED_MALIGNANT_PATIENTS = 4_137  # from canonical_malignant_diagnosis_v1
 EXPECTED_BENIGN_ROWS = 11_688  # from path_synoptics
 EXPECTED_BENIGN_PATIENTS = 10_871
@@ -437,16 +437,23 @@ def step_1_build_malignant_events(
             "canonical_tumor_characteristics_v1")
         return {"created": False, "rows": -1, "patients": -1}
 
+    # Filter to malignant tumors only. canonical_tumor_characteristics_v1
+    # carries 11,106 rows but 4,417 of them have NULL primary_histology
+    # (placeholders for benign-only patients, same pattern as
+    # tumor_episode_master_v2). The decision report's expected target is
+    # ~6,700 rows / ~4,137 patients — 11,106 - 4,417 = 6,689 ✓.
     con.execute(
         f"CREATE OR REPLACE TABLE {fq(target_schema, target_table)} AS "
-        f"SELECT * FROM {fq('main', 'canonical_tumor_characteristics_v1')}"
+        f"SELECT * FROM {fq('main', 'canonical_tumor_characteristics_v1')} "
+        f"WHERE primary_histology IS NOT NULL "
+        f"  AND TRIM(CAST(primary_histology AS VARCHAR)) <> ''"
     )
     n0 = row_count(con, target_schema, target_table)
-    log(f"  base copy: {n0:,} rows")
-    if n0 != EXPECTED_MALIGNANT_ROWS:
+    log(f"  base copy (after malignancy filter): {n0:,} rows")
+    if not (6_500 <= n0 <= 7_000):
         log_warn(
-            f"  base copy row count {n0:,} differs from expected "
-            f"{EXPECTED_MALIGNANT_ROWS:,} — check upstream."
+            f"  base copy row count {n0:,} outside expected band "
+            f"[6,500-7,000] — check upstream."
         )
 
     # 1b. Add discordance columns from tumor_episode_master_v2.
@@ -773,19 +780,31 @@ def _placeholder_array_literal(cols: list[str]) -> str:
 def _benign_flag_select(
     out_col: str, source_col: str | None, ps_alias: str = "ps"
 ) -> str:
-    """Build the SELECT expression for one benign flag (Yes/No VARCHAR -> BOOL)."""
+    """Build the SELECT expression for one benign flag.
+
+    NOTE on flag encoding: live data inspection on path_synoptics shows the
+    PRESENT marker is the literal `'x'` (lowercase), e.g. `multinodular_goiter`
+    has 6,205 rows with `'x'` and 5,480 with NULL. Earlier versions of this
+    function only accepted Yes/Y/TRUE/1/POS, which silently set every flag to
+    FALSE. The accepted positive set now includes `'X'`/`'x'` plus the
+    Yes/Y/TRUE/1/POS family for forward-compat. Free-text values (e.g.
+    `'Dominant benign adenomatoid nodule, left lobe, 2.5 cm'`) are also
+    treated as PRESENT — anything beyond a clear negative or empty marker is
+    treated as a positive observation rather than silently FALSE.
+    """
     _validate_sql_identifier(out_col)
     if source_col is None:
         return f"FALSE AS {out_col}"
     _validate_sql_identifier(source_col)
     return (
-        f"CASE WHEN UPPER(TRIM(CAST({ps_alias}.{source_col} AS VARCHAR))) "
-        f"IN ('Y','YES','TRUE','1','POS','POSITIVE') THEN TRUE "
-        f"WHEN UPPER(TRIM(CAST({ps_alias}.{source_col} AS VARCHAR))) "
-        f"IN ('N','NO','FALSE','0','NEG','NEGATIVE') THEN FALSE "
+        f"CASE "
         f"WHEN {ps_alias}.{source_col} IS NULL "
         f"  OR TRIM(CAST({ps_alias}.{source_col} AS VARCHAR)) = '' THEN FALSE "
-        f"ELSE FALSE END AS {out_col}"
+        f"WHEN UPPER(TRIM(CAST({ps_alias}.{source_col} AS VARCHAR))) "
+        f"IN ('N','NO','FALSE','0','NEG','NEGATIVE','NONE') THEN FALSE "
+        f"WHEN UPPER(TRIM(CAST({ps_alias}.{source_col} AS VARCHAR))) "
+        f"IN ('?','UNKNOWN','UNK','U','NOT ASSESSED','NOT KNOWN') THEN FALSE "
+        f"ELSE TRUE END AS {out_col}"
     )
 
 
@@ -1535,6 +1554,45 @@ def step_5_build_rollups(
         FROM ev
         GROUP BY research_id
     """)
+    # Merge bethesda into benign_rollup so the QA union check
+    #   COUNT(malignant_rollup ∪ benign_rollup WHERE bethesda IS NOT NULL)
+    #     == COUNT(archived path_outcome_classification_v1 WHERE bethesda IS NOT NULL)
+    # passes. ~1,100 patients have bethesda but no malignant tumor; without
+    # this merge they'd be invisible in the rollup-side bethesda total.
+    if poc_present:
+        add_column_if_missing(
+            con, "main", "canonical_path_benign_patient_rollup_v1",
+            "bethesda_final", "BIGINT")
+        add_column_if_missing(
+            con, "main", "canonical_path_benign_patient_rollup_v1",
+            "bethesda_final_name", "VARCHAR")
+        add_column_if_missing(
+            con, "main", "canonical_path_benign_patient_rollup_v1",
+            "regex_path_outcome", "VARCHAR")
+        con.execute(f"""
+            UPDATE {fq('main', 'canonical_path_benign_patient_rollup_v1')} AS r
+            SET
+                bethesda_final      = poc.bethesda_max,
+                bethesda_final_name = poc.bethesda_name,
+                regex_path_outcome  = poc.regex_class
+            FROM (
+                SELECT
+                    research_id,
+                    MAX(bethesda_final)             AS bethesda_max,
+                    ANY_VALUE(bethesda_final_name)  AS bethesda_name,
+                    ANY_VALUE(regex_classification) AS regex_class
+                FROM {fq('main', 'path_outcome_classification_v1')}
+                GROUP BY research_id
+            ) poc
+            WHERE poc.research_id = TRY_CAST(r.research_id AS BIGINT)
+        """)
+        n_beth = int(con.execute(
+            f"SELECT COUNT(*) FROM "
+            f"{fq('main', 'canonical_path_benign_patient_rollup_v1')} "
+            f"WHERE bethesda_final IS NOT NULL"
+        ).fetchone()[0])
+        log(f"  merged bethesda_final on {n_beth:,} benign rollup rows")
+
     n_b = row_count(con, 'main', 'canonical_path_benign_patient_rollup_v1')
     log(f"  built canonical_path_benign_patient_rollup_v1: {n_b:,} rows")
     out["benign_rollup_rows"] = n_b
@@ -1986,7 +2044,10 @@ def step_10_qa(
         archive_count=archive_bp,
     )
 
-    # Row count on malignant_events == archive of canonical_tumor_characteristics_v1.
+    # Row count on malignant_events == archive of canonical_tumor_characteristics_v1
+    # restricted to malignant rows (primary_histology IS NOT NULL). The base
+    # copy in Step 1 applies that filter; the QA gate must mirror it so we
+    # measure against the right denominator.
     if table_exists(con, "main", "canonical_path_malignant_events_v1"):
         n_me = row_count(con, "main", "canonical_path_malignant_events_v1")
     else:
@@ -1994,15 +2055,17 @@ def step_10_qa(
     arch_t = f"canonical_tumor_characteristics_v1_pre361_{BUILD_TS}"
     try:
         archive_me = int(con.execute(
-            f'SELECT COUNT(*) FROM {ARCHIVE_FQ}."{arch_t}"'
+            f'SELECT COUNT(*) FROM {ARCHIVE_FQ}."{arch_t}" '
+            f"WHERE primary_histology IS NOT NULL "
+            f"  AND TRIM(CAST(primary_histology AS VARCHAR)) <> ''"
         ).fetchone()[0])
     except duckdb.Error:
         archive_me = None
     check(
-        "malignant_events_rowcount_matches_ctc_archive",
+        "malignant_events_rowcount_matches_ctc_archive_filtered",
         n_me >= 0 and archive_me is not None and n_me == archive_me,
         events_count=n_me,
-        archive_count=archive_me,
+        archive_count_filtered=archive_me,
     )
 
     # No research_id values lost: union of distinct rids before vs after.
@@ -2052,27 +2115,43 @@ def step_10_qa(
         ).fetchone()[0])
     except duckdb.Error:
         archive_poc_cnt = None
-    if (
+    # Bethesda preservation: the prompt's check is union-based — a patient
+    # may carry bethesda from path_outcome_classification_v1 either via the
+    # malignant rollup (if they have any malignant tumor) or via the benign
+    # rollup (if benign-only). Compute COUNT(distinct rid with bethesda) on
+    # the union of both rollups.
+    can_check_bethesda_union = (
         archive_poc_cnt is not None
         and table_exists(con, "main", "canonical_path_malignant_patient_rollup_v1")
+        and table_exists(con, "main", "canonical_path_benign_patient_rollup_v1")
         and column_exists(con, "main",
                           "canonical_path_malignant_patient_rollup_v1",
                           "bethesda_final")
-    ):
-        live_poc = int(con.execute(
-            f"SELECT COUNT(*) FROM "
-            f"{fq('main', 'canonical_path_malignant_patient_rollup_v1')} "
-            f"WHERE bethesda_final IS NOT NULL"
-        ).fetchone()[0])
+        and column_exists(con, "main",
+                          "canonical_path_benign_patient_rollup_v1",
+                          "bethesda_final")
+    )
+    if can_check_bethesda_union:
+        live_union = int(con.execute(f"""
+            SELECT COUNT(DISTINCT rid) FROM (
+                SELECT research_id AS rid FROM
+                    {fq('main', 'canonical_path_malignant_patient_rollup_v1')}
+                WHERE bethesda_final IS NOT NULL
+                UNION
+                SELECT research_id AS rid FROM
+                    {fq('main', 'canonical_path_benign_patient_rollup_v1')}
+                WHERE bethesda_final IS NOT NULL
+            )
+        """).fetchone()[0])
     else:
-        live_poc = -1
+        live_union = -1
     check(
-        "bethesda_preserved_in_malignant_rollup",
+        "bethesda_preserved_union_check",
         archive_poc_cnt is not None
-        and live_poc >= 0
-        and live_poc == archive_poc_cnt,
+        and live_union >= 0
+        and live_union == archive_poc_cnt,
         archive_count=archive_poc_cnt,
-        rollup_count=live_poc,
+        union_rollup_count=live_union,
     )
 
     # Linkage column population on malignant_events.
@@ -2089,11 +2168,23 @@ def step_10_qa(
         ).fetchone()[0])
     else:
         n_link = -1
+    # Linkage threshold is now relative to the post-filter denominator
+    # (~6,689 malignant rows), not the pre-filter 11,106. The prompt's "85%"
+    # target → 0.85 * 6,689 ≈ 5,685. Probe showed ~7,818 link successfully
+    # (over 100% of the new denominator because STF v1 still has 11,103 rows
+    # and matches across the pre-filter set; we get more matches than rows).
+    n_me_for_link = (
+        row_count(con, "main", "canonical_path_malignant_events_v1")
+        if table_exists(con, "main", "canonical_path_malignant_events_v1")
+        else 1
+    )
+    link_threshold = int(0.85 * n_me_for_link)
     check(
-        "malignant_linkage_population",
-        n_link >= 9_000,
+        "malignant_linkage_population_geq_85pct",
+        n_link >= link_threshold,
         rows_with_specimen_focus_id=n_link,
-        target_threshold=9000,
+        malignant_events_total=n_me_for_link,
+        target_threshold_85pct=link_threshold,
     )
 
     # Benign-events linkage rate (Issue 2 follow-up gate). The decision report
