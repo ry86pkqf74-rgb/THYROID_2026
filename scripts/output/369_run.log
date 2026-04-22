@@ -1,0 +1,123 @@
+[13:27:06.932Z] Script 369 — phase=all — 2026-04-22T13:27:06.932259+00:00
+[13:27:07.006Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:27:07.538Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:27:07.538Z] ======================================================================
+[13:27:07.538Z] PHASE MERGE — read ckpt JSONL → dedup → write parquet (pathology)
+[13:27:07.538Z] ======================================================================
+[13:27:07.538Z]   gate OK: ckpt exists: note_entities_llm_pathology.ckpt.jsonl
+[13:27:07.569Z]   Raw checkpoint rows: 10,084
+[13:27:07.572Z]   After dedup: 10,084 unique note_row_ids (0 dups removed)
+[13:27:07.612Z]   Outcome split: err=198 | empty=5,216 | has_entities=4,670
+[13:27:07.612Z]   Entity-type histogram:
+[13:27:07.612Z]     fna_cytology: 3,101
+[13:27:07.612Z]     benign_pathology: 2,769
+[13:27:07.612Z]     surgical_pathology: 2,112
+[13:27:07.612Z]     tumor_size: 1,078
+[13:27:07.612Z]     molecular_testing: 974
+[13:27:07.612Z]     bethesda_class: 815
+[13:27:07.612Z]     extrathyroidal_extension: 711
+[13:27:07.612Z]     lymph_node_pathology: 560
+[13:27:07.612Z]     frozen_section: 404
+[13:27:07.612Z]     margin_status: 306
+[13:27:07.612Z]     multifocality: 243
+[13:27:07.612Z]     lymphovascular_invasion: 211
+[13:27:07.612Z]     tumor_variant: 51
+[13:27:07.612Z]     perineural_invasion: 46
+[13:27:07.613Z]   Source-tag llm_model values (preserved as-is): ['qwen2.5-32b']
+[13:27:07.633Z]   Written: note_entities_llm_pathology.parquet (10,084 rows, 1.45 MB)
+[13:27:07.633Z]   Preflight: 369_preflight.json
+[13:27:07.633Z] PHASE MERGE complete
+[13:27:07.636Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:27:07.636Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:27:07.636Z] ======================================================================
+[13:27:07.636Z] PHASE 0 — parquet audit (pathology) (READ-ONLY)
+[13:27:07.636Z] ======================================================================
+[13:27:07.636Z]   gate OK: merged parquet exists: /Users/ros/THyroid 2026/runs/round2_20260421/pathology/output/note_entities_llm_pathology.parquet
+[13:27:07.649Z]   Rows: 10,084 | distinct note_row_ids: 10,084 | distinct RIDs: 5,106
+[13:27:07.649Z]   gate OK: no duplicate note_row_ids in parquet
+[13:27:07.649Z]   gate OK: parquet row count >= 9,000 (got 10,084)
+[13:27:07.678Z]   Entity-type distribution in parquet:
+[13:27:07.678Z]     fna_cytology: 3,101
+[13:27:07.678Z]     benign_pathology: 2,769
+[13:27:07.678Z]     surgical_pathology: 2,112
+[13:27:07.678Z]     tumor_size: 1,078
+[13:27:07.678Z]     molecular_testing: 974
+[13:27:07.678Z]     bethesda_class: 815
+[13:27:07.678Z]     extrathyroidal_extension: 711
+[13:27:07.678Z]     lymph_node_pathology: 560
+[13:27:07.678Z]     frozen_section: 404
+[13:27:07.678Z]     margin_status: 306
+[13:27:07.678Z]     multifocality: 243
+[13:27:07.678Z]     lymphovascular_invasion: 211
+[13:27:07.678Z]     tumor_variant: 51
+[13:27:07.678Z]     perineural_invasion: 46
+[13:27:07.678Z]   gate OK: core pathology entity types present (missing: set())
+[13:27:08.145Z]   Current MD main.note_entities_llm_pathology: 11,037 rows, models=['qwen3:32b']
+[13:27:08.145Z] PHASE 0 complete
+[13:27:08.145Z] ======================================================================
+[13:27:08.145Z] PHASE 1 — archive current main.note_entities_llm_pathology → archive_pub_v1_0
+[13:27:08.145Z] ======================================================================
+[13:27:08.199Z]   archiving 11,037 rows main.note_entities_llm_pathology -> "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_pathology_pre369_20260422
+[13:27:09.466Z]   gate OK: archive row-count parity (11,037)
+[13:27:09.466Z] PHASE 1 complete
+[13:27:09.466Z] ======================================================================
+[13:27:09.466Z] PHASE 2 — load merged parquet → main.note_entities_llm_pathology
+[13:27:09.466Z] ======================================================================
+[13:27:09.466Z]   gate OK: merged parquet exists
+[13:27:09.484Z]   Loaded parquet into local frame: 10,084 rows
+[13:27:09.499Z]   gate OK: staging parity (10,084 == 10,084)
+[13:27:10.536Z]   gate OK: MD load parity (10,084 == 10,084)
+[13:27:10.536Z]   Loaded 10,084 rows into main.note_entities_llm_pathology
+[13:27:10.576Z]   gate OK: all expected columns present (missing: [])
+[13:27:10.576Z]   Columns verified: 17 cols
+[13:27:10.576Z] PHASE 2 complete
+[13:27:10.576Z] ======================================================================
+[13:27:10.576Z] PHASE 3 — post-load parity
+[13:27:10.576Z] ======================================================================
+[13:27:10.609Z]   MD: 10,084 rows | 5,106 RIDs | 10,084 note_row_ids
+[13:27:10.609Z]   Parquet: 10,084 rows | 5,106 RIDs
+[13:27:10.609Z]   gate OK: row-count parity (10,084)
+[13:27:10.609Z]   gate OK: RID-count parity (5,106)
+[13:27:10.609Z]   gate OK: no duplicate note_row_ids in MD
+[13:27:10.609Z] PHASE 3 complete
+[13:27:10.609Z] ======================================================================
+[13:27:10.609Z] PHASE 4 — CPM snapshot + ALTER ADD COLUMN IF NOT EXISTS
+[13:27:10.609Z] ======================================================================
+[13:27:11.643Z]   CPM snapshot: cpm_pre369_path_rollup_20260422 (2 cols snapshotted)
+[13:27:11.682Z]   CPM column already present (preserved): nlp_path_has_data
+[13:27:11.722Z]   CPM column already present (preserved): nlp_path_n_entities
+[13:27:11.909Z]   added CPM column: nlp_path_positive_mentioned BOOLEAN
+[13:27:12.084Z]   added CPM column: nlp_path_confidence_tier VARCHAR
+[13:27:12.084Z] PHASE 4 complete
+[13:27:12.084Z] ======================================================================
+[13:27:12.084Z] PHASE 5 — build canonicals + UPDATE CPM nlp_path_*
+[13:27:12.084Z] ======================================================================
+[13:27:12.589Z]   Built main.canonical_pathology_clinical_events_v1: 13,358 rows
+[13:27:12.589Z]   gate OK: events table populated
+[13:27:12.775Z]   Built main.canonical_pathology_clinical_patient_rollup_v1: 3,382 rows (RIDs with any entity)
+[13:27:12.898Z]   CPM zero-out pass complete
+[13:27:13.054Z]   Post-rollup CPM: has_data TRUE=3,382 FALSE=7,489 n_entities_sum=13358 positive_mentioned_t=2,855
+[13:27:13.054Z]   gate OK: all 10,871 CPM rows accounted for
+[13:27:13.054Z]   gate OK: at least one RID has nlp_path_has_data=TRUE
+[13:27:13.054Z] PHASE 5 complete
+[13:27:13.055Z] ======================================================================
+[13:27:13.055Z] PHASE 6 — invariants A-F + frozen-section / US LN guards
+[13:27:13.055Z] ======================================================================
+[13:27:13.084Z]   gate OK: CPM row count == 10,871 (got 10,871)
+[13:27:13.114Z]   gate OK: zero NULLs on nlp_path_has_data/n_entities/positive_mentioned (got 0)
+[13:27:13.145Z]   gate OK: confidence_tier iff has_data=TRUE (mismatches: 0)
+[13:27:13.171Z]   gate OK: source table populated (got 10,084)
+[13:27:13.209Z]   gate OK: nlp_path_n_entities >= 0 everywhere (negative: 0)
+[13:27:13.262Z]   gate OK: sum(nlp_path_n_entities)=13358 == events rows=13358
+[13:27:13.288Z]   gate OK: frozen-section domain untouched: main.canonical_frozen_section_events_v1 row count == 7,081 (got 7,081)
+[13:27:13.314Z]   gate OK: US LN domain untouched: main.canonical_us_lymph_node_v2 row count == 6,801 (got 6,801)
+[13:27:13.314Z] PHASE 6 complete
+[13:27:13.315Z] ======================================================================
+[13:27:13.315Z] PHASE 7 — registry + __readme sync
+[13:27:13.315Z] ======================================================================
+[13:27:13.567Z]   registry upsert: canonical_pathology_clinical_events_v1 (rows=13,358, patients=3,382)
+[13:27:13.671Z]   registry upsert: canonical_pathology_clinical_patient_rollup_v1 (rows=3,382, patients=3,382)
+[13:27:13.787Z]   registry upsert: note_entities_llm_pathology (rows=10,084, patients=5,106)
+[13:27:13.825Z]   __readme append: script=369_pathology_v2_merge_load_rollup
+[13:27:13.825Z] PHASE 7 complete
+[13:27:13.826Z] Done.

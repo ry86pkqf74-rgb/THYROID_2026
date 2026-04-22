@@ -1,0 +1,31 @@
+{
+  "domain": "pathology",
+  "raw_rows": 10084,
+  "deduped_rows": 10084,
+  "outcome_split": {
+    "err": 198,
+    "empty": 5216,
+    "has_entities": 4670
+  },
+  "entity_type_counts": {
+    "benign_pathology": 2769,
+    "surgical_pathology": 2112,
+    "fna_cytology": 3101,
+    "extrathyroidal_extension": 711,
+    "bethesda_class": 815,
+    "molecular_testing": 974,
+    "lymph_node_pathology": 560,
+    "tumor_variant": 51,
+    "tumor_size": 1078,
+    "multifocality": 243,
+    "lymphovascular_invasion": 211,
+    "margin_status": 306,
+    "frozen_section": 404,
+    "perineural_invasion": 46
+  },
+  "source_llm_model_tags": [
+    "qwen2.5-32b"
+  ],
+  "merged_at": "2026-04-22T13:27:07.633100+00:00",
+  "parquet_path": "/Users/ros/THyroid 2026/runs/round2_20260421/pathology/output/note_entities_llm_pathology.parquet"
+}
