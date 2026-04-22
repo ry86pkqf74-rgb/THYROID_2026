@@ -1,0 +1,14 @@
+APPROVED
+# Script 391 T-stage downstream reconciliation
+# Phase 0 clean: all 10 frozen baselines match 0.00% drift.
+# 6-step projection:
+#   2B ete_grade+ete_grade_final sync: 1,144 rows
+#   2C DEPRECATED T3b upgrade (gross-ETE): 172 rows
+#   2D-B micro_t3b_corrected: 906 → 0 (Rule A cleared the cohort)
+#   2D-C/D ajcc8_t_stage rebuild: 1,078 rows (172 up-T3b + 906 up-T3b)
+#   2D-E ajcc8_stage_group_corrected cascade: 3,777 rows
+#   2E manuscript_cohort_v1.ajcc8_t_stage: 172 rows, 100% join
+# Column-rename corrections honored (direct-check rule):
+#   ajcc8_t_stage_corrected → ajcc8_t_stage (phase-4.6 2026-04-17)
+#   tumor_size_cm → tumor_size_cm_dominant
+# Logan's explicit call 2026-04-22 post-live-probe.
