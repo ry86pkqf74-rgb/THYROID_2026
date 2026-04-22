@@ -1,0 +1,11 @@
+Rule A
+# Rule A + residual re-queue (AJCC8 T3b).
+# Live-verified baselines 2026-04-22 (1,311 / 1,121 / 0 / 4 / 1,125);
+# original spec had arithmetic inconsistency (190+1,091=1,281 not 1,325)
+# flagged and corrected by Phase 0 probe.
+# Sticky guard expanded to include 'unable_to_determine' (26 rows).
+# 194 boolean-string junk rows route to queue untouched in CPM.
+# Cohort stability sanity check: ete_adjudication_v1 unchanged
+# (45 rows, 1 micro / 16 absent / 26 unable / 2 gross), bool-junk
+# still 194, invasion_rollup rowcount recorded in run log.
+# Logan's explicit call 2026-04-22 post-live-probe.

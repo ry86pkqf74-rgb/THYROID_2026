@@ -1,0 +1,425 @@
+[INFO] [21:49:06.506Z] === Script 390 ETE Adjudication Reconciliation ===
+[INFO] [21:49:06.506Z] Mode: Phase 0 (probe-only)
+[INFO] [21:49:06.506Z] Stamp: 20260422
+[INFO] [21:49:06.513Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:49:07.423Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [21:49:07.423Z] === Phase 0: Discovery + probe ===
+[INFO] [21:49:07.574Z] CPM rowcount: 10871
+[INFO] [21:49:07.643Z] ETE grade distribution:
+[INFO] [21:49:07.643Z]   None                            n=  6796  gross_flag=    0  op_intraop=   44  path_gross=    0
+[INFO] [21:49:07.643Z]   'microscopic'                   n=  3643  gross_flag=  949  op_intraop= 1031  path_gross=  937
+[INFO] [21:49:07.643Z]   'gross'                         n=   190  gross_flag=  189  op_intraop=   49  path_gross=   38
+[INFO] [21:49:07.643Z]   'false'                         n=   187  gross_flag=    0  op_intraop=    5  path_gross=    0
+[INFO] [21:49:07.643Z]   'present_ungraded'              n=    32  gross_flag=    6  op_intraop=   12  path_gross=    6
+[INFO] [21:49:07.643Z]   'absent'                        n=    16  gross_flag=    0  op_intraop=    2  path_gross=    0
+[INFO] [21:49:07.643Z]   'true'                          n=     7  gross_flag=    2  op_intraop=    3  path_gross=    2
+[INFO] [21:49:07.710Z] ETE × invasion rollup cross-tab (top 10):
+[INFO] [21:49:07.710Z]   grade='absent'                        any_gross=False  any_micro=False  n=14
+[INFO] [21:49:07.710Z]   grade='absent'                        any_gross=True  any_micro=False  n=2
+[INFO] [21:49:07.710Z]   grade='false'                         any_gross=False  any_micro=False  n=182
+[INFO] [21:49:07.710Z]   grade='false'                         any_gross=True  any_micro=False  n=5
+[INFO] [21:49:07.710Z]   grade='gross'                         any_gross=False  any_micro=False  n=141
+[INFO] [21:49:07.710Z]   grade='gross'                         any_gross=True  any_micro=False  n=49
+[INFO] [21:49:07.710Z]   grade='microscopic'                   any_gross=False  any_micro=False  n=2551
+[INFO] [21:49:07.710Z]   grade='microscopic'                   any_gross=True  any_micro=False  n=813
+[INFO] [21:49:07.710Z]   grade='microscopic'                   any_gross=True  any_micro=True  n=218
+[INFO] [21:49:07.710Z]   grade='microscopic'                   any_gross=False  any_micro=True  n=61
+[INFO] [21:49:07.753Z] ete_adjudication_v1 rowcount: 45
+[INFO] [21:49:07.804Z] Adjudicated CPM rows breakdown:
+[INFO] [21:49:07.804Z]   'unable_to_determine'               n=26
+[INFO] [21:49:07.804Z]   'absent'                            n=16
+[INFO] [21:49:07.804Z]   'gross'                             n=2
+[INFO] [21:49:07.804Z]   'microscopic'                       n=1
+[INFO] [21:49:07.804Z]   → unable_to_determine (expanded sticky): 26
+[INFO] [21:49:11.767Z] cpm_ete_self_contradiction_queue_v1 pre-state: 1 rows
+[INFO] [21:49:11.767Z]   status='awaiting_manual_review'  n=1
+[INFO] [21:49:11.803Z] Boolean-string junk rows: 194
+[INFO] [21:49:11.804Z]   'false'=187
+[INFO] [21:49:11.804Z]   'true'=7
+[INFO] [21:49:11.837Z] NULL ete_grade_final_v2 rows (informational, not graded in 390): 6796
+[INFO] [21:49:11.838Z] Running Rule A simulation (read-only CTE)...
+[INFO] [21:49:11.902Z] Rule A simulation results:
+[INFO] [21:49:11.902Z]   would-be-gross post-rule : 1311
+[INFO] [21:49:11.902Z]   flip-up to gross         : 1121
+[INFO] [21:49:11.902Z]   flip-down from gross     : 0
+[INFO] [21:49:11.902Z]   flip to microscopic      : 4
+[INFO] [21:49:11.902Z]   TOTAL ROWS MUTATED       : 1125
+[INFO] [21:49:11.902Z]   rows unchanged           : 9746
+[INFO] [21:49:12.004Z] Rule A residual queue: microscopic-no-signal (rule_a CTE): 2575
+[INFO] [21:49:12.004Z] Rule A residual queue: microscopic-FF cohort (invasion rollup): 0
+[INFO] [21:49:12.004Z] Projected new queue rows: 220 (0 micro-no-signal + 26 unable-sticky + 194 bool-junk)
+[INFO] [21:49:12.005Z]   Drift gate [PASS] CPM_ROWS: actual=10871, expected=10871, drift=0.00% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [PASS] ADJ_ROWS: actual=45, expected=45, drift=0.00% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [PASS] WOULD_BE_GROSS_POST_RULE_A: actual=1311, expected=1325, drift=1.06% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [FAIL] FLIP_UP_RULE_A: actual=1121, expected=1091, drift=2.75% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [FAIL] FLIP_TO_MICRO_RULE_A: actual=4, expected=8, drift=50.00% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [FAIL] TOTAL_MUTATED_RULE_A: actual=1125, expected=1099, drift=2.37% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [PASS] BOOLEAN_STRING_JUNK_ROWS: actual=194, expected=194, drift=0.00% (tol=2%)
+[INFO] [21:49:12.005Z]   Drift gate [PASS] UNABLE_STICKY: actual=26, expected=26, drift=0.00% (tol=2%)
+[INFO] [21:49:12.007Z] Probe report written: /Users/loganglosser/THYROID_2026/scripts/output/390_probe_report.md
+[INFO] [21:49:12.007Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[ERROR] [21:49:12.007Z] DRIFT GATE FAILED — 3 baseline(s) exceeded 2% tolerance:
+[ERROR] [21:49:12.007Z]   FLIP_UP_RULE_A: actual=1121, expected=1091, drift=2.75%
+[ERROR] [21:49:12.007Z]   FLIP_TO_MICRO_RULE_A: actual=4, expected=8, drift=50.00%
+[ERROR] [21:49:12.007Z]   TOTAL_MUTATED_RULE_A: actual=1125, expected=1099, drift=2.37%
+[INFO] [21:59:41.140Z] === Script 390 ETE Adjudication Reconciliation ===
+[INFO] [21:59:41.140Z] Mode: Phase 0 (probe-only)
+[INFO] [21:59:41.140Z] Stamp: 20260422
+[INFO] [21:59:41.143Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:59:41.991Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [21:59:41.991Z] === Phase 0: Cohort stability sanity check ===
+[INFO] [21:59:41.991Z] Cohort stability sanity check ...
+[INFO] [21:59:42.021Z]   ete_adjudication_v1: total=45, micro=1, absent=16, unable=26
+[INFO] [21:59:42.021Z]   [PASS] ete_adjudication_v1 unchanged (45 / 1 / 16 / 26)
+[INFO] [21:59:42.136Z]   boolean-string junk rows: 194
+[INFO] [21:59:42.136Z]   [PASS] boolean-string junk = 194 (expected 194)
+[INFO] [21:59:42.166Z]   canonical_invasion_patient_rollup_v1 rowcount: 10871 (recorded; not a halt gate)
+[INFO] [21:59:42.166Z] === Phase 0: Discovery + probe ===
+[INFO] [21:59:42.212Z] CPM rowcount: 10871
+[INFO] [21:59:42.250Z] ETE grade distribution:
+[INFO] [21:59:42.250Z]   None                            n=  6796  gross_flag=    0  op_intraop=   44  path_gross=    0
+[INFO] [21:59:42.250Z]   'microscopic'                   n=  3643  gross_flag=  949  op_intraop= 1031  path_gross=  937
+[INFO] [21:59:42.250Z]   'gross'                         n=   190  gross_flag=  189  op_intraop=   49  path_gross=   38
+[INFO] [21:59:42.250Z]   'false'                         n=   187  gross_flag=    0  op_intraop=    5  path_gross=    0
+[INFO] [21:59:42.250Z]   'present_ungraded'              n=    32  gross_flag=    6  op_intraop=   12  path_gross=    6
+[INFO] [21:59:42.250Z]   'absent'                        n=    16  gross_flag=    0  op_intraop=    2  path_gross=    0
+[INFO] [21:59:42.250Z]   'true'                          n=     7  gross_flag=    2  op_intraop=    3  path_gross=    2
+[INFO] [21:59:42.305Z] ETE × invasion rollup cross-tab (top 10):
+[INFO] [21:59:42.305Z]   grade='absent'                        any_gross=False  any_micro=False  n=14
+[INFO] [21:59:42.305Z]   grade='absent'                        any_gross=True  any_micro=False  n=2
+[INFO] [21:59:42.305Z]   grade='false'                         any_gross=False  any_micro=False  n=182
+[INFO] [21:59:42.305Z]   grade='false'                         any_gross=True  any_micro=False  n=5
+[INFO] [21:59:42.305Z]   grade='gross'                         any_gross=False  any_micro=False  n=141
+[INFO] [21:59:42.305Z]   grade='gross'                         any_gross=True  any_micro=False  n=49
+[INFO] [21:59:42.305Z]   grade='microscopic'                   any_gross=False  any_micro=False  n=2551
+[INFO] [21:59:42.305Z]   grade='microscopic'                   any_gross=True  any_micro=False  n=813
+[INFO] [21:59:42.305Z]   grade='microscopic'                   any_gross=True  any_micro=True  n=218
+[INFO] [21:59:42.305Z]   grade='microscopic'                   any_gross=False  any_micro=True  n=61
+[INFO] [21:59:42.413Z] ete_adjudication_v1 rowcount: 45
+[INFO] [21:59:42.457Z] Adjudicated CPM rows breakdown:
+[INFO] [21:59:42.457Z]   'unable_to_determine'               n=26
+[INFO] [21:59:42.457Z]   'absent'                            n=16
+[INFO] [21:59:42.457Z]   'gross'                             n=2
+[INFO] [21:59:42.457Z]   'microscopic'                       n=1
+[INFO] [21:59:42.457Z]   → unable_to_determine (expanded sticky): 26
+[INFO] [21:59:44.284Z] cpm_ete_self_contradiction_queue_v1 pre-state: 1 rows
+[INFO] [21:59:44.284Z]   status='awaiting_manual_review'  n=1
+[INFO] [21:59:44.319Z] Boolean-string junk rows: 194
+[INFO] [21:59:44.319Z]   'false'=187
+[INFO] [21:59:44.319Z]   'true'=7
+[INFO] [21:59:44.358Z] NULL ete_grade_final_v2 rows (informational, not graded in 390): 6796
+[INFO] [21:59:44.358Z] Running Rule A simulation (read-only CTE)...
+[INFO] [21:59:44.405Z] Rule A simulation results:
+[INFO] [21:59:44.405Z]   would-be-gross post-rule : 1311
+[INFO] [21:59:44.405Z]   flip-up to gross         : 1121
+[INFO] [21:59:44.405Z]   flip-down from gross     : 0
+[INFO] [21:59:44.405Z]   flip to microscopic      : 4
+[INFO] [21:59:44.405Z]   TOTAL ROWS MUTATED       : 1125
+[INFO] [21:59:44.405Z]   rows unchanged           : 9746
+[INFO] [21:59:44.604Z] Rule A residual queue: microscopic-no-signal (rule_a CTE): 2575
+[INFO] [21:59:44.604Z] Rule A residual queue: microscopic-FF cohort (invasion rollup): 0
+[INFO] [21:59:44.605Z] Projected new queue rows: 220 (0 micro-no-signal + 26 unable-sticky + 194 bool-junk)
+[INFO] [21:59:44.605Z]   Drift gate [PASS] CPM_ROWS: actual=10871, expected=10871, drift=0.00% (tol=2%)
+[INFO] [21:59:44.605Z]   Drift gate [PASS] ADJ_ROWS: actual=45, expected=45, drift=0.00% (tol=2%)
+[INFO] [21:59:44.605Z]   Drift gate [PASS] BOOLEAN_STRING_JUNK: actual=194, expected=194, drift=0.00% (tol=2%)
+[INFO] [21:59:44.605Z]   Drift gate [PASS] UNABLE_STICKY: actual=26, expected=26, drift=0.00% (tol=2%)
+[INFO] [21:59:44.605Z]   Drift gate [PASS] WOULD_BE_GROSS_POST_RULE_A: actual=1311, expected=1311, drift=0.00% (tol=0.00% (exact))
+[INFO] [21:59:44.605Z]   Drift gate [PASS] FLIP_UP_RULE_A: actual=1121, expected=1121, drift=0.00% (tol=0.00% (exact))
+[INFO] [21:59:44.605Z]   Drift gate [PASS] FLIP_DOWN_RULE_A: actual=0, expected=0, drift=0.00% (tol=0.00% (exact))
+[INFO] [21:59:44.605Z]   Drift gate [PASS] FLIP_TO_MICRO_RULE_A: actual=4, expected=4, drift=0.00% (tol=0.00% (exact))
+[INFO] [21:59:44.605Z]   Drift gate [PASS] TOTAL_MUTATED_RULE_A: actual=1125, expected=1125, drift=0.00% (tol=0.00% (exact))
+[INFO] [21:59:44.605Z] Probe report written: /Users/loganglosser/THYROID_2026/scripts/output/390_probe_report.md
+[INFO] [21:59:44.606Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [21:59:44.606Z] Drift gate: PASS — all 8 frozen baselines within 2% tolerance
+[INFO] [21:59:44.606Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [21:59:44.606Z] 
+[INFO] [21:59:44.606Z] Phase 0 complete. Probe report: scripts/output/390_probe_report.md
+[INFO] [21:59:44.606Z] Plan approval: scripts/output/390_plan_approval.txt
+[INFO] [21:59:44.606Z] 
+[INFO] [21:59:44.606Z] Halted at Phase 1 plan-review gate.
+[INFO] [21:59:44.606Z] Plan is pre-approved (Rule A, Logan 2026-04-22).
+[INFO] [21:59:44.606Z] Re-run with --apply to execute Phase 2 writes.
+[INFO] [22:04:01.504Z] === Script 390 ETE Adjudication Reconciliation ===
+[INFO] [22:04:01.505Z] Mode: --apply (Phase 2-3)
+[INFO] [22:04:01.505Z] Stamp: 20260422
+[INFO] [22:04:01.515Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [22:04:02.387Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [22:04:04.860Z] === Phase 0: Cohort stability sanity check ===
+[INFO] [22:04:04.860Z]   (partial-run recovery: using snapshot cpm_ete_pre390_20260422 for bool-junk check)
+[INFO] [22:04:04.860Z] Cohort stability sanity check ...
+[INFO] [22:04:04.977Z]   ete_adjudication_v1: total=45, micro=1, absent=16, unable=26
+[INFO] [22:04:04.977Z]   [PASS] ete_adjudication_v1 unchanged (45 / 1 / 16 / 26)
+[INFO] [22:04:05.084Z]   boolean-string junk rows (archive_pub_v1_0.cpm_ete_pre390_20260422): 194
+[INFO] [22:04:05.084Z]   [PASS] boolean-string junk = 194 (expected 194)
+[INFO] [22:04:05.115Z]   canonical_invasion_patient_rollup_v1 rowcount: 10871 (recorded; not a halt gate)
+[INFO] [22:04:05.115Z] === Phase 0: Discovery + probe ===
+[INFO] [22:04:05.193Z] CPM rowcount: 10871
+[INFO] [22:04:05.270Z] ETE grade distribution:
+[INFO] [22:04:05.271Z]   None                            n=  6752  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:04:05.271Z]   'microscopic'                   n=  2580  gross_flag=    0  op_intraop=    1  path_gross=    0
+[INFO] [22:04:05.271Z]   'gross'                         n=  1311  gross_flag= 1139  op_intraop= 1132  path_gross=  976
+[INFO] [22:04:05.271Z]   'false'                         n=   179  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:04:05.271Z]   'present_ungraded'              n=    29  gross_flag=    6  op_intraop=   10  path_gross=    6
+[INFO] [22:04:05.271Z]   'absent'                        n=    16  gross_flag=    0  op_intraop=    2  path_gross=    0
+[INFO] [22:04:05.271Z]   'true'                          n=     4  gross_flag=    1  op_intraop=    1  path_gross=    1
+[INFO] [22:04:05.335Z] ETE × invasion rollup cross-tab (top 10):
+[INFO] [22:04:05.335Z]   grade='absent'                        any_gross=False  any_micro=False  n=14
+[INFO] [22:04:05.335Z]   grade='absent'                        any_gross=True  any_micro=False  n=2
+[INFO] [22:04:05.335Z]   grade='false'                         any_gross=False  any_micro=False  n=179
+[INFO] [22:04:05.335Z]   grade='gross'                         any_gross=True  any_micro=False  n=914
+[INFO] [22:04:05.335Z]   grade='gross'                         any_gross=True  any_micro=True  n=218
+[INFO] [22:04:05.335Z]   grade='gross'                         any_gross=False  any_micro=False  n=167
+[INFO] [22:04:05.335Z]   grade='gross'                         any_gross=False  any_micro=True  n=12
+[INFO] [22:04:05.335Z]   grade='microscopic'                   any_gross=False  any_micro=False  n=2530
+[INFO] [22:04:05.335Z]   grade='microscopic'                   any_gross=False  any_micro=True  n=49
+[INFO] [22:04:05.335Z]   grade='microscopic'                   any_gross=True  any_micro=False  n=1
+[INFO] [22:04:05.364Z] ete_adjudication_v1 rowcount: 45
+[INFO] [22:04:05.401Z] Adjudicated CPM rows breakdown:
+[INFO] [22:04:05.401Z]   'unable_to_determine'               n=26
+[INFO] [22:04:05.401Z]   'absent'                            n=16
+[INFO] [22:04:05.401Z]   'gross'                             n=2
+[INFO] [22:04:05.401Z]   'microscopic'                       n=1
+[INFO] [22:04:05.401Z]   → unable_to_determine (expanded sticky): 26
+[INFO] [22:04:05.668Z] cpm_ete_self_contradiction_queue_v1 pre-state: 209 rows
+[INFO] [22:04:05.668Z]   status='awaiting_manual_review'  n=209
+[INFO] [22:04:05.714Z] Boolean-string junk rows: 183
+[INFO] [22:04:05.714Z]   'false'=179
+[INFO] [22:04:05.714Z]   'true'=4
+[INFO] [22:04:05.747Z] NULL ete_grade_final_v2 rows (informational, not graded in 390): 6752
+[INFO] [22:04:05.747Z] Running Rule A simulation (read-only CTE)...
+[INFO] [22:04:05.802Z] Rule A simulation results:
+[INFO] [22:04:05.802Z]   would-be-gross post-rule : 1311
+[INFO] [22:04:05.802Z]   flip-up to gross         : 0
+[INFO] [22:04:05.802Z]   flip-down from gross     : 0
+[INFO] [22:04:05.802Z]   flip to microscopic      : 0
+[INFO] [22:04:05.802Z]   TOTAL ROWS MUTATED       : 0
+[INFO] [22:04:05.802Z]   rows unchanged           : 10871
+[INFO] [22:04:05.910Z] Rule A residual queue: microscopic-no-signal (rule_a CTE): 2579
+[INFO] [22:04:05.910Z] Rule A residual queue: microscopic-FF cohort (invasion rollup): 0
+[INFO] [22:04:05.910Z] Projected new queue rows: 209 (0 micro-no-signal + 26 unable-sticky + 183 bool-junk)
+[INFO] [22:04:05.910Z]   Drift gate [PASS] CPM_ROWS: actual=10871, expected=10871, drift=0.00% (tol=2%)
+[INFO] [22:04:05.910Z]   Drift gate [PASS] ADJ_ROWS: actual=45, expected=45, drift=0.00% (tol=2%)
+[INFO] [22:04:05.910Z]   Drift gate [FAIL] BOOLEAN_STRING_JUNK: actual=183, expected=194, drift=5.67% (tol=2%)
+[INFO] [22:04:05.910Z]   Drift gate [PASS] UNABLE_STICKY: actual=26, expected=26, drift=0.00% (tol=2%)
+[INFO] [22:04:05.910Z]   Drift gate [PASS] WOULD_BE_GROSS_POST_RULE_A: actual=1311, expected=1311, drift=0.00% (tol=0.00% (exact))
+[INFO] [22:04:05.910Z]   Drift gate [FAIL] FLIP_UP_RULE_A: actual=0, expected=1121, drift=100.00% (tol=0.00% (exact))
+[INFO] [22:04:05.910Z]   Drift gate [PASS] FLIP_DOWN_RULE_A: actual=0, expected=0, drift=0.00% (tol=0.00% (exact))
+[INFO] [22:04:05.910Z]   Drift gate [FAIL] FLIP_TO_MICRO_RULE_A: actual=0, expected=4, drift=100.00% (tol=0.00% (exact))
+[INFO] [22:04:05.910Z]   Drift gate [FAIL] TOTAL_MUTATED_RULE_A: actual=0, expected=1125, drift=100.00% (tol=0.00% (exact))
+[INFO] [22:04:05.911Z] Probe report written: /Users/loganglosser/THYROID_2026/scripts/output/390_probe_report.md
+[INFO] [22:04:05.911Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[ERROR] [22:04:05.911Z] DRIFT GATE FAILED — 4 baseline(s) exceeded 2% tolerance:
+[ERROR] [22:04:05.911Z]   BOOLEAN_STRING_JUNK: actual=183, expected=194, drift=5.67%
+[ERROR] [22:04:05.911Z]   FLIP_UP_RULE_A: actual=0, expected=1121, drift=100.00%
+[ERROR] [22:04:05.911Z]   FLIP_TO_MICRO_RULE_A: actual=0, expected=4, drift=100.00%
+[ERROR] [22:04:05.911Z]   TOTAL_MUTATED_RULE_A: actual=0, expected=1125, drift=100.00%
+[INFO] [22:04:45.651Z] === Script 390 ETE Adjudication Reconciliation ===
+[INFO] [22:04:45.651Z] Mode: --apply (Phase 2-3)
+[INFO] [22:04:45.651Z] Stamp: 20260422
+[INFO] [22:04:45.656Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [22:04:46.421Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [22:04:49.529Z] === Phase 0: Cohort stability sanity check ===
+[INFO] [22:04:49.529Z]   (partial-run recovery: using snapshot cpm_ete_pre390_20260422 for bool-junk check)
+[INFO] [22:04:49.529Z] Cohort stability sanity check ...
+[INFO] [22:04:49.651Z]   ete_adjudication_v1: total=45, micro=1, absent=16, unable=26
+[INFO] [22:04:49.652Z]   [PASS] ete_adjudication_v1 unchanged (45 / 1 / 16 / 26)
+[INFO] [22:04:49.679Z]   boolean-string junk rows (archive_pub_v1_0.cpm_ete_pre390_20260422): 194
+[INFO] [22:04:49.680Z]   [PASS] boolean-string junk = 194 (expected 194)
+[INFO] [22:04:49.712Z]   canonical_invasion_patient_rollup_v1 rowcount: 10871 (recorded; not a halt gate)
+[INFO] [22:04:49.712Z] === Phase 0: Discovery + probe ===
+[INFO] [22:04:49.777Z] CPM rowcount: 10871
+[INFO] [22:04:49.831Z] ETE grade distribution:
+[INFO] [22:04:49.831Z]   None                            n=  6752  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:04:49.831Z]   'microscopic'                   n=  2580  gross_flag=    0  op_intraop=    1  path_gross=    0
+[INFO] [22:04:49.831Z]   'gross'                         n=  1311  gross_flag= 1139  op_intraop= 1132  path_gross=  976
+[INFO] [22:04:49.831Z]   'false'                         n=   179  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:04:49.831Z]   'present_ungraded'              n=    29  gross_flag=    6  op_intraop=   10  path_gross=    6
+[INFO] [22:04:49.831Z]   'absent'                        n=    16  gross_flag=    0  op_intraop=    2  path_gross=    0
+[INFO] [22:04:49.831Z]   'true'                          n=     4  gross_flag=    1  op_intraop=    1  path_gross=    1
+[INFO] [22:04:49.878Z] ETE × invasion rollup cross-tab (top 10):
+[INFO] [22:04:49.878Z]   grade='absent'                        any_gross=False  any_micro=False  n=14
+[INFO] [22:04:49.878Z]   grade='absent'                        any_gross=True  any_micro=False  n=2
+[INFO] [22:04:49.878Z]   grade='false'                         any_gross=False  any_micro=False  n=179
+[INFO] [22:04:49.878Z]   grade='gross'                         any_gross=True  any_micro=False  n=914
+[INFO] [22:04:49.878Z]   grade='gross'                         any_gross=True  any_micro=True  n=218
+[INFO] [22:04:49.878Z]   grade='gross'                         any_gross=False  any_micro=False  n=167
+[INFO] [22:04:49.878Z]   grade='gross'                         any_gross=False  any_micro=True  n=12
+[INFO] [22:04:49.878Z]   grade='microscopic'                   any_gross=False  any_micro=False  n=2530
+[INFO] [22:04:49.878Z]   grade='microscopic'                   any_gross=False  any_micro=True  n=49
+[INFO] [22:04:49.878Z]   grade='microscopic'                   any_gross=True  any_micro=False  n=1
+[INFO] [22:04:49.907Z] ete_adjudication_v1 rowcount: 45
+[INFO] [22:04:49.946Z] Adjudicated CPM rows breakdown:
+[INFO] [22:04:49.946Z]   'unable_to_determine'               n=26
+[INFO] [22:04:49.946Z]   'absent'                            n=16
+[INFO] [22:04:49.946Z]   'gross'                             n=2
+[INFO] [22:04:49.946Z]   'microscopic'                       n=1
+[INFO] [22:04:49.946Z]   → unable_to_determine (expanded sticky): 26
+[INFO] [22:04:50.238Z] cpm_ete_self_contradiction_queue_v1 pre-state: 209 rows
+[INFO] [22:04:50.238Z]   status='awaiting_manual_review'  n=209
+[INFO] [22:04:50.281Z] Boolean-string junk rows: 183
+[INFO] [22:04:50.282Z]   'false'=179
+[INFO] [22:04:50.282Z]   'true'=4
+[INFO] [22:04:50.348Z] NULL ete_grade_final_v2 rows (informational, not graded in 390): 6752
+[INFO] [22:04:50.349Z] Running Rule A simulation (read-only CTE)...
+[INFO] [22:04:50.404Z] Rule A simulation results:
+[INFO] [22:04:50.404Z]   would-be-gross post-rule : 1311
+[INFO] [22:04:50.404Z]   flip-up to gross         : 0
+[INFO] [22:04:50.404Z]   flip-down from gross     : 0
+[INFO] [22:04:50.404Z]   flip to microscopic      : 0
+[INFO] [22:04:50.404Z]   TOTAL ROWS MUTATED       : 0
+[INFO] [22:04:50.404Z]   rows unchanged           : 10871
+[INFO] [22:04:50.529Z] Rule A residual queue: microscopic-no-signal (rule_a CTE): 2579
+[INFO] [22:04:50.529Z] Rule A residual queue: microscopic-FF cohort (invasion rollup): 0
+[INFO] [22:04:50.529Z] Projected new queue rows: 209 (0 micro-no-signal + 26 unable-sticky + 183 bool-junk)
+[INFO] [22:04:50.529Z]   Drift gate [PASS] CPM_ROWS: actual=10871, expected=10871, drift=0.00% (tol=2%)
+[INFO] [22:04:50.529Z]   Drift gate [PASS] ADJ_ROWS: actual=45, expected=45, drift=0.00% (tol=2%)
+[INFO] [22:04:50.529Z]   Drift gate [PASS] UNABLE_STICKY: actual=26, expected=26, drift=0.00% (tol=2%)
+[INFO] [22:04:50.529Z]   (simulation drift checks skipped — recovery mode; Phase 2B already applied)
+[INFO] [22:04:50.532Z] Probe report written: /Users/loganglosser/THYROID_2026/scripts/output/390_probe_report.md
+[INFO] [22:04:50.533Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [22:04:50.533Z] Drift gate: PASS — all 8 frozen baselines within 2% tolerance
+[INFO] [22:04:50.533Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [22:04:50.534Z] Plan approval verified: Rule A
+[INFO] [22:04:50.994Z] Idempotency check: snapshot 'cpm_ete_pre390_20260422' + __readme row both present.
+[INFO] [22:04:50.994Z] Running Phase 3 quick-check to determine if prior run was clean ...
+[WARN] [22:04:51.550Z] Prior snapshot + __readme found but Phase 3 quick-check FAILED (partial prior run — queue or manuscript cohort incomplete). Continuing with Phase 2D/2E/3 re-run ...
+[INFO] [22:04:51.551Z] === Phase 2: Apply writes ===
+[INFO] [22:04:51.551Z] Partial prior run detected (snap=cpm_ete_pre390_20260422). Resuming from Phase 2D ...
+[INFO] [22:04:51.585Z]   Prior Phase 2B: 1125 rows tagged with script_390_rule_a_20260422
+[INFO] [22:04:51.616Z] 2C: 3 __readme rows already present — skipping (idempotent)
+[INFO] [22:04:51.616Z] 2D: Repopulating contradiction queue ...
+[INFO] [22:04:52.146Z]   Queue columns: ['research_id', 'cpm_ete_grade_final_v2', 'cpm_gross_ete_flag', 'note', 'flagged_at', 'flagged_by', 'status', 'reason', 'queued_by_script', 'queued_at']
+[INFO] [22:04:52.181Z]   Preserved rows (status != awaiting_manual_review): 0
+[INFO] [22:04:52.835Z]   Cohort 1 (microscopic-no-signal): 2579 rows
+[INFO] [22:04:53.103Z]   Cohort 2 (unable_to_determine sticky): 26 rows
+[INFO] [22:04:53.326Z]   Cohort 3 (boolean-string junk): 183 rows
+[INFO] [22:04:53.360Z]   Queue final row count: 2788 (dynamic expected=2788, gate [2739, 2851])
+[INFO] [22:04:53.360Z] 2E: Rebuilding manuscript_cohort_v1.ete_grade_final + .ete_grade_source ...
+[INFO] [22:04:54.019Z] 2E: manuscript_cohort_v1 rows updated: -1
+[INFO] [22:04:54.019Z] === Phase 3: Post-state verification ===
+[INFO] [22:04:54.019Z] Phase 3: Post-state verification ...
+[INFO] [22:04:54.055Z]   [PASS] CPM rowcount = 10,871 — actual=10871
+[INFO] [22:04:54.087Z]   [PASS] ete_adjudication_v1 rowcount = 45 — actual=45
+[INFO] [22:04:54.128Z]   [PASS] Adjudicator-sticky rows unchanged — 0 sticky rows changed
+[INFO] [22:04:54.239Z]   [PASS] 0 residual gross-signal microscopic (non-sticky) — 0 residual contradictions remain
+[INFO] [22:04:54.372Z]   [FAIL] ete_ordinal_worst >= 2 for all gross rows — 164 gross rows with ordinal < 2
+[INFO] [22:04:54.909Z]   [PASS] manuscript_cohort_v1.ete_grade_final matches CPM — 0 mismatches
+[INFO] [22:04:55.168Z]   [PASS] 3 __readme rows for Script 390 present — actual=3
+[INFO] [22:04:55.284Z]   [PASS] Snapshot cpm_ete_pre390_20260422 rowcount = 10871 — actual=10871
+[INFO] [22:04:55.284Z]   [PASS] Queue rowcount in gate [2739–2851] — actual=2788
+[ERROR] [22:04:55.284Z] Phase 3 FAILED — 1 invariant(s) violated:
+[ERROR] [22:04:55.284Z]   ete_ordinal_worst >= 2 for all gross rows: 164 gross rows with ordinal < 2
+[INFO] [22:04:55.285Z] Close-out report written: /Users/loganglosser/THYROID_2026/scripts/output/390_close_out.md
+[INFO] [22:05:55.957Z] === Script 390 ETE Adjudication Reconciliation ===
+[INFO] [22:05:55.957Z] Mode: --apply (Phase 2-3)
+[INFO] [22:05:55.957Z] Stamp: 20260422
+[INFO] [22:05:55.963Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [22:05:56.895Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [22:05:59.638Z] === Phase 0: Cohort stability sanity check ===
+[INFO] [22:05:59.638Z]   (partial-run recovery: using snapshot cpm_ete_pre390_20260422 for bool-junk check)
+[INFO] [22:05:59.638Z] Cohort stability sanity check ...
+[INFO] [22:05:59.674Z]   ete_adjudication_v1: total=45, micro=1, absent=16, unable=26
+[INFO] [22:05:59.674Z]   [PASS] ete_adjudication_v1 unchanged (45 / 1 / 16 / 26)
+[INFO] [22:05:59.701Z]   boolean-string junk rows (archive_pub_v1_0.cpm_ete_pre390_20260422): 194
+[INFO] [22:05:59.701Z]   [PASS] boolean-string junk = 194 (expected 194)
+[INFO] [22:05:59.730Z]   canonical_invasion_patient_rollup_v1 rowcount: 10871 (recorded; not a halt gate)
+[INFO] [22:05:59.730Z] === Phase 0: Discovery + probe ===
+[INFO] [22:05:59.784Z] CPM rowcount: 10871
+[INFO] [22:05:59.912Z] ETE grade distribution:
+[INFO] [22:05:59.912Z]   None                            n=  6752  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:05:59.912Z]   'microscopic'                   n=  2580  gross_flag=    0  op_intraop=    1  path_gross=    0
+[INFO] [22:05:59.912Z]   'gross'                         n=  1311  gross_flag= 1139  op_intraop= 1132  path_gross=  976
+[INFO] [22:05:59.912Z]   'false'                         n=   179  gross_flag=    0  op_intraop=    0  path_gross=    0
+[INFO] [22:05:59.913Z]   'present_ungraded'              n=    29  gross_flag=    6  op_intraop=   10  path_gross=    6
+[INFO] [22:05:59.913Z]   'absent'                        n=    16  gross_flag=    0  op_intraop=    2  path_gross=    0
+[INFO] [22:05:59.913Z]   'true'                          n=     4  gross_flag=    1  op_intraop=    1  path_gross=    1
+[INFO] [22:05:59.950Z] ETE × invasion rollup cross-tab (top 10):
+[INFO] [22:05:59.950Z]   grade='absent'                        any_gross=False  any_micro=False  n=14
+[INFO] [22:05:59.950Z]   grade='absent'                        any_gross=True  any_micro=False  n=2
+[INFO] [22:05:59.950Z]   grade='false'                         any_gross=False  any_micro=False  n=179
+[INFO] [22:05:59.950Z]   grade='gross'                         any_gross=True  any_micro=False  n=914
+[INFO] [22:05:59.950Z]   grade='gross'                         any_gross=True  any_micro=True  n=218
+[INFO] [22:05:59.951Z]   grade='gross'                         any_gross=False  any_micro=False  n=167
+[INFO] [22:05:59.951Z]   grade='gross'                         any_gross=False  any_micro=True  n=12
+[INFO] [22:05:59.951Z]   grade='microscopic'                   any_gross=False  any_micro=False  n=2530
+[INFO] [22:05:59.951Z]   grade='microscopic'                   any_gross=False  any_micro=True  n=49
+[INFO] [22:05:59.951Z]   grade='microscopic'                   any_gross=True  any_micro=False  n=1
+[INFO] [22:06:00.094Z] ete_adjudication_v1 rowcount: 45
+[INFO] [22:06:00.157Z] Adjudicated CPM rows breakdown:
+[INFO] [22:06:00.157Z]   'unable_to_determine'               n=26
+[INFO] [22:06:00.157Z]   'absent'                            n=16
+[INFO] [22:06:00.157Z]   'gross'                             n=2
+[INFO] [22:06:00.157Z]   'microscopic'                       n=1
+[INFO] [22:06:00.157Z]   → unable_to_determine (expanded sticky): 26
+[INFO] [22:06:00.499Z] cpm_ete_self_contradiction_queue_v1 pre-state: 2788 rows
+[INFO] [22:06:00.499Z]   status='awaiting_manual_review'  n=2788
+[INFO] [22:06:00.541Z] Boolean-string junk rows: 183
+[INFO] [22:06:00.542Z]   'false'=179
+[INFO] [22:06:00.542Z]   'true'=4
+[INFO] [22:06:00.576Z] NULL ete_grade_final_v2 rows (informational, not graded in 390): 6752
+[INFO] [22:06:00.576Z] Running Rule A simulation (read-only CTE)...
+[INFO] [22:06:00.621Z] Rule A simulation results:
+[INFO] [22:06:00.622Z]   would-be-gross post-rule : 1311
+[INFO] [22:06:00.623Z]   flip-up to gross         : 0
+[INFO] [22:06:00.623Z]   flip-down from gross     : 0
+[INFO] [22:06:00.623Z]   flip to microscopic      : 0
+[INFO] [22:06:00.623Z]   TOTAL ROWS MUTATED       : 0
+[INFO] [22:06:00.623Z]   rows unchanged           : 10871
+[INFO] [22:06:00.715Z] Rule A residual queue: microscopic-no-signal (rule_a CTE): 2579
+[INFO] [22:06:00.715Z] Rule A residual queue: microscopic-FF cohort (invasion rollup): 0
+[INFO] [22:06:00.715Z] Projected new queue rows: 209 (0 micro-no-signal + 26 unable-sticky + 183 bool-junk)
+[INFO] [22:06:00.715Z]   Drift gate [PASS] CPM_ROWS: actual=10871, expected=10871, drift=0.00% (tol=2%)
+[INFO] [22:06:00.715Z]   Drift gate [PASS] ADJ_ROWS: actual=45, expected=45, drift=0.00% (tol=2%)
+[INFO] [22:06:00.715Z]   Drift gate [PASS] UNABLE_STICKY: actual=26, expected=26, drift=0.00% (tol=2%)
+[INFO] [22:06:00.715Z]   (simulation drift checks skipped — recovery mode; Phase 2B already applied)
+[INFO] [22:06:00.715Z] Probe report written: /Users/loganglosser/THYROID_2026/scripts/output/390_probe_report.md
+[INFO] [22:06:00.716Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [22:06:00.716Z] Drift gate: PASS — all 8 frozen baselines within 2% tolerance
+[INFO] [22:06:00.716Z] Plan approval written: /Users/loganglosser/THYROID_2026/scripts/output/390_plan_approval.txt
+[INFO] [22:06:00.717Z] Plan approval verified: Rule A
+[INFO] [22:06:01.085Z] Idempotency check: snapshot 'cpm_ete_pre390_20260422' + __readme row both present.
+[INFO] [22:06:01.085Z] Running Phase 3 quick-check to determine if prior run was clean ...
+[WARN] [22:06:01.225Z] Prior snapshot + __readme found but Phase 3 quick-check FAILED (partial prior run — queue or manuscript cohort incomplete). Continuing with Phase 2D/2E/3 re-run ...
+[INFO] [22:06:01.225Z] === Phase 2: Apply writes ===
+[INFO] [22:06:01.225Z] Partial prior run detected (snap=cpm_ete_pre390_20260422). Resuming from Phase 2D ...
+[INFO] [22:06:01.372Z]   Prior Phase 2B: 1125 rows tagged with script_390_rule_a_20260422
+[INFO] [22:06:01.372Z] 2B-fixup: Ensuring ete_ordinal_worst >= 2 for all gross rows ...
+[INFO] [22:06:01.550Z] 2B-fixup: Gross rows with ordinal < 2 remaining: 0 (expected 0)
+[INFO] [22:06:01.586Z] 2C: 3 __readme rows already present — skipping (idempotent)
+[INFO] [22:06:01.586Z] 2D: Repopulating contradiction queue ...
+[INFO] [22:06:02.115Z]   Queue columns: ['research_id', 'cpm_ete_grade_final_v2', 'cpm_gross_ete_flag', 'note', 'flagged_at', 'flagged_by', 'status', 'reason', 'queued_by_script', 'queued_at']
+[INFO] [22:06:02.157Z]   Preserved rows (status != awaiting_manual_review): 0
+[INFO] [22:06:02.572Z]   Cohort 1 (microscopic-no-signal): 2579 rows
+[INFO] [22:06:02.774Z]   Cohort 2 (unable_to_determine sticky): 26 rows
+[INFO] [22:06:02.854Z]   Cohort 3 (boolean-string junk): 183 rows
+[INFO] [22:06:02.884Z]   Queue final row count: 2788 (dynamic expected=2788, gate [2739, 2851])
+[INFO] [22:06:02.884Z] 2E: Rebuilding manuscript_cohort_v1.ete_grade_final + .ete_grade_source ...
+[INFO] [22:06:03.447Z] 2E: manuscript_cohort_v1 rows updated: -1
+[INFO] [22:06:03.447Z] === Phase 3: Post-state verification ===
+[INFO] [22:06:03.447Z] Phase 3: Post-state verification ...
+[INFO] [22:06:03.483Z]   [PASS] CPM rowcount = 10,871 — actual=10871
+[INFO] [22:06:03.602Z]   [PASS] ete_adjudication_v1 rowcount = 45 — actual=45
+[INFO] [22:06:03.650Z]   [PASS] Adjudicator-sticky rows unchanged — 0 sticky rows changed
+[INFO] [22:06:03.713Z]   [PASS] 0 residual gross-signal microscopic (non-sticky) — 0 residual contradictions remain
+[INFO] [22:06:03.748Z]   [PASS] ete_ordinal_worst >= 2 for all gross rows — 0 gross rows with ordinal < 2
+[INFO] [22:06:04.166Z]   [PASS] manuscript_cohort_v1.ete_grade_final matches CPM — 0 mismatches
+[INFO] [22:06:04.397Z]   [PASS] 3 __readme rows for Script 390 present — actual=3
+[INFO] [22:06:04.493Z]   [PASS] Snapshot cpm_ete_pre390_20260422 rowcount = 10871 — actual=10871
+[INFO] [22:06:04.494Z]   [PASS] Queue rowcount in gate [2739–2851] — actual=2788
+[INFO] [22:06:04.494Z] Phase 3: ALL invariants passed ✓
+[INFO] [22:06:04.501Z] Close-out report written: /Users/loganglosser/THYROID_2026/scripts/output/390_close_out.md
+[INFO] [22:06:04.501Z] 
+[INFO] [22:06:04.501Z] === Script 390 complete ===
+[INFO] [22:06:04.501Z]   CPM rows mutated       : 1125
+[INFO] [22:06:04.501Z]   Snapshot               : archive_pub_v1_0.cpm_ete_pre390_20260422
+[INFO] [22:06:04.501Z]   Queue final rowcount   : 2788
+[INFO] [22:06:04.501Z]   Manuscript rows updated: -1
+[INFO] [22:06:04.501Z] 
+[INFO] [22:06:04.501Z] Phase 4 — Git commit + tag (manual):
+[INFO] [22:06:04.501Z]   git add scripts/390_ete_adjudication_reconciliation.py
+[INFO] [22:06:04.501Z]   git add scripts/output/390_probe_report.md
+[INFO] [22:06:04.501Z]   git add scripts/output/390_plan_approval.txt
+[INFO] [22:06:04.501Z]   git add scripts/output/390_run.log
+[INFO] [22:06:04.501Z]   git add scripts/output/390_close_out.md
+[INFO] [22:06:04.501Z]   git commit -m 'Script 390: ETE adjudication reconciliation — Rule A applied;'
+[INFO] [22:06:04.501Z]   git tag v1_0-ete-reconciled-20260422
