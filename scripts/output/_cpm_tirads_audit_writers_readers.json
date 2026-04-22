@@ -1,0 +1,1195 @@
+{
+  "imaging_tirads_source": {
+    "n_hits_total": 7,
+    "n_writer_files": 1,
+    "n_reader_files": 4,
+    "writer_files": [
+      "scripts/48_build_analysis_resolved_layer.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/48_build_analysis_resolved_layer.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/48_build_analysis_resolved_layer.py:246: tirads_source                           AS imaging_tirads_source,"
+    ],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:237: gm.imaging_tirads_source,",
+      "scripts/48_build_analysis_resolved_layer.py:506: i.imaging_tirads_source,",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:18: - **Column list**: research_id, age_at_surgery, sex, race, demo_source, demo_confidence, path_histology_raw, histology_final, histology_sour"
+    ]
+  },
+  "max_tirads_ever": {
+    "n_hits_total": 48,
+    "n_writer_files": 5,
+    "n_reader_files": 19,
+    "writer_files": [
+      "scripts/252_recompute_max_tirads.py",
+      "scripts/265_canonical_finalization.py",
+      "scripts/272_canonical_cleanup_phase1.py",
+      "scripts/301_canonical_us_patient_master_v1.py",
+      "scripts/50_multinodule_imaging.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "scripts/228_registry_backfill.py",
+      "scripts/246_canonical_us_nodule_characteristics.py",
+      "scripts/252_recompute_max_tirads.py",
+      "scripts/259_final_verification_lock.py",
+      "scripts/264_final_acceptance_addendum.py",
+      "scripts/277_canonical_cleanup_phase7_verification.py",
+      "scripts/50_multinodule_imaging.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/canonical_cleanup_20260417/drift_report.md",
+      "studies/canonical_cleanup_20260417/phase1_dryrun_probe.py",
+      "studies/canonical_cleanup_20260417/phase1_run.log",
+      "studies/canonical_cleanup_20260417/phase1_stdout.log",
+      "studies/canonical_cleanup_20260417/preflight.py",
+      "studies/canonical_cleanup_20260417/schema_recon.py",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md",
+      "studies/v1_1_finalization/FINALIZATION_REPORT_v1_1.md",
+      "studies/v1_1_finalization/PLAN.md"
+    ],
+    "writer_examples": [
+      "scripts/50_multinodule_imaging.py:703: MAX(max_tirads)                     AS max_tirads_ever,",
+      "scripts/50_multinodule_imaging.py:744: tirads_best_score               AS max_tirads_ever,",
+      "scripts/50_multinodule_imaging.py:872: tirads_best_score               AS max_tirads_ever,"
+    ],
+    "reader_examples": [
+      "studies/v1_1_finalization/PLAN.md:16: | 1.1 | `max_tirads_ever` CPM-too-low patients (vs `canonical_us_nodule_characteristics_v1`) | 1,503 | **1,503** |",
+      "studies/v1_1_finalization/PLAN.md:38: | 1 | 1.1 | CRITICAL | `max_tirads_ever` ignores `tirads_acr_recalculated` | **252** |",
+      "studies/v1_1_finalization/PLAN.md:55: | **252** | Recompute `max_tirads_ever`, `imaging_tirads_worst`, `preop_tirads_best` from `canonical_us_nodule_characteristics_v1` (built by"
+    ]
+  },
+  "preop_tirads_best": {
+    "n_hits_total": 30,
+    "n_writer_files": 5,
+    "n_reader_files": 5,
+    "writer_files": [
+      "scripts/204_canonical_master_assembly.py",
+      "scripts/205_canonical_consolidation.py",
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/252_recompute_max_tirads.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "scripts/252_recompute_max_tirads.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/v1_1_finalization/PLAN.md"
+    ],
+    "writer_examples": [
+      "scripts/221b_suspicious_ln_reextraction.py:24: * Do NOT modify tirads_v2_nodules_raw / preop_tirads_best /",
+      "scripts/204_canonical_master_assembly.py:145: g.imaging_tirads_best AS preop_tirads_best,",
+      "scripts/204_canonical_master_assembly.py:296: \"bethesda_final\", \"preop_tirads_best\","
+    ],
+    "reader_examples": [
+      "studies/v1_1_finalization/PLAN.md:55: | **252** | Recompute `max_tirads_ever`, `imaging_tirads_worst`, `preop_tirads_best` from `canonical_us_nodule_characteristics_v1` (built by",
+      "scripts/209_nlp_entity_crossvalidation.py:487: \"preop_tirads_best\", \"preop_tirads_category\"]].copy()",
+      "scripts/207_canonical_master_expansion.py:66: SUM(CASE WHEN CAST(c.preop_tirads_best AS VARCHAR) != CAST(g.imaging_tirads_best AS VARCHAR)  THEN 1 ELSE 0 END) AS tirads_mismatch,"
+    ]
+  },
+  "preop_tirads_category": {
+    "n_hits_total": 5,
+    "n_writer_files": 2,
+    "n_reader_files": 3,
+    "writer_files": [
+      "scripts/204_canonical_master_assembly.py",
+      "scripts/205_canonical_consolidation.py"
+    ],
+    "reader_files": [
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/204_canonical_master_assembly.py:147: g.imaging_tirads_category AS preop_tirads_category,",
+      "scripts/205_canonical_consolidation.py:345: g.imaging_tirads_category AS preop_tirads_category,"
+    ],
+    "reader_examples": [
+      "scripts/209_nlp_entity_crossvalidation.py:487: \"preop_tirads_best\", \"preop_tirads_category\"]].copy()",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:731: preop_tirads_category"
+    ]
+  },
+  "preop_tirads_worst": {
+    "n_hits_total": 3,
+    "n_writer_files": 2,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/204_canonical_master_assembly.py",
+      "scripts/205_canonical_consolidation.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/204_canonical_master_assembly.py:146: g.imaging_tirads_worst AS preop_tirads_worst,",
+      "scripts/205_canonical_consolidation.py:344: g.imaging_tirads_worst AS preop_tirads_worst,"
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:732: preop_tirads_worst"
+    ]
+  },
+  "tirads_best_category_v12": {
+    "n_hits_total": 12,
+    "n_writer_files": 2,
+    "n_reader_files": 7,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/265_canonical_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "scripts/246_canonical_us_nodule_characteristics.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/ajcc8_t_stage_view_migration_proposal.md",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/265_canonical_finalization.py:245: (\"tirads_best_category_v12\", \"canonical_us_nodule_characteristics_v1\",",
+      "scripts/221_tirads_v2_integration.py:512: \"tirads_best_category_v12\", \"tirads_worst_category_v12\","
+    ],
+    "reader_examples": [
+      "scripts/209_nlp_entity_crossvalidation.py:485: can = master[[\"research_id\", \"tirads_best_category_v12\", \"tirads_best_score_v12\",",
+      "scripts/209_nlp_entity_crossvalidation.py:509: can_cat = row[\"tirads_best_category_v12\"].values[0]",
+      "scripts/209_nlp_entity_crossvalidation.py:543: \"canonical_field\": \"tirads_best_category_v12\","
+    ]
+  },
+  "tirads_best_combined": {
+    "n_hits_total": 8,
+    "n_writer_files": 2,
+    "n_reader_files": 3,
+    "writer_files": [
+      "scripts/205_canonical_consolidation.py",
+      "scripts/265_canonical_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/213_data_dictionary.py",
+      "scripts/228_registry_backfill.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/265_canonical_finalization.py:248: (\"tirads_best_combined\", \"canonical_us_nodule_characteristics_v1\",",
+      "scripts/205_canonical_consolidation.py:206: MIN(tirads_score) AS tirads_best_combined,",
+      "scripts/205_canonical_consolidation.py:348: tp_tirads.tirads_best_combined,"
+    ],
+    "reader_examples": [
+      "scripts/213_data_dictionary.py:75: (r\"^(preop_tirads_|tirads_best_combined|tirads_worst_combined|tirads_.*_v12)\",",
+      "scripts/213_data_dictionary.py:680: | TIRADS documented | ~3,474 | `tirads_best_combined` | At least one structured TIRADS score |",
+      "scripts/228_registry_backfill.py:63: 'imaging_n_nodule_records, tirads_worst_combined, tirads_best_combined',"
+    ]
+  },
+  "tirads_best_score_v12": {
+    "n_hits_total": 26,
+    "n_writer_files": 4,
+    "n_reader_files": 13,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/265_canonical_finalization.py",
+      "scripts/271_tirads_imaging_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "scripts/228_registry_backfill.py",
+      "scripts/246_canonical_us_nodule_characteristics.py",
+      "scripts/265_canonical_finalization.py",
+      "scripts/273_registry_curation.py",
+      "scripts/57_freeze_manuscript_cohort.py",
+      "scripts/58_missingness_summary.py",
+      "scripts/59_dataset_summary.py",
+      "scripts/61_table1_preview.py",
+      "studies/canonical_cleanup_20260417/ajcc8_t_stage_view_migration_proposal.md",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/265_canonical_finalization.py:148: (\"tirads_best_score_v12\", \"canonical_us_nodule_characteristics_v1\",",
+      "scripts/221b_suspicious_ln_reextraction.py:25: tirads_best_score_v12 / any legacy TIRADS columns.",
+      "scripts/271_tirads_imaging_finalization.py:583: \"tirads_best_score_v12\":"
+    ],
+    "reader_examples": [
+      "scripts/209_nlp_entity_crossvalidation.py:485: can = master[[\"research_id\", \"tirads_best_category_v12\", \"tirads_best_score_v12\",",
+      "scripts/57_freeze_manuscript_cohort.py:125: for c in (\"imaging_tirads_best_score\", \"tirads_best_score_v12\", \"tirads_score_v11\"):",
+      "scripts/207_canonical_master_expansion.py:93: COUNT(CASE WHEN tirads_best_score_v12 IS NOT NULL THEN 1 END)         AS has_v12_tirads,"
+    ]
+  },
+  "tirads_concordant_count_v12": {
+    "n_hits_total": 4,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:251: prm.tirads_concordant_count_v12,",
+      "scripts/273_registry_curation.py:485: \"tirads_concordant_count_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_has_acr_recalc_v12": {
+    "n_hits_total": 4,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:253: prm.tirads_has_acr_recalc_v12,",
+      "scripts/273_registry_curation.py:482: \"tirads_has_acr_recalc_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_mismatch_count_v12": {
+    "n_hits_total": 4,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:252: prm.tirads_mismatch_count_v12,",
+      "scripts/273_registry_curation.py:486: \"tirads_mismatch_count_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_n_nodule_records_v12": {
+    "n_hits_total": 4,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:250: prm.tirads_n_nodule_records_v12,",
+      "scripts/273_registry_curation.py:484: \"tirads_n_nodule_records_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_n_sources_v12": {
+    "n_hits_total": 4,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:249: prm.tirads_n_sources_v12,",
+      "scripts/273_registry_curation.py:483: \"tirads_n_sources_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_nodule_size_max_mm_v12": {
+    "n_hits_total": 8,
+    "n_writer_files": 0,
+    "n_reader_files": 5,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/ajcc8_t_stage_view_migration_proposal.md",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:254: prm.tirads_nodule_size_max_mm_v12,",
+      "scripts/273_registry_curation.py:487: \"tirads_nodule_size_max_mm_v12\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:109: - **Column list**: research_id, ete_path_confirmed, ete_grade_v3, margin_status_refined, closest_margin_mm, vascular_invasion_refined, lvi_r"
+    ]
+  },
+  "tirads_nodules_scored_combined": {
+    "n_hits_total": 3,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/205_canonical_consolidation.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/205_canonical_consolidation.py:207: COUNT(*) AS tirads_nodules_scored_combined",
+      "scripts/205_canonical_consolidation.py:349: tp_tirads.tirads_nodules_scored_combined,"
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:954: tirads_nodules_scored_combined"
+    ]
+  },
+  "tirads_reliability_v12": {
+    "n_hits_total": 6,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:94: COUNT(CASE WHEN tirads_reliability_v12 IS NOT NULL THEN 1 END)        AS has_reliability,",
+      "scripts/207_canonical_master_expansion.py:248: prm.tirads_reliability_v12,",
+      "scripts/207_canonical_master_expansion.py:663: \"tirads_reliability_v12\": \"prm_v12\", \"tirads_source_v12\": \"prm_v12\","
+    ]
+  },
+  "tirads_source_v12": {
+    "n_hits_total": 6,
+    "n_writer_files": 0,
+    "n_reader_files": 4,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:95: COUNT(CASE WHEN tirads_source_v12 IS NOT NULL THEN 1 END)             AS has_source,",
+      "scripts/207_canonical_master_expansion.py:247: prm.tirads_source_v12,",
+      "scripts/207_canonical_master_expansion.py:663: \"tirads_reliability_v12\": \"prm_v12\", \"tirads_source_v12\": \"prm_v12\","
+    ]
+  },
+  "tirads_worst_category_v12": {
+    "n_hits_total": 18,
+    "n_writer_files": 2,
+    "n_reader_files": 9,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/265_canonical_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/209_nlp_entity_crossvalidation.py",
+      "scripts/246_canonical_us_nodule_characteristics.py",
+      "scripts/252_recompute_max_tirads.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/ajcc8_t_stage_view_migration_proposal.md",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md",
+      "studies/v1_1_finalization/PLAN.md"
+    ],
+    "writer_examples": [
+      "scripts/265_canonical_finalization.py:151: (\"tirads_worst_category_v12\", \"canonical_us_nodule_characteristics_v1\",",
+      "scripts/221_tirads_v2_integration.py:512: \"tirads_best_category_v12\", \"tirads_worst_category_v12\","
+    ],
+    "reader_examples": [
+      "studies/v1_1_finalization/PLAN.md:55: | **252** | Recompute `max_tirads_ever`, `imaging_tirads_worst`, `preop_tirads_best` from `canonical_us_nodule_characteristics_v1` (built by",
+      "scripts/209_nlp_entity_crossvalidation.py:486: \"tirads_worst_category_v12\", \"max_tirads_ever\",",
+      "scripts/207_canonical_master_expansion.py:246: prm.tirads_worst_category_v12,"
+    ]
+  },
+  "tirads_worst_combined": {
+    "n_hits_total": 10,
+    "n_writer_files": 3,
+    "n_reader_files": 3,
+    "writer_files": [
+      "scripts/205_canonical_consolidation.py",
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/265_canonical_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/213_data_dictionary.py",
+      "scripts/228_registry_backfill.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/265_canonical_finalization.py:251: (\"tirads_worst_combined\", \"canonical_us_nodule_characteristics_v1\",",
+      "scripts/205_canonical_consolidation.py:205: MAX(tirads_score) AS tirads_worst_combined,",
+      "scripts/205_canonical_consolidation.py:347: tp_tirads.tirads_worst_combined,"
+    ],
+    "reader_examples": [
+      "scripts/213_data_dictionary.py:75: (r\"^(preop_tirads_|tirads_best_combined|tirads_worst_combined|tirads_.*_v12)\",",
+      "scripts/228_registry_backfill.py:63: 'imaging_n_nodule_records, tirads_worst_combined, tirads_best_combined',",
+      "scripts/228_registry_backfill.py:72: 'tirads_worst_combined, tirads_best_combined (via combined CTE)',"
+    ]
+  },
+  "tirads_worst_score_v12": {
+    "n_hits_total": 10,
+    "n_writer_files": 1,
+    "n_reader_files": 5,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/265_canonical_finalization.py",
+      "scripts/273_registry_curation.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:579: \"tirads_worst_score_v12\":",
+      "scripts/271_tirads_imaging_finalization.py:609: \"       tirads_worst_score_v12, tirads_best_score_v12, \"",
+      "scripts/271_tirads_imaging_finalization.py:1201: - Legacy column `tirads_worst_score_v12` and `tirads_best_score_v12` retained"
+    ],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:96: COUNT(CASE WHEN tirads_worst_score_v12 IS NOT NULL THEN 1 END)        AS has_worst",
+      "scripts/207_canonical_master_expansion.py:244: prm.tirads_worst_score_v12,",
+      "scripts/207_canonical_master_expansion.py:662: \"tirads_best_score_v12\": \"prm_v12\", \"tirads_worst_score_v12\": \"prm_v12\","
+    ]
+  },
+  "worst_tirads_category": {
+    "n_hits_total": 8,
+    "n_writer_files": 1,
+    "n_reader_files": 4,
+    "writer_files": [
+      "scripts/50_multinodule_imaging.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/213_data_dictionary.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/50_multinodule_imaging.py:721: END AS worst_tirads_category,",
+      "scripts/50_multinodule_imaging.py:755: END AS worst_tirads_category,",
+      "scripts/50_multinodule_imaging.py:879: tirads_best_category            AS worst_tirads_category,"
+    ],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:269: ips.worst_tirads_category,",
+      "scripts/213_data_dictionary.py:77: (r\"^(imaging_|n_us_|bilateral_|dominant_|has_suspicious_|longitudinal_|max_tirads_|worst_tirads_category)\",",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md:53: - **Column list**: research_id, n_exams, n_total_nodules, max_tirads_ever, bilateral_disease_flag, dominant_nodule_size_cm, multifocal_flag,"
+    ]
+  },
+  "imaging_tirads_best": {
+    "n_hits_total": 15,
+    "n_writer_files": 4,
+    "n_reader_files": 6,
+    "writer_files": [
+      "scripts/204_canonical_master_assembly.py",
+      "scripts/205_canonical_consolidation.py",
+      "scripts/301_canonical_us_patient_master_v1.py",
+      "scripts/48_build_analysis_resolved_layer.py"
+    ],
+    "reader_files": [
+      "scripts/207_canonical_master_expansion.py",
+      "scripts/48_build_analysis_resolved_layer.py",
+      "scripts/56_pre_manuscript_audit.py",
+      "scripts/62_run_primary_descriptives.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md"
+    ],
+    "writer_examples": [
+      "scripts/301_canonical_us_patient_master_v1.py:129: (\"imaging_tirads_best\",    \"max_tirads_category_ever\"),",
+      "scripts/48_build_analysis_resolved_layer.py:243: tirads_best_score                       AS imaging_tirads_best,",
+      "scripts/204_canonical_master_assembly.py:145: g.imaging_tirads_best AS preop_tirads_best,"
+    ],
+    "reader_examples": [
+      "scripts/207_canonical_master_expansion.py:66: SUM(CASE WHEN CAST(c.preop_tirads_best AS VARCHAR) != CAST(g.imaging_tirads_best AS VARCHAR)  THEN 1 ELSE 0 END) AS tirads_mismatch,",
+      "scripts/48_build_analysis_resolved_layer.py:503: i.imaging_tirads_best,",
+      "scripts/62_run_primary_descriptives.py:140: tirads = int(df[\"imaging_tirads_best\"].notna().sum())"
+    ]
+  },
+  "imaging_updated_tirads_category_cpm_v1": {
+    "n_hits_total": 2,
+    "n_writer_files": 0,
+    "n_reader_files": 1,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/375_cpm_column_cleanup_and_audit.py"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/375_cpm_column_cleanup_and_audit.py:8: imaging_tirads_category        \u2192  imaging_updated_tirads_category_cpm_v1",
+      "scripts/375_cpm_column_cleanup_and_audit.py:43: (\"imaging_tirads_category\",       \"imaging_updated_tirads_category_cpm_v1\"),"
+    ]
+  },
+  "imaging_tirads_worst": {
+    "n_hits_total": 21,
+    "n_writer_files": 5,
+    "n_reader_files": 8,
+    "writer_files": [
+      "scripts/204_canonical_master_assembly.py",
+      "scripts/205_canonical_consolidation.py",
+      "scripts/252_recompute_max_tirads.py",
+      "scripts/301_canonical_us_patient_master_v1.py",
+      "scripts/48_build_analysis_resolved_layer.py"
+    ],
+    "reader_files": [
+      "scripts/252_recompute_max_tirads.py",
+      "scripts/48_build_analysis_resolved_layer.py",
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt",
+      "studies/proposal_multimodal_prediction_20260318/explain_plan_01.txt",
+      "studies/proposal_multimodal_prediction_20260318/query_log.sql",
+      "studies/proposal_multimodal_prediction_20260318/run_feasibility.py",
+      "studies/proposal_multimodal_prediction_20260318/schema_inventory.md",
+      "studies/v1_1_finalization/PLAN.md"
+    ],
+    "writer_examples": [
+      "scripts/301_canonical_us_patient_master_v1.py:130: (\"imaging_tirads_worst\",   \"max_tirads_category_ever\"),",
+      "scripts/48_build_analysis_resolved_layer.py:244: tirads_worst_score                      AS imaging_tirads_worst,",
+      "scripts/204_canonical_master_assembly.py:146: g.imaging_tirads_worst AS preop_tirads_worst,"
+    ],
+    "reader_examples": [
+      "studies/v1_1_finalization/PLAN.md:55: | **252** | Recompute `max_tirads_ever`, `imaging_tirads_worst`, `preop_tirads_best` from `canonical_us_nodule_characteristics_v1` (built by",
+      "scripts/48_build_analysis_resolved_layer.py:504: i.imaging_tirads_worst,",
+      "scripts/252_recompute_max_tirads.py:3: Script 252 \u2014 Recompute max_tirads_ever / imaging_tirads_worst / preop_tirads_best"
+    ]
+  },
+  "tirads_worst_points_v271": {
+    "n_hits_total": 6,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:513: (\"tirads_worst_points_v271\", \"DOUBLE\",",
+      "scripts/271_tirads_imaging_finalization.py:561: \"SET tirads_worst_points_v271 = t.worst_pts, \"",
+      "scripts/271_tirads_imaging_finalization.py:570: \"SELECT COUNT(*) FILTER (WHERE tirads_worst_points_v271 IS NOT NULL) AS n_w, \""
+    ],
+    "reader_examples": []
+  },
+  "tirads_best_points_v271": {
+    "n_hits_total": 6,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:517: (\"tirads_best_points_v271\", \"DOUBLE\",",
+      "scripts/271_tirads_imaging_finalization.py:562: \"    tirads_best_points_v271  = t.best_pts, \"",
+      "scripts/271_tirads_imaging_finalization.py:571: \"       COUNT(*) FILTER (WHERE tirads_best_points_v271 IS NOT NULL)  AS n_b \""
+    ],
+    "reader_examples": []
+  },
+  "tirads_source_system_v271": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:520: (\"tirads_source_system_v271\", \"VARCHAR\",",
+      "scripts/271_tirads_imaging_finalization.py:563: \"    tirads_source_system_v271 = 'cunc_v1_points_acr2017' \"",
+      "scripts/271_tirads_imaging_finalization.py:611: \"       tirads_source_system_v271 \""
+    ],
+    "reader_examples": []
+  },
+  "imaging_laterality_rollup": {
+    "n_hits_total": 42,
+    "n_writer_files": 3,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py",
+      "scripts/271a_fix_concordance_three_valued.py",
+      "scripts/271b_laterality_normalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:790: log(\"=== STEP 6 \u2014 dominant_nodule_flag + imaging_laterality_rollup + has_structured + concordance ===\")",
+      "scripts/271_tirads_imaging_finalization.py:858: (\"imaging_laterality_rollup\", \"VARCHAR\",",
+      "scripts/271_tirads_imaging_finalization.py:866: f\"TRUE iff cpm.laterality matches imaging_laterality_rollup (both non-NULL). \""
+    ],
+    "reader_examples": []
+  },
+  "pathology_vs_imaging_laterality_concordant": {
+    "n_hits_total": 23,
+    "n_writer_files": 3,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271_tirads_imaging_finalization.py",
+      "scripts/271a_fix_concordance_three_valued.py",
+      "scripts/271b_laterality_normalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271_tirads_imaging_finalization.py:865: (\"pathology_vs_imaging_laterality_concordant\", \"BOOLEAN\",",
+      "scripts/271_tirads_imaging_finalization.py:995: \"SET pathology_vs_imaging_laterality_concordant = \"",
+      "scripts/271_tirads_imaging_finalization.py:1000: \"SELECT pathology_vs_imaging_laterality_concordant, COUNT(*) \""
+    ],
+    "reader_examples": []
+  },
+  "tumor_pathology_laterality_v271b": {
+    "n_hits_total": 36,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271b_laterality_normalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271b_laterality_normalization.py:27: 3 \u2014 Add tumor_pathology_laterality_v271b + has_isthmus_involvement.",
+      "scripts/271b_laterality_normalization.py:442: \"For new analyses prefer tumor_pathology_laterality_v271b \"",
+      "scripts/271b_laterality_normalization.py:451: \"For new analyses prefer tumor_pathology_laterality_v271b. Script 271b, 2026-04-18.\""
+    ],
+    "reader_examples": []
+  },
+  "imaging_laterality_rollup_v271b": {
+    "n_hits_total": 28,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271b_laterality_normalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271b_laterality_normalization.py:653: log(\"=== STEP 4 \u2014 imaging_has_left/right/isthmus + imaging_laterality_rollup_v271b ===\")",
+      "scripts/271b_laterality_normalization.py:682: \"imaging_laterality_rollup_v271b\", \"VARCHAR\",",
+      "scripts/271b_laterality_normalization.py:724: \"    imaging_laterality_rollup_v271b = NULL\""
+    ],
+    "reader_examples": []
+  },
+  "pathology_vs_imaging_laterality_concordant_v271b": {
+    "n_hits_total": 17,
+    "n_writer_files": 1,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/271b_laterality_normalization.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/271b_laterality_normalization.py:790: log(\"=== STEP 5 \u2014 pathology_vs_imaging_laterality_concordant_v271b ===\")",
+      "scripts/271b_laterality_normalization.py:795: \"pathology_vs_imaging_laterality_concordant_v271b\", \"VARCHAR\",",
+      "scripts/271b_laterality_normalization.py:808: \"SET pathology_vs_imaging_laterality_concordant_v271b = NULL\""
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_n_nodules_scored": {
+    "n_hits_total": 13,
+    "n_writer_files": 3,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py"
+    ],
+    "reader_files": [
+      "scripts/prompt6_353_repoint_orphan_view.py"
+    ],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:83: WHERE tirads_v2_n_nodules_scored IS NOT NULL",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:111: COUNT(*) AS tirads_v2_n_nodules_scored,",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:137: (\"tirads_v2_n_nodules_scored\", \"tirads_v2_n_nodules_scored\"),"
+    ],
+    "reader_examples": [
+      "scripts/prompt6_353_repoint_orphan_view.py:6: - tirads_v2_n_nodules_scored  (already in CPM pre-Prompt 6)",
+      "scripts/prompt6_353_repoint_orphan_view.py:39: tirads_v2_n_nodules_scored          AS n_nodules_scored_qwen,",
+      "scripts/prompt6_353_repoint_orphan_view.py:43: WHERE tirads_v2_n_nodules_scored IS NOT NULL"
+    ]
+  },
+  "tirads_v2_worst_category": {
+    "n_hits_total": 22,
+    "n_writer_files": 4,
+    "n_reader_files": 2,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/301_canonical_us_patient_master_v1.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py"
+    ],
+    "reader_files": [
+      "scripts/336_final_main_audit.py",
+      "scripts/prompt6_353_repoint_orphan_view.py"
+    ],
+    "writer_examples": [
+      "scripts/301_canonical_us_patient_master_v1.py:131: (\"tirads_v2_worst_category\", \"max_tirads_category_ever\"),",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:4: tirads_v2_nodules_raw has 3,021 distinct RIDs. cpm.tirads_v2_worst_category",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:75: WHERE tirads_v2_worst_category IS NOT NULL"
+    ],
+    "reader_examples": [
+      "scripts/336_final_main_audit.py:199: (\"tirads_v2_worst_category nonnull\",",
+      "scripts/336_final_main_audit.py:200: \"SELECT COUNT(*) FROM main.canonical_patient_master WHERE tirads_v2_worst_category IS NOT NULL\",",
+      "scripts/prompt6_353_repoint_orphan_view.py:7: - tirads_v2_worst_category    (already in CPM pre-Prompt 6)"
+    ]
+  },
+  "tirads_v2_max_points": {
+    "n_hits_total": 10,
+    "n_writer_files": 3,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:79: WHERE tirads_v2_max_points IS NOT NULL",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:114: MAX(tirads_total_points) AS tirads_v2_max_points,",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:136: (\"tirads_v2_max_points\", \"tirads_v2_max_points\"),"
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_largest_nodule_cm": {
+    "n_hits_total": 8,
+    "n_writer_files": 3,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:115: MAX(size_cm_max) AS tirads_v2_largest_nodule_cm,",
+      "scripts/280_synoptic_rollup_rebuild.py:1168: \"tirads_v2_largest_nodule_cm\",",
+      "scripts/221_tirads_v2_integration.py:70: (\"tirads_v2_largest_nodule_cm\",        \"DOUBLE\"),"
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_any_ete_on_us": {
+    "n_hits_total": 11,
+    "n_writer_files": 4,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:117: AS tirads_v2_any_ete_on_us,",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:74: \"tirads_v2_any_ete_on_us\", \"tirads_v2_any_interval_growth\",",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:181: for cpm_col in [\"tirads_v2_any_ete_on_us\", \"tirads_v2_any_interval_growth\","
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_any_interval_growth": {
+    "n_hits_total": 11,
+    "n_writer_files": 4,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:118: BOOL_OR(interval_growth_flag) AS tirads_v2_any_interval_growth,",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:74: \"tirads_v2_any_ete_on_us\", \"tirads_v2_any_interval_growth\",",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:181: for cpm_col in [\"tirads_v2_any_ete_on_us\", \"tirads_v2_any_interval_growth\","
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_any_fna_recommended": {
+    "n_hits_total": 10,
+    "n_writer_files": 4,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:119: BOOL_OR(fna_recommended_this_nodule) AS tirads_v2_any_fna_recommended",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:73: for col in [\"tirads_v2_any_fna_recommended\", \"tirads_v2_any_suspicious_ln_on_us\",",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:182: \"tirads_v2_any_fna_recommended\"]:"
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_n_reports": {
+    "n_hits_total": 12,
+    "n_writer_files": 5,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/221c_rollup_threevalue_patch.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:97: COUNT(*) AS tirads_v2_n_reports,",
+      "scripts/221b_suspicious_ln_reextraction.py:787: COUNT(*) AS tirads_v2_n_reports,",
+      "scripts/221c_rollup_threevalue_patch.py:117: WHERE tirads_v2_n_reports IS NOT NULL"
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_any_suspicious_ln_on_us": {
+    "n_hits_total": 22,
+    "n_writer_files": 5,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/221c_rollup_threevalue_patch.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [
+      "scripts/336_final_main_audit.py"
+    ],
+    "writer_examples": [
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:5: exposes report-level columns for far fewer (e.g. tirads_v2_any_suspicious_ln_on_us",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:73: for col in [\"tirads_v2_any_fna_recommended\", \"tirads_v2_any_suspicious_ln_on_us\",",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:99: AS tirads_v2_any_suspicious_ln_on_us,"
+    ],
+    "reader_examples": [
+      "scripts/336_final_main_audit.py:202: (\"tirads_v2_any_suspicious_ln_on_us nonnull\",",
+      "scripts/336_final_main_audit.py:203: \"SELECT COUNT(*) FROM main.canonical_patient_master WHERE tirads_v2_any_suspicious_ln_on_us IS NOT NULL\","
+    ]
+  },
+  "tirads_v2_shortest_followup_months": {
+    "n_hits_total": 13,
+    "n_writer_files": 5,
+    "n_reader_files": 0,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/221c_rollup_threevalue_patch.py",
+      "scripts/280_synoptic_rollup_rebuild.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [],
+    "writer_examples": [
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:75: \"tirads_v2_shortest_followup_months\"]:",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:103: AS tirads_v2_shortest_followup_months",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:116: (\"tirads_v2_shortest_followup_months\", \"DOUBLE\"),"
+    ],
+    "reader_examples": []
+  },
+  "tirads_v2_worst_rank": {
+    "n_hits_total": 23,
+    "n_writer_files": 2,
+    "n_reader_files": 3,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/328_tirads_v2_gap_a_cast_fix.py"
+    ],
+    "reader_files": [
+      "scripts/prompt6_348_older_masters.py",
+      "scripts/prompt6_353_completion_audit.py",
+      "scripts/prompt6_353_repoint_orphan_view.py"
+    ],
+    "writer_examples": [
+      "scripts/328_tirads_v2_gap_a_cast_fix.py:113: MAX(tr_rank) AS tirads_v2_worst_rank,",
+      "scripts/221_tirads_v2_integration.py:445: MAX(tr_rank)                                         AS tirads_v2_worst_rank,",
+      "scripts/221_tirads_v2_integration.py:750: tirads_v2_worst_rank       AS qwen_worst_rank,"
+    ],
+    "reader_examples": [
+      "scripts/prompt6_348_older_masters.py:13: Action: backfill the 1 unique column (tirads_v2_worst_rank) to CPM,",
+      "scripts/prompt6_348_older_masters.py:208: assert unique_tvn == [\"tirads_v2_worst_rank\"], (",
+      "scripts/prompt6_348_older_masters.py:216: AND column_name='tirads_v2_worst_rank'"
+    ]
+  },
+  "tirads_v2_worst_rank_source": {
+    "n_hits_total": 2,
+    "n_writer_files": 0,
+    "n_reader_files": 1,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/prompt6_348_older_masters.py"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/prompt6_348_older_masters.py:227: f'ADD COLUMN \"tirads_v2_worst_rank_source\" VARCHAR'",
+      "scripts/prompt6_348_older_masters.py:235: \"tirads_v2_worst_rank_source\" = '{TVN}_backfill_348'"
+    ]
+  },
+  "tirads_v2_any_fna_recommended_report": {
+    "n_hits_total": 21,
+    "n_writer_files": 4,
+    "n_reader_files": 2,
+    "writer_files": [
+      "scripts/221_tirads_v2_integration.py",
+      "scripts/221b_suspicious_ln_reextraction.py",
+      "scripts/221c_rollup_threevalue_patch.py",
+      "scripts/329_tirads_v2_gap_b_report_reroll.py"
+    ],
+    "reader_files": [
+      "scripts/prompt6_348_older_masters.py",
+      "scripts/prompt6_353_completion_audit.py"
+    ],
+    "writer_examples": [
+      "scripts/329_tirads_v2_gap_b_report_reroll.py:101: AS tirads_v2_any_fna_recommended_report,",
+      "scripts/221b_suspicious_ln_reextraction.py:797: MAX(CASE WHEN overall_recommendation = 'fna' THEN 1 ELSE 0 END)::BOOLEAN  AS tirads_v2_any_fna_recommended_report,",
+      "scripts/221c_rollup_threevalue_patch.py:142: MAX(CASE WHEN overall_recommendation = 'fna' THEN 1 ELSE 0 END)::BOOLEAN  AS tirads_v2_any_fna_recommended_report,"
+    ],
+    "reader_examples": [
+      "scripts/prompt6_348_older_masters.py:17: Action: backfill the 1 unique column (tirads_v2_any_fna_recommended_report)",
+      "scripts/prompt6_348_older_masters.py:271: assert unique_tvr == [\"tirads_v2_any_fna_recommended_report\"], (",
+      "scripts/prompt6_348_older_masters.py:278: AND column_name='tirads_v2_any_fna_recommended_report'"
+    ]
+  },
+  "tirads_v2_any_fna_recommended_report_source": {
+    "n_hits_total": 2,
+    "n_writer_files": 0,
+    "n_reader_files": 1,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/prompt6_348_older_masters.py"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/prompt6_348_older_masters.py:289: f'ADD COLUMN \"tirads_v2_any_fna_recommended_report_source\" VARCHAR'",
+      "scripts/prompt6_348_older_masters.py:297: \"tirads_v2_any_fna_recommended_report_source\" = '{TVR}_backfill_348'"
+    ]
+  },
+  "imaging_tirads_best_v2": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:52: (\"imaging_tirads_best_v2\",          \"VARCHAR\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:171: if col == \"imaging_tirads_best_v2\":"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:205: \"imaging_tirads_best_v2, imaging_tirads_worst_v2, \"",
+      "scripts/369_us_v2_views_and_registry.py:212: \"imaging_tirads_best_v2\", \"imaging_tirads_worst_v2\","
+    ]
+  },
+  "imaging_tirads_worst_v2": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:53: (\"imaging_tirads_worst_v2\",         \"VARCHAR\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:133: p.max_tirads_category_ever    AS imaging_tirads_worst_v2,"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:205: \"imaging_tirads_best_v2, imaging_tirads_worst_v2, \"",
+      "scripts/369_us_v2_views_and_registry.py:212: \"imaging_tirads_best_v2\", \"imaging_tirads_worst_v2\","
+    ]
+  },
+  "imaging_updated_tirads_category_cpm_v2": {
+    "n_hits_total": 2,
+    "n_writer_files": 0,
+    "n_reader_files": 1,
+    "writer_files": [],
+    "reader_files": [
+      "scripts/375_cpm_column_cleanup_and_audit.py"
+    ],
+    "writer_examples": [],
+    "reader_examples": [
+      "scripts/375_cpm_column_cleanup_and_audit.py:7: imaging_tirads_category_v2_v2  \u2192  imaging_updated_tirads_category_cpm_v2",
+      "scripts/375_cpm_column_cleanup_and_audit.py:42: (\"imaging_tirads_category_v2_v2\", \"imaging_updated_tirads_category_cpm_v2\"),"
+    ]
+  },
+  "imaging_laterality_rollup_v2": {
+    "n_hits_total": 5,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:55: (\"imaging_laterality_rollup_v2\",    \"VARCHAR\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:108: END AS imaging_laterality_rollup_v2",
+      "scripts/368_cpm_us_cutover_to_v2.py:136: lr.imaging_laterality_rollup_v2,"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:206: \"imaging_tirads_category_v2_v2, imaging_laterality_rollup_v2, \"",
+      "scripts/369_us_v2_views_and_registry.py:213: \"imaging_tirads_category_v2_v2\", \"imaging_laterality_rollup_v2\","
+    ]
+  },
+  "max_tirads_ever_v2": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:56: (\"max_tirads_ever_v2\",              \"DOUBLE\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:137: p.max_tirads_points_ever      AS max_tirads_ever_v2,"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:207: \"max_tirads_ever_v2\"",
+      "scripts/369_us_v2_views_and_registry.py:214: \"max_tirads_ever_v2\","
+    ]
+  },
+  "preop_tirads_best_v2": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:57: (\"preop_tirads_best_v2\",            \"VARCHAR\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:115: MIN(worst_tirads_category_this_exam) AS preop_tirads_best_v2,",
+      "scripts/368_cpm_us_cutover_to_v2.py:138: pre.preop_tirads_best_v2,"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:209: \"feeds_master_columns_secondary\": \"preop_tirads_best_v2, preop_tirads_category_v2\","
+    ]
+  },
+  "preop_tirads_category_v2": {
+    "n_hits_total": 4,
+    "n_writer_files": 1,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/368_cpm_us_cutover_to_v2.py"
+    ],
+    "reader_files": [
+      "scripts/369_us_v2_views_and_registry.py"
+    ],
+    "writer_examples": [
+      "scripts/368_cpm_us_cutover_to_v2.py:58: (\"preop_tirads_category_v2\",        \"VARCHAR\"),",
+      "scripts/368_cpm_us_cutover_to_v2.py:116: MAX(worst_tirads_category_this_exam) AS preop_tirads_category_v2",
+      "scripts/368_cpm_us_cutover_to_v2.py:139: pre.preop_tirads_category_v2,"
+    ],
+    "reader_examples": [
+      "scripts/369_us_v2_views_and_registry.py:209: \"feeds_master_columns_secondary\": \"preop_tirads_best_v2, preop_tirads_category_v2\","
+    ]
+  },
+  "nlp_tirads_has_component_detail": {
+    "n_hits_total": 7,
+    "n_writer_files": 2,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/212_nlp_entity_rollup.py",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/212_nlp_entity_rollup.py:120: BOOL_OR(entity_type ILIKE '%compos%' OR entity_type ILIKE '%echogen%') AS nlp_tirads_has_component_detail",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:18: nlp_tirads_has_component_detail",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:70: \"nlp_tirads_has_component_detail\","
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:506: nlp_tirads_has_component_detail"
+    ]
+  },
+  "nlp_tirads_has_data": {
+    "n_hits_total": 11,
+    "n_writer_files": 3,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/212_nlp_entity_rollup.py",
+      "scripts/236_canonical_finalization.py",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/236_canonical_finalization.py:549: (\"tirads\",               \"note_entities_llm_tirads_granular\",            \"nlp_tirads_has_data\",      \"Requires validated TIRADS component sc",
+      "scripts/212_nlp_entity_rollup.py:109: TRUE AS nlp_tirads_has_data,",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:14: nlp_tirads_has_data"
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:507: nlp_tirads_has_data"
+    ]
+  },
+  "nlp_tirads_max_category": {
+    "n_hits_total": 8,
+    "n_writer_files": 2,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/212_nlp_entity_rollup.py",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/212_nlp_entity_rollup.py:119: END) AS nlp_tirads_max_category,",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:17: nlp_tirads_max_category",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:69: \"nlp_tirads_max_category\","
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:508: nlp_tirads_max_category"
+    ]
+  },
+  "nlp_tirads_n_entities": {
+    "n_hits_total": 7,
+    "n_writer_files": 2,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/212_nlp_entity_rollup.py",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/212_nlp_entity_rollup.py:110: COUNT(*) AS nlp_tirads_n_entities,",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:15: nlp_tirads_n_entities",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:67: \"nlp_tirads_n_entities\","
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:509: nlp_tirads_n_entities"
+    ]
+  },
+  "nlp_tirads_n_notes": {
+    "n_hits_total": 7,
+    "n_writer_files": 2,
+    "n_reader_files": 1,
+    "writer_files": [
+      "scripts/212_nlp_entity_rollup.py",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py"
+    ],
+    "reader_files": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt"
+    ],
+    "writer_examples": [
+      "scripts/212_nlp_entity_rollup.py:111: COUNT(DISTINCT note_row_id) AS nlp_tirads_n_notes,",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:16: nlp_tirads_n_notes",
+      "scripts/runpod_402_tirads_granular_qwen25_rerun.py:68: \"nlp_tirads_n_notes\","
+    ],
+    "reader_examples": [
+      "studies/canonical_cleanup_20260417/cpm_cols_pre.txt:510: nlp_tirads_n_notes"
+    ]
+  }
+}

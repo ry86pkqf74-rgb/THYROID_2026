@@ -1,0 +1,42 @@
+[INFO] [00:28:25.908Z] Run config: do_writes=True, phases=['7'], BUILD_TS=20260422_002825
+[INFO] [00:28:25.909Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:28:30.774Z] ==============================================================================
+[INFO] [00:28:30.774Z] STEP 7 — Drop deprecated tables
+[INFO] [00:28:30.774Z] ==============================================================================
+[ERROR] [00:28:31.158Z] FATAL: RuntimeError('Archive canonical_tumor_characteristics_v1_pre361_20260422_002825 unreadable: Catalog Error: Table with name canonical_tumor_characteristics_v1_pre361_20260422_002825 does not exist!\nDid you mean "canonical_tumor_characteristics_v1_pre361_20260422_002245"?\n\nLINE 1: SELECT COUNT(*) FROM "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_...\n                             ^. Refusing to drop.')
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 1726, in step_7_drop_deprecated
+    arch_n = int(con.execute(
+                 ~~~~~~~~~~~^
+        f"SELECT COUNT(*) FROM {archive_fq_name}"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).fetchone()[0])
+    ^
+_duckdb.CatalogException: Catalog Error: Table with name canonical_tumor_characteristics_v1_pre361_20260422_002825 does not exist!
+Did you mean "canonical_tumor_characteristics_v1_pre361_20260422_002245"?
+
+LINE 1: SELECT COUNT(*) FROM "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_...
+                             ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2351, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2322, in main
+    results["step_7"] = step_7_drop_deprecated(
+                        ~~~~~~~~~~~~~~~~~~~~~~^
+        con, do_writes, archive_counts
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 1730, in step_7_drop_deprecated
+    raise RuntimeError(
+        f"Archive {archive_name} unreadable: {exc}. Refusing to drop."
+    ) from exc
+RuntimeError: Archive canonical_tumor_characteristics_v1_pre361_20260422_002825 unreadable: Catalog Error: Table with name canonical_tumor_characteristics_v1_pre361_20260422_002825 does not exist!
+Did you mean "canonical_tumor_characteristics_v1_pre361_20260422_002245"?
+
+LINE 1: SELECT COUNT(*) FROM "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_...
+                             ^. Refusing to drop.

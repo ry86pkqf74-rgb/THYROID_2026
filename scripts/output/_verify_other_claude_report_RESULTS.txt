@@ -1,0 +1,200 @@
+======================================================================
+CLAIM VERIFICATION — other Claude report dated 2026-04-20
+======================================================================
+
+[1] CPM rows: 10871 (claim: 10,871), cols: 1536 (claim: 1,499)
+
+[2] note_entities_llm_* tables (claim: 5 integrated, 12 stuck at Apr-3 qwen3:32b with 11,037 rows/5,641 RIDs):
+  note_entities_llm_airway_invasion: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_cervical_ln_detail: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_dynamic_risk_response: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_frozen_section_detail: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_functional_outcomes: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FALSE clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_imaging: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_labs: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_parathyroid_detail: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_past_medical_hx: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_past_surgical_hx: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_pathology: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_patient_decision_adherence: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_physical_exam: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_presenting_symptoms: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_rad_treatment: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_rai_detailed: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_recurrence: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_survival_followup: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_synoptic_pathology_enrichment: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_synoptic_pathology_enrichment__march2026_broken: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_tg_kinetics: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_tirads_granular: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_us_nodule_dynamics: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+  note_entities_llm_vascular_invasion: ERROR Binder Error: Referenced column "extraction_timestamp" not found in FROM clause!
+Candidate bindings: "extracted_at", "note_date", "entity_domain", "note_type", "note_index"
+
+LINE 1: SELECT COUNT(*), COUNT(DISTINCT research_id), MAX(extraction_timestamp) FROM "thyroid_canonical_publication_v1_0...
+                                                          ^
+
+[3] TIRADS v2 — claim: 3,021 nodule-raw RIDs, 2,465 in CPM tirads_v2_worst_category, 4,073 report-rollup RIDs
+  tirads_v2_nodules_raw.distinct_rid = 3021
+  tirads_v2_reports_raw.distinct_rid = 4073
+  cpm.tirads_v2_worst_category nonnull = 2465
+  cpm.tirads_v2_n_nodules_scored nonnull = 2465
+  cpm.tirads_v2_any_fna_recommended nonnull = 2465
+  cpm.tirads_v2_any_suspicious_ln_on_us nonnull = 1498
+  cpm.tirads_v2_any_ete_on_us nonnull = 2465
+  cpm.tirads_v2_any_interval_growth nonnull = 2465
+  tirads_reextraction_queue_v1: rows=4363 rids=1316
+
+[4] Claimed 100%-NULL CPM columns (post Scripts 288-291):
+  biochemical_concern_first_date                     nonnull = 1372
+  recurrence_histology                               nonnull = 118
+  recurrence_site                                    nonnull = 1338
+  recurrence_site_primary                            nonnull = 100
+  op_esophageal_inv_any                              nonnull = 0
+  path_stage_raw                                     nonnull = 4070
+  gm_path_stage_raw                                  nonnull = 4070
+  rai_scan_findings_v9                               nonnull = 527
+  comp_vc_paralysis_evidence_tier                    nonnull = 0
+  comp_vc_paresis_evidence_tier                      nonnull = 0
+
+[5] Operative episode detail v2 — claim: 9,371 rows / 9,368 RIDs; n_surgeries_v2 says 738 have >=2
+  operative_episode_detail_v2: rows=9371 rids=9368
+  n_surgeries_v2 distribution: [(1, 10133), (2, 698), (3, 31), (4, 7), (5, 1), (6, 1)]
+  patients with >=2 rows in detail table: 3
+  n_surgeries v1 != v2 conflict count: 599 (claim: 598)
+
+[6] Complication rates (claim: hypocalcemia 98/10871, hypopara 34/10871)
+  comp_hypocalcemia_confirmed                   TRUE/Y/1 = 98
+  comp_hypoparathyroidism_confirmed             TRUE/Y/1 = 34
+  comp_hypopara_permanent: ERR Binder Error: Referenced column "comp_hypopara_permanent" not found in FROM clause!
+Candidate bindings: "comp_hypopara_permanent_source", "comp_hypopara_permanent_limitation_note", "comp_hypocalcemia_permanent", "comp_hypoparathyroidism_permanent", "comp_vc_paralysis_permanent"
+
+LINE 1: ...ical_publication_v1_0".main.canonical_patient_master WHERE comp_hypopara_permanent = TRUE OR comp_hypopara_permanent...
+                                                                      ^
+  comp_rln_injury_confirmed                     TRUE/Y/1 = 59
+  comp_rln_paresis_confirmed: ERR Binder Error: Referenced column "comp_rln_paresis_confirmed" not found in FROM clause!
+Candidate bindings: "comp_vc_paralysis_confirmed", "comp_vc_paresis_confirmed", "comp_rln_injury_confirmed", "comp_vc_paresis_permanent", "comp_rln_injury_suspected"
+
+LINE 1: ...ical_publication_v1_0".main.canonical_patient_master WHERE comp_rln_paresis_confirmed = TRUE OR comp_rln_paresis_confi...
+                                                                      ^
+  comp_rln_paralysis_confirmed: ERR Binder Error: Referenced column "comp_rln_paralysis_confirmed" not found in FROM clause!
+Candidate bindings: "comp_rln_injury_confirmed", "comp_vc_paralysis_confirmed", "comp_vc_paresis_confirmed", "comp_vc_paralysis_transient", "comp_rln_injury_suspected"
+
+LINE 1: ...ical_publication_v1_0".main.canonical_patient_master WHERE comp_rln_paralysis_confirmed = TRUE OR comp_rln_paralysis_c...
+                                                                      ^
+  postop_calcium_min_value                      nonnull = 544
+
+[7] Calcium lab coverage — Script 291 allegedly added 44 TSH rows from LLM; check calcium too
+  ERROR: Binder Error: Referenced column "lab_name" not found in FROM clause!
+Candidate bindings: "lab_name_raw", "lab_date", "lab_name_standardized", "lab_date_status", "abnormal_flag"
+
+LINE 1: ...publication_v1_0".main.longitudinal_lab_canonical_v1 WHERE lab_name ILIKE '%calcium%' OR lab_name ILIKE '%ca++%'
+                                                                      ^
+
+[8] Open adjudication queues (claim: 5 queues + 403 lab_orphan)
+  path_size_adjudication_v241                             rows=96
+  (mw.)path_tumor_size_correction_queue_v1                rows=80
+  ete_adjudication_v1                                     rows=45
+  (mw.)cpm_hypopara_adjudication_queue_v1                 rows=4
+  (mw.)cpm_is_malignant_flag_review_v1                    rows=5
+  (mw.)cpm_ete_self_contradiction_queue_v1                rows=1
+  (mw.)cohort_view_duplicate_review_v1                    rows=8
+  (mw.)lab_orphan_cohort_review_v1                        rows=403
+  (mw.)tg_orphan_cancer_text_investigation_queue_v1       rows=83
+  (mw.)ln_extract_noncohort_orphan_v279                   rows=2
+
+[9] See separate git log
+
+DONE.

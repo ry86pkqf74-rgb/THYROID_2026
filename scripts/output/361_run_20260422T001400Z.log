@@ -1,0 +1,34 @@
+[INFO] [00:14:00.394Z] Run config: do_writes=False, phases=['0', '1', '2', '3'], BUILD_TS=20260422_001400
+[INFO] [00:14:00.395Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:14:00.933Z] ==============================================================================
+[INFO] [00:14:00.933Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_001400)
+[INFO] [00:14:00.933Z] ==============================================================================
+[INFO] [00:14:01.498Z] Archive plan: main.canonical_tumor_characteristics_v1 (11,106 rows) -> canonical_tumor_characteristics_v1_pre361_20260422_001400
+[INFO] [00:14:01.601Z] Archive plan: main.canonical_benign_diagnosis_v1 (6,818 rows) -> canonical_benign_diagnosis_v1_pre361_20260422_001400
+[INFO] [00:14:01.707Z] Archive plan: main.canonical_malignant_diagnosis_v1 (4,441 rows) -> canonical_malignant_diagnosis_v1_pre361_20260422_001400
+[INFO] [00:14:01.811Z] Archive plan: main.canonical_diagnosis_unified_v1 (11,028 rows) -> canonical_diagnosis_unified_v1_pre361_20260422_001400
+[INFO] [00:14:01.899Z] Archive plan: main.tumor_episode_master_v2 (11,691 rows) -> tumor_episode_master_v2_pre361_20260422_001400
+[INFO] [00:14:01.981Z] Archive plan: main.synoptic_tumor_long_v1 (11,103 rows) -> synoptic_tumor_long_v1_pre361_20260422_001400
+[INFO] [00:14:02.079Z] Archive plan: main.path_outcome_classification_v1 (10,871 rows) -> path_outcome_classification_v1_pre361_20260422_001400
+[INFO] [00:14:02.079Z] ==============================================================================
+[INFO] [00:14:02.079Z] STEP 1 — Build main.canonical_path_malignant_events_v1
+[INFO] [00:14:02.079Z] ==============================================================================
+[INFO] [00:14:02.185Z]   source CTC v1 cols: 50
+[INFO] [00:14:02.185Z]   source TEM v2 cols: 37
+[INFO] [00:14:02.185Z]   source STF v1 cols: 21
+[INFO] [00:14:02.185Z]   [dry-run] would CREATE OR REPLACE TABLE from canonical_tumor_characteristics_v1
+[INFO] [00:14:02.185Z] ==============================================================================
+[INFO] [00:14:02.186Z] STEP 2 — Build main.canonical_path_benign_events_v1
+[INFO] [00:14:02.186Z] ==============================================================================
+[WARN] [00:14:02.251Z]   benign flag nlp_nifcp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:14:02.251Z]   benign flag nlp_nifp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:14:02.251Z]   benign flag nlp_nifpt has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:14:02.251Z]   benign flag nlp_normal_thyroid has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[INFO] [00:14:02.251Z]   benign_events placeholder columns (4): ['nlp_nifcp', 'nlp_nifp', 'nlp_nifpt', 'nlp_normal_thyroid']
+[INFO] [00:14:02.251Z]   [dry-run] would CREATE OR REPLACE TABLE benign_events from path_synoptics (+ specimen_master_v1 link via rid+date)
+[INFO] [00:14:02.251Z] ==============================================================================
+[INFO] [00:14:02.251Z] STEP 3 — Build main.canonical_path_gland_events_v1 (unified)
+[INFO] [00:14:02.251Z] ==============================================================================
+[INFO] [00:14:02.317Z]   all gland slot columns validated against path_synoptics ✓
+[INFO] [00:14:02.317Z]   [dry-run] would build gland events long table from path_synoptics
+[INFO] [00:14:02.317Z] Script 361 complete.

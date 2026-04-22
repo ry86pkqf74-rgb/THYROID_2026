@@ -1,0 +1,183 @@
+[INFO] [15:41:26.671Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:41:28.524Z] === PHASE 0 dry-run ===
+[INFO] [15:41:28.553Z]   nlp_detail: (32408,)
+[INFO] [15:41:28.586Z]   event_v1: (8640, 3535)
+[INFO] [15:41:28.632Z]   cpm: (10871,)
+[INFO] [15:41:32.850Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:41:33.379Z] === PHASE 2 build frozen_section_event_v2 ===
+[ERROR] [15:41:33.506Z] BinderException("Binder Error: No function matches the given name and argument types 'generate_series(INTEGER, UBIGINT)'. You might need to add explicit type casts.\n\tCandidate functions:\n\tgenerate_series(BIGINT)\n\tgenerate_series(BIGINT, BIGINT)\n\tgenerate_series(BIGINT, BIGINT, BIGINT)\n\tgenerate_series(TIMESTAMP, TIMESTAMP, INTERVAL)\n\tgenerate_series(TIMESTAMP WITH TIME ZONE, TIMESTAMP WITH TIME ZONE, INTERVAL)\n\n\nLINE 127:         FROM generate_series(\n                       ^")
+[INFO] [15:41:42.360Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:41:42.873Z] === PHASE 2 build frozen_section_event_v2 ===
+[INFO] [15:41:43.748Z] v2 rows=4,203 patients=4,086 rows_surgery_null=9 patients_any_null_surg=8
+[INFO] [15:42:31.500Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:42:32.018Z] === PHASE 2 build frozen_section_event_v2 ===
+[INFO] [15:42:32.537Z] v2 rows=11,761 patients=4,116 rows_surgery_null=199 patients_any_null_surg=102
+[INFO] [15:43:12.985Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:43:13.513Z] === PHASE 2 build frozen_section_event_v2 ===
+[INFO] [15:43:14.043Z] v2 rows=7,788 patients=3,064 rows_surgery_null=190 patients_any_null_surg=99
+[INFO] [15:43:40.719Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:43:41.277Z] === PHASE 2 build frozen_section_event_v2 ===
+[INFO] [15:43:41.808Z] v2 rows=11,761 patients=4,116 rows_surgery_null=199 patients_any_null_surg=102
+[INFO] [15:54:56.193Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [15:54:56.731Z] === PHASE 2-test dry-run: tier2.frozen_section_event_v2_test ===
+[INFO] [15:54:57.494Z] GATE tier2.frozen_section_event_v2_test: rows=7,081 distinct_patients=4,116 rows_surgery_null=179 patients_any_surgery_null=102 pct_with_surgery_n=97.52%
+[INFO] [15:54:57.494Z] GATE invariant: COUNT(*) in [7500,8200] -> False (n=7081)
+[INFO] [15:54:57.494Z] GATE invariant: COUNT(DISTINCT research_id) in [3520,3550] -> False (n=4116)
+[INFO] [15:54:57.494Z] GATE invariant: patients with surgery_n NOT NULL >= 95% -> True (97.52%)
+[INFO] [16:04:43.165Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:04:43.750Z] === PHASE 2-test dry-run: tier2.frozen_section_event_v2_test ===
+[INFO] [16:04:44.352Z] GATE tier2.frozen_section_event_v2_test: rows=7,081 distinct_patients=4,116 rows_surgery_null=179 patients_any_surgery_null=102 pct_with_surgery_n=97.52%
+[INFO] [16:04:44.352Z] GATE invariant: COUNT(*) in [6800,7400] -> True (n=7081)
+[INFO] [16:04:44.352Z] GATE invariant: COUNT(DISTINCT research_id) in [4050,4200] -> True (n=4116)
+[INFO] [16:04:44.352Z] GATE invariant: patients with surgery_n NOT NULL >= 95% -> 1 (97.52%)
+[INFO] [16:04:44.378Z] GATE invariant: duplicate non-null synoptic_match_key rows -> True (offenders=0)
+[INFO] [16:04:44.406Z] GATE invariant: (research_id, date) with BOTH p1 and p2 fs_pathology_frozen_section -> True (n=0)
+[INFO] [16:04:44.574Z] GATE info: Excel-only synoptic rows (p1, synoptic_match_key set, LLM did not win key) n=1,781 (expected band by patients [450,750])
+[INFO] [16:04:44.574Z] GATE invariant: Excel-only synoptic patients in [450,750] -> False (n=1747)
+[INFO] [16:07:49.577Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:07:50.173Z] === PHASE 2-test dry-run: tier2.frozen_section_event_v2_test ===
+[INFO] [16:07:50.853Z] GATE tier2.frozen_section_event_v2_test: rows=7,081 distinct_patients=4,116 rows_surgery_null=179 patients_any_surgery_null=102 pct_with_surgery_n=97.52%
+[INFO] [16:07:50.853Z] GATE invariant: COUNT(*) in [6800,7400] -> True (n=7081)
+[INFO] [16:07:50.853Z] GATE invariant: COUNT(DISTINCT research_id) in [4050,4200] -> True (n=4116)
+[INFO] [16:07:50.853Z] GATE invariant: patients with surgery_n NOT NULL >= 95% -> 1 (97.52%)
+[INFO] [16:07:50.897Z] GATE invariant: duplicate non-null synoptic_match_key rows -> True (offenders=0)
+[INFO] [16:07:50.941Z] GATE invariant: (research_id, date) with BOTH p1 and p2 fs_pathology_frozen_section -> True (n=0)
+[INFO] [16:07:51.277Z] --- Coverage diagnostics (informational, no gate) ---
+[INFO] [16:07:51.277Z] Excel synoptic patients (distinct research_id where source_priority=1 on fs_pathology_frozen_section): 1,748
+[INFO] [16:07:51.277Z] LLM-on-synoptic-cell patients (distinct research_id where source_priority=2 AND synoptic_match_key IS NOT NULL): 2,379
+[INFO] [16:07:51.277Z] Excel ∩ LLM-on-synoptic-cell overlap (excel_corroborated_flag=TRUE, distinct research_id): 2,374
+[INFO] [16:07:51.277Z] Excel-only patients (Excel − overlap): 1,747 (rows=1,781)
+[INFO] [16:07:51.277Z] LLM synoptic rows without Excel match (excel_corroborated_flag=FALSE): 13
+[INFO] [16:07:51.327Z] CPM snapshot (stale until phase 5 in isolated phase-2 run): nlp_frozensec_has_data TRUE=2,855 — hard band [3500,3600] enforced in post_rename_gates
+[INFO] [16:07:51.449Z] Dropped tier2.frozen_section_event_v2_test (MotherDuck left without test table)
+[INFO] [16:08:13.227Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:08:13.792Z] === PHASE 2-test dry-run: tier2.frozen_section_event_v2_test ===
+[INFO] [16:08:14.422Z] GATE tier2.frozen_section_event_v2_test: rows=7,081 distinct_patients=4,116 rows_surgery_null=179 patients_any_surgery_null=102 pct_with_surgery_n=97.52%
+[INFO] [16:08:14.422Z] GATE invariant: COUNT(*) in [6800,7400] -> True (n=7081)
+[INFO] [16:08:14.422Z] GATE invariant: COUNT(DISTINCT research_id) in [4050,4200] -> True (n=4116)
+[INFO] [16:08:14.422Z] GATE invariant: patients with surgery_n NOT NULL >= 95% -> 1 (97.52%)
+[INFO] [16:08:14.448Z] GATE invariant: duplicate non-null synoptic_match_key rows -> True (offenders=0)
+[INFO] [16:08:14.482Z] GATE invariant: (research_id, date) with BOTH p1 and p2 fs_pathology_frozen_section -> True (n=0)
+[INFO] [16:08:14.763Z] --- Coverage diagnostics (informational, no gate) ---
+[INFO] [16:08:14.763Z] Excel synoptic patients (distinct research_id where source_priority=1 on fs_pathology_frozen_section): 4,086
+[INFO] [16:08:14.763Z] LLM-on-synoptic-cell patients (distinct research_id where source_priority=2 AND synoptic_match_key IS NOT NULL): 2,379
+[INFO] [16:08:14.763Z] Excel ∩ LLM-on-synoptic-cell overlap (excel_corroborated_flag=TRUE, distinct research_id): 2,374
+[INFO] [16:08:14.763Z] Excel-only patients (Excel − overlap): 1,747 (rows=1,781)
+[INFO] [16:08:14.763Z] LLM synoptic rows without Excel match (excel_corroborated_flag=FALSE): 13
+[INFO] [16:08:14.794Z] CPM snapshot (stale until phase 5 in isolated phase-2 run): nlp_frozensec_has_data TRUE=2,855 — hard band [3500,3600] enforced in post_rename_gates
+[INFO] [16:08:14.919Z] Dropped tier2.frozen_section_event_v2_test (MotherDuck left without test table)
+[INFO] [16:08:31.481Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:08:32.037Z] === PHASE 0 dry-run ===
+[INFO] [16:08:32.062Z]   nlp_detail: (32408,)
+[INFO] [16:08:32.110Z]   event_v1: (8640, 3535)
+[INFO] [16:08:32.154Z]   cpm: (10871,)
+[INFO] [16:08:32.154Z] === PHASE 1 archive ===
+[INFO] [16:08:33.362Z] Archived tier2.frozen_section_event_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."frozen_section_event_v1_preFROZENCLEANUP_20260421T160831Z" (8,640 rows)
+[INFO] [16:08:35.714Z] Archived tier2.patient_tier2_master_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."patient_tier2_master_v1_preFROZENCLEANUP_20260421T160831Z" (10,871 rows)
+[INFO] [16:08:36.450Z] Archived main.operative_episode_detail_v2 -> "Thyroid 2026 UPdated".archive_pub_v1_0."operative_episode_detail_v2_preFROZENCLEANUP_20260421T160831Z" (11,773 rows)
+[INFO] [16:08:39.716Z] Archived main.canonical_patient_master -> "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_patient_master_preFROZENCLEANUP_20260421T160831Z" (10,871 rows)
+[INFO] [16:08:39.716Z] === PHASE 1.5 inventory ===
+[INFO] [16:08:40.156Z] Wrote inventory: /Users/ros/THyroid 2026/reports/FROZEN_SECTION_INVENTORY_20260421T160831Z.md
+[ERROR] [16:08:40.156Z] ORPHAN_ARCHIVE hits=71 — pass --confirm-orphans to proceed
+[ERROR] [16:08:40.156Z]   orphan: {'fqname': 'main.canonical_patient_master.ene_op_intraop', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.156Z]   orphan: {'fqname': 'main.canonical_patient_master.op_intraop_gross_ete_any', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.156Z]   orphan: {'fqname': 'main.canonical_patient_master.op_nlp_intraop_complication', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.canonical_patient_master.op_nlp_intraop_complication_date', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.canonical_patient_master.op_nlp_intraop_complication_days_from_surg', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.canonical_patient_master.op_nlp_intraop_complication_n_mentions', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.canonical_patient_master.ops_intraop_appearance', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.canonical_patient_master.ops_intraop_nodule_count', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'main.manuscript_cohort_v1.op_intraop_gross_ete_any', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_descriptive_full_cohort_v1.nlp_frozensec_has_data', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_descriptive_full_cohort_v1.nlp_frozensec_key_finding', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_descriptive_full_cohort_v1.syn_carcinoma_on_frozen', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_descriptive_full_cohort_v1.syn_frozen_section', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_descriptive_full_cohort_v1.syn_frozen_section_result', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m047_frozen_section_v1.nlp_frozensec_has_data', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m047_frozen_section_v1.nlp_frozensec_key_finding', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m047_frozen_section_v1.syn_carcinoma_on_frozen', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m047_frozen_section_v1.syn_frozen_section', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m047_frozen_section_v1.syn_frozen_section_result', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m062_incidental_frozen_v1.nlp_frozensec_has_data', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m062_incidental_frozen_v1.nlp_frozensec_key_finding', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m062_incidental_frozen_v1.syn_carcinoma_on_frozen', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m062_incidental_frozen_v1.syn_frozen_section', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m062_incidental_frozen_v1.syn_frozen_section_result', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m063_frozen_false_neg_v1.nlp_frozensec_has_data', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m063_frozen_false_neg_v1.nlp_frozensec_key_finding', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m063_frozen_false_neg_v1.syn_carcinoma_on_frozen', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m063_frozen_false_neg_v1.syn_frozen_section', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m063_frozen_false_neg_v1.syn_frozen_section_result', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[ERROR] [16:08:40.157Z]   orphan: {'fqname': 'manuscript_workspace.cohort_m064_frozen_decision_v1.nlp_frozensec_has_data', 'object_type': 'column', 'bucket': 'ORPHAN_ARCHIVE', 'row_count': None, 'rationale': 'column scan', 'proposed_action': 'see bucket'}
+[INFO] [16:09:44.783Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:09:45.328Z] === PHASE 0 dry-run ===
+[INFO] [16:09:45.352Z]   nlp_detail: (32408,)
+[INFO] [16:09:45.376Z]   event_v1: (8640, 3535)
+[INFO] [16:09:45.419Z]   cpm: (10871,)
+[INFO] [16:09:45.419Z] === PHASE 1 archive ===
+[INFO] [16:09:46.482Z] Archived tier2.frozen_section_event_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."frozen_section_event_v1_preFROZENCLEANUP_20260421T160944Z" (8,640 rows)
+[INFO] [16:09:48.548Z] Archived tier2.patient_tier2_master_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."patient_tier2_master_v1_preFROZENCLEANUP_20260421T160944Z" (10,871 rows)
+[INFO] [16:09:49.346Z] Archived main.operative_episode_detail_v2 -> "Thyroid 2026 UPdated".archive_pub_v1_0."operative_episode_detail_v2_preFROZENCLEANUP_20260421T160944Z" (11,773 rows)
+[INFO] [16:09:52.811Z] Archived main.canonical_patient_master -> "Thyroid 2026 UPdated".archive_pub_v1_0."canonical_patient_master_preFROZENCLEANUP_20260421T160944Z" (10,871 rows)
+[INFO] [16:09:52.811Z] === PHASE 1.5 inventory ===
+[INFO] [16:09:53.243Z] Wrote inventory: /Users/ros/THyroid 2026/reports/FROZEN_SECTION_INVENTORY_20260421T160944Z.md
+[INFO] [16:09:53.243Z] Inventory written: /Users/ros/THyroid 2026/reports/FROZEN_SECTION_INVENTORY_20260421T160944Z.md
+[INFO] [16:09:53.243Z] === PHASE 2 build frozen_section_event_v2 ===
+[INFO] [16:09:53.864Z] GATE tier2.frozen_section_event_v2: rows=7,081 distinct_patients=4,116 rows_surgery_null=179 patients_any_surgery_null=102 pct_with_surgery_n=97.52%
+[INFO] [16:09:53.864Z] GATE invariant: COUNT(*) in [6800,7400] -> True (n=7081)
+[INFO] [16:09:53.864Z] GATE invariant: COUNT(DISTINCT research_id) in [4050,4200] -> True (n=4116)
+[INFO] [16:09:53.864Z] GATE invariant: patients with surgery_n NOT NULL >= 95% -> 1 (97.52%)
+[INFO] [16:09:53.891Z] GATE invariant: duplicate non-null synoptic_match_key rows -> True (offenders=0)
+[INFO] [16:09:53.920Z] GATE invariant: (research_id, date) with BOTH p1 and p2 fs_pathology_frozen_section -> True (n=0)
+[INFO] [16:09:54.188Z] --- Coverage diagnostics (informational, no gate) ---
+[INFO] [16:09:54.188Z] Excel synoptic patients (distinct research_id where source_priority=1 on fs_pathology_frozen_section): 4,086
+[INFO] [16:09:54.188Z] LLM-on-synoptic-cell patients (distinct research_id where source_priority=2 AND synoptic_match_key IS NOT NULL): 2,379
+[INFO] [16:09:54.188Z] Excel ∩ LLM-on-synoptic-cell overlap (excel_corroborated_flag=TRUE, distinct research_id): 2,374
+[INFO] [16:09:54.188Z] Excel-only patients (Excel − overlap): 1,747 (rows=1,781)
+[INFO] [16:09:54.188Z] LLM synoptic rows without Excel match (excel_corroborated_flag=FALSE): 13
+[INFO] [16:09:54.216Z] CPM snapshot (stale until phase 5 in isolated phase-2 run): nlp_frozensec_has_data TRUE=2,855 — hard band [3500,3600] enforced in post_rename_gates
+[INFO] [16:09:54.216Z] === PHASE 3 operative_episode_detail_v2 ===
+[INFO] [16:09:54.591Z] Added operative_episode_detail_v2.frozen_section_n
+[INFO] [16:09:54.778Z] Added operative_episode_detail_v2.frozen_section_any_malignant_flag
+[INFO] [16:09:54.998Z] Added operative_episode_detail_v2.frozen_section_any_deferred_flag
+[INFO] [16:09:55.173Z] Added operative_episode_detail_v2.frozen_section_any_suspected_malignant_flag
+[INFO] [16:09:55.355Z] === PHASE 4 patient_tier2_master wide frozen columns ===
+[INFO] [16:10:04.269Z] Rebuilt tier2.patient_tier2_master_v1 frozen_section__* columns (12 slots + aggregates)
+[INFO] [16:10:04.269Z] === PHASE 5 CPM rollup ===
+[INFO] [16:10:05.048Z] CPM frozen-related columns refreshed from stage table
+[INFO] [16:10:05.048Z] === PHASE 6 rename event v2 → v1 + comments ===
+[ERROR] [16:10:05.172Z] CatalogException('Catalog Error: Table with name "frozen_section_event_v1_preFROZENCLEANUP_20260421T160944Z" already exists!')
+[INFO] [16:11:27.249Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:11:27.797Z] === PHASE 6 rename event v2 → v1 + comments ===
+[INFO] [16:11:29.293Z] Archived tier2.frozen_section_event_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."frozen_section_event_v1_preFROZENCLEANUP_20260421T161127Z" (8,640 rows)
+[INFO] [16:11:52.072Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:11:52.688Z] === PHASE 6.5 verify tables + concordance/long rebuild ===
+[INFO] [16:11:53.184Z] Running /opt/homebrew/opt/python@3.14/bin/python3.14 /Users/ros/THyroid 2026/scripts/337_build_verify_concordance_master.py --commit
+[INFO] [16:11:55.653Z] Running /opt/homebrew/opt/python@3.14/bin/python3.14 /Users/ros/THyroid 2026/scripts/338_build_verify_long.py --commit
+[INFO] [16:12:02.753Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:12:03.272Z] === PHASE 7 registry sync ===
+[INFO] [16:12:03.699Z] detail_table_registry_v1 synced for frozen tables
+[INFO] [16:22:27.932Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:22:28.488Z] === PHASE 8 canonical publish (main.canonical_frozen_section_*) ===
+[INFO] [16:22:28.742Z] Built main.canonical_frozen_section_events_v1 (rows=7,081, patients=4,116)
+[ERROR] [16:22:28.945Z] CatalogException('Catalog Error: Table with name canonical_frozen_section_events_v1 does not exist!\nDid you mean "main.canonical_frozen_section_events_v1"?')
+[INFO] [16:22:56.639Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [16:22:57.223Z] === PHASE 8 canonical publish (main.canonical_frozen_section_*) ===
+[INFO] [16:22:57.495Z] Built main.canonical_frozen_section_events_v1 (rows=7,081, patients=4,116)
+[INFO] [16:23:02.289Z] Built main.canonical_frozen_section_patient_rollup_v1 (rows=4,066, distinct patients=4,066)
+[INFO] [16:23:03.688Z] Archived tier2.frozen_section_event_v1 -> "Thyroid 2026 UPdated".archive_pub_v1_0."tier2_frozen_section_event_v1_preCANONICALPROMOTION_20260421T162256Z"
+[INFO] [16:23:04.129Z] Replaced tier2.frozen_section_event_v1 with canonical-backed view
+[INFO] [16:23:04.341Z] detail_table_registry_v1 swapped to canonical_frozen_section_* (tier2.frozen_section_event_v1 row marked deprecated)
+[INFO] [16:23:04.371Z] Rebuilding verify_frozen_section_v1 from main.canonical_frozen_section_events_v1
+[INFO] [16:23:04.711Z] Running /opt/homebrew/opt/python@3.14/bin/python3.14 /Users/ros/THyroid 2026/scripts/337_build_verify_concordance_master.py --commit
+[INFO] [16:23:07.151Z] Running /opt/homebrew/opt/python@3.14/bin/python3.14 /Users/ros/THyroid 2026/scripts/338_build_verify_long.py --commit
+[INFO] [16:23:09.857Z] === Phase 8 post-publish gates ===
+[INFO] [16:23:10.068Z] GATE main.canonical_frozen_section_events_v1 EXISTS -> True
+[INFO] [16:23:10.095Z] GATE main.canonical_frozen_section_patient_rollup_v1 EXISTS -> True
+[INFO] [16:23:10.148Z] GATE main.canonical_frozen_section_events_v1 row count == tier2.frozen_section_event_v1 row count -> True (7081 == 7081)
+[INFO] [16:23:10.148Z] GATE canonical row_count in [6800,7400] -> True (n=7081)
+[INFO] [16:23:10.172Z] GATE canonical_frozen_section_patient_rollup_v1 distinct research_id in [4050,4200] -> True (n=4066)
+[INFO] [16:23:10.172Z] INFO canonical events distinct patients = 4116 (rollup limited to performed-event patients = 4066)
+[INFO] [16:23:10.222Z] registry canonical entries: [('canonical_frozen_section_events_v1', 'main'), ('canonical_frozen_section_patient_rollup_v1', 'main')]
+[INFO] [16:23:10.222Z] registry tier2 entries (deprecated tag): [('frozen_section_event_v1', 'tier2', '[domain=frozen_section; grain=per_event] — source: Script 360 (20260421T161202Z). Rows=7081, patients=4116. | DEPRECATED: shim view backed by main.canonical_frozen_section_events_v1 (Script 360 Phase 8)')]
+[INFO] [16:23:10.223Z] GATE detail_table_registry_v1 references canonical_frozen_section_* not tier2.* -> True

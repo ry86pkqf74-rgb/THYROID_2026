@@ -1,0 +1,82 @@
+[INFO] [00:15:26.468Z] Run config: do_writes=True, phases=['0', '1', '10', '2', '3', '5', '6', '8', '9'], BUILD_TS=20260422_001526
+[INFO] [00:15:26.469Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:15:26.975Z] ==============================================================================
+[INFO] [00:15:26.975Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_001526)
+[INFO] [00:15:26.975Z] ==============================================================================
+[INFO] [00:15:27.523Z] Archive plan: main.canonical_tumor_characteristics_v1 (11,106 rows) -> canonical_tumor_characteristics_v1_pre361_20260422_001526
+[INFO] [00:15:29.150Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_characteristics_v1_pre361_20260422_001526" (11,106 rows)
+[INFO] [00:15:29.233Z] Archive plan: main.canonical_benign_diagnosis_v1 (6,818 rows) -> canonical_benign_diagnosis_v1_pre361_20260422_001526
+[INFO] [00:15:31.725Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_benign_diagnosis_v1_pre361_20260422_001526" (6,818 rows)
+[INFO] [00:15:31.805Z] Archive plan: main.canonical_malignant_diagnosis_v1 (4,441 rows) -> canonical_malignant_diagnosis_v1_pre361_20260422_001526
+[INFO] [00:15:33.237Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_malignant_diagnosis_v1_pre361_20260422_001526" (4,441 rows)
+[INFO] [00:15:33.319Z] Archive plan: main.canonical_diagnosis_unified_v1 (11,028 rows) -> canonical_diagnosis_unified_v1_pre361_20260422_001526
+[INFO] [00:15:34.764Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_diagnosis_unified_v1_pre361_20260422_001526" (11,028 rows)
+[INFO] [00:15:34.846Z] Archive plan: main.tumor_episode_master_v2 (11,691 rows) -> tumor_episode_master_v2_pre361_20260422_001526
+[INFO] [00:15:36.368Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."tumor_episode_master_v2_pre361_20260422_001526" (11,691 rows)
+[INFO] [00:15:36.451Z] Archive plan: main.synoptic_tumor_long_v1 (11,103 rows) -> synoptic_tumor_long_v1_pre361_20260422_001526
+[INFO] [00:15:37.998Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."synoptic_tumor_long_v1_pre361_20260422_001526" (11,103 rows)
+[INFO] [00:15:38.080Z] Archive plan: main.path_outcome_classification_v1 (10,871 rows) -> path_outcome_classification_v1_pre361_20260422_001526
+[INFO] [00:15:39.580Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."path_outcome_classification_v1_pre361_20260422_001526" (10,871 rows)
+[INFO] [00:15:39.580Z] ==============================================================================
+[INFO] [00:15:39.580Z] STEP 1 — Build main.canonical_path_malignant_events_v1
+[INFO] [00:15:39.580Z] ==============================================================================
+[INFO] [00:15:39.686Z]   source CTC v1 cols: 50
+[INFO] [00:15:39.686Z]   source TEM v2 cols: 37
+[INFO] [00:15:39.686Z]   source STF v1 cols: 21
+[INFO] [00:15:40.058Z]   base copy: 11,106 rows
+[INFO] [00:15:40.230Z]   added column main.canonical_path_malignant_events_v1.discordance_histology_flag BOOLEAN
+[INFO] [00:15:40.404Z]   added column main.canonical_path_malignant_events_v1.discordance_t_stage_flag BOOLEAN
+[INFO] [00:15:40.593Z]   added column main.canonical_path_malignant_events_v1.discordance_laterality_flag BOOLEAN
+[INFO] [00:15:40.773Z]   added column main.canonical_path_malignant_events_v1.discordance_notes VARCHAR
+[INFO] [00:15:40.893Z]   populated discordance columns on 7,818 rows from TEM v2
+[INFO] [00:15:41.371Z]   added column main.canonical_path_malignant_events_v1.specimen_focus_id VARCHAR
+[INFO] [00:15:41.542Z]   added column main.canonical_path_malignant_events_v1.linkage_confidence_tier VARCHAR
+[INFO] [00:15:41.732Z]   added column main.canonical_path_malignant_events_v1.linkage_score DECIMAL(29,3)
+[INFO] [00:15:42.437Z]   populated specimen_focus_id on 7,818 rows from STF v1
+[INFO] [00:15:43.198Z]   added column main.canonical_path_malignant_events_v1.build_script VARCHAR
+[INFO] [00:15:43.364Z]   added column main.canonical_path_malignant_events_v1.build_ts TIMESTAMP
+[INFO] [00:15:43.533Z]   added column main.canonical_path_malignant_events_v1.consolidation_source VARCHAR
+[INFO] [00:15:43.853Z]   built canonical_path_malignant_events_v1: 11,106 rows / 8,422 patients
+[INFO] [00:15:43.853Z] ==============================================================================
+[INFO] [00:15:43.853Z] STEP 2 — Build main.canonical_path_benign_events_v1
+[INFO] [00:15:43.853Z] ==============================================================================
+[WARN] [00:15:43.925Z]   benign flag nlp_nifcp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:15:43.925Z]   benign flag nlp_nifp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:15:43.925Z]   benign flag nlp_nifpt has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:15:43.925Z]   benign flag nlp_normal_thyroid has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[INFO] [00:15:43.925Z]   benign_events placeholder columns (4): ['nlp_nifcp', 'nlp_nifp', 'nlp_nifpt', 'nlp_normal_thyroid']
+[INFO] [00:15:46.188Z]   flagged 7,299 benign rows with concomitant malignancy
+[INFO] [00:15:46.416Z]   built canonical_path_benign_events_v1: 11,688 rows / 10,871 patients
+[INFO] [00:15:46.416Z] ==============================================================================
+[INFO] [00:15:46.416Z] STEP 3 — Build main.canonical_path_gland_events_v1 (unified)
+[INFO] [00:15:46.416Z] ==============================================================================
+[INFO] [00:15:46.486Z]   all gland slot columns validated against path_synoptics ✓
+[INFO] [00:15:53.584Z]   built canonical_path_gland_events_v1: 140,256 rows / 10,871 patients (thyroid=70,128, parathyroid=70,128)
+[INFO] [00:15:53.584Z] ==============================================================================
+[INFO] [00:15:53.584Z] STEP 5 — Build the 3 patient-grain rollup tables
+[INFO] [00:15:53.584Z] ==============================================================================
+[ERROR] [00:15:53.671Z] FATAL: BinderException("Binder Error: No function matches the given name and argument types 'upper(BIGINT)'. You might need to add explicit type casts.\n\tCandidate functions:\n\tupper(VARCHAR) -> VARCHAR\n\n\nLINE 27:                     OR UPPER(COALESCE(gross_ete, '')) NOT IN ('', 'NONE', 'NO')\n                                ^")
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2241, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2205, in main
+    results["step_5"] = step_5_build_rollups(con, do_writes)
+                        ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 1433, in step_5_build_rollups
+    con.execute(f"""
+    ~~~~~~~~~~~^^^^^
+        CREATE OR REPLACE TABLE {fq('main', 'canonical_path_malignant_patient_rollup_v1')} AS
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<44 lines>...
+        FROM agg ev{poc_join}
+        ^^^^^^^^^^^^^^^^^^^^^
+    """)
+    ^^^^
+_duckdb.BinderException: Binder Error: No function matches the given name and argument types 'upper(BIGINT)'. You might need to add explicit type casts.
+	Candidate functions:
+	upper(VARCHAR) -> VARCHAR
+
+
+LINE 27:                     OR UPPER(COALESCE(gross_ete, '')) NOT IN ('', 'NONE', 'NO')
+                                ^

@@ -1,0 +1,225 @@
+--- manuscript_workspace.detail_table_registry_v1 columns ---
+  detail_table_name                        VARCHAR
+  schema_name                              VARCHAR
+  join_key                                 VARCHAR
+  grain                                    VARCHAR
+  total_rows                               BIGINT
+  total_patients                           BIGINT
+  domain                                   VARCHAR
+  feeds_master_columns                     VARCHAR
+  description                              VARCHAR
+  canonical_version                        VARCHAR
+  feeds_master_columns_secondary           VARCHAR
+  feeds_master_columns_array               VARCHAR[]
+  needs_manual_review                      BOOLEAN
+
+--- registry rows for lab tables ---
+  ('extracted_postop_labs_expanded_v1', 'main', 'research_id', 'one row per postop lab measurement', 1395, 1051, 'Labs', 'postop_calcium_min_value, postop_pth_min_value, calcium_nadir_30d, pth_nadir_30d', 'Postoperative calcium and PTH lab values for hypoparathyroidism assessment.', 'v1_0', None, ['postop_calcium_min_value', 'postop_pth_min_value', 'calcium_nadir_30d', 'pth_nadir_30d'], False)
+  ('lab_cross_wave_dedup_map_v1', 'main', 'research_id', 'one row per lab dedup pair', 21761, 1796, 'Labs', 'dedup crosswalk (no direct CPM column)', 'Lab cross-wave dedup map.', 'v1_0', None, [], False)
+  ('longitudinal_lab_canonical_v1', 'main', 'research_id', 'one row per lab result (TSH, PTH, Ca, VitD, etc)', 75247, 3556, 'Labs', 'lab_tsh_n_measurements, lab_pth_n_measurements, lab_calcium_n_measurements, lab_vitd_n_measurements', 'Broad longitudinal lab data. analyte_group column identifies the lab type.', 'v1_0', None, ['lab_tsh_n_measurements', 'lab_pth_n_measurements', 'lab_calcium_n_measurements', 'lab_vitd_n_measurements'], False)
+  ('thyroglobulin_lab_canonical_v1', 'main', 'research_id', 'one row per Tg/TgAb lab result', 74258, 3124, 'Labs', 'tg_n_measurements, tg_nadir, tg_peak, tg_mean, tg_rising_flag, tg_trajectory_class, tgab_interference_flag', 'Canonical thyroglobulin and TgAb lab results with days_from_surgery and temporal windows.', 'v1_0', 'tg_mean;tg_n_measurements;tg_nadir;tg_peak;tg_rising_flag;tg_trajectory_class', ['tg_n_measurements', 'tg_nadir', 'tg_peak', 'tg_mean', 'tg_rising_flag', 'tg_trajectory_class', 'tgab_interference_flag'], False)
+  ('note_entities_llm_labs', 'main', 'research_id', 'one row per lab entity', 11037, 5641, 'NLP', 'nlp_labs_* columns', 'Lab value mentions from NLP.', 'v1_0', None, ['nlp_labs_has_data', 'nlp_labs_key_finding', 'nlp_labs_n_entities', 'nlp_labs_n_notes'], False)
+
+--- sample 50 raw TSH values (with their parsed numerics) ---
+  raw='<0.01'                             num=0.01       n=14
+  raw='<0.01 mIU/L'                       num=None       n=13
+  raw='0.3 ng/mL'                         num=None       n=8
+  raw='1.1 mIU/L'                         num=None       n=6
+  raw='0.01 mIU/L'                        num=None       n=6
+  raw='1.6 mIU/L'                         num=None       n=5
+  raw='<0.005 mIU/L'                      num=None       n=4
+  raw='<0.01 (L)'                         num=None       n=4
+  raw='2.4'                               num=2.4        n=4
+  raw='0.3 mIU/L'                         num=None       n=4
+  raw='0.9 mIU/L'                         num=None       n=4
+  raw='0.01'                              num=0.01       n=4
+  raw='1.7'                               num=1.7        n=3
+  raw='1.8 mIU/L'                         num=None       n=3
+  raw='<0.006'                            num=0.006      n=3
+  raw='2.4 mIU/L'                         num=None       n=3
+  raw='0.18'                              num=0.18       n=3
+  raw='<0.005'                            num=0.005      n=3
+  raw='1.7 mIU/L'                         num=None       n=3
+  raw='1.4 mIU/L'                         num=None       n=3
+  raw='1.3 mIU/L'                         num=None       n=3
+  raw='<0.1'                              num=0.1        n=2
+  raw='4.1'                               num=4.1        n=2
+  raw='<0.01 mcIU/mL'                     num=None       n=2
+  raw='1.93 mIU/L'                        num=None       n=2
+  raw='0.81 mcIU/mL'                      num=None       n=2
+  raw='0.98 mIU/L'                        num=None       n=2
+  raw='<0.1 mIU/L'                        num=None       n=2
+  raw='< 0.01'                            num=0.01       n=2
+  raw='<0.01 mIU/L'                       num=0.01       n=2
+  raw='0.15 mIU/L'                        num=None       n=2
+  raw='0.48'                              num=0.48       n=2
+  raw='1.73 mIU/L'                        num=None       n=2
+  raw='0.97 mIU/L'                        num=None       n=2
+  raw='0.89'                              num=0.89       n=2
+  raw='1.38 mIU/L'                        num=None       n=2
+  raw='1.1'                               num=1.1        n=2
+  raw='0.47 mIU/L'                        num=None       n=2
+  raw='0.03 mIU/L'                        num=None       n=2
+  raw='2.7'                               num=2.7        n=2
+  raw='1.66 mIU/L'                        num=None       n=2
+  raw='18 mIU/L'                          num=None       n=2
+  raw='0.19'                              num=0.19       n=2
+  raw='0.75'                              num=0.75       n=2
+  raw='0.71 mIU/L'                        num=None       n=2
+  raw='3.42 mIU/L'                        num=None       n=2
+  raw='1.2'                               num=1.2        n=2
+  raw='2.1'                               num=2.1        n=2
+  raw='0.74 mIU/L'                        num=None       n=2
+  raw='0.06'                              num=0.06       n=2
+
+--- sample 30 PTH raw values ---
+  raw='8.0'                     num=8.0        n=4
+  raw='14.0'                    num=14.0       n=3
+  raw='23.0'                    num=23.0       n=3
+  raw='22.0'                    num=22.0       n=3
+  raw='60.0'                    num=60.0       n=3
+  raw='42.0'                    num=42.0       n=3
+  raw='26.0'                    num=26.0       n=3
+  raw='12.0'                    num=12.0       n=3
+  raw='31 pg/mL'                num=None       n=2
+  raw='130.0'                   num=130.0      n=2
+  raw='9.0'                     num=9.0        n=2
+  raw='144.0'                   num=144.0      n=2
+  raw='29 pg/mL'                num=None       n=2
+  raw='56.0'                    num=56.0       n=2
+  raw='43.0'                    num=43.0       n=2
+  raw='79.0'                    num=79.0       n=2
+  raw='54.0'                    num=54.0       n=2
+  raw='157.0'                   num=157.0      n=2
+  raw='17.0'                    num=17.0       n=2
+  raw='11.0'                    num=11.0       n=2
+  raw='6.0'                     num=6.0        n=2
+  raw='21.0'                    num=21.0       n=2
+  raw='40.0'                    num=40.0       n=2
+  raw='62.0'                    num=62.0       n=2
+  raw='82 pg/mL'                num=None       n=2
+  raw='51.0'                    num=51.0       n=2
+  raw='61.0'                    num=61.0       n=2
+  raw='59 pg/mL'                num=None       n=2
+  raw='40'                      num=40.0       n=2
+  raw='277.0'                   num=277.0      n=2
+
+--- sample 30 calcium raw values ---
+  raw='500.0'                   num=500.0      n=7
+  raw='9.4'                     num=9.4        n=6
+  raw='8.8 mg/dL'               num=None       n=6
+  raw='10.4'                    num=10.4       n=5
+  raw='9.5 mg/dL'               num=None       n=5
+  raw='10.0'                    num=10.0       n=5
+  raw='9.6 mg/dL'               num=None       n=4
+  raw='9.6'                     num=9.6        n=4
+  raw='9.8'                     num=9.8        n=4
+  raw='10.1'                    num=10.1       n=4
+  raw='600.0'                   num=600.0      n=4
+  raw='9.9'                     num=9.9        n=3
+  raw='9.9 mg/dL'               num=None       n=3
+  raw='8.8'                     num=8.8        n=3
+  raw='9.0'                     num=9.0        n=3
+  raw='9.7'                     num=9.7        n=3
+  raw='1.0'                     num=1.0        n=3
+  raw='8.1'                     num=8.1        n=3
+  raw='8.9'                     num=8.9        n=3
+  raw='9.1 mg/dL'               num=None       n=3
+  raw='9.2 mg/dL'               num=None       n=3
+  raw='10.5'                    num=10.5       n=3
+  raw='10.3'                    num=10.3       n=3
+  raw='9.5'                     num=9.5        n=3
+  raw='9.4 mg/dL'               num=None       n=3
+  raw='9.3'                     num=9.3        n=3
+  raw='1000.0'                  num=1000.0     n=2
+  raw='8.5'                     num=8.5        n=2
+  raw='10.6'                    num=10.6       n=2
+  raw='10.0 mg/dL'              num=None       n=2
+
+--- sample 30 vitamin_d raw values ---
+  raw='32 ng/mL'                num=None       n=4
+  raw='37'                      num=37.0       n=3
+  raw='29'                      num=29.0       n=2
+  raw='31'                      num=31.0       n=2
+  raw='29 ng/mL'                num=None       n=2
+  raw='30 ng/mL'                num=None       n=2
+  raw='18 ng/mL'                num=None       n=2
+  raw='38 ng/mL'                num=None       n=2
+  raw='26 ng/mL'                num=None       n=2
+  raw='39 ng/mL'                num=None       n=2
+  raw='57 ng/mL'                num=None       n=2
+  raw='46'                      num=46.0       n=2
+  raw='32'                      num=32.0       n=2
+  raw='25'                      num=25.0       n=2
+  raw='53'                      num=53.0       n=1
+  raw='24 ng/mL'                num=None       n=1
+  raw='43 ng/mL'                num=None       n=1
+  raw='12 ng/mL'                num=None       n=1
+  raw='45'                      num=45.0       n=1
+  raw='12'                      num=12.0       n=1
+  raw='61'                      num=61.0       n=1
+  raw='38'                      num=38.0       n=1
+  raw='18'                      num=18.0       n=1
+  raw='32.7'                    num=32.7       n=1
+  raw='68 ng/mL'                num=None       n=1
+  raw='45 ng/mL'                num=None       n=1
+  raw='5000 units daily'        num=None       n=1
+  raw='52 ng/mL'                num=None       n=1
+  raw='17.6'                    num=17.6       n=1
+  raw='20 ng/mL'                num=None       n=1
+
+--- sample TgAb raw values containing ':' (titer format) ---
+  raw='1:100'                   num=100.0      n=1
+  raw='1:6400'                  num=6400.0     n=1
+  raw='1:25600'                 num=25600.0    n=1
+
+--- sample Tg raw values starting with < or > ---
+  raw='<0.1'                              num=0.1        n=10483
+  raw='<0.9'                              num=0.9        n=543
+  raw='<0.2'                              num=0.2        n=323
+  raw='>450.0'                            num=450.0      n=279
+  raw='<0.5'                              num=0.5        n=177
+  raw='>2500.0'                           num=2500.0     n=49
+  raw='>9000.0'                           num=9000.0     n=46
+  raw='<1.0'                              num=1.0        n=36
+  raw='>2500'                             num=2500.0     n=30
+  raw='<2.0'                              num=2.0        n=9
+  raw='>478.0'                            num=478.0      n=8
+  raw='>484.0'                            num=484.0      n=5
+  raw='>472.0'                            num=472.0      n=4
+  raw='>481.0'                            num=481.0      n=4
+  raw='>476.0'                            num=476.0      n=2
+  raw='>477.0'                            num=477.0      n=2
+  raw='>458.0'                            num=458.0      n=2
+  raw='>476.7'                            num=476.7      n=1
+  raw='>492.0'                            num=492.0      n=1
+  raw='>8000.0'                           num=8000.0     n=1
+  raw='>2204.7'                           num=2204.7     n=1
+  raw='>806.2'                            num=806.2      n=1
+
+--- distribution of value_numeric NULL by analyte ---
+  anti_thyroglobulin        nulls= 1739 / 37647
+  tsh                       nulls=  318 / 559
+  thyroglobulin             nulls=  211 / 36611
+  calcium                   nulls=   63 / 188
+  vitamin_d                 nulls=   50 / 86
+  pth                       nulls=   36 / 200
+
+--- max value_numeric per analyte (post raw) ---
+  anti_thyroglobulin        min=0.1 max=25600.0
+  calcium                   min=1.0 max=2000.0
+  pth                       min=2.0 max=1399.0
+  thyroglobulin             min=0.0 max=9000.0
+  tsh                       min=0.0 max=151.36
+  vitamin_d                 min=12.0 max=68.0
+
+--- archive_pub_v1_0 schema sample ---
+DB list:
+  my_db
+  Thyroid 2026 UPdated
+  thyroid_canonical_publication_v1_0
+  md_information_schema
+  system
+  temp
+
+--- 113 head ---

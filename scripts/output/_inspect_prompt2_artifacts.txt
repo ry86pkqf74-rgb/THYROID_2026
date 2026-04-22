@@ -1,0 +1,426 @@
+==============================================================================
+1. ALL Prompt-2 artifacts in main
+==============================================================================
+Total: 48 tables
+  airway_invasion_event_v1
+  airway_invasion_patient_wide_v1
+  dynamic_risk_response_event_v1
+  dynamic_risk_response_patient_wide_v1
+  frozen_section_event_v1
+  frozen_section_patient_wide_v1
+  functional_outcomes_event_v1
+  functional_outcomes_patient_wide_v1
+  parathyroid_detail_event_v1
+  parathyroid_patient_wide_v1
+  past_medical_hx_event_v1
+  past_medical_hx_patient_wide_v1
+  past_surgical_hx_event_v1
+  past_surgical_hx_patient_wide_v1
+  patient_decision_adherence_event_v1
+  patient_decision_adherence_patient_wide_v1
+  physical_exam_event_v1
+  physical_exam_patient_wide_v1
+  presenting_symptoms_event_v1
+  presenting_symptoms_patient_wide_v1
+  rad_treatment_event_v1
+  rad_treatment_patient_wide_v1
+  vascular_invasion_event_v1
+  vascular_invasion_patient_wide_v1
+  verify_airway_invasion_summary_v1
+  verify_airway_invasion_v1
+  verify_frozen_section_summary_v1
+  verify_frozen_section_v1
+  verify_genetics_per_test_summary_v1
+  verify_genetics_per_test_v1
+  verify_labs_summary_v1
+  verify_labs_v1
+  verify_ln_summary_v1
+  verify_ln_v1
+  verify_operative_summary_v1
+  verify_operative_v1
+  verify_parathyroid_summary_v1
+  verify_parathyroid_v1
+  verify_pathology_synoptics_summary_v1
+  verify_pathology_synoptics_v1
+  verify_rai_summary_v1
+  verify_rai_v1
+  verify_recurrence_summary_v1
+  verify_recurrence_v1
+  verify_us_nodule_summary_v1
+  verify_us_nodule_v1
+  verify_vascular_invasion_summary_v1
+  verify_vascular_invasion_v1
+
+==============================================================================
+2. Schema of every verify_*_summary_v1 table
+==============================================================================
+
+12 summary tables
+
+  verify_airway_invasion_summary_v1  (1 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_frozen_section_summary_v1  (2 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_genetics_per_test_summary_v1  (1 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_labs_summary_v1  (2 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_ln_summary_v1  (2 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_operative_summary_v1  (3 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_parathyroid_summary_v1  (2 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_pathology_synoptics_summary_v1  (11 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_total                             BIGINT
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    n_both_null                         HUGEINT
+    n_excel_nonnull                     HUGEINT
+    n_llm_nonnull                       HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_rai_summary_v1  (2 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_recurrence_summary_v1  (1 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             BIGINT
+    n_disagree                          BIGINT
+    n_excel_only                        BIGINT
+    n_llm_only                          BIGINT
+    pct_agree                           DOUBLE
+
+  verify_us_nodule_summary_v1  (3 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_total                             BIGINT
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    n_both_null                         HUGEINT
+    n_excel_nonnull                     HUGEINT
+    n_llm_nonnull                       HUGEINT
+    pct_agree                           DOUBLE
+
+  verify_vascular_invasion_summary_v1  (1 rows)
+    domain                              VARCHAR
+    field_name                          VARCHAR
+    n_agree                             HUGEINT
+    n_disagree                          HUGEINT
+    n_excel_only                        HUGEINT
+    n_llm_only                          HUGEINT
+    pct_agree                           DOUBLE
+
+--- UNION OF ALL SUMMARY COLS ---
+  domain                               in 12/12 tables
+  field_name                           in 12/12 tables
+  n_agree                              in 12/12 tables
+  n_both_null                          in 2/12 tables
+  n_disagree                           in 12/12 tables
+  n_excel_nonnull                      in 2/12 tables
+  n_excel_only                         in 12/12 tables
+  n_llm_nonnull                        in 2/12 tables
+  n_llm_only                           in 12/12 tables
+  n_total                              in 2/12 tables
+  pct_agree                            in 12/12 tables
+
+==============================================================================
+3. Schema of every verify_*_v1 (non-summary) detail table
+==============================================================================
+
+12 detail tables
+
+  verify_airway_invasion_v1  (10871 rows, 10871 distinct rid)  (4 cols)
+    suffix counts: {'_excel': 1, '_llm': 1, '_concordance': 1}
+    base fields (1): ['extrathyroidal_extension']
+    non-pattern cols: ['research_id']
+
+  verify_frozen_section_v1  (10872 rows, 10872 distinct rid)  (7 cols)
+    suffix counts: {'_excel': 2, '_llm': 2, '_concordance': 2}
+    base fields (2): ['frozen_section_performed', 'frozen_section_result']
+    non-pattern cols: ['research_id']
+
+  verify_genetics_per_test_v1  (10861 rows, 10861 distinct rid)  (4 cols)
+    suffix counts: {'_excel': 1, '_llm': 1, '_concordance': 1}
+    base fields (1): ['platform']
+    non-pattern cols: ['research_id']
+
+  verify_labs_v1  (3760 rows, 3760 distinct rid)  (7 cols)
+    suffix counts: {'_excel': 2, '_llm': 2, '_concordance': 2}
+    base fields (2): ['tg_value', 'tsh_value']
+    non-pattern cols: ['research_id']
+
+  verify_ln_v1  (10871 rows, 10871 distinct rid)  (7 cols)
+    suffix counts: {'_excel': 2, '_llm': 2, '_concordance': 2}
+    base fields (2): ['ln_positive', 'ln_total']
+    non-pattern cols: ['research_id']
+
+  verify_operative_v1  (11422 rows, 11422 distinct rid)  (10 cols)
+    suffix counts: {'_excel': 3, '_llm': 3, '_concordance': 3}
+    base fields (3): ['central_neck_dissection_flag', 'lateral_neck_dissection_flag', 'surgery_type']
+    non-pattern cols: ['research_id']
+
+  verify_parathyroid_v1  (10872 rows, 10872 distinct rid)  (7 cols)
+    suffix counts: {'_excel': 2, '_llm': 2, '_concordance': 2}
+    base fields (2): ['n_pt_autotransplanted', 'n_pt_identified']
+    non-pattern cols: ['research_id']
+
+  verify_pathology_synoptics_v1  (10871 rows, 10871 distinct rid)  (35 cols)
+    suffix counts: {'_excel': 11, '_llm': 11, '_concordance': 11}
+    base fields (11): ['angioinvasion', 'extrathyroidal_extension', 'histologic_type', 'ln_examined', 'ln_involved', 'lymphatic_invasion', 'margin_status', 'n_stage', 'perineural_invasion', 'size_greatest_dimension_cm', 't_stage']
+    non-pattern cols: ['research_id', 'excel_source_workbook']
+
+  verify_rai_v1  (1148 rows, 1148 distinct rid)  (7 cols)
+    suffix counts: {'_excel': 2, '_llm': 2, '_concordance': 2}
+    base fields (2): ['rai_dose_mci', 'rai_indication']
+    non-pattern cols: ['research_id']
+
+  verify_recurrence_v1  (10871 rows, 10871 distinct rid)  (10 cols)
+    suffix counts: {'_llm': 3, '_excel': 3, '_concordance': 3}
+    base fields (3): ['recurrence_confirmed', 'recurrence_date', 'recurrence_site']
+    non-pattern cols: ['research_id']
+
+  verify_us_nodule_v1  (6126 rows, 6126 distinct rid)  (10 cols)
+    suffix counts: {'_excel': 3, '_llm': 3, '_concordance': 3}
+    base fields (3): ['max_nodule_size_cm', 'nodule_count', 'tirads_category_max']
+    non-pattern cols: ['research_id']
+
+  verify_vascular_invasion_v1  (10871 rows, 10871 distinct rid)  (4 cols)
+    suffix counts: {'_excel': 1, '_llm': 1, '_concordance': 1}
+    base fields (1): ['lymphovascular_invasion']
+    non-pattern cols: ['research_id']
+
+==============================================================================
+4. Schema of every *_patient_wide_v1 table
+==============================================================================
+
+12 wide tables
+
+  airway_invasion_patient_wide_v1  (1805 rows, 1805 distinct rid, 12 cols)
+    research_id                                   VARCHAR
+    ai_any_positive_flag                          BOOLEAN
+    ai_first_positive_date                        VARCHAR
+    ai_last_positive_date                         VARCHAR
+    ai_n_notes_positive                           BIGINT
+    ai_max_extent_rank                            INTEGER
+    ai_max_extent                                 VARCHAR
+    ai_first_positive_source_note_ref             VARCHAR
+    ...(4 more)
+
+  dynamic_risk_response_patient_wide_v1  (25 rows, 25 distinct rid, 9 cols)
+    research_id                                   VARCHAR
+    drr_latest_category                           VARCHAR
+    drr_latest_source_note_ref                    VARCHAR
+    drr_latest_note_date                          VARCHAR
+    drr_latest_evidence_text                      VARCHAR
+    drr_worst_category_ever                       VARCHAR
+    drr_worst_category_date                       VARCHAR
+    drr_worst_category_source_note_ref            VARCHAR
+    ...(1 more)
+
+  frozen_section_patient_wide_v1  (3535 rows, 3535 distinct rid, 47 cols)
+    research_id                                   VARCHAR
+    n_frozen_events                               BIGINT
+    any_frozen_performed_flag                     BOOLEAN
+    first_frozen_performed_date                   VARCHAR
+    last_frozen_performed_date                    VARCHAR
+    any_frozen_malignant_result_flag              BOOLEAN
+    first_malignant_frozen_date                   VARCHAR
+    any_frozen_deferred_flag                      BOOLEAN
+    ...(39 more)
+
+  functional_outcomes_patient_wide_v1  (1842 rows, 1842 distinct rid, 27 cols)
+    research_id                                   VARCHAR
+    voice_symptom_postop_flag                     BOOLEAN
+    voice_symptom_postop_first_date               VARCHAR
+    voice_symptom_postop_first_source_note_ref    VARCHAR
+    voice_symptom_postop_first_evidence_text      VARCHAR
+    voice_symptom_postop_last_date                VARCHAR
+    voice_symptom_postop_last_source_note_ref     VARCHAR
+    voice_symptom_postop_last_evidence_text       VARCHAR
+    ...(19 more)
+
+  parathyroid_patient_wide_v1  (3706 rows, 3706 distinct rid, 21 cols)
+    research_id                                   VARCHAR
+    n_pt_identified                               BIGINT
+    n_pt_preserved                                BIGINT
+    n_pt_autotransplanted                         BIGINT
+    n_pt_removed                                  BIGINT
+    any_ischemic_change_flag                      BOOLEAN
+    first_ischemic_date                           VARCHAR
+    first_ischemic_source_note_ref                VARCHAR
+    ...(13 more)
+
+  past_medical_hx_patient_wide_v1  (295 rows, 295 distinct rid, 16 cols)
+    research_id                                   VARCHAR
+    had_prior_neck_radiation_flag                 BOOLEAN
+    prior_neck_radiation_first_date               VARCHAR
+    prior_neck_radiation_first_source_note_ref    VARCHAR
+    prior_neck_radiation_first_evidence_text      VARCHAR
+    prior_neck_radiation_n_notes_documenting      BIGINT
+    had_prior_cancer_flag                         BOOLEAN
+    prior_cancer_first_date                       VARCHAR
+    ...(8 more)
+
+  past_surgical_hx_patient_wide_v1  (1878 rows, 1878 distinct rid, 13 cols)
+    research_id                                   VARCHAR
+    had_prior_thyroid_surgery_flag                BOOLEAN
+    prior_thyroid_surgery_first_date              VARCHAR
+    prior_thyroid_surgery_first_documentation_source_note_ref VARCHAR
+    prior_thyroid_surgery_first_evidence_text     VARCHAR
+    prior_thyroid_surgery_n_notes_documenting     BIGINT
+    prior_thyroid_surgery_type_primary            VARCHAR
+    prior_thyroid_surgery_type_primary_source_note_ref VARCHAR
+    ...(5 more)
+
+  patient_decision_adherence_patient_wide_v1  (398 rows, 398 distinct rid, 17 cols)
+    research_id                                   VARCHAR
+    any_declined_surgery_flag                     BOOLEAN
+    declined_surgery_first_date                   VARCHAR
+    declined_surgery_first_source_note_ref        VARCHAR
+    declined_surgery_first_evidence_text          VARCHAR
+    declined_surgery_n_notes                      BIGINT
+    any_declined_rai_flag                         BOOLEAN
+    declined_rai_first_date                       VARCHAR
+    ...(9 more)
+
+  physical_exam_patient_wide_v1  (522 rows, 522 distinct rid, 22 cols)
+    research_id                                   VARCHAR
+    pe_palpable_thyroid_mass_flag                 BOOLEAN
+    pe_palpable_thyroid_mass_first_date           VARCHAR
+    pe_palpable_thyroid_mass_first_source_note_ref VARCHAR
+    pe_palpable_thyroid_mass_first_evidence_text  VARCHAR
+    pe_palpable_thyroid_mass_last_date            VARCHAR
+    pe_palpable_thyroid_mass_last_source_note_ref VARCHAR
+    pe_palpable_thyroid_mass_n_notes_documenting  BIGINT
+    ...(14 more)
+
+  presenting_symptoms_patient_wide_v1  (120 rows, 120 distinct rid, 9 cols)
+    research_id                                   VARCHAR
+    presenting_symptom_primary                    VARCHAR
+    presenting_symptom_primary_source_note_ref    VARCHAR
+    presenting_symptom_primary_note_date          VARCHAR
+    presenting_symptom_primary_evidence_text      VARCHAR
+    was_symptomatic_at_presentation_flag          BOOLEAN
+    symptomatic_first_date                        VARCHAR
+    symptomatic_first_source_note_ref             VARCHAR
+    ...(1 more)
+
+  rad_treatment_patient_wide_v1  (213 rows, 213 distinct rid, 11 cols)
+    research_id                                   VARCHAR
+    had_external_beam_radiation_flag              BOOLEAN
+    ebrt_first_treatment_date                     VARCHAR
+    ebrt_first_treatment_source_note_ref          VARCHAR
+    ebrt_first_treatment_evidence_text            VARCHAR
+    ebrt_last_treatment_date                      VARCHAR
+    ebrt_n_notes_documenting                      BIGINT
+    rt_modality_primary                           VARCHAR
+    ...(3 more)
+
+  vascular_invasion_patient_wide_v1  (4215 rows, 4215 distinct rid, 20 cols)
+    research_id                                   VARCHAR
+    vi_any_positive_flag                          BOOLEAN
+    vi_first_positive_date                        VARCHAR
+    vi_last_positive_date                         VARCHAR
+    vi_n_notes_positive                           BIGINT
+    vi_any_negative_flag                          BOOLEAN
+    vi_first_negative_date                        VARCHAR
+    vi_extensive_flag                             BOOLEAN
+    ...(12 more)
+
+==============================================================================
+5. Schema of every *_event_v1 table
+==============================================================================
+
+12 event tables
+  airway_invasion_event_v1: 11601 rows, 15 cols
+  dynamic_risk_response_event_v1: 53 rows, 14 cols
+  frozen_section_event_v1: 8640 rows, 18 cols
+  functional_outcomes_event_v1: 3322 rows, 15 cols
+  parathyroid_detail_event_v1: 10130 rows, 15 cols
+  past_medical_hx_event_v1: 865 rows, 18 cols
+  past_surgical_hx_event_v1: 3919 rows, 17 cols
+  patient_decision_adherence_event_v1: 641 rows, 15 cols
+  physical_exam_event_v1: 2025 rows, 17 cols
+  presenting_symptoms_event_v1: 280 rows, 15 cols
+  rad_treatment_event_v1: 580 rows, 14 cols
+  vascular_invasion_event_v1: 22800 rows, 15 cols
+
+==============================================================================
+6. Existing schemas in publication DB
+==============================================================================
+  main: 166 tables, 2 views
+  manuscript_workspace: 40 tables, 68 views
+  views_readable: 0 tables, 46 views
+
+==============================================================================
+7. Existence of operational tables (logs)
+==============================================================================
+  thyroid_canonical_publication_v1_0.manuscript_workspace.archive_move_log_v1: EXISTS
+  thyroid_canonical_publication_v1_0.manuscript_workspace.schema_reorg_move_log_v1: MISSING
+  thyroid_canonical_publication_v1_0.manuscript_workspace.schema_reorg_orphan_references_v1: MISSING
+  Thyroid 2026 UPdated.archive_pub_v1_0: 255 archive tables
+
+DONE.

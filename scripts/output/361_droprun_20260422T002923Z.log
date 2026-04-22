@@ -1,0 +1,25 @@
+[INFO] [00:29:24.049Z] Run config: do_writes=True, phases=['7'], BUILD_TS=20260422_002924
+[INFO] [00:29:24.052Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:29:25.509Z] ==============================================================================
+[INFO] [00:29:25.509Z] STEP 7 — Drop deprecated tables
+[INFO] [00:29:25.509Z] ==============================================================================
+[INFO] [00:29:25.884Z]   parity verified: main.canonical_tumor_characteristics_v1 (11,106 rows) <- canonical_tumor_characteristics_v1_pre361_20260422_002245
+[INFO] [00:29:25.962Z]   parity verified: main.canonical_benign_diagnosis_v1 (6,818 rows) <- canonical_benign_diagnosis_v1_pre361_20260422_002245
+[INFO] [00:29:26.016Z]   parity verified: main.canonical_malignant_diagnosis_v1 (4,441 rows) <- canonical_malignant_diagnosis_v1_pre361_20260422_002245
+[INFO] [00:29:26.071Z]   parity verified: main.canonical_diagnosis_unified_v1 (11,028 rows) <- canonical_diagnosis_unified_v1_pre361_20260422_002245
+[INFO] [00:29:26.127Z]   parity verified: main.tumor_episode_master_v2 (11,691 rows) <- tumor_episode_master_v2_pre361_20260422_002245
+[INFO] [00:29:26.180Z]   parity verified: main.synoptic_tumor_long_v1 (11,103 rows) <- synoptic_tumor_long_v1_pre361_20260422_002245
+[INFO] [00:29:26.231Z]   parity verified: main.path_outcome_classification_v1 (10,871 rows) <- path_outcome_classification_v1_pre361_20260422_002245
+[WARN] [00:29:26.274Z]   view dependency lookup failed (non-fatal): Catalog Error: Table with name view_table_usage does not exist!
+Did you mean "views"?
+
+LINE 1: SELECT view_schema, view_name FROM information_schema.view_table_usage WHERE view_catalog ...
+                                           ^
+[INFO] [00:29:26.307Z]   DROP TABLE main.canonical_tumor_characteristics_v1
+[INFO] [00:29:26.528Z]   DROP TABLE main.canonical_benign_diagnosis_v1
+[INFO] [00:29:27.386Z]   DROP TABLE main.canonical_malignant_diagnosis_v1
+[INFO] [00:29:27.553Z]   DROP TABLE main.canonical_diagnosis_unified_v1
+[INFO] [00:29:27.709Z]   DROP TABLE main.tumor_episode_master_v2
+[INFO] [00:29:27.864Z]   DROP TABLE main.synoptic_tumor_long_v1
+[INFO] [00:29:28.023Z]   DROP TABLE main.path_outcome_classification_v1
+[INFO] [00:29:28.147Z] Script 361 complete.

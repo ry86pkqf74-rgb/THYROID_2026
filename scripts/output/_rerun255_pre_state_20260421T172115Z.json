@@ -1,0 +1,47 @@
+{
+  "utc": "20260421T172115Z",
+  "rollups": {
+    "tg_postop_surveillance_windows_v1": {
+      "rows": 16184,
+      "distinct_research_id": 3250,
+      "hash": "23e3633634b43d8bdc8d4642eaf8a97e",
+      "archive": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"tg_postop_surveillance_windows_v1_pre255rerun_20260421T172115Z\""
+    },
+    "tg_timeline_patient_summary_v1": {
+      "rows": 3258,
+      "distinct_research_id": 3258,
+      "hash": "b46635f3d1e8882f7d7b615963050559",
+      "archive": "\"Thyroid 2026 UPdated\".\"archive_pub_v1_0\".\"tg_timeline_patient_summary_v1_pre255rerun_20260421T172115Z\""
+    }
+  },
+  "per_analyte": {
+    "canonical_labs_thyroglobulin_v1": {
+      "rows": 53006,
+      "hash": "4a242c666ab720080554a7441287c309"
+    },
+    "canonical_labs_tsh_v1": {
+      "rows": 556,
+      "hash": "06497351a843ba6ddcc3a9e038c5a08e"
+    },
+    "canonical_labs_pth_v1": {
+      "rows": 200,
+      "hash": "52817c5f2b6c42dd2efa1e695798386a"
+    },
+    "canonical_labs_calcium_v1": {
+      "rows": 187,
+      "hash": "ca66566c1681f4a9a1c89df7cf116d21"
+    },
+    "canonical_labs_vitamin_d_v1": {
+      "rows": 86,
+      "hash": "4d4fd50059da9ab73b6e56e6f87f003c"
+    }
+  },
+  "views": {
+    "longitudinal_lab_VIEW_v1": {
+      "rows": 54035
+    },
+    "thyroglobulin_lab_VIEW_v1": {
+      "rows": 53006
+    }
+  }
+}

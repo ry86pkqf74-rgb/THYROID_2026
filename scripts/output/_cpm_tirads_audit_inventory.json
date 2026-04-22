@@ -1,0 +1,416 @@
+{
+  "database": "thyroid_canonical_publication_v1_0",
+  "table": "main.canonical_patient_master",
+  "total_columns": 1585,
+  "tirads_related_total": 58,
+  "audit_columns": [
+    {
+      "name": "imaging_tirads_source",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 251,
+      "n_populated": 3474
+    },
+    {
+      "name": "max_tirads_ever",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 333,
+      "n_populated": 3439
+    },
+    {
+      "name": "preop_tirads_best",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 729,
+      "n_populated": 3474
+    },
+    {
+      "name": "preop_tirads_category",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 730,
+      "n_populated": 3474
+    },
+    {
+      "name": "preop_tirads_worst",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 731,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_best_category_v12",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 944,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_best_combined",
+      "type": "INTEGER",
+      "nullable": "YES",
+      "pos": 945,
+      "n_populated": 3439
+    },
+    {
+      "name": "tirads_best_score_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 946,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_concordant_count_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 947,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_has_acr_recalc_v12",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 948,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_mismatch_count_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 949,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_n_nodule_records_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 950,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_n_sources_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 951,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_nodule_size_max_mm_v12",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 952,
+      "n_populated": 3439
+    },
+    {
+      "name": "tirads_nodules_scored_combined",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 953,
+      "n_populated": 3439
+    },
+    {
+      "name": "tirads_reliability_v12",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 954,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_source_v12",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 955,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_worst_category_v12",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 956,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_worst_combined",
+      "type": "INTEGER",
+      "nullable": "YES",
+      "pos": 957,
+      "n_populated": 3439
+    },
+    {
+      "name": "tirads_worst_score_v12",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 958,
+      "n_populated": 3474
+    },
+    {
+      "name": "worst_tirads_category",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 992,
+      "n_populated": 3439
+    },
+    {
+      "name": "imaging_tirads_best",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 1249,
+      "n_populated": 3474
+    },
+    {
+      "name": "imaging_updated_tirads_category_cpm_v1",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1250,
+      "n_populated": 3474
+    },
+    {
+      "name": "imaging_tirads_worst",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 1251,
+      "n_populated": 3474
+    },
+    {
+      "name": "tirads_worst_points_v271",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1514,
+      "n_populated": 1326
+    },
+    {
+      "name": "tirads_best_points_v271",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1515,
+      "n_populated": 1326
+    },
+    {
+      "name": "tirads_source_system_v271",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1516,
+      "n_populated": 1326
+    },
+    {
+      "name": "imaging_laterality_rollup",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1517,
+      "n_populated": 3439
+    },
+    {
+      "name": "pathology_vs_imaging_laterality_concordant",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1519,
+      "n_populated": 3364
+    },
+    {
+      "name": "tumor_pathology_laterality_v271b",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1520,
+      "n_populated": 3986
+    },
+    {
+      "name": "imaging_laterality_rollup_v271b",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1525,
+      "n_populated": 3439
+    },
+    {
+      "name": "pathology_vs_imaging_laterality_concordant_v271b",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1526,
+      "n_populated": 10871
+    },
+    {
+      "name": "tirads_v2_n_nodules_scored",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 1527,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_worst_category",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1528,
+      "n_populated": 2819
+    },
+    {
+      "name": "tirads_v2_max_points",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1529,
+      "n_populated": 1357
+    },
+    {
+      "name": "tirads_v2_largest_nodule_cm",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1530,
+      "n_populated": 2440
+    },
+    {
+      "name": "tirads_v2_any_ete_on_us",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1531,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_any_interval_growth",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1532,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_any_fna_recommended",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1533,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_n_reports",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 1534,
+      "n_populated": 4073
+    },
+    {
+      "name": "tirads_v2_any_suspicious_ln_on_us",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1535,
+      "n_populated": 1498
+    },
+    {
+      "name": "tirads_v2_shortest_followup_months",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1536,
+      "n_populated": 806
+    },
+    {
+      "name": "tirads_v2_worst_rank",
+      "type": "INTEGER",
+      "nullable": "YES",
+      "pos": 1551,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_worst_rank_source",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1552,
+      "n_populated": 2465
+    },
+    {
+      "name": "tirads_v2_any_fna_recommended_report",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 1553,
+      "n_populated": 4073
+    },
+    {
+      "name": "tirads_v2_any_fna_recommended_report_source",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1554,
+      "n_populated": 4073
+    },
+    {
+      "name": "imaging_tirads_best_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1575,
+      "n_populated": 1226
+    },
+    {
+      "name": "imaging_tirads_worst_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1576,
+      "n_populated": 1226
+    },
+    {
+      "name": "imaging_updated_tirads_category_cpm_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1577,
+      "n_populated": 1226
+    },
+    {
+      "name": "imaging_laterality_rollup_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1578,
+      "n_populated": 3439
+    },
+    {
+      "name": "max_tirads_ever_v2",
+      "type": "DOUBLE",
+      "nullable": "YES",
+      "pos": 1579,
+      "n_populated": 1300
+    },
+    {
+      "name": "preop_tirads_best_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1580,
+      "n_populated": 1043
+    },
+    {
+      "name": "preop_tirads_category_v2",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 1581,
+      "n_populated": 1043
+    }
+  ],
+  "nlp_columns": [
+    {
+      "name": "nlp_tirads_has_component_detail",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 505,
+      "n_populated": 1714
+    },
+    {
+      "name": "nlp_tirads_has_data",
+      "type": "BOOLEAN",
+      "nullable": "YES",
+      "pos": 506,
+      "n_populated": 1715
+    },
+    {
+      "name": "nlp_tirads_max_category",
+      "type": "VARCHAR",
+      "nullable": "YES",
+      "pos": 507,
+      "n_populated": 1714
+    },
+    {
+      "name": "nlp_tirads_n_entities",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 508,
+      "n_populated": 1715
+    },
+    {
+      "name": "nlp_tirads_n_notes",
+      "type": "BIGINT",
+      "nullable": "YES",
+      "pos": 509,
+      "n_populated": 1715
+    }
+  ]
+}

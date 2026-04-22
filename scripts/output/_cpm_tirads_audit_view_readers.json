@@ -1,0 +1,55 @@
+{
+  "preop_tirads_category": [
+    "manuscript_workspace.cohort_m025_tirads_performance_v1",
+    "manuscript_workspace.cohort_m045_multimodal_risk_v1"
+  ],
+  "tirads_best_category_v12": [
+    "manuscript_workspace.cohort_descriptive_full_cohort_v1",
+    "manuscript_workspace.cohort_m011_tirads_fna_genetics_v1",
+    "manuscript_workspace.cohort_m025_tirads_performance_v1",
+    "manuscript_workspace.cohort_m045_multimodal_risk_v1",
+    "manuscript_workspace.cohort_m053_nondiagnostic_fna_v1",
+    "manuscript_workspace.cohort_m064_frozen_decision_v1",
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1",
+    "manuscript_workspace.cohort_m076_ln_surveillance_v1"
+  ],
+  "tirads_best_score_v12": [
+    "manuscript_workspace.cohort_descriptive_full_cohort_v1",
+    "manuscript_workspace.cohort_m011_tirads_fna_genetics_v1",
+    "manuscript_workspace.cohort_m025_tirads_performance_v1",
+    "manuscript_workspace.cohort_m045_multimodal_risk_v1",
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ],
+  "tirads_concordant_count_v12": [
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ],
+  "tirads_mismatch_count_v12": [
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ],
+  "tirads_n_nodule_records_v12": [
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ],
+  "tirads_n_sources_v12": [
+    "manuscript_workspace.cohort_m025_tirads_performance_v1"
+  ],
+  "tirads_nodule_size_max_mm_v12": [
+    "manuscript_workspace.cohort_descriptive_full_cohort_v1",
+    "manuscript_workspace.cohort_m011_tirads_fna_genetics_v1",
+    "manuscript_workspace.cohort_m050_tumor_size_volume_v1",
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ],
+  "tirads_reliability_v12": [
+    "manuscript_workspace.cohort_m025_tirads_performance_v1"
+  ],
+  "tirads_worst_category_v12": [
+    "manuscript_workspace.cohort_descriptive_full_cohort_v1",
+    "manuscript_workspace.cohort_m011_tirads_fna_genetics_v1",
+    "manuscript_workspace.cohort_m025_tirads_performance_v1",
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1",
+    "manuscript_workspace.cohort_m076_ln_surveillance_v1"
+  ],
+  "tirads_worst_score_v12": [
+    "manuscript_workspace.cohort_m025_tirads_performance_v1",
+    "manuscript_workspace.cohort_m075_tirads_multi_nodule_v1"
+  ]
+}

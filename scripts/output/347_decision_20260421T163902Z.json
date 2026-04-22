@@ -1,0 +1,98 @@
+{
+  "script": "347",
+  "run_ts": "20260421T163902Z",
+  "do_writes": false,
+  "archive_dests": {
+    "longitudinal_lab_canonical_v1": {
+      "dest": "longitudinal_lab_canonical_v1_pre347_20260421T163902Z",
+      "rows": 75291,
+      "dry_run": true
+    },
+    "thyroglobulin_lab_canonical_v1": {
+      "dest": "thyroglobulin_lab_canonical_v1_pre347_20260421T163902Z",
+      "rows": 74258,
+      "dry_run": true
+    },
+    "lab_cross_wave_dedup_map_v1": {
+      "dest": "lab_cross_wave_dedup_map_v1_pre347_20260421T163902Z",
+      "rows": 21761,
+      "dry_run": true
+    }
+  },
+  "verify_results": {
+    "n_pass": 0,
+    "n_fail": 0,
+    "table_rows": {
+      "canonical_labs_thyroglobulin_v1": 0,
+      "canonical_labs_tsh_v1": 0,
+      "canonical_labs_pth_v1": 0,
+      "canonical_labs_calcium_v1": 0,
+      "canonical_labs_vitamin_d_v1": 0
+    }
+  },
+  "patched_scripts": [
+    {
+      "path": "scripts/203_canonical_recurrence.py",
+      "pyflakes_ok": false,
+      "ast_ok": true,
+      "pyflakes_output": "/Users/ros/THyroid 2026/scripts/203_canonical_recurrence.py:319:5: local variable '_persistent_rids' is assigned to but never used\n"
+    },
+    {
+      "path": "scripts/223_ingest_and_publish.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/223_publish_canonical.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/253_lab_orphan_triage.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/255_rebuild_rai_tg_rollups.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/272_canonical_cleanup_phase1.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/273_canonical_cleanup_phase2_3.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/277_canonical_cleanup_phase7_verification.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/286_cpm_missing_data_backfill.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    },
+    {
+      "path": "scripts/prompt6_349_max_stimulated_tg.py",
+      "pyflakes_ok": false,
+      "ast_ok": true,
+      "pyflakes_output": "/Users/ros/THyroid 2026/scripts/prompt6_349_max_stimulated_tg.py:42:1: 'datetime.datetime' imported but unused\n/Users/ros/THyroid 2026/scripts/prompt6_349_max_stimulated_tg.py:42:1: 'datetime.timezone' imported but unused\n"
+    },
+    {
+      "path": "scripts/prompt6_352_wiring_gap_sweep.py",
+      "pyflakes_ok": false,
+      "ast_ok": true,
+      "pyflakes_output": "/Users/ros/THyroid 2026/scripts/prompt6_352_wiring_gap_sweep.py:34:1: 'datetime.datetime' imported but unused\n/Users/ros/THyroid 2026/scripts/prompt6_352_wiring_gap_sweep.py:34:1: 'datetime.timezone' imported but unused\n"
+    },
+    {
+      "path": "scripts/113_tg_lab_ingestion.py",
+      "pyflakes_ok": true,
+      "ast_ok": true
+    }
+  ]
+}

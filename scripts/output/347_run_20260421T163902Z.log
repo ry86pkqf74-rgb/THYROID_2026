@@ -1,0 +1,50 @@
+[16:39:02.165Z] === Script 347 DRY-RUN ===
+[16:39:02.806Z]   CPM invariant (pre): rows=10871 dist_rid=10871 null_fna=0
+[16:39:02.806Z] === PHASE 1 — archive snapshots ===
+[16:39:02.829Z]   source main.longitudinal_lab_canonical_v1: 75,291 rows -> longitudinal_lab_canonical_v1_pre347_20260421T163902Z
+[16:39:02.853Z]   source main.thyroglobulin_lab_canonical_v1: 74,258 rows -> thyroglobulin_lab_canonical_v1_pre347_20260421T163902Z
+[16:39:02.875Z]   source main.lab_cross_wave_dedup_map_v1: 21,761 rows -> lab_cross_wave_dedup_map_v1_pre347_20260421T163902Z
+[16:39:02.875Z] === PHASE 2A — pulling source rows ===
+[16:39:03.611Z]   pulled 75,291 rows from longitudinal+thyroglobulin join
+[16:39:04.198Z]   normalized 75,291 rows; 0 unit-converted
+[16:39:04.198Z]   staging canonical_labs_thyroglobulin_v1: 74,258 pre-dedup rows
+[16:39:04.198Z]   staging canonical_labs_tsh_v1: 559 pre-dedup rows
+[16:39:04.198Z]   staging canonical_labs_vitamin_d_v1: 86 pre-dedup rows
+[16:39:04.198Z]   staging canonical_labs_calcium_v1: 188 pre-dedup rows
+[16:39:04.198Z]   staging canonical_labs_pth_v1: 200 pre-dedup rows
+[16:39:04.198Z] === PHASE 2B — write per-analyte tables (with dedup) ===
+[16:39:04.260Z]   canonical_labs_thyroglobulin_v1: 74,258 pre-dedup rows -> staging_df register
+[16:39:04.320Z]     [dry-run] canonical_labs_thyroglobulin_v1 would have 53,006 rows post-dedup
+[16:39:04.324Z]   canonical_labs_tsh_v1: 559 pre-dedup rows -> staging_df register
+[16:39:04.330Z]     [dry-run] canonical_labs_tsh_v1 would have 540 rows post-dedup
+[16:39:04.331Z]   canonical_labs_vitamin_d_v1: 86 pre-dedup rows -> staging_df register
+[16:39:04.335Z]     [dry-run] canonical_labs_vitamin_d_v1 would have 86 rows post-dedup
+[16:39:04.335Z]   canonical_labs_calcium_v1: 188 pre-dedup rows -> staging_df register
+[16:39:04.339Z]     [dry-run] canonical_labs_calcium_v1 would have 184 rows post-dedup
+[16:39:04.340Z]   canonical_labs_pth_v1: 200 pre-dedup rows -> staging_df register
+[16:39:04.343Z]     [dry-run] canonical_labs_pth_v1 would have 196 rows post-dedup
+[16:39:04.344Z] === PHASE 3 — write compatibility views ===
+[16:39:04.344Z]   [dry-run] skip view DDL
+[16:39:04.344Z] === PHASE 4 — drop legacy lab objects ===
+[16:39:04.344Z]   [dry-run] would drop VIEW main.longitudinal_lab_canonical_cancer_only_v1
+[16:39:04.344Z]   [dry-run] would drop VIEW main.thyroglobulin_lab_canonical_cancer_only_v1
+[16:39:04.344Z]   [dry-run] would drop TABLE main.longitudinal_lab_canonical_v1
+[16:39:04.344Z]   [dry-run] would drop TABLE main.thyroglobulin_lab_canonical_v1
+[16:39:04.344Z]   [dry-run] would drop TABLE main.lab_cross_wave_dedup_map_v1
+[16:39:04.344Z] === PHASE 5 — registry update ===
+[16:39:04.520Z]   registry columns: ['canonical_version', 'description', 'detail_table_name', 'domain', 'feeds_master_columns', 'feeds_master_columns_array', 'feeds_master_columns_secondary', 'grain', 'join_key', 'needs_manual_review', 'schema_name', 'total_patients', 'total_rows']
+[16:39:04.520Z]   [dry-run] skip registry mutations
+[16:39:04.520Z] === PHASE 6 — readable views ===
+[16:39:04.520Z]   [dry-run] would drop views_readable.Labs_Tg_Cancer_Only
+[16:39:04.520Z]   [dry-run] would drop views_readable.Labs_Longitudinal_Cancer_Only
+[16:39:04.520Z]   [dry-run] would drop views_readable.Labs_Longitudinal_All
+[16:39:04.520Z]   [dry-run] would drop views_readable.Labs_Tg_Longitudinal
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_Thyroglobulin
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_TSH
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_PTH
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_Calcium
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_VitaminD
+[16:39:04.520Z]   [dry-run] would create views_readable.Labs_Longitudinal
+[16:39:04.520Z] === PHASE 7 — verification SKIPPED in dry-run ===
+[16:39:05.227Z] decision log: scripts/output/347_decision_20260421T163902Z.json
+[16:39:05.275Z]   CPM invariant (final): rows=10871 dist_rid=10871 null_fna=0

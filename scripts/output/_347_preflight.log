@@ -1,0 +1,127 @@
+Connected to thyroid_canonical_publication_v1_0
+
+CPM invariant: rows=10871 dist_rid=10871 null_fna=0 (PASS)
+
+--- PRE-STATE inventory ---
+  main.longitudinal_lab_canonical_v1                    rows= 75,291 pts=3,581
+  main.thyroglobulin_lab_canonical_v1                   rows= 74,258 pts=3,124
+  main.lab_cross_wave_dedup_map_v1                      rows= 21,761 pts=1,796
+  main.tg_postop_surveillance_windows_v1                rows= 16,184 pts=3,250
+  main.tg_timeline_patient_summary_v1                   rows=  3,258 pts=3,258
+  main.note_entities_llm_labs                           rows= 11,037 pts=5,641
+
+--- existing cancer_only / VIEW objects ---
+  archive_pub_v1_0.extracted_postop_labs_expanded_v1_pre235_backup_20260416  (BASE TABLE)
+  archive_pub_v1_0.extracted_postop_labs_expanded_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.extracted_postop_labs_expanded_v1_pre346_20260421T125134Z  (BASE TABLE)
+  archive_pub_v1_0.lab_cross_wave_dedup_map_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.longitudinal_lab_canonical_v1_orphans_pre253_20260417T015343Z  (BASE TABLE)
+  archive_pub_v1_0.longitudinal_lab_canonical_v1_pre235_backup_20260416  (BASE TABLE)
+  archive_pub_v1_0.longitudinal_lab_canonical_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.note_entities_llm_labs_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.note_entities_llm_tg_kinetics_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.tg_postop_surveillance_windows_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.tg_timeline_patient_summary_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.thyroglobulin_lab_canonical_v1_orphans_pre253_20260417T015343Z  (BASE TABLE)
+  archive_pub_v1_0.thyroglobulin_lab_canonical_v1_pre251_20260417T012311Z  (BASE TABLE)
+  archive_pub_v1_0.verify_labs_summary_v1_preSCHEMAREORG_20260421T053234Z  (BASE TABLE)
+  archive_pub_v1_0.verify_labs_v1_preSCHEMAREORG_20260421T053440Z  (BASE TABLE)
+  main.lab_cross_wave_dedup_map_v1  (BASE TABLE)
+  main.longitudinal_lab_canonical_cancer_only_v1  (VIEW)
+  main.longitudinal_lab_canonical_v1  (BASE TABLE)
+  main.note_entities_llm_labs  (BASE TABLE)
+  main.note_entities_llm_tg_kinetics  (BASE TABLE)
+  main.tg_postop_surveillance_windows_v1  (BASE TABLE)
+  main.tg_timeline_patient_summary_v1  (BASE TABLE)
+  main.thyroglobulin_lab_canonical_cancer_only_v1  (VIEW)
+  main.thyroglobulin_lab_canonical_v1  (BASE TABLE)
+  views_readable.Labs_Longitudinal_All  (VIEW)
+  views_readable.Labs_Longitudinal_Cancer_Only  (VIEW)
+  views_readable.Labs_Tg_Cancer_Only  (VIEW)
+  views_readable.Labs_Tg_Longitudinal  (VIEW)
+  views_readable.Labs_Tg_Postop_Surveillance  (VIEW)
+
+--- longitudinal_lab_canonical_v1 columns ---
+  research_id                              BIGINT
+  lab_date                                 DATE
+  lab_date_status                          VARCHAR
+  lab_name_raw                             VARCHAR
+  lab_name_standardized                    VARCHAR
+  analyte_group                            VARCHAR
+  value_raw                                VARCHAR
+  value_numeric                            DOUBLE
+  unit_raw                                 INTEGER
+  unit_standardized                        VARCHAR
+  reference_range                          INTEGER
+  abnormal_flag                            INTEGER
+  is_censored                              BOOLEAN
+  source_table                             VARCHAR
+  source_script                            VARCHAR
+  ingestion_wave                           VARCHAR
+  data_completeness_tier                   VARCHAR
+  provenance_note                          VARCHAR
+  value_corrected                          DOUBLE
+  calcium_correction_applied               VARCHAR
+  is_in_canonical_cancer_cohort            BOOLEAN
+
+--- thyroglobulin_lab_canonical_v1 columns ---
+  research_id                              BIGINT
+  analyte                                  VARCHAR
+  assay_method                             VARCHAR
+  test_name_raw                            VARCHAR
+  specimen_collect_dt                      TIMESTAMP_NS
+  order_dt                                 TIMESTAMP_NS
+  result_raw                               VARCHAR
+  result_numeric                           DOUBLE
+  result_qualifier                         VARCHAR
+  result_flag                              VARCHAR
+  days_from_surgery                        BIGINT
+  temporal_window                          VARCHAR
+  surg_date                                TIMESTAMP_NS
+  race                                     VARCHAR
+  gender                                   VARCHAR
+  age_at_surgery                           BIGINT
+  thyroid_procedure                        VARCHAR
+  disambiguation_method                    VARCHAR
+  disambiguation_confidence                DOUBLE
+  ingestion_script                         VARCHAR
+  ingestion_date                           TIMESTAMP
+  is_in_canonical_cancer_cohort            BOOLEAN
+
+--- longitudinal_lab_canonical_v1 per-analyte counts ---
+  anti_thyroglobulin        rows= 37647 pts= 3038
+  thyroglobulin             rows= 36611 pts= 2925
+  tsh                       rows=   559 pts=  449
+  pth                       rows=   200 pts=  184
+  calcium                   rows=   188 pts=  166
+  vitamin_d                 rows=    86 pts=   82
+
+--- longitudinal_lab_canonical_v1: ingestion_wave x source_table x analyte (top 50) ---
+  wave=wave_tgab_structured_ehr            src=thyroglobulin_lab_canonical_v1                   lab=anti_thyroglobulin     n=37647
+  wave=wave_tg_structured_ehr              src=thyroglobulin_lab_canonical_v1                   lab=thyroglobulin          n=36611
+  wave=final_institutional_20260407        src=canonical_extracted_fact_long_v2                 lab=tsh                    n=515
+  wave=final_institutional_20260407        src=extracted_postop_labs_expanded_v1                lab=pth                    n=130
+  wave=final_institutional_20260407        src=canonical_extracted_fact_long_v2                 lab=calcium                n=128
+  wave=final_institutional_20260407        src=canonical_extracted_fact_long_v2                 lab=vitamin_d              n=86
+  wave=final_institutional_20260407        src=canonical_extracted_fact_long_v2                 lab=pth                    n=70
+  wave=final_institutional_20260407        src=extracted_postop_labs_expanded_v1                lab=calcium                n=60
+  wave=llm_notes                           src=note_entities_llm_labs                           lab=tsh                    n=44
+
+--- detail_table_registry_v1 columns ---
+--- registry rows for lab tables ---
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/output/_347_preflight.py", line 98, in <module>
+    for r in con.execute("""
+             ~~~~~~~~~~~^^^^
+        SELECT * FROM main.detail_table_registry_v1
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+           OR detail_table_name ILIKE '%thyroglobulin%'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    """).fetchall():
+    ^^^^
+_duckdb.CatalogException: Catalog Error: Table with name detail_table_registry_v1 does not exist!
+Did you mean "manuscript_workspace.detail_table_registry_v1"?
+
+LINE 2:     SELECT * FROM main.detail_table_registry_v1
+                          ^

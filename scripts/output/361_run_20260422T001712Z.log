@@ -1,0 +1,105 @@
+[INFO] [00:17:12.983Z] Run config: do_writes=True, phases=['0', '1', '10', '2', '3', '5', '6', '8', '9'], BUILD_TS=20260422_001712
+[INFO] [00:17:12.984Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:17:13.515Z] ==============================================================================
+[INFO] [00:17:13.515Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_001712)
+[INFO] [00:17:13.515Z] ==============================================================================
+[INFO] [00:17:14.098Z] Archive plan: main.canonical_tumor_characteristics_v1 (11,106 rows) -> canonical_tumor_characteristics_v1_pre361_20260422_001712
+[INFO] [00:17:15.780Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_characteristics_v1_pre361_20260422_001712" (11,106 rows)
+[INFO] [00:17:15.879Z] Archive plan: main.canonical_benign_diagnosis_v1 (6,818 rows) -> canonical_benign_diagnosis_v1_pre361_20260422_001712
+[INFO] [00:17:17.363Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_benign_diagnosis_v1_pre361_20260422_001712" (6,818 rows)
+[INFO] [00:17:17.440Z] Archive plan: main.canonical_malignant_diagnosis_v1 (4,441 rows) -> canonical_malignant_diagnosis_v1_pre361_20260422_001712
+[INFO] [00:17:18.937Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_malignant_diagnosis_v1_pre361_20260422_001712" (4,441 rows)
+[INFO] [00:17:19.015Z] Archive plan: main.canonical_diagnosis_unified_v1 (11,028 rows) -> canonical_diagnosis_unified_v1_pre361_20260422_001712
+[INFO] [00:17:20.412Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_diagnosis_unified_v1_pre361_20260422_001712" (11,028 rows)
+[INFO] [00:17:20.491Z] Archive plan: main.tumor_episode_master_v2 (11,691 rows) -> tumor_episode_master_v2_pre361_20260422_001712
+[INFO] [00:17:21.951Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."tumor_episode_master_v2_pre361_20260422_001712" (11,691 rows)
+[INFO] [00:17:22.026Z] Archive plan: main.synoptic_tumor_long_v1 (11,103 rows) -> synoptic_tumor_long_v1_pre361_20260422_001712
+[INFO] [00:17:23.496Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."synoptic_tumor_long_v1_pre361_20260422_001712" (11,103 rows)
+[INFO] [00:17:23.570Z] Archive plan: main.path_outcome_classification_v1 (10,871 rows) -> path_outcome_classification_v1_pre361_20260422_001712
+[INFO] [00:17:26.126Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."path_outcome_classification_v1_pre361_20260422_001712" (10,871 rows)
+[INFO] [00:17:26.126Z] ==============================================================================
+[INFO] [00:17:26.126Z] STEP 1 — Build main.canonical_path_malignant_events_v1
+[INFO] [00:17:26.126Z] ==============================================================================
+[INFO] [00:17:26.232Z]   source CTC v1 cols: 50
+[INFO] [00:17:26.232Z]   source TEM v2 cols: 37
+[INFO] [00:17:26.232Z]   source STF v1 cols: 21
+[INFO] [00:17:26.562Z]   base copy: 11,106 rows
+[INFO] [00:17:26.746Z]   added column main.canonical_path_malignant_events_v1.discordance_histology_flag BOOLEAN
+[INFO] [00:17:26.927Z]   added column main.canonical_path_malignant_events_v1.discordance_t_stage_flag BOOLEAN
+[INFO] [00:17:27.113Z]   added column main.canonical_path_malignant_events_v1.discordance_laterality_flag BOOLEAN
+[INFO] [00:17:27.290Z]   added column main.canonical_path_malignant_events_v1.discordance_notes VARCHAR
+[INFO] [00:17:27.399Z]   populated discordance columns on 7,818 rows from TEM v2
+[INFO] [00:17:27.872Z]   added column main.canonical_path_malignant_events_v1.specimen_focus_id VARCHAR
+[INFO] [00:17:28.052Z]   added column main.canonical_path_malignant_events_v1.linkage_confidence_tier VARCHAR
+[INFO] [00:17:28.228Z]   added column main.canonical_path_malignant_events_v1.linkage_score DECIMAL(29,3)
+[INFO] [00:17:28.358Z]   populated specimen_focus_id on 7,818 rows from STF v1
+[INFO] [00:17:28.546Z]   added column main.canonical_path_malignant_events_v1.build_script VARCHAR
+[INFO] [00:17:28.728Z]   added column main.canonical_path_malignant_events_v1.build_ts TIMESTAMP
+[INFO] [00:17:28.900Z]   added column main.canonical_path_malignant_events_v1.consolidation_source VARCHAR
+[INFO] [00:17:29.246Z]   built canonical_path_malignant_events_v1: 11,106 rows / 8,422 patients
+[INFO] [00:17:29.246Z] ==============================================================================
+[INFO] [00:17:29.246Z] STEP 2 — Build main.canonical_path_benign_events_v1
+[INFO] [00:17:29.246Z] ==============================================================================
+[WARN] [00:17:29.321Z]   benign flag nlp_nifcp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:17:29.321Z]   benign flag nlp_nifp has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:17:29.321Z]   benign flag nlp_nifpt has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[WARN] [00:17:29.321Z]   benign flag nlp_normal_thyroid has no path_synoptics source — emitting PLACEHOLDER constant FALSE
+[INFO] [00:17:29.321Z]   benign_events placeholder columns (4): ['nlp_nifcp', 'nlp_nifp', 'nlp_nifpt', 'nlp_normal_thyroid']
+[INFO] [00:17:31.497Z]   flagged 7,299 benign rows with concomitant malignancy
+[INFO] [00:17:31.743Z]   built canonical_path_benign_events_v1: 11,688 rows / 10,871 patients
+[INFO] [00:17:31.743Z] ==============================================================================
+[INFO] [00:17:31.743Z] STEP 3 — Build main.canonical_path_gland_events_v1 (unified)
+[INFO] [00:17:31.743Z] ==============================================================================
+[INFO] [00:17:31.816Z]   all gland slot columns validated against path_synoptics ✓
+[INFO] [00:17:33.872Z]   built canonical_path_gland_events_v1: 28,724 rows / 10,731 patients (thyroid=24,699, parathyroid=4,025)
+[INFO] [00:17:33.872Z] ==============================================================================
+[INFO] [00:17:33.872Z] STEP 5 — Build the 3 patient-grain rollup tables
+[INFO] [00:17:33.872Z] ==============================================================================
+[INFO] [00:17:34.137Z]   built canonical_path_malignant_patient_rollup_v1: 8,422 rows
+[INFO] [00:17:34.351Z]   built canonical_path_benign_patient_rollup_v1: 10,871 rows
+[INFO] [00:17:34.578Z]   built canonical_path_gland_patient_rollup_v1: 10,731 rows
+[INFO] [00:17:34.578Z] ==============================================================================
+[INFO] [00:17:34.578Z] STEP 6 — Create / refresh views_readable views
+[INFO] [00:17:34.578Z] ==============================================================================
+[INFO] [00:17:34.733Z]   view views_readable.path_malignant_events_VIEW_v1 -> main.canonical_path_malignant_events_v1
+[INFO] [00:17:34.898Z]   view views_readable.path_benign_events_VIEW_v1 -> main.canonical_path_benign_events_v1
+[INFO] [00:17:35.063Z]   view views_readable.path_gland_events_VIEW_v1 -> main.canonical_path_gland_events_v1
+[INFO] [00:17:35.225Z]   view views_readable.path_malignant_patient_rollup_VIEW_v1 -> main.canonical_path_malignant_patient_rollup_v1
+[INFO] [00:17:35.388Z]   view views_readable.path_benign_patient_rollup_VIEW_v1 -> main.canonical_path_benign_patient_rollup_v1
+[INFO] [00:17:35.563Z]   view views_readable.path_gland_patient_rollup_VIEW_v1 -> main.canonical_path_gland_patient_rollup_v1
+[INFO] [00:17:35.563Z] ==============================================================================
+[INFO] [00:17:35.563Z] STEP 8 — detail_table_registry_v1 sync
+[INFO] [00:17:35.563Z] ==============================================================================
+[INFO] [00:17:35.633Z]   registry columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[INFO] [00:17:35.659Z]   registry rows for deprecated tables (pre-delete): 7
+[INFO] [00:17:35.693Z]   deleted 7 legacy registry rows
+[INFO] [00:17:35.845Z]   INSERT registry row: canonical_path_malignant_events_v1 (rows=11106, patients=8422)
+[INFO] [00:17:36.034Z]   INSERT registry row: canonical_path_benign_events_v1 (rows=11688, patients=10871)
+[INFO] [00:17:36.217Z]   INSERT registry row: canonical_path_gland_events_v1 (rows=28724, patients=10731)
+[INFO] [00:17:36.401Z]   INSERT registry row: canonical_path_malignant_patient_rollup_v1 (rows=8422, patients=8422)
+[INFO] [00:17:36.584Z]   INSERT registry row: canonical_path_benign_patient_rollup_v1 (rows=10871, patients=10871)
+[INFO] [00:17:36.766Z]   INSERT registry row: canonical_path_gland_patient_rollup_v1 (rows=10731, patients=10731)
+[INFO] [00:17:36.800Z] ==============================================================================
+[INFO] [00:17:36.800Z] STEP 9 — CPM feeder audit (report only)
+[INFO] [00:17:36.800Z] ==============================================================================
+[INFO] [00:17:36.870Z]   CPM has 1532 total columns, 118 nlp_* columns
+[INFO] [00:17:37.623Z]   CPM feeder audit -> /Users/ros/THyroid 2026/op_path_cpm_feeder_audit_20260421.md
+[INFO] [00:17:37.623Z]   found 0 likely CPM ↔ deprecated source matches
+[INFO] [00:17:37.623Z] ==============================================================================
+[INFO] [00:17:37.623Z] STEP 10 — Zero-drift QA
+[INFO] [00:17:37.623Z] ==============================================================================
+[INFO] [00:17:37.703Z]   QA FAIL malignant_patient_count_matches_legacy: {'rollup_count': 8422, 'archive_count': 4137, 'legacy_row_count': 4441}
+[INFO] [00:17:37.783Z]   QA FAIL benign_patient_count_geq_legacy: {'rollup_count': 0, 'archive_count': 6734}
+[INFO] [00:17:37.863Z]   QA PASS malignant_events_rowcount_matches_ctc_archive: {'events_count': 11106, 'archive_count': 11106}
+[INFO] [00:17:38.144Z]   QA PASS no_research_ids_lost: {'n_before': 10871, 'n_after': 10871, 'n_lost': 0, 'sample_lost': []}
+[INFO] [00:17:38.257Z]   QA FAIL bethesda_preserved_in_malignant_rollup: {'archive_count': 5249, 'rollup_count': 4198}
+[INFO] [00:17:38.358Z]   QA FAIL malignant_linkage_population: {'rows_with_specimen_focus_id': 7818, 'target_threshold': 9000}
+[INFO] [00:17:38.458Z]   QA PASS benign_events_full_linkage_rate_geq_60pct: {'n_total': 11688, 'n_full': 7299, 'full_pct': 0.6245, 'n_ambiguous_multi_specimen': 1082}
+[INFO] [00:17:38.494Z]   QA PASS view_resolves_path_malignant_events_VIEW_v1: {}
+[INFO] [00:17:38.526Z]   QA PASS view_resolves_path_benign_events_VIEW_v1: {}
+[INFO] [00:17:38.557Z]   QA PASS view_resolves_path_gland_events_VIEW_v1: {}
+[INFO] [00:17:38.588Z]   QA PASS view_resolves_path_malignant_patient_rollup_VIEW_v1: {}
+[INFO] [00:17:38.619Z]   QA PASS view_resolves_path_benign_patient_rollup_VIEW_v1: {}
+[INFO] [00:17:38.651Z]   QA PASS view_resolves_path_gland_patient_rollup_VIEW_v1: {}
+[INFO] [00:17:38.651Z]   QA report -> /Users/ros/THyroid 2026/qa/qa_script_361_op_path_consolidation.json
+[ERROR] [00:17:38.651Z] ZERO-DRIFT QA failed — see qa file for details

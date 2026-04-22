@@ -1,0 +1,29 @@
+[17:21:26.200Z] ==============================================================================
+[17:21:26.200Z] === START 255_rebuild_rai_tg_rollups.py  mode=APPLY
+[17:21:26.783Z] connected to thyroid_canonical_publication_v1_0
+[17:21:26.942Z] PREFLIGHT  RAI dose mismatches: 0
+[17:21:26.942Z]            Tg count mismatches: tg=1411 tgab=1479
+[17:21:26.942Z]            Tg peak/nadir mismatches: peak=2 nadir=3
+[17:21:31.067Z] SNAPSHOT  "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_patient_master_pre255_20260421T172126Z"
+[17:21:31.067Z] SCHEMA  add provenance cols if missing
+[17:21:31.116Z]   rai_max_dose_source already exists (idempotent)
+[17:21:31.175Z]   tg_peak_source already exists (idempotent)
+[17:21:31.464Z] REBUILD  RAI dose with episode_v2 -> rai_dose_v9 fallback
+[17:21:31.549Z]   rai_max_dose_mci > 0 patients: 280
+[17:21:31.549Z] REBUILD  Tg/TgAb counts + tg_peak/nadir/mean
+[17:21:31.798Z]   patients with n_tg > 0: 2528
+[17:21:31.798Z]   patients with tg_peak set: 2561
+[17:21:31.798Z] DICTIONARY  upsert provenance + canonical-source rows
+[17:21:32.560Z] FATAL: CatalogException('Catalog Error: Table with name data_dictionary_v240 does not exist!\nDid you mean "data_dictionary_v279"?\n\nLINE 1: SELECT COUNT(*) FROM thyroid_canonical_publication_v1_0.main.data_dictionary_v240...\n                             ^')
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/255_rebuild_rai_tg_rollups.py", line 367, in <module>
+    main()
+  File "/Users/ros/THyroid 2026/scripts/255_rebuild_rai_tg_rollups.py", line 296, in main
+    upsert_dict_entry(
+  File "/Users/ros/THyroid 2026/scripts/255_rebuild_rai_tg_rollups.py", line 122, in upsert_dict_entry
+    n = con.execute(
+_duckdb.CatalogException: Catalog Error: Table with name data_dictionary_v240 does not exist!
+Did you mean "data_dictionary_v279"?
+
+LINE 1: SELECT COUNT(*) FROM thyroid_canonical_publication_v1_0.main.data_dictionary_v240...
+                             ^

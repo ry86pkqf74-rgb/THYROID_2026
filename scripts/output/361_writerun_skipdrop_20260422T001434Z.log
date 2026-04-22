@@ -1,0 +1,49 @@
+[INFO] [00:14:34.889Z] Run config: do_writes=True, phases=['0', '1', '10', '2', '3', '5', '6', '8', '9'], BUILD_TS=20260422_001434
+[INFO] [00:14:34.890Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:14:35.380Z] ==============================================================================
+[INFO] [00:14:35.380Z] STEP 0 — Pre-flight & archive (BUILD_TS=20260422_001434)
+[INFO] [00:14:35.380Z] ==============================================================================
+[INFO] [00:14:36.053Z] Archive plan: main.canonical_tumor_characteristics_v1 (11,106 rows) -> canonical_tumor_characteristics_v1_pre361_20260422_001434
+[INFO] [00:14:38.005Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_characteristics_v1_pre361_20260422_001434" (11,106 rows)
+[INFO] [00:14:38.083Z] Archive plan: main.canonical_benign_diagnosis_v1 (6,818 rows) -> canonical_benign_diagnosis_v1_pre361_20260422_001434
+[INFO] [00:14:39.763Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_benign_diagnosis_v1_pre361_20260422_001434" (6,818 rows)
+[INFO] [00:14:39.858Z] Archive plan: main.canonical_malignant_diagnosis_v1 (4,441 rows) -> canonical_malignant_diagnosis_v1_pre361_20260422_001434
+[INFO] [00:14:41.228Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_malignant_diagnosis_v1_pre361_20260422_001434" (4,441 rows)
+[INFO] [00:14:41.323Z] Archive plan: main.canonical_diagnosis_unified_v1 (11,028 rows) -> canonical_diagnosis_unified_v1_pre361_20260422_001434
+[INFO] [00:14:43.019Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_diagnosis_unified_v1_pre361_20260422_001434" (11,028 rows)
+[INFO] [00:14:43.100Z] Archive plan: main.tumor_episode_master_v2 (11,691 rows) -> tumor_episode_master_v2_pre361_20260422_001434
+[INFO] [00:14:44.693Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."tumor_episode_master_v2_pre361_20260422_001434" (11,691 rows)
+[INFO] [00:14:44.772Z] Archive plan: main.synoptic_tumor_long_v1 (11,103 rows) -> synoptic_tumor_long_v1_pre361_20260422_001434
+[INFO] [00:14:46.328Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."synoptic_tumor_long_v1_pre361_20260422_001434" (11,103 rows)
+[INFO] [00:14:46.425Z] Archive plan: main.path_outcome_classification_v1 (10,871 rows) -> path_outcome_classification_v1_pre361_20260422_001434
+[INFO] [00:14:48.457Z]   archived -> "Thyroid 2026 UPdated"."archive_pub_v1_0"."path_outcome_classification_v1_pre361_20260422_001434" (10,871 rows)
+[INFO] [00:14:48.457Z] ==============================================================================
+[INFO] [00:14:48.457Z] STEP 1 — Build main.canonical_path_malignant_events_v1
+[INFO] [00:14:48.457Z] ==============================================================================
+[INFO] [00:14:48.566Z]   source CTC v1 cols: 50
+[INFO] [00:14:48.566Z]   source TEM v2 cols: 37
+[INFO] [00:14:48.566Z]   source STF v1 cols: 21
+[INFO] [00:14:48.886Z]   base copy: 11,106 rows
+[INFO] [00:14:49.066Z]   added column main.canonical_path_malignant_events_v1.discordance_histology_flag BOOLEAN
+[INFO] [00:14:49.237Z]   added column main.canonical_path_malignant_events_v1.discordance_t_stage_flag BOOLEAN
+[INFO] [00:14:49.403Z]   added column main.canonical_path_malignant_events_v1.discordance_laterality_flag BOOLEAN
+[INFO] [00:14:49.567Z]   added column main.canonical_path_malignant_events_v1.discordance_notes VARCHAR
+[ERROR] [00:14:49.612Z] FATAL: BinderException("Binder Error: No function matches the given name and argument types 'trim(INTEGER)'. You might need to add explicit type casts.\n\tCandidate functions:\n\ttrim(VARCHAR) -> VARCHAR\n\ttrim(VARCHAR, VARCHAR) -> VARCHAR\n\n\nLINE 10:                         THEN COALESCE(NULLIF(TRIM(t.consult_diagnosis), ''),\n                                                      ^")
+Traceback (most recent call last):
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2237, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 2195, in main
+    results["step_1"] = step_1_build_malignant_events(con, do_writes)
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/ros/THyroid 2026/scripts/361_op_path_consolidation.py", line 496, in step_1_build_malignant_events
+    con.execute(update_sql)
+    ~~~~~~~~~~~^^^^^^^^^^^^
+_duckdb.BinderException: Binder Error: No function matches the given name and argument types 'trim(INTEGER)'. You might need to add explicit type casts.
+	Candidate functions:
+	trim(VARCHAR) -> VARCHAR
+	trim(VARCHAR, VARCHAR) -> VARCHAR
+
+
+LINE 10:                         THEN COALESCE(NULLIF(TRIM(t.consult_diagnosis), ''),
+                                                      ^

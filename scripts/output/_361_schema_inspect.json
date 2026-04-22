@@ -1,0 +1,2559 @@
+{
+  "main.path_synoptics": {
+    "exists": true,
+    "row_count": 11688,
+    "distinct_research_id": 10871,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "race",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "gender",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "surg_date",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "age",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "thyroid_procedure",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "reop",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "surgery",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "completion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "substernal_resection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "procedure_other_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "io_rln_monitoring",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "central_compartment_dissection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "right_neck_dissection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "left_neck_dissection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "bilateral_neck_dissection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "other_ln_dissection",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parathyroid_operation",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "path_special_studies",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "clinical_information_pre_op_diagnosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "path_diagnosis_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "path_diagnosis_summary",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "synoptic_diagnosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "microscopic_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "path_extended_gross_path",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "rl_size_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ll_size_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "isthmus_size_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "pyramidal_lobe_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "total_thyroid_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "substernal_goiter_size_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "other_label",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "specimen_integrity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "weight_total",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "rl_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ll_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "isthmus_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "pyramidal_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "substernal_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "other_g",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_focality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "dominant_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_site_laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_size_greatest_dimension_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_additional_dimension_1",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "tumor_1_additional_dimension_2",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "tumor_1_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_histology_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumors_if_separate_synoptics_not_included",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_1_architecture",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_cytomorphology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_histologic_grade",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_1_capsule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_ki_67_labeling_index",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_mitotic_rate_per_2mm2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_necrosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_angioinvasion_quantify",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_distance_to_closest_margin_mm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_site_of_involvement",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_margin_angiolymphatic_invasion_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_ln_involved",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_level_involved",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_size_of_largest_metastatic_deposit_cm",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "tumor_1_extranodal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_ln_examined",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_level_examined",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_ln_examined_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_ln_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_multiple_tumor",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_pt",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_pn",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_pm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_additional_finding_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_additional_finding_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_additional_finding_3",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parathyroid_glands",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "location_of_parathyroid_glands",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parathyroid_gland_findings",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ancillary_studies",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_size_greatest_dimension_cm",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "tumor_2_additional_dimension_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_additional_dimension_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_histologic_variants",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_histology_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_architecture",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_cytomorphology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_histologic_grade",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_capsule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_mitotic_rate_per_2mm2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_necrosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_angioinvasion_quantify",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_distance_to_closest_margin_mm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_site_of_margin_involvement",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_margin_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_lns_involved",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_level_involved",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_largest_metastatic_deposit_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_extranodal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_tumor_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_size_greatest_dimension_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_additional_dimension_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_additional_dimension_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_histologic_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_histology_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_architecture",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_cytomorphology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_histologic_grade",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_tumor_capsule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_necrosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_mitotic_rate_per_2mm2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_angioinvasion_quantify",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_distance_to_closest_margin_mm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_margin_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_stage_tumor_3",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_size_greatest_dimension_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_additional_dimension_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_additional_dimension_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_histologic_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_architecture",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_cytomorphology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_histologic_grade",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_capsule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_necrosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_mitotic_rate_per_2mm2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_angioinvasion_quantify",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_distance_to_closest_margin_mm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_margin_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_tumor_4",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_size_greatest_dimension_cm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_additional_dimension_1",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_additional_dimension_2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_histologic_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_architecture",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_cytomorphology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_histologic_grade",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_capsule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_necrosis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_mitotic_rate_per_2mm2",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_angioinvasion_quantify",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_distance_to_closest_margin_mm",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_margin_comment",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_tumor_5",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "frozen_section_obtained",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "fs_pathology_frozen_section",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "carcinoma_identified_on_fs_sent_intraop",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "other_findings",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "adenoma_nodule_size_info_not_all_complete",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "atypical_adenomas",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hyperplastic_change_follicular_hyperplasia",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "multinodular_goiter",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "substernal_multinodular_goiter",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "adenomatous_hyperplasia",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "papillary_hyperplasia",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hurthle_cell_oncocytic_adenoma",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "follicular_adenoma",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hyalinizing_trabecular_tumor_adenoma",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "lymphocytic_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "chronic_lymphocytic_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hashimoto_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "palpation_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "chronic_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "de_quervain_thyroiditis_granulomatous_thyroiditis_or_giant_cell_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "autoimmune_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "riedels_fibrosing_thyroiditis",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "chronic_inflammation",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "cystic_degeneration",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "c_cell_hyperplasia",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hurthle_cell_change",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hurthle_cell_metaplasia",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hurthle_cell_nodule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "follicular_nodule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "hyperplastic_nodules",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "adenomatoid_nodules",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "colloid_nodule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "colloid_cyst",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "graves",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "thymic_tissue",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "thyroglossal_duct_cyst",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parathyroid_gland_or_tissue_included_in_resected_specimen",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "incidental_gland_excision",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_cellularity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_1_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_cellularity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_2_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_cellularity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_3_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_cellularity",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "parag_4_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_4_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_cellularity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_5_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_location",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_biopsy_incisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_parathyroidectomy_excisional",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_cellularity",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_weight_grams",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parag_6_size",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_workbook",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ingest_sheet_spec",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ingest_script_version",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ingested_at_utc",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_2_stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_3_stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_4_stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_5_stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.specimen_master_v1": {
+    "exists": true,
+    "row_count": 10139,
+    "distinct_research_id": 8422,
+    "columns": [
+      {
+        "name": "specimen_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "specimen_fingerprint_sha256",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "research_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "source_system",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "procedure_date_day",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "accession_or_source_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "specimen_role",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "anatomic_site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "surgery_episode_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "encounter_synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "materialized_at",
+        "dtype": "TIMESTAMP WITH TIME ZONE"
+      },
+      {
+        "name": "fingerprint_input_canonical",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "source_candidate_kind",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "identity_build_run_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "identity_built_at",
+        "dtype": "TIMESTAMP"
+      }
+    ]
+  },
+  "main.specimen_tumor_focus_v1": {
+    "exists": true,
+    "row_count": 11103,
+    "distinct_research_id": 8422,
+    "columns": [
+      {
+        "name": "specimen_focus_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "focus_fingerprint_sha256",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "specimen_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "master_fingerprint_sha256",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "research_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "surg_date",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "surg_date_canonical",
+        "dtype": "DATE"
+      },
+      {
+        "name": "encounter_synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_index",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "site_text",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "surgery_episode_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "path_surgery_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_ordinal",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "linkage_confidence_tier",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "linkage_score",
+        "dtype": "DECIMAL(29,3)"
+      },
+      {
+        "name": "materialized_at",
+        "dtype": "TIMESTAMP WITH TIME ZONE"
+      },
+      {
+        "name": "fingerprint_input_focus_canonical",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "identity_build_run_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "identity_built_at",
+        "dtype": "TIMESTAMP"
+      }
+    ]
+  },
+  "main.canonical_tumor_characteristics_v1": {
+    "exists": true,
+    "row_count": 11106,
+    "distinct_research_id": 8422,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "surgery_episode_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_ordinal",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "surgery_date",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "path_surgery_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "specimen_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "size_greatest_dimension_cm",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "tumor_size_cm_per_surgery",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "primary_histology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_source",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "t_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "n_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "m_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "overall_stage_deprecated_un_versioned_20260417",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "gross_ete",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "vascular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "angioinvasion_quantify",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ln_examined",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "ln_involved",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "nodal_disease_positive_count",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "nodal_disease_total_count",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "extranodal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "number_of_tumors",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "multifocality_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "source_tables",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "resolution_rule",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "data_completeness_pct",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "t_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "n_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "m_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "overall_stage_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_group_ajcc7",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "t_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "n_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "m_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "overall_stage_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_group_ajcc8",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ajcc7_stage_calculable_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "ajcc8_stage_calculable_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "staging_source_note",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "stage_migration_7_to_8",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.tumor_episode_master_v2": {
+    "exists": true,
+    "row_count": 11691,
+    "distinct_research_id": 10871,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "surgery_episode_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "tumor_ordinal",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "surgery_date",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "date_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "date_confidence",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "primary_histology",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_source",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "t_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "n_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "m_stage_deprecated_un_versioned_20260417",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "overall_stage_deprecated_un_versioned_20260417",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "tumor_size_cm",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "gross_ete",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "vascular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "nodal_disease_positive_count",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "nodal_disease_total_count",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "extranodal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "number_of_tumors",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "multifocality_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "consult_diagnosis",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "consult_precedence_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "histology_discordance_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "t_stage_discordance_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "confidence_rank",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "source_tables",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "procedure_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "linked_surgery_episode_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "surgery_link_score_v3",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "surgery_link_tier",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.synoptic_tumor_long_v1": {
+    "exists": true,
+    "row_count": 11103,
+    "distinct_research_id": 8422,
+    "columns": [
+      {
+        "name": "synoptic_row_ix",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "research_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "surg_date",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "thyroid_procedure",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_index",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "source_table",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_path_file",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_column_prefix",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "build_git_sha",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "angioinvasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "angioinvasion_quantify",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "capsular_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "extrathyroidal_extension",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histologic_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "ln_examined",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "ln_involved",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "lymphatic_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "margin_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "perineural_invasion",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "site",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "size_greatest_dimension_cm",
+        "dtype": "DOUBLE"
+      }
+    ]
+  },
+  "main.canonical_benign_diagnosis_v1": {
+    "exists": true,
+    "row_count": 6818,
+    "distinct_research_id": 6734,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "benign_diagnosis_primary",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "has_multinodular_goiter",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_substernal_goiter",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_follicular_adenoma",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_hurthle_cell_adenoma",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_adenomatoid_nodules",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_adenomatous_hyperplasia",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_atypical_adenoma",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_hyalinizing_trabecular_tumor",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_graves_disease",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_hashimotos",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_colloid_nodule",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_nodular_hyperplasia",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "has_intrathyroidal_parathyroid",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "is_malignant",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "path_diagnosis_summary_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_table",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.canonical_malignant_diagnosis_v1": {
+    "exists": true,
+    "row_count": 4441,
+    "distinct_research_id": 4137,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_base_canonical",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_variant_canonical",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_subtype_detail",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_full_descriptor",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "is_malignant",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "is_metastatic_presentation",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "n_tumors",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "tumor_2_histology_canonical",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_base_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "histology_variant_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_table",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.canonical_diagnosis_unified_v1": {
+    "exists": true,
+    "row_count": 11028,
+    "distinct_research_id": 10871,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "diagnosis_primary",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "diagnosis_variant",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "diagnosis_full",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "is_malignant",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "n_tumors",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "source_table",
+        "dtype": "VARCHAR"
+      }
+    ]
+  },
+  "main.path_outcome_classification_v1": {
+    "exists": true,
+    "row_count": 10871,
+    "distinct_research_id": 10871,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "current_fna_path_outcome",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "regex_classification",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "classification_source",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "bethesda_final",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "bethesda_final_name",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "tumor_1_histologic_type",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "all_text_snippet",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "classified_at",
+        "dtype": "TIMESTAMP WITH TIME ZONE"
+      }
+    ]
+  },
+  "main.operative_episode_detail_v2": {
+    "exists": true,
+    "row_count": 11773,
+    "distinct_research_id": 10871,
+    "columns": [
+      {
+        "name": "research_id",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "surgery_episode_id",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "surgery_date_native",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "resolved_surgery_date",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "date_status",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "procedure_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "procedure_normalized",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "laterality",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "central_neck_dissection_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "lateral_neck_dissection_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "rln_monitoring_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "rln_finding_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "parathyroid_autograft_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "parathyroid_autograft_count",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "parathyroid_autograft_site",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "parathyroid_resection_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "gross_ete_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "local_invasion_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "tracheal_involvement_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "esophageal_involvement_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "strap_muscle_involvement_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "reoperative_field_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "ebl_ml",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "drain_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "operative_findings_raw",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "source_tables",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "op_confidence",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "note_date_resolved",
+        "dtype": "TIMESTAMP"
+      },
+      {
+        "name": "note_date_source",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "note_date_confidence",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "parathyroid_identified_count",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "frozen_section_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "berry_ligament_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "ebl_ml_nlp",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "op_enrichment_source",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "linked_pathology_episode_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "path_link_score_v3",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "linked_fna_episode_id",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "fna_link_score_v3",
+        "dtype": "DOUBLE"
+      },
+      {
+        "name": "episode_rank",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "n_dates_in_cluster",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "episode_source_mix",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "n_entity_notes_in_episode",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "episode_has_cpm_anchor",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "episode_cpm_ordinal",
+        "dtype": "INTEGER"
+      },
+      {
+        "name": "frozen_section_n",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "frozen_section_any_malignant_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "frozen_section_any_deferred_flag",
+        "dtype": "BOOLEAN"
+      },
+      {
+        "name": "frozen_section_any_suspected_malignant_flag",
+        "dtype": "BOOLEAN"
+      }
+    ]
+  },
+  "manuscript_workspace.detail_table_registry_v1": {
+    "exists": true,
+    "row_count": 134,
+    "distinct_research_id": null,
+    "columns": [
+      {
+        "name": "detail_table_name",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "schema_name",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "join_key",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "grain",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "total_rows",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "total_patients",
+        "dtype": "BIGINT"
+      },
+      {
+        "name": "domain",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "description",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "canonical_version",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns_secondary",
+        "dtype": "VARCHAR"
+      },
+      {
+        "name": "feeds_master_columns_array",
+        "dtype": "VARCHAR[]"
+      },
+      {
+        "name": "needs_manual_review",
+        "dtype": "BOOLEAN"
+      }
+    ]
+  },
+  "__path_synoptics_buckets__": {
+    "benign_neoplasm": [
+      "adenoma_nodule_size_info_not_all_complete",
+      "atypical_adenomas",
+      "hyperplastic_change_follicular_hyperplasia",
+      "multinodular_goiter",
+      "substernal_multinodular_goiter",
+      "adenomatous_hyperplasia",
+      "papillary_hyperplasia",
+      "hurthle_cell_oncocytic_adenoma",
+      "follicular_adenoma",
+      "hyalinizing_trabecular_tumor_adenoma",
+      "cystic_degeneration",
+      "c_cell_hyperplasia",
+      "hurthle_cell_change",
+      "hurthle_cell_metaplasia",
+      "hurthle_cell_nodule",
+      "follicular_nodule",
+      "hyperplastic_nodules",
+      "adenomatoid_nodules",
+      "colloid_nodule",
+      "colloid_cyst",
+      "graves",
+      "thyroglossal_duct_cyst"
+    ],
+    "thyroiditis": [
+      "lymphocytic_thyroiditis",
+      "chronic_lymphocytic_thyroiditis",
+      "hashimoto_thyroiditis",
+      "palpation_thyroiditis",
+      "chronic_thyroiditis",
+      "de_quervain_thyroiditis_granulomatous_thyroiditis_or_giant_cell_thyroiditis",
+      "autoimmune_thyroiditis",
+      "riedels_fibrosing_thyroiditis",
+      "chronic_inflammation"
+    ],
+    "lobe": [
+      "isthmus_size_cm",
+      "pyramidal_lobe_cm",
+      "isthmus_g"
+    ],
+    "parathyroid": [
+      "parathyroid_operation",
+      "parathyroid_glands",
+      "location_of_parathyroid_glands",
+      "parathyroid_gland_findings",
+      "parathyroid_gland_or_tissue_included_in_resected_specimen",
+      "parag_1_parathyroidectomy_excisional",
+      "parag_2_parathyroidectomy_excisional",
+      "parag_3_parathyroidectomy_excisional",
+      "parag_4_parathyroidectomy_excisional",
+      "parag_5_parathyroidectomy_excisional",
+      "parag_6_parathyroidectomy_excisional"
+    ],
+    "discordance": [],
+    "linkage": [],
+    "size_weight": [
+      "rl_size_cm",
+      "ll_size_cm",
+      "isthmus_size_cm",
+      "total_thyroid_size",
+      "substernal_goiter_size_cm",
+      "weight_total",
+      "tumor_1_size_greatest_dimension_cm",
+      "tumor_1_additional_dimension_1",
+      "tumor_1_additional_dimension_2",
+      "tumor_1_size_of_largest_metastatic_deposit_cm",
+      "tumor_2_size_greatest_dimension_cm",
+      "tumor_2_additional_dimension_1",
+      "tumor_2_additional_dimension_2",
+      "tumor_3_size_greatest_dimension_cm",
+      "tumor_3_additional_dimension_1",
+      "tumor_3_additional_dimension_2",
+      "tumor_4_size_greatest_dimension_cm",
+      "tumor_4_additional_dimension_1",
+      "tumor_4_additional_dimension_2",
+      "tumor_5_size_greatest_dimension_cm",
+      "tumor_5_additional_dimension_1",
+      "tumor_5_additional_dimension_2",
+      "adenoma_nodule_size_info_not_all_complete",
+      "parag_1_weight_grams",
+      "parag_1_size",
+      "parag_2_weight_grams",
+      "parag_2_size",
+      "parag_3_weight_grams",
+      "parag_3_size",
+      "parag_4_weight_grams",
+      "parag_4_size",
+      "parag_5_weight_grams",
+      "parag_5_size",
+      "parag_6_weight_grams",
+      "parag_6_size"
+    ]
+  },
+  "__ctc_linkage__": [
+    "surgery_episode_id",
+    "tumor_ordinal",
+    "specimen_id",
+    "synoptic_row_ix"
+  ],
+  "__tem_v2_linkage__": [
+    "surgery_episode_id",
+    "tumor_ordinal",
+    "linked_surgery_episode_id"
+  ],
+  "__tem_v2_discordance__": [
+    "histology_discordance_flag",
+    "t_stage_discordance_flag"
+  ],
+  "__stf_v1_cols__": [
+    "specimen_focus_id",
+    "focus_fingerprint_sha256",
+    "specimen_id",
+    "master_fingerprint_sha256",
+    "synoptic_row_ix",
+    "research_id",
+    "surg_date",
+    "surg_date_canonical",
+    "encounter_synoptic_row_ix",
+    "tumor_index",
+    "site_text",
+    "histologic_type",
+    "surgery_episode_id",
+    "path_surgery_id",
+    "tumor_ordinal",
+    "linkage_confidence_tier",
+    "linkage_score",
+    "materialized_at",
+    "fingerprint_input_focus_canonical",
+    "identity_build_run_id",
+    "identity_built_at"
+  ],
+  "__registry_columns__": [
+    "detail_table_name",
+    "schema_name",
+    "join_key",
+    "grain",
+    "total_rows",
+    "total_patients",
+    "domain",
+    "feeds_master_columns",
+    "description",
+    "canonical_version",
+    "feeds_master_columns_secondary",
+    "feeds_master_columns_array",
+    "needs_manual_review"
+  ],
+  "__registry_sample_frozen__": {
+    "detail_table_name": "canonical_frozen_section_events_v1",
+    "schema_name": "main",
+    "join_key": "research_id",
+    "grain": "per_event",
+    "total_rows": 7081,
+    "total_patients": 4116,
+    "domain": "frozen_section",
+    "feeds_master_columns": null,
+    "description": "[domain=frozen_section; grain=per_event] \u2014 source: Script 360 (20260421T162256Z). Rows=7081, patients=4116. | Script 360 canonical publish",
+    "canonical_version": "v1_0_script360",
+    "feeds_master_columns_secondary": null,
+    "feeds_master_columns_array": null,
+    "needs_manual_review": false
+  },
+  "__views_readable_list__": [
+    "views_readable.Analysis_Patient_Resolved",
+    "views_readable.Cervical_LN_from_Notes_LLM",
+    "views_readable.Cohort_Descriptive_Full",
+    "views_readable.Complications",
+    "views_readable.Data_Dictionary",
+    "views_readable.Diagnosis_Unified",
+    "views_readable.FNA_Cytology",
+    "views_readable.FNA_Episode_Master",
+    "views_readable.Genetics_Testing",
+    "views_readable.Genetics_Variants",
+    "views_readable.Genetics_from_Notes_LLM",
+    "views_readable.Labs_Calcium",
+    "views_readable.Labs_Longitudinal",
+    "views_readable.Labs_PTH",
+    "views_readable.Labs_TSH",
+    "views_readable.Labs_Tg_Postop_Surveillance",
+    "views_readable.Labs_Thyroglobulin",
+    "views_readable.Labs_VitaminD",
+    "views_readable.NSQIP_Linkage",
+    "views_readable.PMHx_from_Notes_LLM",
+    "views_readable.PSHx_from_Notes_LLM",
+    "views_readable.Pathology_Outcome_Classification",
+    "views_readable.Pathology_Specimen_Master",
+    "views_readable.Pathology_Synoptics",
+    "views_readable.Pathology_Tumor_Characteristics",
+    "views_readable.Pathology_Tumor_Focus",
+    "views_readable.Patient_Cross_Domain_Timeline",
+    "views_readable.Patient_Master_Canonical",
+    "views_readable.RAI_Treatment_Episode",
+    "views_readable.RAI_from_Notes_LLM",
+    "views_readable.Recurrence_Event_Clean",
+    "views_readable.Recurrence_Status",
+    "views_readable.Registry_Detail_Tables",
+    "views_readable.Registry_Domain_Map",
+    "views_readable.Surgery_Episode_Detail",
+    "views_readable.Surgery_from_Notes_LLM",
+    "views_readable.Survival_Cohort_Enriched",
+    "views_readable.Survival_Followup",
+    "views_readable.Symptoms_from_Notes_LLM",
+    "views_readable.Tumor_Episode_Master",
+    "views_readable.US_Lymph_Nodes_Wide_v2",
+    "views_readable.US_Nodules_TIRADS",
+    "views_readable.US_Nodules_Wide_v2",
+    "views_readable.US_Reports_Raw",
+    "views_readable.US_Thyroid_Gland_Wide_v2"
+  ]
+}

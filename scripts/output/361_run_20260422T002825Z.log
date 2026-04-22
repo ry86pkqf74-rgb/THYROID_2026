@@ -1,0 +1,6 @@
+[INFO] [00:28:25.908Z] Run config: do_writes=True, phases=['7'], BUILD_TS=20260422_002825
+[INFO] [00:28:25.909Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [00:28:30.774Z] ==============================================================================
+[INFO] [00:28:30.774Z] STEP 7 — Drop deprecated tables
+[INFO] [00:28:30.774Z] ==============================================================================
+[ERROR] [00:28:31.158Z] FATAL: RuntimeError('Archive canonical_tumor_characteristics_v1_pre361_20260422_002825 unreadable: Catalog Error: Table with name canonical_tumor_characteristics_v1_pre361_20260422_002825 does not exist!\nDid you mean "canonical_tumor_characteristics_v1_pre361_20260422_002245"?\n\nLINE 1: SELECT COUNT(*) FROM "Thyroid 2026 UPdated"."archive_pub_v1_0"."canonical_tumor_...\n                             ^. Refusing to drop.')
