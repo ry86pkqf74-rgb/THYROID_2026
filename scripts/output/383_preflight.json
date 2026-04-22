@@ -1,0 +1,13 @@
+{
+  "domain": "tirads_granular",
+  "raw_rows": 10084,
+  "deduped_rows": 10084,
+  "notes_with_nodules": 1900,
+  "total_nodules": 3646,
+  "notes_with_nontrivial_report_level": 5914,
+  "source_llm_model_tags": [
+    "qwen2.5-32b"
+  ],
+  "merged_at": "2026-04-22T13:34:15.377959+00:00",
+  "parquet_path": "/Users/ros/THyroid 2026/runs/round2_20260421/tirads_granular/output/note_entities_llm_tirads_granular.parquet"
+}

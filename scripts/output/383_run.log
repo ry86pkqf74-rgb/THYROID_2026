@@ -1,0 +1,77 @@
+[13:34:14.702Z] Script 383 — phase=all — 2026-04-22T13:34:14.702913+00:00
+[13:34:14.720Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:34:15.217Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:34:15.217Z] ======================================================================
+[13:34:15.217Z] PHASE MERGE — read ckpt JSONL → dedup → write parquet (tirads_granular)
+[13:34:15.217Z] ======================================================================
+[13:34:15.217Z]   gate OK: ckpt exists: note_entities_llm_tirads_granular.ckpt.jsonl
+[13:34:15.263Z]   Raw checkpoint rows: 10,084
+[13:34:15.266Z]   After dedup: 10,084 unique note_row_ids (0 dups removed)
+[13:34:15.327Z]   Notes with >=1 nodule: 1,900 / 10,084 (18.8%)
+[13:34:15.327Z]   Total nodules: 3,646
+[13:34:15.327Z]   Notes with non-trivial report_level: 5,914
+[13:34:15.329Z]   Source-tag llm_model values (preserved as-is): ['qwen2.5-32b']
+[13:34:15.377Z]   Written: note_entities_llm_tirads_granular.parquet (10,084 rows, 2.97 MB)
+[13:34:15.378Z]   Preflight: 383_preflight.json
+[13:34:15.378Z] PHASE MERGE complete
+[13:34:15.382Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:34:15.383Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:34:15.383Z] ======================================================================
+[13:34:15.383Z] PHASE 0 — parquet audit (tirads_granular) (READ-ONLY)
+[13:34:15.383Z] ======================================================================
+[13:34:15.383Z]   gate OK: merged parquet exists: /Users/ros/THyroid 2026/runs/round2_20260421/tirads_granular/output/note_entities_llm_tirads_granular.parquet
+[13:34:15.397Z]   Rows: 10,084 | distinct note_row_ids: 10,084 | distinct RIDs: 5,106
+[13:34:15.397Z]   gate OK: no duplicate note_row_ids in parquet
+[13:34:15.397Z]   gate OK: parquet row count >= 9,000 (got 10,084)
+[13:34:15.401Z]   gate OK: result_json has tirads_granular shape (got 9,777 matching rows)
+[13:34:15.761Z]   Current MD main.note_entities_llm_tirads_granular: NOT PRESENT (will be created in phase 2)
+[13:34:15.761Z] PHASE 0 complete
+[13:34:15.761Z] ======================================================================
+[13:34:15.761Z] PHASE 1 — archive current main.note_entities_llm_tirads_granular → archive_pub_v1_0 (if present)
+[13:34:15.761Z] ======================================================================
+[13:34:15.792Z]   no pre-existing main.note_entities_llm_tirads_granular; archive skipped
+[13:34:15.792Z] PHASE 1 complete
+[13:34:15.792Z] ======================================================================
+[13:34:15.792Z] PHASE 2 — load merged parquet → main.note_entities_llm_tirads_granular
+[13:34:15.792Z] ======================================================================
+[13:34:15.792Z]   gate OK: merged parquet exists
+[13:34:15.818Z]   Loaded parquet: 10,084 rows
+[13:34:15.836Z]   gate OK: staging parity (10,084 == 10,084)
+[13:34:16.439Z]   gate OK: MD load parity (10,084 == 10,084)
+[13:34:16.439Z]   Loaded 10,084 rows into main.note_entities_llm_tirads_granular
+[13:34:16.439Z] PHASE 2 complete
+[13:34:16.440Z] ======================================================================
+[13:34:16.440Z] PHASE 3 — post-load parity
+[13:34:16.440Z] ======================================================================
+[13:34:16.482Z]   MD: 10,084 rows | 5,106 RIDs | 10,084 note_row_ids
+[13:34:16.482Z]   Parquet: 10,084 rows | 5,106 RIDs
+[13:34:16.482Z]   gate OK: row-count parity (10,084)
+[13:34:16.482Z]   gate OK: RID-count parity (5,106)
+[13:34:16.482Z]   gate OK: no duplicate note_row_ids in MD
+[13:34:16.482Z] PHASE 3 complete
+[13:34:16.482Z] ======================================================================
+[13:34:16.482Z] PHASE 4 — absorb-chain trigger (intentionally SKIPPED — see header)
+[13:34:16.482Z] ======================================================================
+[13:34:16.506Z]   canonical_us_nodule_v2 row count: 37,579 (no change expected)
+[13:34:16.550Z]   main.tirads_v2_nodules_raw present: False
+[13:34:16.584Z]   main.note_entities_llm_us_nodule_dynamics present: False
+[13:34:16.619Z]   main.note_entities_llm_imaging present: False
+[13:34:16.644Z]   manuscript_workspace.us_llm_absorption_deferred_multi_nodule_v1: 825 rows
+[13:34:16.667Z]   manuscript_workspace.us_raw_index0_conflict_v1: 32,146 rows
+[13:34:16.693Z]   manuscript_workspace.us_raw_index_mismatch_v1: 13,166 rows
+[13:34:16.722Z]   manuscript_workspace.us_llm_absorption_mapping_v1: 56 rows
+[13:34:16.722Z]   Chain skipped — see CHAIN_SCRIPTS comment for rationale.
+[13:34:16.722Z]   Carry-forward: a future script (suggest 388) should rebuild the absorb
+[13:34:16.722Z]   pipeline against the new tirads_granular source.
+[13:34:16.722Z] PHASE 4 complete
+[13:34:16.722Z] ======================================================================
+[13:34:16.722Z] PHASE 5 — final invariants (CPM intact + LN/frozen guards)
+[13:34:16.722Z] ======================================================================
+[13:34:16.749Z]   gate OK: CPM row count == 10,871 (got 10,871)
+[13:34:16.773Z]   gate OK: US LN domain untouched: main.canonical_us_lymph_node_v2 row count == 6,801 (got 6,801)
+[13:34:16.802Z]   gate OK: frozen-section domain untouched: main.canonical_frozen_section_events_v1 row count == 7,081 (got 7,081)
+[13:34:16.828Z]   gate OK: us_nodule_v2 == baseline 37,579 (got 37,579); chain skipped, no monotonic growth expected
+[13:34:17.003Z]   registry upsert: note_entities_llm_tirads_granular (rows=10,084, patients=5,106)
+[13:34:17.042Z]   __readme append: script=383_tirads_granular_merge_load
+[13:34:17.043Z] PHASE 5 complete
+[13:34:17.043Z] Done.
