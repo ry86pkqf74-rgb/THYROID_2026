@@ -788,10 +788,10 @@ def step_3_build_procedure_codes(
         ranked AS (
             SELECT
                 c.*,
-                COUNT(*) OVER (
+                SUM(CASE WHEN c.surgery_episode_id IS NOT NULL
+                         THEN 1 ELSE 0 END) OVER (
                     PARTITION BY c.research_id, c.note_date_dt
-                ) FILTER (WHERE c.surgery_episode_id IS NOT NULL)
-                  AS n_candidate_episodes_within,
+                )                                                AS n_candidate_episodes_within,
                 ROW_NUMBER() OVER (
                     PARTITION BY c.research_id, c.note_date_dt,
                                  c.entity_value_raw
