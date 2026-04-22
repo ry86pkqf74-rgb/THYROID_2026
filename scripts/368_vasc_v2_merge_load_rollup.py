@@ -107,7 +107,17 @@ VASC_CPM_COLUMNS: tuple[str, ...] = (
     "nlp_vasc_confidence_tier",
 )
 VASC_CONFIDENCE_TIER_VALUE = "below_80pct_concordance"
-VASC_POSITIVE_PATTERNS = ["%positive%", "%present%", "%identified%"]
+
+# In-target invasion entity types — only these contribute to nlp_vasc_* rollup.
+# The v2 prompt also defines off-target types (capsular_invasion, soft_tissue_invasion,
+# perineural_invasion_detailed, ptnm_stage, necrosis, vessel_count, mitotic_rate,
+# ki67_index) that are kept in the source table for cross-domain queries but must
+# NOT inflate vasc CPM rollup counts. See cursor prompt 2026-04-22 §1A bug fix / D1.
+VASC_INTARGET_ENTITY_TYPES: tuple[str, ...] = (
+    "vascular_invasion",
+    "lymphatic_invasion",
+    "lymphovascular_invasion",
+)
 
 # entity_type typo fix applied during merge
 ENTITY_TYPE_FIXES = {
@@ -161,11 +171,19 @@ ext AS (
     WHERE json_extract_string(entity, '$.entity_value') IS NOT NULL
 ),
 pos AS (
-    -- v2: use qualifier field; fall back to present_or_negated for compat
+    -- v2: use qualifier field; fall back to present_or_negated for compat.
+    -- Filter to in-target invasion types ONLY — off-target entities (capsular,
+    -- soft_tissue, PNI, ptnm, necrosis, etc.) must not inflate the vasc CPM
+    -- rollup. See cursor prompt 2026-04-22 §1A / D1.
     SELECT * FROM ext
     WHERE confidence >= 0.5
       AND present_or_negated = 'present'
       AND (qualifier IS NULL OR qualifier IN ('present', 'suspected'))
+      AND entity_type IN (
+          'vascular_invasion',
+          'lymphatic_invasion',
+          'lymphovascular_invasion'
+      )
 )
 """
 
@@ -542,10 +560,6 @@ def phase_5(con: Any) -> None:
 
     con.execute(f"USE {CANONICAL_DB}")
 
-    like_clauses = " OR ".join(
-        f"CAST(result_json AS VARCHAR) LIKE '{p}'" for p in VASC_POSITIVE_PATTERNS
-    )
-
     # Zero-out pass: set all CPM vasc columns to FALSE / NULL / 0
     con.execute(f"""
         UPDATE main.{CPM_TABLE} SET
@@ -574,9 +588,10 @@ def phase_5(con: Any) -> None:
             GROUP BY research_id
         ),
         pos_mentioned AS (
-            SELECT DISTINCT research_id
-            FROM main.{SOURCE_TABLE}
-            WHERE {like_clauses}
+            -- Bug fix 2026-04-22: previously used LIKE patterns on result_json,
+            -- which fired on capsular/ETE/PNI mentions and inflated the count.
+            -- Now derived from the type-filtered + qualifier-filtered `pos` CTE.
+            SELECT DISTINCT research_id FROM pos
         )
         SELECT
             CAST(p.research_id AS VARCHAR) AS research_id,
