@@ -1,0 +1,70 @@
+[13:38:23.186Z] Script 385 — round-2 canonical verification — 2026-04-22T13:38:23.186205+00:00
+[13:38:23.186Z]   Strict mode: False
+[13:38:23.212Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:38:23.727Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:38:23.727Z] ======================================================================
+[13:38:23.727Z] C1 — every new canonical exists in PUB.main
+[13:38:23.727Z] ======================================================================
+[13:38:24.293Z]   gate OK: main.canonical_pathology_clinical_events_v1 present
+[13:38:24.324Z]   gate OK: main.canonical_pathology_clinical_patient_rollup_v1 present
+[13:38:24.354Z]   gate OK: main.canonical_cervical_ln_clinical_events_v1 present
+[13:38:24.385Z]   gate OK: main.canonical_cervical_ln_clinical_patient_rollup_v1 present
+[13:38:24.415Z]   gate OK: main.canonical_esophageal_invasion_events_v1 present
+[13:38:24.445Z]   gate OK: main.canonical_esophageal_invasion_patient_rollup_v1 present
+[13:38:24.474Z]   gate OK: main.note_entities_llm_tirads_granular present (load-only)
+[13:38:24.474Z] ======================================================================
+[13:38:24.474Z] C2 — every new canonical has a row in manuscript_workspace.detail_table_registry_v1
+[13:38:24.474Z] ======================================================================
+[13:38:24.499Z]   gate OK: registry has exactly 1 row for canonical_pathology_clinical_events_v1 (got 1)
+[13:38:24.541Z]   gate OK: registry has exactly 1 row for canonical_pathology_clinical_patient_rollup_v1 (got 1)
+[13:38:24.564Z]   gate OK: registry has exactly 1 row for canonical_cervical_ln_clinical_events_v1 (got 1)
+[13:38:24.588Z]   gate OK: registry has exactly 1 row for canonical_cervical_ln_clinical_patient_rollup_v1 (got 1)
+[13:38:24.631Z]   gate OK: registry has exactly 1 row for canonical_esophageal_invasion_events_v1 (got 1)
+[13:38:24.656Z]   gate OK: registry has exactly 1 row for canonical_esophageal_invasion_patient_rollup_v1 (got 1)
+[13:38:24.682Z]   gate OK: registry has 1 row for note_entities_llm_tirads_granular (got 1)
+[13:38:24.682Z] ======================================================================
+[13:38:24.682Z] C3 — every Phase-B script has a __readme entry
+[13:38:24.682Z] ======================================================================
+[13:38:24.709Z]   gate OK: __readme has >= 1 row for script=369_pathology_v2_merge_load_rollup (got 1)
+[13:38:24.736Z]   gate OK: __readme has >= 1 row for script=382_cervical_ln_clinical_merge_load_rollup (got 1)
+[13:38:24.763Z]   gate OK: __readme has >= 1 row for script=383_tirads_granular_merge_load (got 1)
+[13:38:24.789Z]   gate OK: __readme has >= 1 row for script=384_esophageal_invasion_merge_load_rollup (got 1)
+[13:38:24.789Z] ======================================================================
+[13:38:24.789Z] C4 — CPM row count is exactly 10,871
+[13:38:24.789Z] ======================================================================
+[13:38:24.866Z]   gate OK: CPM rows == 10,871 (got 10,871)
+[13:38:24.866Z] ======================================================================
+[13:38:24.866Z] C5 — no new nlp_<dom>_n_notes / nlp_<dom>_key_finding columns
+[13:38:24.866Z] ======================================================================
+[13:38:24.931Z]   gate OK: CPM column nlp_cervln_n_notes NOT present (got present=False)
+[13:38:24.970Z]   gate OK: CPM column nlp_cervln_key_finding NOT present (got present=False)
+[13:38:25.006Z]   gate OK: CPM column nlp_esoph_n_notes NOT present (got present=False)
+[13:38:25.047Z]   gate OK: CPM column nlp_esoph_key_finding NOT present (got present=False)
+[13:38:25.047Z]   (legacy nlp_path_n_notes pre-existed Script 369 and is intentionally ignored)
+[13:38:25.047Z] ======================================================================
+[13:38:25.047Z] C6 — sum(nlp_<dom>_n_entities) == events table row count
+[13:38:25.047Z] ======================================================================
+[13:38:25.100Z]   gate OK: sum(nlp_path_n_entities)=13358 == events rows=13358 for path
+[13:38:25.150Z]   gate OK: sum(nlp_cervln_n_entities)=4493 == events rows=4493 for cervln
+[13:38:25.199Z]   gate OK: sum(nlp_esoph_n_entities)=188 == events rows=188 for esoph
+[13:38:25.199Z] ======================================================================
+[13:38:25.199Z] C7 — canonical_us_nodule_v2 >= baseline 37,579
+[13:38:25.199Z] ======================================================================
+[13:38:25.223Z]   gate OK: us_nodule_v2 rows >= baseline 37,579 (got 37,579)
+[13:38:25.223Z]   (equality — Script 383 absorb-chain was skipped, no monotonic growth expected)
+[13:38:25.223Z] ======================================================================
+[13:38:25.223Z] C8 — frozen-section + US LN row counts unchanged from pre-Phase-B baselines
+[13:38:25.223Z] ======================================================================
+[13:38:25.275Z]   gate OK: frozen-section rows == 7,081 (got 7,081)
+[13:38:25.275Z]   gate OK: US LN rows == 6,801 (got 6,801)
+[13:38:25.466Z] ======================================================================
+[13:38:25.466Z] ALL VERIFY GATES PASSED
+[13:38:25.466Z] ======================================================================
+[13:38:25.466Z]   canonical_pathology_clinical_events_v1: 13,358
+[13:38:25.466Z]   canonical_pathology_clinical_patient_rollup_v1: 3,382
+[13:38:25.466Z]   canonical_cervical_ln_clinical_events_v1: 4,493
+[13:38:25.466Z]   canonical_cervical_ln_clinical_patient_rollup_v1: 1,643
+[13:38:25.466Z]   canonical_esophageal_invasion_events_v1: 188
+[13:38:25.466Z]   canonical_esophageal_invasion_patient_rollup_v1: 60
+[13:38:25.466Z]   note_entities_llm_tirads_granular: 10,084
+[13:38:25.467Z]   Verify report: 385_verify.json

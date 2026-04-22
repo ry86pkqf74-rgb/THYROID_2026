@@ -1,0 +1,69 @@
+{
+  "started_at": "2026-04-22T13:38:23.727952+00:00",
+  "strict": false,
+  "checks": {
+    "c1_canonicals_present": {
+      "canonical_pathology_clinical_events_v1": true,
+      "canonical_pathology_clinical_patient_rollup_v1": true,
+      "canonical_cervical_ln_clinical_events_v1": true,
+      "canonical_cervical_ln_clinical_patient_rollup_v1": true,
+      "canonical_esophageal_invasion_events_v1": true,
+      "canonical_esophageal_invasion_patient_rollup_v1": true,
+      "note_entities_llm_tirads_granular": true
+    },
+    "c2_registry_rows": {
+      "canonical_pathology_clinical_events_v1": 1,
+      "canonical_pathology_clinical_patient_rollup_v1": 1,
+      "canonical_cervical_ln_clinical_events_v1": 1,
+      "canonical_cervical_ln_clinical_patient_rollup_v1": 1,
+      "canonical_esophageal_invasion_events_v1": 1,
+      "canonical_esophageal_invasion_patient_rollup_v1": 1,
+      "note_entities_llm_tirads_granular": 1
+    },
+    "c3_readme_entries": {
+      "369_pathology_v2_merge_load_rollup": 1,
+      "382_cervical_ln_clinical_merge_load_rollup": 1,
+      "383_tirads_granular_merge_load": 1,
+      "384_esophageal_invasion_merge_load_rollup": 1
+    },
+    "c4_cpm_rows": 10871,
+    "c5_no_leak": {
+      "cervln": {
+        "nlp_cervln_n_notes": false,
+        "nlp_cervln_key_finding": false
+      },
+      "esoph": {
+        "nlp_esoph_n_notes": false,
+        "nlp_esoph_key_finding": false
+      }
+    },
+    "c6_rollup_parity": {
+      "path": {
+        "sum_cpm": 13358,
+        "events_rows": 13358
+      },
+      "cervln": {
+        "sum_cpm": 4493,
+        "events_rows": 4493
+      },
+      "esoph": {
+        "sum_cpm": 188,
+        "events_rows": 188
+      }
+    },
+    "c7_us_nodule_v2_rows": 37579,
+    "c8_frozen_section_rows": 7081,
+    "c8_us_ln_rows": 6801,
+    "row_counts": {
+      "canonical_pathology_clinical_events_v1": 13358,
+      "canonical_pathology_clinical_patient_rollup_v1": 3382,
+      "canonical_cervical_ln_clinical_events_v1": 4493,
+      "canonical_cervical_ln_clinical_patient_rollup_v1": 1643,
+      "canonical_esophageal_invasion_events_v1": 188,
+      "canonical_esophageal_invasion_patient_rollup_v1": 60,
+      "note_entities_llm_tirads_granular": 10084
+    }
+  },
+  "finished_at": "2026-04-22T13:38:25.466279+00:00",
+  "status": "PASS"
+}
