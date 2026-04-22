@@ -1182,8 +1182,11 @@ def step_3_build_gland_events(
                 f"CASE WHEN ps.{weight_col} IS NOT NULL THEN "
                 f"'weight_raw=' || CAST(ps.{weight_col} AS VARCHAR) END"
             )
+        # NULLIF on CONCAT_WS — without this, an all-NULL parts list yields
+        # '' (not NULL) and the downstream "all NULL → drop" WHERE filter
+        # leaves the row in. Caused the 140K-row overcount in the first run.
         notes_expr = (
-            f"CONCAT_WS('; ', {', '.join(notes_parts)})"
+            f"NULLIF(CONCAT_WS('; ', {', '.join(notes_parts)}), '')"
             if notes_parts else "NULL::VARCHAR"
         )
         thyroid_unions.append(f"""
@@ -1248,7 +1251,7 @@ def step_3_build_gland_events(
                 f"'desc=' || CAST(ps.{desc_col} AS VARCHAR) END"
             )
         notes_expr = (
-            f"CONCAT_WS('; ', {', '.join(notes_parts)})"
+            f"NULLIF(CONCAT_WS('; ', {', '.join(notes_parts)}), '')"
             if notes_parts else "NULL::VARCHAR"
         )
         parathyroid_unions.append(f"""
@@ -1455,8 +1458,15 @@ def step_5_build_rollups(
                 MAX(stage_group_ajcc8)                  AS highest_stage_ajcc8,
                 MAX(stage_group_ajcc7)                  AS highest_stage_ajcc7,
                 BOOL_OR(
-                    UPPER(COALESCE(extrathyroidal_extension, '')) NOT IN ('', 'NONE', 'NO')
-                    OR UPPER(COALESCE(gross_ete, '')) NOT IN ('', 'NONE', 'NO')
+                    -- gross_ete is BIGINT (NULL or 1)
+                    COALESCE(gross_ete, 0) = 1
+                    -- extrathyroidal_extension is VARCHAR; positive values
+                    -- include 'present', 'minimal', 'microscopic', 'yes',
+                    -- 'c/a' (continuous activity); 'x' = not assessed and
+                    -- 'false'/'no'/'none'/empty = negative
+                    OR LOWER(COALESCE(CAST(extrathyroidal_extension AS VARCHAR), ''))
+                       IN ('present', 'minimal', 'microscopic', 'yes', 'c/a',
+                           'gross', 'macroscopic')
                 )                                       AS any_ett,
                 mode(primary_histology)                 AS dominant_histology
             FROM ev
