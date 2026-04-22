@@ -1,0 +1,93 @@
+[INFO] [23:00:24.332Z] Script 392: 392_ete_boolean_string_normalization
+[INFO] [23:00:24.332Z] Run stamp: 20260422_230024
+[INFO] [23:00:24.332Z] Mode: --phase 0
+[INFO] [23:00:24.337Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [23:00:25.148Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [23:00:25.148Z] 
+[INFO] [23:00:25.148Z] ============================================================
+[INFO] [23:00:25.148Z] PHASE 0: PROBE
+[INFO] [23:00:25.148Z] ============================================================
+[INFO] [23:00:25.247Z] CPM rowcount: 10871
+[INFO] [23:00:25.248Z] 
+[INFO] [23:00:25.248Z] Q0-A: Junk cohort distribution (ete_grade_final_v2 IN ('true','false'))
+[INFO] [23:00:25.300Z]   ete_grade_final_v2='false'  n=179
+[INFO] [23:00:25.300Z]   ete_grade_final_v2='true'  n=4
+[INFO] [23:00:25.300Z]   TOTAL junk rows: 183  (expected 183)
+[INFO] [23:00:25.300Z] 
+[INFO] [23:00:25.300Z] Q0-B: Evidence bucketing for junk cohort
+[INFO] [23:00:25.354Z]   junk='false'   bucket=all_flags_negative          n=179
+[INFO] [23:00:25.354Z]   junk='true'    bucket=all_flags_negative          n=2
+[INFO] [23:00:25.354Z]   junk='true'    bucket=gross_corroborated          n=2
+[INFO] [23:00:25.354Z]   Bucket A (false/all_flags_neg): 179  expect 179
+  Bucket B (true/gross_corroborated): 2  expect 2
+  Bucket C (true/all_flags_neg): 2  expect 2
+  Other true (micro/mixed): 0
+[INFO] [23:00:25.354Z] 
+[INFO] [23:00:25.354Z] Q0-C: Legacy ete_grade parity on 183-row junk cohort
+[INFO] [23:00:25.394Z]   Junk rows with matching ete_grade: 183  (expect 183)
+[INFO] [23:00:25.394Z] 
+[INFO] [23:00:25.394Z] Q0-D: T-stage state + full flag vectors for the 2 gross-flip candidates
+[INFO] [23:00:25.438Z]   Gross-corroborated 'true' rows: 2
+[INFO] [23:00:25.438Z]     research_id=11599  diag=PTC  ete_grade_final_v2='true'  ete_ordinal_worst=None  t_stage=T3b  stage_group=IVB  size=1.2  age=72
+      op_intraop_gross=False  path_gross=1  gross_ete_flag=True  any_micro=False  micro_t3b_corrected=False
+[INFO] [23:00:25.438Z]     research_id=3430  diag=PTC  ete_grade_final_v2='true'  ete_ordinal_worst=None  t_stage=T2  stage_group=II  size=3.0  age=10
+      op_intraop_gross=True  path_gross=None  gross_ete_flag=False  any_micro=False  micro_t3b_corrected=False
+[INFO] [23:00:25.438Z] 
+[INFO] [23:00:25.438Z] Q0-D2: Full flag vectors for the 2 uncorroborated 'true' candidates (queue set)
+[INFO] [23:00:25.497Z]   Uncorroborated 'true' rows (queue candidates): 2
+[INFO] [23:00:25.498Z]     research_id=10626  diag=FTC  ete_grade_final_v2='true'  ete_ordinal_worst=None  t_stage=T2  stage_group=IVB  size=3.0  age=60
+      op_intraop_gross=False  path_gross=None  gross_ete_flag=False  any_micro=False  micro_t3b_corrected=False
+[INFO] [23:00:25.498Z]     research_id=9708  diag=FTC  ete_grade_final_v2='true'  ete_ordinal_worst=None  t_stage=T3a  stage_group=IVB  size=11.0  age=76
+      op_intraop_gross=False  path_gross=None  gross_ete_flag=False  any_micro=False  micro_t3b_corrected=False
+[INFO] [23:00:25.498Z] 
+[INFO] [23:00:25.498Z] Q0-E: Queue table pre-existence check
+[INFO] [23:00:28.154Z]   Queue table found. Rows already queued from 183-cohort: 185
+[INFO] [23:00:28.199Z]     reason=boolean_string_upstream_bug  script=390  n=183
+[INFO] [23:00:28.199Z]     reason=adjudicator_unable_to_determine_rule_a_candidate  script=390  n=2
+[INFO] [23:00:28.228Z]   Rows with reason=boolean_string_no_corroboration: 0  (expect 0)
+[INFO] [23:00:28.228Z] 
+[INFO] [23:00:28.228Z] Q0-F: ete_ordinal_worst distribution (to verify scale; expect 3=gross)
+[INFO] [23:00:28.350Z]   ordinal=1  ete_grade_final_v2='microscopic'  n=2578
+[INFO] [23:00:28.350Z]   ordinal=1  ete_grade_final_v2='present_ungraded'  n=11
+[INFO] [23:00:28.350Z]   ordinal=1  ete_grade_final_v2='absent'  n=3
+[INFO] [23:00:28.350Z]   ordinal=2  ete_grade_final_v2='gross'  n=1311
+[INFO] [23:00:28.386Z]   Ordinal=3 grade distribution: []
+[INFO] [23:00:28.386Z] ============================================================
+[INFO] [23:00:28.386Z] BASELINE DRIFT CHECK (halt threshold: 2%)
+[INFO] [23:00:28.386Z] ============================================================
+[INFO] [23:00:28.386Z]   CPM_ROWCOUNT                    actual=  10871  expected=  10871  drift=0.00%  [OK]
+[INFO] [23:00:28.386Z]   N_JUNK_FALSE                    actual=    179  expected=    179  drift=0.00%  [OK]
+[INFO] [23:00:28.386Z]   N_JUNK_TRUE                     actual=      4  expected=      4  drift=0.00%  [OK]
+[INFO] [23:00:28.386Z]   N_JUNK_TOTAL                    actual=    183  expected=    183  drift=0.00%  [OK]
+[INFO] [23:00:28.386Z] All 4 baselines within 2% drift tolerance — OK
+[INFO] [23:00:28.386Z] ============================================================
+[INFO] [23:00:28.387Z] Probe report written → /Users/loganglosser/THYROID_2026/scripts/output/392_prestate_probe_report.md
+[INFO] [23:00:28.387Z] 
+[INFO] [23:00:28.387Z] Phase 0 complete. Review the probe report:
+[INFO] [23:00:28.387Z]   /Users/loganglosser/THYROID_2026/scripts/output/392_prestate_probe_report.md
+[INFO] [23:00:28.387Z] Then greenlight via chat and run:
+[INFO] [23:00:28.387Z]   python3 scripts/392_ete_boolean_string_normalization.py --apply
+[INFO] [23:46:53.799Z] Script 392: 392_ete_boolean_string_normalization
+[INFO] [23:46:53.799Z] Run stamp: 20260422_234653
+[INFO] [23:46:53.800Z] Mode: --apply
+[INFO] [23:46:53.803Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [23:46:54.621Z] Connection OK — attached DBs: ['Thyroid 2026 UPdated', 'md_information_schema', 'my_db', 'system', 'temp', 'thyroid_canonical_publication_v1_0']
+[INFO] [23:46:56.666Z] Idempotency: both triggers present (snap=cpm_ete_pre392_20260422_234621, readme=True)
+[INFO] [23:46:56.667Z] Re-verifying Phase 3 invariants for NO-OP exit ...
+[INFO] [23:46:56.667Z] 
+[INFO] [23:46:56.667Z] ============================================================
+[INFO] [23:46:56.667Z] PHASE 3: POST-STATE VERIFICATION
+[INFO] [23:46:56.667Z] ============================================================
+[INFO] [23:46:56.753Z]   [PASS] V1: 0 'false' literals remain in ete_grade_final_v2
+[INFO] [23:46:56.810Z]   [PASS] V2: Exactly 2 'true' literals remain (queue-routed)
+[INFO] [23:46:56.926Z]   [PASS] V3: Queue has 2 rows from queued_by_script='392'
+[INFO] [23:46:56.965Z]   [PASS] V4: ete_grade == ete_grade_final_v2 for all original 183 rows
+[INFO] [23:46:57.002Z]   [PASS] V5: 0 'false' strings in full CPM.ete_grade_final_v2
+[INFO] [23:46:57.038Z]   V6: Orphan stage_groups (T+N+M set, stage_group NULL, DTC): 9
+[INFO] [23:46:57.066Z]   [PASS] V7: __readme row for Script 392 landed
+[INFO] [23:46:57.315Z]   [PASS] V8: Snapshot cpm_ete_pre392_20260422_234621 rowcount = 183
+[INFO] [23:46:57.454Z]   [PASS] V9: CPM rowcount unchanged at 10,871
+[INFO] [23:46:57.454Z] ============================================================
+[INFO] [23:46:57.454Z] PHASE 3: ALL 8 CHECKS PASSED
+[INFO] [23:46:57.454Z] ============================================================
+[INFO] [23:46:57.454Z] Idempotency: Phase 3 invariants pass — NO-OP exit (script already applied).
