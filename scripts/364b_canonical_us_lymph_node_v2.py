@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Script 365 — Build main.canonical_us_lymph_node_v2 (Phase 5).
+"""Script 364b — Build main.canonical_us_lymph_node_v2 (Phase 5).
+
+Renamed from 365_canonical_us_lymph_node_v2.py on 2026-04-22 to resolve a
+script-number collision with scripts/365_psh_pmh_meds_consolidation.py
+(both occupied the 365 slot). 361/362/363/364 slots were already consumed
+in the Tier-2 cascade (361 op-path, 362 operative, 363 reset/invasion,
+364 complications), so 364b is the least-disruptive disambiguator and
+clusters this script with the broader 364 surgical/structural-finding
+work. The CPM/cohort and table-name semantics are unchanged.
 
 Ultrasound-sourced LN findings ONLY. The schema enforces this contract via
   * source_modality VARCHAR NOT NULL CHECK (source_modality = 'US')
@@ -29,7 +37,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from _md_connect import connect_locked, PUBLICATION_DB  # noqa: E402
 
-SCRIPT_TAG = "Script 365"
+SCRIPT_TAG = "Script 364b"
 TARGET = f"{PUBLICATION_DB}.main.canonical_us_lymph_node_v2"
 OUT_DIR = HERE / "output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -205,7 +213,7 @@ COMMENT_SQL = (
     f"Grain: one row per LN observation on a US exam. NOT for "
     f"pathology/CT/PET-CT/MR/nucmed LN — those live in parallel "
     f"canonical_<modality>_lymph_node_v2 tables. source_modality is fixed to "
-    f"US (CHECK constraint enforced). Built {RUN_TS} by Script 365 from "
+    f"US (CHECK constraint enforced). Built {RUN_TS} by Script 364b from "
     f"ultrasound_reports.lymph_node_assessment + us_nodules_tirads.us_1_impression "
     f"(LN-keyword filter) + CPM lnus_* (US-sourced only). No LLM run.';"
 )
