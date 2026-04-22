@@ -1,0 +1,29 @@
+{
+  "merged_rows": 20536,
+  "shard_a_rows": 14445,
+  "shard_b_rows": 10268,
+  "duplicate_rows_removed": 4177,
+  "typo_fixes": 2,
+  "notes_with_entities": 3153,
+  "entity_type_counts": {
+    "vascular_invasion": 1255,
+    "lymphovascular_invasion": 993,
+    "ptnm_stage": 427,
+    "soft_tissue_invasion": 904,
+    "capsular_invasion": 1255,
+    "perineural_invasion_detailed": 265,
+    "lymphatic_invasion": 415,
+    "vessel_count": 146,
+    "necrosis": 188,
+    "mitotic_rate": 110,
+    "ki67_index": 46
+  },
+  "qualifier_counts": {
+    "present": 2496,
+    "absent": 3038,
+    "indeterminate": 319,
+    "suspected": 151
+  },
+  "parquet_path": "/Users/ros/THyroid 2026/runs/9domain_v5/vascular_invasion/note_entities_llm_vascular_invasion_v2.parquet",
+  "merged_at": "2026-04-22T13:20:20.318023+00:00"
+}

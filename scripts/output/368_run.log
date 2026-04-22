@@ -1,0 +1,130 @@
+[13:20:19.563Z] Script 368 — phase=all — 2026-04-22T13:20:19.563741+00:00
+[13:20:19.566Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:20:20.087Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:20:20.087Z] ======================================================================
+[13:20:20.087Z] PHASE MERGE — combine shard A + B → deduplicate → write parquet
+[13:20:20.087Z] ======================================================================
+[13:20:20.087Z]   gate OK: shard exists: note_entities_llm_vascular_invasion.ckpt.jsonl
+[13:20:20.088Z]   gate OK: shard exists: note_entities_llm_vascular_invasion.ckpt.jsonl
+[13:20:20.154Z]   Shard A: 14,445 raw checkpoint rows
+[13:20:20.154Z]   Shard B: 10,268 raw checkpoint rows
+[13:20:20.154Z]   Combined: 24,713 rows before dedup
+[13:20:20.161Z]   After dedup: 20,536 unique note_row_ids
+[13:20:20.161Z]   Duplicates removed: 4,177
+[13:20:20.169Z]   Entity type typo fixes applied: 2
+[13:20:20.239Z]   Notes with entities: 3,153 / 20,536 (15.4%)
+[13:20:20.259Z]   Entity type distribution:
+[13:20:20.259Z]     vascular_invasion: 1,255
+[13:20:20.259Z]     capsular_invasion: 1,255
+[13:20:20.259Z]     lymphovascular_invasion: 993
+[13:20:20.259Z]     soft_tissue_invasion: 904
+[13:20:20.259Z]     ptnm_stage: 427
+[13:20:20.259Z]     lymphatic_invasion: 415
+[13:20:20.259Z]     perineural_invasion_detailed: 265
+[13:20:20.259Z]     necrosis: 188
+[13:20:20.259Z]     vessel_count: 146
+[13:20:20.259Z]     mitotic_rate: 110
+[13:20:20.259Z]     ki67_index: 46
+[13:20:20.259Z]   Qualifier distribution:
+[13:20:20.259Z]     absent: 3,038
+[13:20:20.259Z]     present: 2,496
+[13:20:20.259Z]     indeterminate: 319
+[13:20:20.259Z]     suspected: 151
+[13:20:20.317Z]   Written: note_entities_llm_vascular_invasion_v2.parquet (20,536 rows, 1.4 MB)
+[13:20:20.318Z]   Preflight written: 368_preflight.json
+[13:20:20.318Z] PHASE MERGE complete
+[13:20:20.327Z]   Connecting to MotherDuck (motherduck.local.toml:MD_SA_TOKEN) …
+[13:20:20.327Z]   Connected. DB: thyroid_canonical_publication_v1_0
+[13:20:20.327Z] ======================================================================
+[13:20:20.327Z] PHASE 0 — parquet audit (READ-ONLY)
+[13:20:20.327Z] ======================================================================
+[13:20:20.327Z]   gate OK: merged parquet exists: /Users/ros/THyroid 2026/runs/9domain_v5/vascular_invasion/note_entities_llm_vascular_invasion_v2.parquet
+[13:20:20.342Z]   Rows: 20,536 | Distinct RIDs: 10,850 | Distinct note_row_ids: 20,536
+[13:20:20.342Z]   Models: ['openai/gpt-oss-120b']
+[13:20:20.342Z]   gate OK: row count > 15,000 (got 20,536)
+[13:20:20.342Z]   gate OK: no duplicate note_row_ids (rows=20,536 == nrids=20,536)
+[13:20:20.354Z]   Entity type distribution in parquet:
+[13:20:20.354Z]     vascular_invasion: 1,255
+[13:20:20.354Z]     capsular_invasion: 1,255
+[13:20:20.354Z]     lymphovascular_invasion: 993
+[13:20:20.354Z]     soft_tissue_invasion: 904
+[13:20:20.354Z]     ptnm_stage: 427
+[13:20:20.354Z]     lymphatic_invasion: 415
+[13:20:20.354Z]     perineural_invasion_detailed: 265
+[13:20:20.354Z]     necrosis: 188
+[13:20:20.354Z]     vessel_count: 146
+[13:20:20.354Z]     mitotic_rate: 110
+[13:20:20.354Z]     ki67_index: 46
+[13:20:20.354Z]   gate OK: lymphovascular_invasion entity type present (LVI conflation fixed)
+[13:20:20.354Z]   gate OK: no lymphvascular_invasion typo (fixed during merge)
+[13:20:20.363Z]   Qualifier field presence:
+[13:20:20.363Z]     PRESENT: 6,004
+[13:20:20.434Z]   Current MD note_entities_llm_vascular_invasion: 39,210 rows, models=['qwen2.5-32b']
+[13:20:20.435Z] PHASE 0 complete
+[13:20:20.435Z] ======================================================================
+[13:20:20.435Z] PHASE 1 — archive current MD table → archive_pub_v1_0
+[13:20:20.435Z] ======================================================================
+[13:20:20.463Z]   Archiving 39,210 rows → Thyroid 2026 UPdated.archive_pub_v1_0.note_entities_llm_vascular_invasion_pre368_20260422
+[13:20:21.769Z]   gate OK: archive row count matches (39,210)
+[13:20:21.769Z]   Archived: 39,210 rows as note_entities_llm_vascular_invasion_pre368_20260422
+[13:20:21.769Z] PHASE 1 complete
+[13:20:21.770Z] ======================================================================
+[13:20:21.770Z] PHASE 2 — load merged parquet → MD main.note_entities_llm_vascular_invasion
+[13:20:21.770Z] ======================================================================
+[13:20:21.770Z]   gate OK: merged parquet exists
+[13:20:21.805Z]   Loaded parquet into local frame: 20,536 rows
+[13:20:21.839Z]   gate OK: staging row count (20,536) == parquet rows (20,536)
+[13:20:22.403Z]   gate OK: MD row count (20,536) == parquet (20,536)
+[13:20:22.403Z]   Loaded 20,536 rows into main.note_entities_llm_vascular_invasion
+[13:20:22.450Z]   gate OK: all expected columns present (missing: [])
+[13:20:22.450Z]   Columns verified: 23 cols
+[13:20:22.450Z] PHASE 2 complete
+[13:20:22.451Z] ======================================================================
+[13:20:22.451Z] PHASE 3 — post-load parity check
+[13:20:22.451Z] ======================================================================
+[13:20:22.559Z]   MD:      20,536 rows | 10,850 RIDs | 20,536 note_row_ids
+[13:20:22.559Z]   Parquet: 20,536 rows | 10,850 RIDs
+[13:20:22.559Z]   gate OK: row count parity (20,536)
+[13:20:22.559Z]   gate OK: RID count parity (10,850)
+[13:20:22.559Z]   gate OK: no duplicate note_row_ids in MD
+[13:20:22.559Z] PHASE 3 complete
+[13:20:22.559Z] ======================================================================
+[13:20:22.559Z] PHASE 4 — pre-mutation CPM snapshot → archive_pub_v1_0
+[13:20:22.559Z] ======================================================================
+[13:20:24.269Z]   Snapped 10,871 CPM rows → cpm_pre368_vasc_rollup_20260422
+[13:20:24.302Z]   Current CPM: has_data TRUE=2,973 FALSE=7,898 NULL=0 n_entities_sum=10217
+[13:20:24.302Z] PHASE 4 complete
+[13:20:24.302Z] ======================================================================
+[13:20:24.302Z] PHASE 5 — rollup UPDATE on canonical_patient_master (4-col Tier-2)
+[13:20:24.302Z] ======================================================================
+[13:20:24.366Z]   Zero-out pass complete
+[13:20:24.531Z]   Post-rollup CPM: has_data TRUE=776 FALSE=10,095 n_entities_sum=1003 pos_mentioned_true=776
+[13:20:24.531Z]   gate OK: at least one RID has has_data=TRUE
+[13:20:24.531Z]   gate OK: all 10,871 CPM rows accounted for
+[13:20:24.531Z] PHASE 5 complete
+[13:20:24.531Z] ======================================================================
+[13:20:24.531Z] PHASE 6 — post-mutation invariants A-F
+[13:20:24.531Z] ======================================================================
+[13:20:24.557Z]   gate OK: CPM row count 10,871 (got 10,871)
+[13:20:24.584Z]   gate OK: zero NULLs on nlp_vasc_has_data/n_entities/positive_mentioned (got 0)
+[13:20:24.614Z]   gate OK: confidence_tier iff has_data=TRUE (mismatches: 0)
+[13:20:24.640Z]   gate OK: source table still has rows (got 20,536)
+[13:20:24.667Z]   gate OK: n_entities >= 0 everywhere (negative: 0)
+[13:20:24.714Z]   gate OK: Tier-2 columns nlp_vasc_n_notes/key_finding NOT present (found: [])
+[13:20:24.714Z]   All invariants A-F passed
+[13:20:24.714Z] PHASE 6 complete
+[13:20:24.714Z] ======================================================================
+[13:20:24.714Z] PHASE 7 — registry + dictionary + __readme sync
+[13:20:24.714Z] ======================================================================
+[13:20:24.786Z]   Registry update skipped (non-fatal): Catalog Error: Table with name detail_table_registry_v1 does not exist!
+Did you mean "manuscript_workspace.detail_table_registry_v1"?
+
+LINE 2:             UPDATE main.detail_table_registry_v1
+                           ^
+[13:20:24.829Z]   __readme update skipped (non-fatal): Binder Error: Referenced column "table_name" not found in FROM clause!
+Candidate bindings: "updated_at", "git_sha"
+
+LINE 12:             WHERE table_name = 'note_entities_llm_vascular_invasion'
+                           ^
+[13:20:24.829Z] PHASE 7 complete
+[13:20:24.829Z] Done.
