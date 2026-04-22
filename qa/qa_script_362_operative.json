@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "name": "events_rowcount_matches_archive",
+      "passed": true,
+      "events_count": 11773,
+      "archive": "operative_episode_detail_v2_pre362_20260422_005646",
+      "archive_count": 11773
+    },
+    {
+      "name": "no_research_ids_lost",
+      "passed": true,
+      "n_old": 10871,
+      "n_new": 10871,
+      "n_lost": 0,
+      "sample_lost": []
+    },
+    {
+      "name": "patient_rollup_parity",
+      "passed": true,
+      "rollup_rows": 10871,
+      "events_distinct_rid": 10871
+    },
+    {
+      "name": "procedure_codes_rowcount_matches_source",
+      "passed": true,
+      "codes_count": 21691,
+      "source_present_count": 21691
+    },
+    {
+      "name": "procedure_linkage_geq_70pct_among_dated_mentions",
+      "passed": true,
+      "method_counts": {
+        "unlinked": 11134,
+        "temporal_30d": 78,
+        "same_day": 9575,
+        "temporal_30d_ambiguous": 904
+      },
+      "total_mentions": 21691,
+      "dated_mentions": 12952,
+      "good_linkage_dated": 9653,
+      "good_pct_among_dated": 0.7453,
+      "note": "Denominator is dated mentions only; ~40% of upstream mentions have NULL note_date and are unlinkable by design."
+    },
+    {
+      "name": "view_resolves_operative_events_VIEW_v1",
+      "passed": true,
+      "row_count": 11773
+    },
+    {
+      "name": "view_resolves_operative_patient_rollup_VIEW_v1",
+      "passed": true,
+      "row_count": 10871
+    },
+    {
+      "name": "view_resolves_operative_procedure_codes_VIEW_v1",
+      "passed": true,
+      "row_count": 21691
+    }
+  ],
+  "informational": [
+    {
+      "name": "procedure_linkage_method_distribution",
+      "distribution": {
+        "unlinked": 11134,
+        "same_day": 9575,
+        "temporal_30d_ambiguous": 904,
+        "temporal_30d": 78
+      }
+    },
+    {
+      "name": "procedure_linkage_ambiguity_rate",
+      "ambiguous": 904,
+      "linked": 10557,
+      "ambiguity_pct": 0.0856
+    },
+    {
+      "name": "procedure_normalization_sanity",
+      "top_values": {
+        "hemithyroidectomy": 9323,
+        "total_thyroidectomy": 8556,
+        "central_neck_dissection": 1000,
+        "completion_thyroidectomy": 949,
+        "tracheostomy": 610,
+        "laryngoscopy": 575,
+        "modified_radical_neck_dissection": 439,
+        "lateral_neck_dissection": 183,
+        "parathyroid_autotransplant": 56
+      }
+    },
+    {
+      "name": "varchar_date_parse_failures_note_entities_procedures",
+      "bad": 8739,
+      "total": 21691,
+      "bad_pct": 0.4029,
+      "note": "Upstream completeness gap; informs why Gate 5 is anchored to dated mentions."
+    },
+    {
+      "name": "placeholder_flag_cols",
+      "expected_missing": [
+        "drain_placed"
+      ],
+      "note": "drain_placed handled by deriving any_drain_placed from note_entities_operative_detail; not a placeholder flag"
+    }
+  ],
+  "passed": true
+}
