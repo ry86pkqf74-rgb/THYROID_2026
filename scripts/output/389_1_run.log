@@ -1,0 +1,79 @@
+[INFO] [21:21:11.455Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:21:15.355Z] Registry located: manuscript_workspace.detail_table_registry_v1
+[INFO] [21:21:15.738Z] Registry: 144 rows, 13 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[INFO] [21:21:15.867Z] Archive schema `archive_pub_v1_0`: 3 tables
+[INFO] [21:21:15.980Z] Move log: manuscript_workspace.archive_move_log_v1
+[INFO] [21:21:16.014Z] Move log entries (distinct src_table): 105
+[INFO] [21:21:16.130Z] Proposed backfill rows: 17
+[INFO] [21:21:16.130Z] Registry rows missing from main with no archive: 58
+[INFO] [21:21:16.130Z] Archive snapshots with no registry match: 0
+[INFO] [21:21:16.130Z] Archive name parse failures: 0
+[INFO] [21:21:16.130Z]   wrote probe report -> /Users/loganglosser/THYROID_2026/scripts/output/389_1_probe_report.md
+[INFO] [21:21:16.131Z] Phase 0 complete. Review 389_1_probe_report.md. Re-run with --apply to proceed.
+[INFO] [21:28:05.217Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:28:08.839Z] Registry located: manuscript_workspace.detail_table_registry_v1
+[INFO] [21:28:09.412Z] Registry: 144 rows, 13 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review']
+[INFO] [21:28:09.554Z] Archive schema `archive_pub_v1_0`: 3 tables
+[INFO] [21:28:09.694Z] Move log: manuscript_workspace.archive_move_log_v1
+[INFO] [21:28:09.729Z] Move log entries (distinct src_table): 105
+[INFO] [21:28:09.893Z] Proposed backfill rows: 17
+[INFO] [21:28:09.893Z] Registry rows missing from main with no archive: 58
+[INFO] [21:28:09.893Z] Archive snapshots with no registry match: 0
+[INFO] [21:28:09.893Z] Archive name parse failures: 0
+[INFO] [21:28:09.894Z]   wrote probe report -> /Users/loganglosser/THYROID_2026/scripts/output/389_1_probe_report.md
+[INFO] [21:28:09.894Z] ========================================================================
+[INFO] [21:28:09.894Z] Phase 2 — apply (registry at manuscript_workspace.detail_table_registry_v1)
+[INFO] [21:28:09.894Z] ========================================================================
+[INFO] [21:28:09.894Z]   2A SNAPSHOT: CREATE OR REPLACE TABLE "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."detail_table_registry_v1_pre389_1_20260422T212806Z" AS SELECT * FROM "thyroid_canonical_publication_v1_0"."manuscript_workspace"."detail_table_registry_v1"
+[INFO] [21:28:10.240Z]      parity OK (144 rows)
+[INFO] [21:28:10.240Z]   2B ALTER: ALTER TABLE "thyroid_canonical_publication_v1_0"."manuscript_workspace"."detail_table_registry_v1" ADD COLUMN IF NOT EXISTS "superseded_by" VARCHAR
+[INFO] [21:28:10.538Z]   2B ALTER: ALTER TABLE "thyroid_canonical_publication_v1_0"."manuscript_workspace"."detail_table_registry_v1" ADD COLUMN IF NOT EXISTS "renamed_by_script" VARCHAR
+[INFO] [21:28:10.950Z]   2C UPDATE _molecular_patient_rollup_v227                          renamed_by_script='297' superseded_by=None
+[INFO] [21:28:11.057Z]   2C UPDATE extracted_braf_recovery_v1                              renamed_by_script='346' superseded_by=None
+[INFO] [21:28:11.136Z]   2C UPDATE extracted_ete_subgraded_v1                              renamed_by_script='346' superseded_by=None
+[INFO] [21:28:11.201Z]   2C UPDATE extracted_fna_bethesda_v1                               renamed_by_script='346' superseded_by=None
+[INFO] [21:28:11.267Z]   2C UPDATE extracted_postop_labs_expanded_v1                       renamed_by_script='346' superseded_by=None
+[INFO] [21:28:11.404Z]   2C UPDATE extracted_ras_patient_summary_v1                        renamed_by_script='346' superseded_by=None
+[INFO] [21:28:11.480Z]   2C UPDATE frozen_section_event_v1                                 renamed_by_script='387' superseded_by=None
+[INFO] [21:28:11.546Z]   2C UPDATE ln_extract_noncohort_orphan_v279                        renamed_by_script='297' superseded_by=None
+[INFO] [21:28:11.616Z]   2C UPDATE path_size_adjudication_v241                             renamed_by_script='325' superseded_by=None
+[INFO] [21:28:11.682Z]   2C UPDATE patient_tier2_master_v1                                 renamed_by_script='387' superseded_by=None
+[INFO] [21:28:11.835Z]   2C UPDATE patient_tumor_rollup_v1                                 renamed_by_script='348' superseded_by=None
+[INFO] [21:28:11.986Z]   2C UPDATE ret_note_entity_adjudication_v226                       renamed_by_script='325' superseded_by=None
+[INFO] [21:28:12.058Z]   2C UPDATE ret_patient_adjudicated_v226                            renamed_by_script='325' superseded_by=None
+[INFO] [21:28:12.119Z]   2C UPDATE tirads_llm_validation_v2                                renamed_by_script='325' superseded_by=None
+[INFO] [21:28:12.182Z]   2C UPDATE tirads_v2_reports_raw                                   renamed_by_script='325' superseded_by=None
+[INFO] [21:28:12.262Z]   2C UPDATE tumor_pathology                                         renamed_by_script='325' superseded_by=None
+[INFO] [21:28:12.328Z]   2C UPDATE vc_paralysis_recalibration_v236                         renamed_by_script='297' superseded_by=None
+[INFO] [21:28:12.827Z]   2D __readme INSERT into "thyroid_canonical_publication_v1_0"."main"."__readme"
+[INFO] [21:28:12.979Z] ========================================================================
+[INFO] [21:28:12.979Z] Phase 3 — verify
+[INFO] [21:28:12.979Z] ========================================================================
+[INFO] [21:28:13.008Z]   row count unchanged (144)
+[INFO] [21:28:13.037Z]   snapshot row count matches (144)
+[INFO] [21:28:13.171Z]   column present: superseded_by :: VARCHAR
+[INFO] [21:28:13.171Z]   column present: renamed_by_script :: VARCHAR
+[INFO] [21:30:12.389Z] Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[INFO] [21:30:16.781Z] Registry located: manuscript_workspace.detail_table_registry_v1
+[INFO] [21:30:17.323Z] Registry: 144 rows, 15 columns: ['detail_table_name', 'schema_name', 'join_key', 'grain', 'total_rows', 'total_patients', 'domain', 'feeds_master_columns', 'description', 'canonical_version', 'feeds_master_columns_secondary', 'feeds_master_columns_array', 'needs_manual_review', 'superseded_by', 'renamed_by_script']
+[INFO] [21:30:17.559Z] Archive schema `archive_pub_v1_0`: 4 tables
+[INFO] [21:30:17.877Z] Move log: manuscript_workspace.archive_move_log_v1
+[INFO] [21:30:17.907Z] Move log entries (distinct src_table): 105
+[INFO] [21:30:18.163Z] Proposed backfill rows: 17
+[INFO] [21:30:18.163Z] Registry rows missing from main with no archive: 58
+[INFO] [21:30:18.163Z] Archive snapshots with no registry match: 1
+[INFO] [21:30:18.163Z] Archive name parse failures: 0
+[INFO] [21:30:18.165Z]   wrote probe report -> /Users/loganglosser/THYROID_2026/scripts/output/389_1_probe_report.md
+[INFO] [21:30:18.165Z] Idempotency: Phase 2 already applied (columns + __readme provenance detected). Skipping Phase 2; running Phase 3 + close-out.
+[INFO] [21:30:18.905Z] ========================================================================
+[INFO] [21:30:18.905Z] Phase 3 — verify
+[INFO] [21:30:18.905Z] ========================================================================
+[INFO] [21:30:18.964Z]   row count unchanged (144)
+[INFO] [21:30:19.003Z]   snapshot row count matches (144)
+[INFO] [21:30:19.201Z]   column present: superseded_by :: VARCHAR
+[INFO] [21:30:19.201Z]   column present: renamed_by_script :: VARCHAR
+[INFO] [21:30:19.231Z]   renamed_by_script non-NULL for all 17 backfilled rows; 3 rows have any archive match (includes legacy-style archives with no script number)
+[INFO] [21:30:19.413Z]   non-NULL superseded_by rows: 0 (all reference live main.* targets)
+[INFO] [21:30:19.463Z]   __readme provenance row present
+[INFO] [21:30:19.464Z]   wrote close-out -> /Users/loganglosser/THYROID_2026/scripts/output/389_1_close_out.md
+[INFO] [21:30:19.464Z] Phase 2 + Phase 3 complete. Run git stage / commit / tag manually.
