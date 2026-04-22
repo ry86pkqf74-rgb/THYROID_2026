@@ -1717,24 +1717,70 @@ def step_7_drop_deprecated(
                 f"Refusing to drop: replacement {sch}.{tbl} is empty."
             )
 
-    # Pre-flight: confirm archive copies exist with matching counts.
+    # Pre-flight: confirm at least one archive snapshot exists per deprecated
+    # table whose row count matches the current LIVE table (or, if archive_counts
+    # was carried in from Step 0 of this invocation, that count). Step 7 is
+    # designed to run as its own invocation (e.g. `--phase 7`) AFTER a separate
+    # build run, so we cannot assume the current BUILD_TS matches the archive
+    # name — must scan archive_pub_v1_0 for any pre361_<table>_* and accept
+    # the most recent one with matching row count.
+    archives_used: dict[str, str] = {}
     for sch, tbl in DEPRECATED_TABLES:
         live_n = archive_counts.get(f"{sch}.{tbl}")
-        archive_name = f"{tbl}_pre361_{BUILD_TS}"
-        archive_fq_name = f'{ARCHIVE_FQ}."{archive_name}"'
+        if live_n is None and table_exists(con, sch, tbl):
+            live_n = row_count(con, sch, tbl)
+        if live_n is None:
+            raise RuntimeError(
+                f"Cannot determine live row count for {sch}.{tbl}. Refusing "
+                f"to drop without a parity reference."
+            )
+        # Find all pre361_* archives for this table.
+        archive_pattern = f"{tbl}_pre361_%"
         try:
-            arch_n = int(con.execute(
-                f"SELECT COUNT(*) FROM {archive_fq_name}"
-            ).fetchone()[0])
+            candidates = con.execute(
+                """
+                SELECT table_name FROM information_schema.tables
+                WHERE table_catalog = ? AND table_schema = ?
+                  AND table_name LIKE ?
+                ORDER BY table_name DESC
+                """,
+                [ARCHIVE_DB, ARCHIVE_SCHEMA, archive_pattern],
+            ).fetchall()
         except duckdb.Error as exc:
             raise RuntimeError(
-                f"Archive {archive_name} unreadable: {exc}. Refusing to drop."
+                f"Cannot enumerate archives for {sch}.{tbl}: {exc}. "
+                f"Refusing to drop."
             ) from exc
-        if live_n is not None and arch_n != live_n:
+        if not candidates:
             raise RuntimeError(
-                f"Archive {archive_name} has {arch_n:,} rows but pre-archive "
-                f"live had {live_n:,}. Refusing to drop {sch}.{tbl}."
+                f"No pre361_* archive found for {sch}.{tbl} in "
+                f"{ARCHIVE_DB}.{ARCHIVE_SCHEMA}. Refusing to drop."
             )
+        matched_archive = None
+        archive_counts_seen: list[tuple[str, int]] = []
+        for (archive_name,) in candidates:
+            archive_fq_name = f'{ARCHIVE_FQ}."{archive_name}"'
+            try:
+                arch_n = int(con.execute(
+                    f"SELECT COUNT(*) FROM {archive_fq_name}"
+                ).fetchone()[0])
+            except duckdb.Error as exc:
+                log_warn(
+                    f"  archive {archive_name} unreadable: {exc} — skipping"
+                )
+                continue
+            archive_counts_seen.append((archive_name, arch_n))
+            if arch_n == live_n:
+                matched_archive = archive_name
+                break  # newest matching wins (DESC order above)
+        if matched_archive is None:
+            raise RuntimeError(
+                f"No pre361_* archive of {sch}.{tbl} matches live row count "
+                f"{live_n:,}. Candidates: {archive_counts_seen}. "
+                f"Refusing to drop."
+            )
+        archives_used[f"{sch}.{tbl}"] = matched_archive
+        log(f"  parity verified: {sch}.{tbl} ({live_n:,} rows) <- {matched_archive}")
 
     # Find dependent views in views_readable that reference the targets.
     dep_views: list[tuple[str, str]] = []
@@ -1782,7 +1828,9 @@ def step_7_drop_deprecated(
         if do_writes:
             con.execute(f"DROP TABLE {fq(sch, tbl)}")
         dropped.append(f"{sch}.{tbl}")
-    return {"dropped": dropped, "dependent_views": [f"{s}.{v}" for s, v in dep_views]}
+    return {"dropped": dropped,
+            "dependent_views": [f"{s}.{v}" for s, v in dep_views],
+            "archives_used_for_parity": archives_used}
 
 
 # ---------------------------------------------------------------------------
