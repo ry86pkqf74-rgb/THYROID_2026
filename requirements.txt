@@ -1,5 +1,6 @@
 streamlit
-duckdb<=1.4.4
+# MotherDuck recommends ≥1.5.2 for the Python client (see connect warnings)
+duckdb>=1.5.2,<2
 # Data version control for processed/*.parquet.dvc and thyroid_master.duckdb.dvc
 dvc[s3]>=3.67,<4
 pandas
