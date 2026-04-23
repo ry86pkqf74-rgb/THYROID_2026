@@ -20,10 +20,10 @@ Each entry has:
 
 | ID | Table | Severity | Scope | Observed | Short description |
 |---|---|---|---|---:|---|
-| LN01 | manuscript_cohort_v1 | critical | patient | 10 pts | `ln_positive_final > path_ln_examined_raw` |
-| LN02 | manuscript_cohort_v1 | critical | patient | 28 pts | `ln_positive_final > 0` with `path_ln_examined_raw = 0` |
-| LN03 | manuscript_cohort_v1 | warning | patient | 51 pts | `path_ln_positive_raw ≠ ln_positive_final` |
-| LN04 | manuscript_cohort_v1 | info | patient | 2,998 pts | both LN columns null |
+| LN01 | manuscript_cohort_v1 | critical | patient | 2 pts (rollup) / 0 row-level (RESOLVED 2026-04-23) | `ln_positive_final > path_ln_examined_raw` |
+| LN02 | manuscript_cohort_v1 | critical | patient | 19 pts (rollup) / 28 rows (RESOLVED 2026-04-23) | `ln_positive_final > 0` with `path_ln_examined_raw = 0` |
+| LN03 | manuscript_cohort_v1 | warning | patient | resolved architecturally (RESOLVED 2026-04-23) | `path_ln_positive_raw ≠ ln_positive_final` |
+| LN04 | manuscript_cohort_v1 | info | patient | resolved via availability flags (RESOLVED 2026-04-23) | both LN columns null |
 | REC01 | recurrence_event_clean_v1 | critical | patient | 28 pts (18 PTC) | recurrence date < first_surgery_date (per operative SoT) |
 | REC02 | manuscript_cohort_v1 | warning | patient | 1,764 pts | flag=TRUE, date NULL |
 | REC03 | manuscript_cohort_v1 | warning | patient | TBD | date present, flag not TRUE |
@@ -126,43 +126,41 @@ Each entry has:
 ## Detail entries
 
 ### LN01 — `ln_positive_final > path_ln_examined_raw`
-- **Table/col**: `main.manuscript_cohort_v1` (`ln_positive_final`, `path_ln_examined_raw`)
+- **Table/col**: `main.manuscript_cohort_v1` (`ln_positive_final`, `path_ln_examined_raw`) — deprecated; superseded by `manuscript_workspace.ln_per_patient_multisource_v1`.
 - **Category**: rollup / rule-violation
 - **Severity / scope**: critical / patient
-- **Detection**:
-  ```sql
-  SELECT COUNT(*) FROM main.manuscript_cohort_v1
-  WHERE ln_positive_final > path_ln_examined_raw;
-  ```
-- **Observed**: 10 patients
-- **Fix** (per multi-source LN architecture):
-  1. Rebuild the LN-path stream in isolation: `ln_path_positive := SUM(ln_involved) over canonical_path_malignant_events_v1`, `ln_path_examined := SUM(ln_examined) over same`, per `(research_id, surgery_episode_uid)`. Within this stream, `ln_path_positive ≤ ln_path_examined` must hold.
-  2. If the row-level source itself violates (numerator > denominator within a single path event), emit to `qc_manual_review_queue_v1` with `issue_id='LN01'`.
-  3. Drop the single `ln_positive_final` / `path_ln_examined_raw` columns from cohort_v2; replace with per-source columns listed in "Resolved decisions #2".
-- **Status**: pending
+- **Observed**:
+  - Row-level on `canonical_path_malignant_events_v1`: **0 rows** (i.e. no single path event has `ln_involved > ln_examined`). The cohort-level violations came purely from collapsed cross-event aggregation.
+  - Patient-rollup on the multisource view: **2 pts** have `SUM(ln_involved) > SUM(ln_examined)` across events.
+- **Fix applied (2026-04-23, migration 11)**:
+  1. Built `manuscript_workspace.ln_per_patient_multisource_v1` (grain = research_id) with per-source LN columns: `ln_path_positive` / `ln_path_examined` (SUM over path events), `ln_us_suspicious_count` (NULL — USLN01 shell), `ln_ct_{suspicious,pathologic}_count`, `ln_mri_suspicious_count`, `ln_clinical_positive_flag`, plus availability booleans per source. Multi-source, never collapsed.
+  2. Queued 2 rollup-level LN01 patients into `qc_manual_review_queue_v1`.
+  3. Cohort v2 reads from this view; the three deprecated cohort_v1 LN columns are `COMMENT ON COLUMN`-marked and logged in `canonical_deprecation_log_v1` under `prompt_10`.
+- **Status**: RESOLVED 2026-04-23 (view `manuscript_workspace.ln_per_patient_multisource_v1`; 2 rows queued under `qc_manual_review_queue_v1`; deprecation log entry `prompt_10`).
 
 ### LN02 — `ln_positive_final > 0` with denominator 0 or NULL
-- **Table/col**: `main.manuscript_cohort_v1`
+- **Table/col**: `main.manuscript_cohort_v1` — deprecated; superseded by `manuscript_workspace.ln_per_patient_multisource_v1`.
 - **Category**: rollup
 - **Severity / scope**: critical / patient
-- **Detection**: `ln_positive_final > 0 AND COALESCE(path_ln_examined_raw,0) = 0`
-- **Observed**: 28 patients
-- **Fix**: Same rebuild as LN01. For the 28 patients: if after rebuild a LN-path source shows positive without denominator, the row is incomplete — emit to manual review with `issue_id='LN02'`. Critical because staging (N1a/N1b) is uncomputable without denominator.
-- **Status**: pending
+- **Observed**:
+  - Row-level on path events: **28 rows / 27 pts** have `ln_involved > 0 AND (ln_examined IS NULL OR = 0)`.
+  - Patient-rollup on the multisource view: **19 pts** have `SUM(ln_involved) > 0 AND SUM(ln_examined) = 0 or NULL`.
+- **Fix applied (2026-04-23, migration 11)**: Queued 19 rollup-level LN02 patients into `qc_manual_review_queue_v1` with `(ln_path_positive, ln_path_examined)` context. Staging (N1a/N1b) remains uncomputable for these patients until chart review either adds a denominator or downgrades the positive count.
+- **Status**: RESOLVED 2026-04-23 (19 rows queued under `qc_manual_review_queue_v1`; deprecation log entry `prompt_10`).
 
 ### LN03 — raw vs final LN disagreement
-- **Table/col**: `main.manuscript_cohort_v1` (`path_ln_positive_raw`, `ln_positive_final`)
+- **Table/col**: `main.manuscript_cohort_v1` (`path_ln_positive_raw`, `ln_positive_final`) — deprecated columns.
 - **Category**: rollup
 - **Severity / scope**: warning / patient
-- **Observed**: 51 patients
-- **Fix**: After LN01 rebuild, both `path_ln_positive_raw` and `ln_positive_final` are deprecated in favor of `ln_path_positive` (single path-sourced column). Drop the two old columns. Document in the cohort_v2 spec that the rename happened.
-- **Status**: pending
+- **Observed**: 51 patients (pre-resolution).
+- **Fix applied (2026-04-23, migration 11)**: Architectural resolution — both columns are deprecated in favor of a single path-stream source on the multisource view (`ln_path_positive`, `ln_path_examined`). The raw/final fork no longer exists; no queue emission needed. Deprecation log entry `prompt_10` covers all three cohort_v1 LN columns.
+- **Status**: RESOLVED 2026-04-23 (resolved architecturally — columns deprecated, no queue emission).
 
 ### LN04 — LN data missing for both columns
 - **Severity / scope**: info / patient
-- **Observed**: 2,998 patients
-- **Fix**: Once multi-source LN columns exist, add `ln_data_available_path BOOLEAN`, `ln_data_available_imaging BOOLEAN`, `ln_data_available_clinical BOOLEAN` to the cohort. Per-source availability reported in Table 1. In Methods, note non-random missingness and which analyses depend on which source.
-- **Status**: pending
+- **Observed**: 2,998 patients (pre-resolution — both `ln_positive_final` and `path_ln_examined_raw` NULL on `manuscript_cohort_v1`).
+- **Fix applied (2026-04-23, migration 11)**: The multisource view exposes per-source availability booleans (`ln_data_available_{path,us,ct,mri,clinical}`). Post-resolution coverage on the 7,012-patient union: path 3,999 / us 4,077 (shell only) / ct 3,086 / mri 462 / clinical 1,643. Zero patients have no LN data in any source. Downstream cohort_v2 + Methods will report per-source N with non-random-missingness language.
+- **Status**: RESOLVED 2026-04-23 (resolved via per-source availability flags on `ln_per_patient_multisource_v1`).
 
 ### REC01 — recurrence before first surgery
 - **Table/col**: `main.recurrence_event_clean_v1` joined to `main.manuscript_cohort_v1.first_surgery_date`
