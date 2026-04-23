@@ -1,6 +1,6 @@
 # Script 403 — Close-out (rid 6275 PDTC stage_group)
 
-- **Commit SHA (materialize):** `(pending; Phase 4)`
+- **Commit SHA (materialize):** `8e99a9ced56a87622c20788717252847105ad56c`
 - **Tag:** `v1_0-pdtc-rid6275-stage-group-applied-20260423_045808`
 - **UTC:** 2026-04-23T05:00:39.058861+00:00
 - **Probe SHA256:** `65880be5f342648336f3bc90949c55c0e663f357f937937819c6a29c9ab5bcad`
@@ -31,7 +31,7 @@
 | check | result |
 |---|---|
 | Staged PDTC-like rows | 46 (expect 46) |
-| age<55, M0 → Stage I bucket | ≥{EXPECT_PDTC_BUCKET_LT55_M0_I_MIN} precedent rows |
+| age<55, M0 → Stage I bucket | ≥5 precedent rows (Phase 0 live bucket = 6) |
 
 ## Post-state
 

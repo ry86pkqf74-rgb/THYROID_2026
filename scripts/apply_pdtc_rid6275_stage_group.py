@@ -970,7 +970,7 @@ def format_close_out(
             "| check | result |",
             "|---|---|",
             f"| Staged PDTC-like rows | {EXPECT_PDTC_STAGED} (expect {EXPECT_PDTC_STAGED}) |",
-            "| age<55, M0 → Stage I bucket | ≥{EXPECT_PDTC_BUCKET_LT55_M0_I_MIN} precedent rows |",
+            f"| age<55, M0 → Stage I bucket | ≥{EXPECT_PDTC_BUCKET_LT55_M0_I_MIN} precedent rows |",
             "",
             "## Post-state",
             "",
