@@ -1,6 +1,6 @@
 # Script 397 — Close-out
 
-- **Git commit / SHA:** `(pending; run git rev-parse HEAD after commit)`
+- **Git commit / SHA:** `c2fc724050d1f0b41343e3ea8457cd79f7a6aab5`
 - **Tag:** `v1_0-cpm-tn-primary-from-v2-filled-20260423_030702`
 - **UTC timestamp:** 2026-04-23T03:07:06.372552+00:00
 - **Probe SHA256 (consumed):** `921e50e18f2be6c37a1aaaf67a8b1288f9b2610e1d36f1371aa6b8bb103389a7`
