@@ -1,8 +1,9 @@
 # Script 402 — Close-out (histologic classification audit)
 
-- **Commit SHA:** `(pending; run after Phase 4)`
+- **Commit SHA:** `5668b7242df949d5511cd14bb18dfd6dc7b87c88` (post-rebase; Script 402 apply + Phase 4)
 - **Tag:** `v1_0-histologic-classification-audit-20260423_044610`
-- **UTC:** 2026-04-23T04:46:13.112990+00:00
+- **UTC (materialize / close-out draft):** 2026-04-23T04:46:13.112990+00:00
+- **Phase 4 push:** `git push origin HEAD` and tag push succeeded after `git pull --rebase --autostash origin main` (unstashed local edits).
 - **Probe SHA256 (consumed):** `7e2ed768490c1c13a62a5d2e694c7590d70dfed8290a93d64b2690454184c46c`
 - **Target FQN:** `thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_histologic_classification_audit_v1`
 
