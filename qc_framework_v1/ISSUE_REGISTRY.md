@@ -94,7 +94,7 @@ Each entry has:
 | GEN06 | canonical_molecular_genetics_v2 | warning | event | ~65% NULL | `resolved_test_date` missing |
 | GEN07 | canonical_molecular_genetics_v2 | warning | event | TBD | `risk_of_malignancy_pct` out of 0–100 range |
 | GEN08 | canonical_molecular_genetics_v2 | critical | event | 496 rows / 465 pts (172 PTC) | `fusion_flag=TRUE` but `gene_fusions_list` empty/NULL (direct row-level check, not unnest-view) |
-| GEN09 | specimen_genomic_assay_v1 | critical | **schema** | 98% broken | linkage to specimen + molecular episode missing |
+| GEN09 | specimen_genomic_assay_v1 | critical | **schema** | 98% broken → research_id-only binding (RESOLVED 2026-04-23) | linkage to specimen + molecular episode missing |
 | GEN10 | canonical_molecular_genetics_from_notes_v2 | warning | **schema** | table-wide | rename to `molecular_mentions_*` to disambiguate from structured layer |
 | GEN11 | canonical_molecular_genetics_v2 | warning | event | mostly NULL | `specimen_adequacy` not populated |
 | GEN12 | canonical_molecular_genetics_v2 | warning | event | TBD | `mutation_status` / `fusion_status` / `cna_status` / `gep_status` non-normalized |
@@ -1048,7 +1048,17 @@ Each entry has:
   3. Populate linkage tiers: `A_direct_match`, `B_same_patient_date_range`, `C_same_patient_only`, `D_unlinked`.
   4. Set `review_flag := (tier NOT IN ('A_direct_match','B_same_patient_date_range'))`.
   5. Target: reduce `D_unlinked` from 9,170 to under 2,000; target `A/B` tier to over 6,000 rows combined.
-- **Status**: pending (blocked on GEN01, PATH01, FNA-episode rebuild)
+- **Status**: RESOLVED 2026-04-23 (migration 06)
+- **Resolution (2026-04-23)**:
+  - Per Logan's direction ("don't over-engineer, they should all simply go to a research ID"), the elaborate tier-based linkage scheme was collapsed to research_id-only binding.
+  - View: `manuscript_workspace.specimen_genomic_assay_v1_relinked` — for every assay row, reports whether its `research_id` exists in `canonical_molecular_genetics_v2` and/or `specimen_master_v1`. Downstream joins bind on `research_id`.
+  - Final distribution (10,370 assay rows):
+    - rid in both molecular + specimen: 1,175
+    - rid in specimen_master only:      6,702
+    - rid in canonical_molecular only:    313
+    - rid in neither:                   2,180 rows / 2,177 patients → queue
+  - Queue: 2,177 rows (one per orphan research_id) inserted into `qc_manual_review_queue_v1` with `issue_id='GEN09'` / `reason='research_id absent from both canonical_molecular_genetics_v2 and specimen_master_v1'`.
+  - Deferred / not built (per "don't over-engineer"): surgery_episode_id imputation, date-window probing, specimen_id reconstruction from collection date, molecular_episode_uid propagation. These can be layered on later if a downstream analysis needs row-level (rather than patient-level) specimen binding.
 
 ### GEN10 — `canonical_molecular_genetics_from_notes_v2` unlinked/unverified
 - **Table/col**: `main.canonical_molecular_genetics_from_notes_v2` (`linked_test_episode_id`, `source_episode_id`, `verification_status`, `confidence_score`)
