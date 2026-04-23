@@ -1,0 +1,13 @@
+2026-04-23T00:14:04.775069+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+2026-04-23T00:14:07.788481+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/395_prestate_probe_report.md
+2026-04-23T00:14:07.789725+00:00 2A: CREATE OR REPLACE "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."cpm_t_sync_pre395_20260423_001407" AS ...
+2026-04-23T00:14:08.200527+00:00 2A OK — 13 rows
+2026-04-23T00:14:08.200866+00:00 2B: UPDATE ajcc8_t_stage FROM ajcc8_t_stage_v2 (11 rows) ...
+2026-04-23T00:14:08.889819+00:00 2B RETURNING count=11
+2026-04-23T00:14:08.890195+00:00 2C: UPDATE ajcc8_stage_group + _corrected ...
+2026-04-23T00:14:09.261389+00:00 2C RETURNING count=11
+2026-04-23T00:14:09.275444+00:00 2D: CREATE queue table if needed + INSERT manual-review rows ...
+2026-04-23T00:14:09.681433+00:00 2D INSERT RETURNING count=2
+2026-04-23T00:14:09.681807+00:00 2E: __readme
+2026-04-23T00:14:10.312345+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/395_close_out_report.md
+2026-04-23T00:14:10.312624+00:00 Script 395 apply + verify complete.
