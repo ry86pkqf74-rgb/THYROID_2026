@@ -36,8 +36,8 @@ Each entry has:
 | TIR01 | canonical_us_nodule_v2 | warning | event | 0 | points↔category band mismatch (ACR 2017) |
 | TIR02 | canonical_us_nodule_v2 | warning | event | 0 | concordance flag inconsistent with cat columns |
 | TIR03 | canonical_us_nodule_v2 | critical | patient | 56 pts / 60 ex | multi-nodule report under-exploded |
-| ETE01 | canonical_path_malignant_events_v1 | warning | event | 3,582 pts / 5,383 ev | ETE string not in controlled vocab |
-| ETE02 | canonical_path_malignant_events_v1 | critical | patient | 211 pts | `gross_ete=1` paired with "minimal/microscopic/focal" |
+| ETE01 | canonical_path_malignant_events_v1 | warning | event | 35 raw → 6 buckets (RESOLVED 2026-04-23) | ETE string not in controlled vocab |
+| ETE02 | canonical_path_malignant_events_v1 | critical | event | 568 rows / 338 pts queued (RESOLVED 2026-04-23) | `gross_ete=1` paired with "minimal/microscopic/present_unspecified" |
 | AJCC01 | canonical_path_malignant_events_v1 | warning | event | 53 pts / 55 ev | AJCC8 calc flag TRUE, N NULL |
 | AJCC02 | manuscript_cohort_v1 | warning | patient | 269 pts | AJCC8 calc flag TRUE, N NULL (cohort) |
 | AJCC03 | canonical_path_malignant_events_v1 | warning | event | 220 rows | AJCC7 calc flag TRUE, component NULL |
@@ -257,21 +257,25 @@ Each entry has:
 
 ### ETE01 — `extrathyroidal_extension` not in controlled vocab
 - **Table/col**: `canonical_path_malignant_events_v1.extrathyroidal_extension`
-- **Observed**: 3,582 patients / 5,383 events (largest finding in the registry)
-- **Fix**:
-  1. Canonical vocabulary: `{none, minimal, microscopic, gross, extensive, NULL}`. `minimal` and `microscopic` are kept as distinct labels (preserve reported term) but are semantically equivalent — any analysis that stratifies by "microscopic ETE" must group `{minimal, microscopic}` together. Document this as a materialized view `ete_grade_grouped` with cases `{minimal, microscopic} → 'microscopic_or_minimal'`, `{gross, extensive} → 'gross_or_extensive'`, `{none} → 'none'`.
-  2. Build `ete_string_map(raw_value, canonical_value)` enumerating every distinct raw value (including typos like `extesive`, `microscopiic`). Fuzzy match + manual review.
-  3. Apply: `UPDATE canonical_path_malignant_events_v1 SET extrathyroidal_extension = m.canonical_value FROM ete_string_map m WHERE extrathyroidal_extension = m.raw_value`.
-  4. Any raw value without a mapping → NULL + log to `manuscript_workspace.ete_unmapped_raw_values_v1` for manual review.
-- **Status**: pending
+- **Observed**: 35 distinct raw values across 6,689 rows / 4,138 patients. Top raws: `x` 5,069, NULL 445, `present` 365, `minimal` 292, `false` 201, `microscopic` 120, plus 29 lower-count variants including typos (`extesive`, `microscopiic`), case/whitespace drift (`Yes;`, `Yes;minimal;`), narrative strings (`present (microscopic perithyroidal soft tissue only…)`, `x\n(single microscopic focus of extension)`), and explicit-unknowns (`c/a`, `n/a`, `indeterminate`, `* (see margin comment)`).
+- **Fix applied (2026-04-23, migration 10)**:
+  1. Built `manuscript_workspace.canonical_path_malignant_events_v1_ete_clean` (view over raw table) with three derived columns:
+     - `ete_grade` — controlled vocab `{none, minimal, microscopic, gross, extensive, present_unspecified, NULL}`.
+     - `ete_grade_grouped` — collapses `{minimal, microscopic} → 'minimal_microscopic'`; other buckets pass through.
+     - `ete_discordance_flag` — see ETE02.
+  2. Normalize pipeline: `LOWER(TRIM(REGEXP_REPLACE(ete, '\s+', ' ', 'g')))` — collapses embedded newlines and case/whitespace drift.
+  3. CASE-ordering (most-specific wins): extensive → gross → microscopic → minimal → focal(→minimal) → none → explicit-unknowns(→NULL) → yes/present/true prefix(→present_unspecified) → NULL fallback. `x (single microscopic focus of extension)` correctly reclassifies to `microscopic` via the contains-microscopic match.
+  4. Raw column retained for audit; `COMMENT ON COLUMN` marks it deprecated and points to the clean view.
+- **Observed post-normalization**: bucket distribution on 6,689 rows — NULL 5,583 / present_unspecified 415 / minimal 327 / none 201 / microscopic 127 / extensive 36 (and 0 gross-only, since every 'gross' string also matched an overriding branch; all gross signal rides on `gross_ete=1` and surfaces via ETE02).
+- **Status**: RESOLVED 2026-04-23 (view `manuscript_workspace.canonical_path_malignant_events_v1_ete_clean`; deprecation log entry `prompt_09`).
 
-### ETE02 — `gross_ete=1` paired with "minimal/microscopic/focal"
-- **Observed**: 211 patients (356 events)
-- **Fix**:
-  1. Source-of-truth decision: declare the **string** (after ETE01 normalization) authoritative.
-  2. Recompute `gross_ete := (extrathyroidal_extension = 'gross' OR extrathyroidal_extension = 'extensive')`.
-  3. Overwrite.
-- **Status**: pending (must run after ETE01)
+### ETE02 — `gross_ete=1` paired with "minimal/microscopic/present_unspecified"
+- **Observed**: 568 event rows / 338 patients where `gross_ete=1` AND `ete_grade IN ('minimal','microscopic','present_unspecified')` — the structured gross flag disagrees with the narrative grade.
+- **Fix applied (2026-04-23, migration 10)**:
+  1. Flag-only — no overwrite. The clean view exposes `ete_discordance_flag BOOLEAN` that captures the contradiction without silently collapsing one source onto the other.
+  2. Queued 568 rows into `manuscript_workspace.qc_manual_review_queue_v1` under `issue_id='ETE02'` with `context_json` containing raw `extrathyroidal_extension`, derived `ete_grade`, `ete_grade_grouped`, and `gross_ete`. Composite `source_pk` = `research_id | surgery_episode_id | path_surgery_id | specimen_id | specimen_focus_id` (table has no single-column PK; NULL-safe via COALESCE). Idempotent via NOT EXISTS guard.
+  3. Manual review will decide per-row: upgrade grade to `gross`/`extensive`, or downgrade the `gross_ete` flag, based on path report context.
+- **Status**: RESOLVED 2026-04-23 (568 rows queued under `qc_manual_review_queue_v1`; deprecation log entry `prompt_09`).
 
 ### AJCC01 — AJCC8 calc flag TRUE with N NULL
 - **Observed**: 53 patients / 55 events (matches your manual count)
