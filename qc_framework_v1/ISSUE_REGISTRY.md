@@ -1055,10 +1055,14 @@ Each entry has:
   - Final distribution (10,370 assay rows):
     - rid in both molecular + specimen: 1,175
     - rid in specimen_master only:      6,702
-    - rid in canonical_molecular only:    313
-    - rid in neither:                   2,180 rows / 2,177 patients → queue
-  - Queue: 2,177 rows (one per orphan research_id) inserted into `qc_manual_review_queue_v1` with `issue_id='GEN09'` / `reason='research_id absent from both canonical_molecular_genetics_v2 and specimen_master_v1'`.
-  - Deferred / not built (per "don't over-engineer"): surgery_episode_id imputation, date-window probing, specimen_id reconstruction from collection date, molecular_episode_uid propagation. These can be layered on later if a downstream analysis needs row-level (rather than patient-level) specimen binding.
+    - rid in canonical_molecular only:    313 rows / 243 patients
+    - rid in neither:                   2,180 rows / 2,177 patients
+  - **No queue emitted** (gut-check outcome 2026-04-23):
+    - The 2,177 "neither" patients: 2,176/2,177 had surgery AND are in `canonical_path_benign_events_v1`, 0/2,177 in `path_malignant`. All have `platform='Other'` with no date / no payload — empty placeholder rows for benign-cohort patients who never had a molecular test. Absence from canonical_molecular is correct; absence from specimen_master is a separate benign-cohort coverage gap, not a GEN09 defect.
+    - The 313 "molecular-only" rows (243 patients): also all benign-cohort (0/243 malignant, 243/243 benign, all with surgery). 43/243 have rows in `canonical_molecular_genetics_from_notes_v2`, so the molecular source may be op-note-derived rather than FNA. specimen_master's missing rows are the same benign-cohort coverage gap.
+    - Queuing either group under GEN09 would be a category error — neither represents a linkage failure that a row-level human review can fix. The view itself IS the GEN09 resolution: downstream joins on `research_id`, with the two boolean flags exposing the coverage gap directly for cohort construction.
+  - Follow-up: specimen_master_v1 benign-cohort coverage gap is its own potential issue (2,177 benign-cohort pts not indexed, plus 243 molecular-only pts); out of scope for GEN09.
+  - Deferred / not built (per "don't over-engineer"): surgery_episode_id imputation, date-window probing, specimen_id reconstruction from collection date, molecular_episode_uid propagation.
 
 ### GEN10 — `canonical_molecular_genetics_from_notes_v2` unlinked/unverified
 - **Table/col**: `main.canonical_molecular_genetics_from_notes_v2` (`linked_test_episode_id`, `source_episode_id`, `verification_status`, `confidence_score`)

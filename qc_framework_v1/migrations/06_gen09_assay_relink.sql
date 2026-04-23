@@ -15,11 +15,29 @@
 -- present in canonical_molecular_genetics_v2 and/or specimen_master_v1.
 -- Downstream joins bind on research_id.
 --
--- Final distribution:
+-- Final distribution (10,370 rows / 10,026 patients):
 --   rid in both      : 1,175
---   rid in sm only   : 6,702  (specimen-linkable, no molecular test)
---   rid in canon only:   313  (molecular-linkable, no specimen row)
---   rid in neither   : 2,180 rows / 2,177 patients  → queue as orphans
+--   rid in sm only   : 6,702   (specimen-linkable, no molecular test parsed)
+--   rid in canon only:   313   (molecular-linkable, no specimen_master row)
+--   rid in neither   : 2,180 rows / 2,177 patients
+--
+-- Gut-check outcome — no queue emitted.
+--   * The 2,177 "neither" patients: 2,176/2,177 had surgery AND are in
+--     canonical_path_benign_events_v1, 0/2,177 in path_malignant. All carry
+--     platform='Other' with no date and no payload — they are empty
+--     placeholder rows for benign-cohort patients who never had a molecular
+--     test. Absence from canonical_molecular is correct. Absence from
+--     specimen_master is a separate coverage gap, not a GEN09 defect.
+--   * The 313 "molecular-only" rows / 243 patients: also benign-cohort
+--     (0/243 in path_malignant, 243/243 in path_benign). All had surgery;
+--     43/243 have notes-derived molecular extractions, so the molecular
+--     source may be op-note (not FNA). specimen_master's missing rows
+--     are the same benign-cohort coverage gap.
+--   Queuing either group under GEN09 would be a category error — neither
+--   represents a linkage failure that a row-level human review can fix.
+--   The view itself IS the GEN09 resolution: downstream joins on
+--   research_id, with the two boolean flags exposing the coverage gap
+--   directly for cohort construction.
 -- ============================================================================
 
 CREATE OR REPLACE VIEW manuscript_workspace.specimen_genomic_assay_v1_relinked AS
@@ -42,29 +60,8 @@ SELECT
         AS rid_in_specimen_master
 FROM main.specimen_genomic_assay_v1 a;
 
--- ---------------------------------------------------------------------------
--- QC queue emission (idempotent) — one row per orphan research_id
--- (rid absent from both molecular and specimen sources).
--- ---------------------------------------------------------------------------
-INSERT INTO manuscript_workspace.qc_manual_review_queue_v1
-    (issue_id, research_id, source_table, source_pk, context_json, reason)
-SELECT
-    'GEN09' AS issue_id,
-    research_id,
-    'specimen_genomic_assay_v1' AS source_table,
-    CAST(research_id AS VARCHAR) AS source_pk,
-    TO_JSON(struct_pack(
-        n_assay_rows := COUNT(*),
-        distinct_platforms := COUNT(DISTINCT platform)
-    )) AS context_json,
-    'research_id absent from both canonical_molecular_genetics_v2 and specimen_master_v1' AS reason
-FROM manuscript_workspace.specimen_genomic_assay_v1_relinked r
-WHERE rid_in_canonical_molecular = FALSE
-  AND rid_in_specimen_master = FALSE
-  AND NOT EXISTS (
-      SELECT 1 FROM manuscript_workspace.qc_manual_review_queue_v1 q
-      WHERE q.issue_id = 'GEN09'
-        AND q.source_table = 'specimen_genomic_assay_v1'
-        AND q.source_pk = CAST(r.research_id AS VARCHAR)
-  )
-GROUP BY research_id;
+-- No queue emission. Gut-check established that the "unlinked" rows are
+-- benign-cohort placeholders or benign-cohort specimen_master coverage
+-- gaps, neither of which is a GEN09 defect. The view exposes the
+-- research_id-level presence/absence directly; downstream consumers bind
+-- on research_id and can filter with the two boolean flags.
