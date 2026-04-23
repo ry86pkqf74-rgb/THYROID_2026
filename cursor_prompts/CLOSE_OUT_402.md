@@ -1,6 +1,6 @@
 # Script 402 — Close-out (histologic classification audit)
 
-- **Commit SHA:** `283ba49b4b39c0dd6b9251d9d61f8347b416b46f` (tag `v1_0-histologic-classification-audit-20260423_044610` points here; parent `5668b72` = Script 402 apply + first Phase 4 attempt)
+- **Commit SHA:** `19b8afd1a994409928a0877a8ec9863e14215456` (tag `v1_0-histologic-classification-audit-20260423_044610`; MotherDuck materialize `5668b7242df949d5511cd14bb18dfd6dc7b87c88`)
 - **Tag:** `v1_0-histologic-classification-audit-20260423_044610`
 - **UTC (materialize / close-out draft):** 2026-04-23T04:46:13.112990+00:00
 - **Phase 4 push:** `git push origin HEAD` and tag push succeeded after `git pull --rebase --autostash origin main` (unstashed local edits).
