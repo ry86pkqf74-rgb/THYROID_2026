@@ -1,6 +1,6 @@
 # Script 401 — Close-out (manual-review queue sort-out)
 
-- **Commit SHA:** `(pending; Phase 4)`
+- **Commit SHA:** `5102d9e0242ddc10b757c540b8527d381f1f1195`
 - **Tag:** `v1_0-manual-review-queue-sortout-20260423_041534`
 - **UTC:** 2026-04-23T04:19:57.104830+00:00
 - **Probe SHA256:** `43f13ca0704ebbf0cd7ce41fe3a0f3856ca88892c22736bfee0228a88729a1e3`

@@ -1,3 +1,6 @@
 2026-04-23T04:15:31.720126+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
 2026-04-23T04:15:34.172647+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/apply_manual_review_queue_sortout_probe.md
 2026-04-23T04:19:57.105382+00:00 Wrote /Users/loganglosser/THYROID_2026/cursor_prompts/CLOSE_OUT_401.md
+2026-04-23T04:19:58.695492+00:00 Phase 4: push HEAD — ok
+2026-04-23T04:19:59.854813+00:00 Phase 4: push tag — ok
+2026-04-23T04:19:59.855698+00:00 Apply+verify done.
