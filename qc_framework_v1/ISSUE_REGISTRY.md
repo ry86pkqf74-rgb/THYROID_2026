@@ -29,9 +29,9 @@ Each entry has:
 | REC03 | manuscript_cohort_v1 | warning | patient | TBD | date present, flag not TRUE |
 | SURG01 | manuscript_cohort_v1 | critical | patient | 171 pts | three surgery-date columns disagree |
 | SURG02 | manuscript_cohort_v1 | info | patient | 8,559 pts | three surgery-date columns identical (collapse) |
-| HIST01 | manuscript_cohort_v1 | warning | patient | 77 pts | whitespace on `histology_final` |
-| HIST02 | manuscript_cohort_v1 | warning | patient | 172 pts | unnormalized PTC variant |
-| HIST03 | manuscript_cohort_v1 | warning | patient | 179 pts | `metastatic ` prefix |
+| HIST01 | manuscript_cohort_v1 | warning | patient | 77 pts → 0 via view (RESOLVED 2026-04-23) | whitespace on `histology_final` |
+| HIST02 | manuscript_cohort_v1 | warning | patient | 59 distinct → 19 buckets (RESOLVED 2026-04-23) | unnormalized PTC variant |
+| HIST03 | manuscript_cohort_v1 | warning | patient | 181 rows flagged via `histology_metastatic_prefix_flag` (RESOLVED 2026-04-23) | `metastatic ` prefix |
 | FNA01 | canonical_fna_events_v1 | critical | patient | 349 ev / 286 pts (154 PTC) | FNA after first surgery (per operative SoT, 2026-04-22 run) |
 | TIR01 | canonical_us_nodule_v2 | warning | event | 0 | points↔category band mismatch (ACR 2017) |
 | TIR02 | canonical_us_nodule_v2 | warning | event | 0 | concordance flag inconsistent with cat columns |
@@ -205,25 +205,21 @@ Each entry has:
 - **Status**: pending
 
 ### HIST01 — whitespace in `histology_final`
-- **Observed**: 77 patients
-- **Fix**: `UPDATE ... SET histology_final = TRIM(histology_final)` in cohort_v1 rebuild.
-- **Status**: pending
+- **Observed**: 77 patients with leading/trailing/internal whitespace variants ("PTC ", " metastatic PTC follicular", embedded newlines in "**THYROID bIOPSY\nAnaplastic carcinoma" and "MTC\nPTC mixed composit").
+- **Fix**: View `manuscript_workspace.manuscript_cohort_v1_histology_clean` normalizes via `LOWER(TRIM(REGEXP_REPLACE(histology_final,'\s+',' ','g')))` before controlled-vocab mapping. Original `histology_final` preserved for audit.
+- **Status**: RESOLVED 2026-04-23 (migration 08) — no queue emission (whitespace is resolved by the view, not by row-level review).
 
 ### HIST02 — unnormalized PTC variant
-- **Observed**: 172 patients
-- **Fix**: Build a canonical variant mapping table `hist_variant_map` with (raw → canonical) entries. Apply via UPDATE on cohort_v1 rebuild. Canonical set:
-  ```
-  PTC classical, PTC follicular variant, PTC tall cell variant,
-  PTC columnar cell variant, PTC diffuse sclerosing variant,
-  PTC hobnail variant, PTC oncocytic variant, PTC solid variant,
-  PTC cribriform-morular variant, PTMC
-  ```
-- **Status**: pending
+- **Observed**: 59 distinct `histology_final` values spanning case-inconsistency (PTC/pTC, Follicular/follicular, Anaplastic/anaplastic), abbreviations (PTC/MTC/pTC), variant free-text ("tall cell variant", "classical", "diffuse sclerosing", "follicular variant"), typos ("metastatitic", "pooly differentied", "paillary"), and mixed forms ("MTC\nPTC mixed composit", "metastatic PTC/anaplastic carcinoma", "High-grade PTC with thymic like features").
+- **Fix**: View `manuscript_workspace.manuscript_cohort_v1_histology_clean` adds two columns:
+  - `histology_final_clean` — controlled-vocab CASE mapping. 59 distinct → 19 buckets (papillary thyroid carcinoma 3,246; follicular thyroid carcinoma 491; medullary thyroid carcinoma 161; NIFTP 117; poorly differentiated thyroid carcinoma 38; FTUMP 34; anaplastic thyroid carcinoma 23; differentiated high grade thyroid carcinoma 10; plus 11 low-count buckets for follicular adenoma, thymic-like, NUT carcinoma, angiosarcoma, adenoid cystic, oncocytic, etc.; 6,734 NULL passthrough).
+  - `histology_variant_extracted` — semicolon-joined tokens from {tall cell, columnar, diffuse sclerosing, follicular variant, solid variant, classical, oncocytic, hurthle} for the 20 rows carrying variant descriptors.
+- **Status**: RESOLVED 2026-04-23 (migration 08) — no queue emission (controlled-vocab mapping IS the resolution; audit done by comparing original vs clean column).
 
 ### HIST03 — `metastatic ` prefix
-- **Observed**: 179 patients
-- **Fix**: Strip `metastatic ` / `Metastatic ` prefix into a new boolean column `is_metastatic_presentation`, route the cleaned histology through HIST02 mapping.
-- **Status**: pending
+- **Observed**: 179 patients with leading `metastatic ` / `Metastatic ` / `  metastatic...` prefixes, collapsing the site/context signal ("this presentation is a metastasis") into the histology string.
+- **Fix**: `histology_metastatic_prefix_flag` boolean column on `manuscript_cohort_v1_histology_clean` — TRUE when normalized string starts with `metastatic `. Observed: 181 rows flagged (matches 179+2: `metastatic/recurrent PTC`×1 and leading-whitespace " metastatic PTC follicular"×1 that the prompt's literal count missed). `histology_final_clean` classifies after prefix stripping, so "metastatic PTC" and "PTC" both map to `papillary thyroid carcinoma` while the flag preserves the distinction.
+- **Status**: RESOLVED 2026-04-23 (migration 08) — no queue emission (the flag is the resolution; downstream cohort rules decide whether to include metastatic-presentation rows).
 
 ### FNA01 — FNA after first surgery
 - **Observed**: 211 patients / 262 events
