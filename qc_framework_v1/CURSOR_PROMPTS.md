@@ -69,16 +69,26 @@ Issue IDs reference `ISSUE_REGISTRY.md`.
 
 ---
 
-## 02 — [PATH15] Re-link pathology rows to `specimen_tumor_focus_v1`
+## 02 — [PATH15] Re-link pathology rows to `specimen_tumor_focus_v1`  *(REVISED 2026-04-22 — simplified; PATH15 demoted to warning)*
 
-> **Context**: 3,026 path_malignant rows (~45%) have NULL `specimen_focus_id` / `linkage_confidence` / `linkage_score`. This blocks per-focus analysis and proper multifocality.
+> **Context**: 3,026 path_malignant rows (~45%) have NULL `specimen_focus_id`. The original framing assumed this blocked per-focus analysis and multifocality. Investigation on 2026-04-22 showed otherwise:
+>  - all per-focus clinical fields (size, invasion, margins, histology, laterality) are native to `canonical_path_malignant_events_v1`
+>  - multifocality is derived from `COUNT(*) OVER (PARTITION BY research_id, surgery_episode_uid)` in prompt 03, not from focus_id
+>  - `main.specimen_tumor_focus_v1` does **not** expose `laterality`, `site`, or `size_greatest_dimension_cm` — the originally proposed 4-tier keys don't exist
+>  - `specimen_genomic_assay_v1` carries `specimen_focus_id` on only 263/10,370 rows (2.5%) — molecular data is structurally specimen-level
+>  - `PATH13` dedup (prompt 363) uses non-NULL focus_id as a tie-break preference only
 >
-> **Do**:
-> 1. Build `manuscript_workspace.path_focus_link_v1` that joins `manuscript_workspace.canonical_path_malignant_events_v1_keyed` to `main.specimen_tumor_focus_v1` on the best available keys: (`research_id`, `surgery_date`, `laterality`, `site`, `size_greatest_dimension_cm`) with fallback to (`research_id`, `surgery_date`, `laterality`, `size_greatest_dimension_cm`) then (`research_id`, `surgery_date`, `laterality`).
-> 2. Emit one row per path_malignant row, with columns `(research_id, surgery_episode_uid, tumor_ordinal, specimen_focus_id, linkage_tier, linkage_confidence)` — `linkage_tier` in {`exact`, `size_laterality`, `laterality_only`, `none`}.
-> 3. For rows that remain `linkage_tier='none'`, insert one row per event into `manuscript_workspace.qc_manual_review_queue_v1` with `issue_id='PATH15'`.
+> **Do** (single tier, no queue):
+> 1. Build `manuscript_workspace.path_focus_link_v1` as an exact join:
+>    ```
+>    path.specimen_id   = focus.specimen_id
+>    path.tumor_ordinal = focus.tumor_index
+>    ```
+>    `(specimen_id, tumor_index)` is unique on focus (11,103/11,103 rows, 0 dupes) — no fan-out.
+> 2. Emit one row per path_malignant row with columns `(research_id, surgery_episode_uid, tumor_ordinal, specimen_focus_id, linkage_tier, linkage_confidence, path_surgery_id, synoptic_row_ix)` — `linkage_tier` in {`exact`, `none`}; confidence ∈ {1.00, 0.00}.
+> 3. Do **not** emit to `qc_manual_review_queue_v1`. Unlinkable rows are a provenance gap, not a QC error. PATH15 is demoted to warning and **removed from the cohort_v2 critical-exclusion set in prompt 46**.
 >
-> **Verify** (expect `linkage_tier='none'` count ≤ the original 3,026):
+> **Verify** (expect ≈ 5,097 `exact` / 1,592 `none`; 0 queue rows):
 > ```sql
 > SELECT linkage_tier, COUNT(*) FROM manuscript_workspace.path_focus_link_v1
 > GROUP BY 1 ORDER BY 2 DESC;
@@ -87,23 +97,27 @@ Issue IDs reference `ISSUE_REGISTRY.md`.
 
 ---
 
-## 03 — [PATH14] Rebuild multifocality (number_of_tumors, multifocality_flag)
+## 03 — [PATH14] Rebuild multifocality at episode grain (focality + episode_laterality split)  *(REVISED 2026-04-22)*
 
-> **Context**: `number_of_tumors` and `multifocality_flag` on `main.canonical_path_malignant_events_v1` do not fire for any patient even though 1,666 patients have >1 row. Derivation is broken and must be rebuilt from the row count per surgery episode.
+> **Context**: `number_of_tumors` and `multifocality_flag` on `main.canonical_path_malignant_events_v1` do not fire for any patient even though 1,666 patients have >1 row. The original prompt proposed rebuilding both columns plus a `bilateral_flag` with the rule `laterality IN ('left','right')`. Two problems:
+>  - the strict rule fires 0 times because the dominant bilateral label is the string `'bilateral'` (3,500 rows) and the `laterality` field has 79 distinct free-text values
+>  - multifocality and bilaterality are **orthogonal** clinical axes — folding them into a single `bilateral_flag` buries unifocal-bilateral cases (single tumor crossing midline, 1,212 episodes) under generic multifocality noise
 >
-> **Do**:
-> 1. Create view `manuscript_workspace.path_episode_multifocality_v1` keyed by `(research_id, surgery_episode_uid)` with:
->    - `number_of_tumors = COUNT(*) OVER (PARTITION BY research_id, surgery_episode_uid)`
->    - `multifocality_flag = (number_of_tumors > 1)`
->    - `bilateral_flag = (COUNT(DISTINCT laterality) FILTER (WHERE laterality IN ('left','right')) = 2)`
->    Source from `manuscript_workspace.canonical_path_malignant_events_v1_keyed`.
-> 2. The existing `number_of_tumors`/`multifocality_flag` columns in main remain untouched (contract: never mutate `main`), but cohort_v2 will read from this view.
+> **Do** (new contract — 2 separate axes):
+> 1. Create view `manuscript_workspace.path_episode_multifocality_v1` at `(research_id, surgery_episode_uid)` grain with:
+>    - `number_of_tumors`    INTEGER  — `COUNT(*)` per episode
+>    - `focality`            VARCHAR  — `'unifocal'` if COUNT(*)=1, else `'multifocal'`
+>    - `episode_laterality`  VARCHAR  — one of `{'left','right','bilateral','isthmus','other','unknown'}`, derived from a normalized per-row laterality (lowercase; `'bilateral'` or substring both `%left%` and `%right%` → `bilateral`; substring `%left%` / `%right%` / `%isthmus%` → that side; else `other`; NULL → NULL)
+> 2. Drop the redundant boolean columns (`multifocality_flag`, `bilateral_flag`). Grep confirmed no downstream prompt references them.
+> 3. Source from `manuscript_workspace.canonical_path_malignant_events_v1_keyed`. `main.*` untouched.
 >
-> **Verify** (should mirror the 1,666 multifocal pts):
+> **Verify** (expect 1,630 multifocal patients, 2,275 bilateral episodes including 1,212 unifocal-bilateral):
 > ```sql
-> SELECT multifocality_flag, COUNT(DISTINCT research_id) AS n_pts
+> SELECT focality, episode_laterality, COUNT(*) AS episodes
 > FROM manuscript_workspace.path_episode_multifocality_v1
-> GROUP BY 1;
+> GROUP BY 1,2 ORDER BY 1,3 DESC;
+> SELECT COUNT(DISTINCT research_id) FROM manuscript_workspace.path_episode_multifocality_v1
+> WHERE focality='multifocal';
 > ```
 
 ---
@@ -850,7 +864,7 @@ Issue IDs reference `ISSUE_REGISTRY.md`.
 > - + `path_episode_multifocality_v1`
 > - + `manuscript_cohort_v1_surgery_reconciled.surgery_date_canonical`
 > - + `manuscript_cohort_v1_recurrence_clean.any_recurrence_final`
-> - Exclude patients with any open `qc_manual_review_queue_v1` row where `status='open'` AND `issue_id` is in the critical set: `{LN01, LN02, REC01, PATH11, PATH15, FNA01, SURG01, TIR03, GEN09}`.
+> - Exclude patients with any open `qc_manual_review_queue_v1` row where `status='open'` AND `issue_id` is in the critical set: `{LN01, LN02, REC01, PATH11, FNA01, SURG01, TIR03, GEN09}`.  *(PATH15 removed 2026-04-22 — demoted to warning; see prompt 02.)*
 >
 > **Verify**:
 > ```sql

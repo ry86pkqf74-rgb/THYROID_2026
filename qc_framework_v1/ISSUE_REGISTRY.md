@@ -58,14 +58,14 @@ Each entry has:
 | PATH11 | canonical_path_malignant_events_v1 | critical | event | 47 rows | nodal positive > 0, denominator 0 or NULL |
 | PATH12 | canonical_path_malignant_events_v1 | warning | event | 106 rows | `size_greatest_dimension_cm > tumor_size_cm_per_surgery` |
 | PATH13 | canonical_path_malignant_events_v1 | warning | event | 15 grp / 30 rows | duplicate tumor-event rows |
-| PATH14 | canonical_path_malignant_events_v1 | critical | **schema** | 1,666 pts vs 0 | `number_of_tumors` and `multifocality_flag` uniformly broken |
-| PATH15 | canonical_path_malignant_events_v1 | critical | event | 3,026 rows | `specimen_focus_id` / linkage_confidence / linkage_score NULL |
+| PATH14 | canonical_path_malignant_events_v1 | critical | **schema** | 1,666 pts vs 0 | `number_of_tumors` and `multifocality_flag` uniformly broken (RESOLVED 2026-04-22 — rebuilt at episode grain with focality + episode_laterality split) |
+| PATH15 | canonical_path_malignant_events_v1 | warning | event | 3,026 rows | `specimen_focus_id` / linkage_confidence / linkage_score NULL (DEMOTED 2026-04-22 — downstream has no hard dependency) |
 | PATH16 | canonical_path_malignant_events_v1 | warning | event | 1,434 rows | `resolution_rule='STL_only'` marks the weak-linkage pathway |
 | PATH17 | canonical_path_malignant_events_v1 | critical | event | 663 rows / 556 pts (461 PTC) | direct laterality ↔ site contradictions (updated: broader detection includes bilateral-without-bilateral-token cases) |
 | PATH18 | canonical_path_malignant_events_v1 | warning | event | 3,153 rows | `bilateral` laterality with single-site label (grain mismatch) |
 | PATH19 | canonical_path_malignant_events_v1 | warning | event | 300 rows | `metastatic`/`recurrent` prefix in `primary_histology` (rolled into PATH02) |
-| PATH20 | canonical_path_malignant_events_v1 | critical | **schema** | 3,152 (47%) | `discordance_t_stage_flag` fires on nearly half of rows |
-| PATH21 | canonical_path_malignant_events_v1 | warning | **schema** | 0 vs 216 | `discordance_laterality_flag` never populated despite PATH17 conflicts |
+| PATH20 | canonical_path_malignant_events_v1 | critical | **schema** | 3,152 → 207 (RESOLVED 2026-04-22) | `discordance_t_stage_flag` rebuilt AJCC8-correct in `manuscript_workspace.path_event_discordance_v1` |
+| PATH21 | canonical_path_malignant_events_v1 | warning | **schema** | 0 → 219 (RESOLVED 2026-04-22) | `discordance_laterality_flag` rebuilt via laterality↔site contradiction rule |
 | USGLAND01 | canonical_us_thyroid_gland_v2 | warning | event | 6,785 / 13,578 | shell rows with no gland measurements |
 | USGLAND02 | canonical_us_thyroid_gland_v2 | critical | **schema** | 13,578 / 13,578 | all parenchymal-phenotype fields uniformly NULL |
 | USLN01 | canonical_us_lymph_node_v2 | critical | **schema** | 6,801 / 6,801 | table is entirely shell rows |
@@ -86,7 +86,7 @@ Each entry has:
 | NM02 | nuclear_med | critical | **schema** | 2,220 / 2,220 | `scan_present` 100% non-standard — inspect first |
 | NM03 | nuclear_med | warning | event | 522 rows | no findings_text and no impression_text |
 | NM04 | nuclear_med | warning | event | 64 / 110 rows | `scantype` / `radiotracer` NULL |
-| GEN01 | canonical_molecular_genetics_v2 | critical | **schema** | 3 IDs / 1,384 rows | `molecular_episode_id` collapsed to ordinals |
+| GEN01 | canonical_molecular_genetics_v2 | critical | **schema** | 3 IDs → 1,383 UIDs / 1,384 rows (RESOLVED 2026-04-23) | `molecular_episode_id` collapsed to ordinals |
 | GEN02 | canonical_molecular_genetics_v2 | warning | event | ThyroSeq 264 / Afirma 60 (324 rows, stricter regex) | `platform_version` NULL while raw signal carries version (broader 422-row count used broader regex) |
 | GEN03 | canonical_molecular_genetics_v2 | warning | event | TBD | `parse_status` sparse / inconsistent |
 | GEN04 | canonical_molecular_genetics_v2 | warning | event | TBD | `overall_result_class` dominated by NULL/other |
@@ -443,12 +443,25 @@ Each entry has:
     (SELECT COUNT(DISTINCT research_id) FROM canonical_path_malignant_events_v1 WHERE multifocality_flag = TRUE) AS pts_with_flag_true;
   ```
 - **Observed**: 1,666 / 0 / 0. Both derived columns are entirely unpopulated or wrong.
-- **Fix**:
-  1. Wait for PATH01 rebuild so `surgery_episode_uid` exists.
-  2. Re-derive: `number_of_tumors := COUNT(*) OVER (PARTITION BY research_id, surgery_episode_uid)`.
-  3. Re-derive: `multifocality_flag := (number_of_tumors > 1)`.
-  4. Overwrite both columns table-wide.
-- **Status**: pending (blocked on PATH01)
+- **Resolution (2026-04-22)**: Built `manuscript_workspace.path_episode_multifocality_v1`
+  at (research_id, surgery_episode_uid) grain. Contract:
+    `number_of_tumors`    INTEGER  (COUNT(*) per episode)
+    `focality`            VARCHAR  ('unifocal' | 'multifocal')
+    `episode_laterality`  VARCHAR  ('left'|'right'|'bilateral'|'isthmus'|'other'|'unknown')
+  The old boolean columns (multifocality_flag, bilateral_flag) were dropped
+  from the view contract — focality and episode_laterality are orthogonal
+  axes that supersede them cleanly.
+  Results:
+    4,203 episodes total
+    1,633 multifocal (1,630 distinct patients)   |   2,570 unifocal
+    2,275 bilateral  (incl. 1,212 unifocal-bilateral crossing-midline cases
+                      that the old bilateral_flag would have missed entirely)
+    932 right | 816 left | 33 isthmus | 25 other | 122 unknown
+  Reconciliation with the registry's 1,666 figure:
+    1,666 patients-with->1-row = 1,630 with a multifocal episode
+                               +   36 with multi-episode unifocal (staged
+                                   completion surgery — clinically unifocal)
+- **Status**: resolved (view in manuscript_workspace; main.* untouched)
 
 ---
 
@@ -473,7 +486,7 @@ Each entry has:
 ### PATH15 — specimen-focus-level linkage missing for ~45% of rows
 - **Table/col**: `canonical_path_malignant_events_v1` (`specimen_focus_id`, `linkage_confidence_tier`, `linkage_score`)
 - **Category**: linkage
-- **Severity / scope**: critical / event
+- **Severity / scope**: **warning** / event  *(DEMOTED 2026-04-22 from critical — see Resolution)*
 - **Detection**:
   ```sql
   SELECT
@@ -483,11 +496,26 @@ Each entry has:
   FROM canonical_path_malignant_events_v1;
   ```
 - **Observed**: 3,026 rows missing all three. Correlates with PATH16 (`resolution_rule='STL_only'`).
-- **Fix**:
-  1. After PATH01 rebuild (surgery_episode_uid), re-run the focus-linkage pass on the 3,026 rows. Use `specimen_tumor_focus_v1` as the linkage target, joining on `(research_id, surgery_date, tumor_ordinal, laterality, site, size_greatest_dimension_cm)` with fuzzy tolerance.
-  2. Rows that still can't be linked after the re-pass get `linkage_confidence_tier = 'unlinked'` and `linkage_score = 0`. Analytic views use `WHERE linkage_confidence_tier IN ('high','medium')`.
-  3. Audit: total fully-linked rows should rise from 3,663 to >6,000 after the re-pass; report the delta.
-- **Status**: pending (blocked on PATH01)
+- **Resolution (2026-04-22)**: Built `manuscript_workspace.path_focus_link_v1`
+  as a single-tier (specimen_id, tumor_ordinal=tumor_index) exact join.
+  Coverage: 5,097/6,689 (76.2%) `exact`; 1,592 (23.8%) `none` (tumor-ordinal
+  misalignment between path and focus extractors). Did **not** queue the
+  unlinked 1,592 and did **not** exclude them from cohort_v2 because
+  `specimen_focus_id` provides no unique clinical signal for this manuscript:
+    - every per-focus clinical field (size, invasion, margins, histology,
+      laterality) is already native to `canonical_path_malignant_events_v1`
+    - multifocality is derived from `COUNT(*) OVER (PARTITION BY
+      research_id, surgery_episode_uid)` (prompt 03)
+    - `specimen_genomic_assay_v1` has specimen_focus_id populated on
+      263/10,370 rows (2.5%) — molecular data is structurally specimen-level,
+      not focus-level
+    - PATH13 dedup (prompt 363) uses non-NULL focus_id only as a tie-break
+      preference; 5,097 populated rows is more than enough
+  Methods-section note: "`specimen_focus_id` populated for 5,097/6,689
+  (76.2%) of path malignant rows via unique `(specimen_id, tumor_ordinal)`
+  match; remaining 1,592 retained with NULL focus_id — no downstream
+  manuscript analysis depends on focus-level resolution for these rows."
+- **Status**: resolved (single-tier view in manuscript_workspace; severity demoted)
 
 ### PATH16 — `resolution_rule='STL_only'` build pathway is weak
 - **Table/col**: `canonical_path_malignant_events_v1.resolution_rule`
@@ -565,6 +593,15 @@ Each entry has:
   4. Overwrite the T-stage components using the declared SoT. Recompute `t_stage_ajcc8` and `t_stage_ajcc7` from the reconciled components.
 - **Status**: pending (blocked on PATH01, PATH14)
 
+#### Resolution (2026-04-22) — migration 04
+- View `manuscript_workspace.path_event_discordance_v1` rebuilds the flag AJCC8-correct against `canonical_path_malignant_events_v1_keyed`.
+- AJCC8 thyroid T-stage rule unified across DTC/MTC/ATC (size + gross ETE); ETE free-text (35 variants) normalized to `{present, absent, unknown, other}` aligned with Logan's Script 390 / 392 conventions.
+- Histology bucketed into `{DTC, MTC, ATC, non_staged (NIFTP/FTUMP/benign), other, unknown_histology}`; non-staged histology → `derived='not_applicable'`, flag → NULL.
+- T3b vs T4a vs T4b collapsed to `indeterminate_t3b_t4a_t4b_requires_llm` when `gross_ete=TRUE` (no structured invasion-target column — see `qc_framework_v1/LLM_TODO.md` item #1).
+- Discordance flag TRUE only when both sides decisive and disagree; NULL when derived is indeterminate/NA or ETE-unknown.
+- Post-rebuild: **207 TRUE / 3,560 FALSE / 2,922 NULL** (from 3,152 TRUE / 511 FALSE / 3,026 NULL). 17× reduction. Top pattern: reported T3b vs derived T1a-T3a (128 rows) — path report saw ETE that the structured `extrathyroidal_extension` column missed (extraction gap, not path-report error).
+- 207 rows queued to `qc_manual_review_queue_v1` under `issue_id='PATH20'`.
+
 ### PATH21 — `discordance_laterality_flag` never populated
 - **Table/col**: `canonical_path_malignant_events_v1.discordance_laterality_flag`
 - **Category**: derivation
@@ -572,6 +609,14 @@ Each entry has:
 - **Observed**: 0 rows TRUE despite 216 PATH17 conflicts
 - **Fix**: Populate during PATH17 fix. The flag becomes TRUE on every row where the original `laterality` didn't match the `site`-derived laterality.
 - **Status**: pending (rolled into PATH17)
+
+#### Resolution (2026-04-22) — migration 04
+- Rebuilt in `manuscript_workspace.path_event_discordance_v1` alongside PATH20.
+- Normalization matches migration 03 pattern: lowercase, then `{left, right, bilateral, isthmus, other}` via substring matching (79 distinct `laterality` values upstream).
+- `site` gets the same normalization.
+- Flag TRUE only when `lat_norm ∈ {left, right}` AND `site_norm` names the opposite side (or bilateral). `isthmus` is not a side and short-circuits to NULL; bilateral laterality short-circuits to NULL (no contradiction possible with a single-side site).
+- Post-rebuild: **219 TRUE / 2,432 FALSE / 4,038 NULL** — matches the PATH17 expected count (~216). Breakdown: 116 `left↔right`, 102 `right↔left`, 1 `left↔bilateral`.
+- 219 rows queued to `qc_manual_review_queue_v1` under `issue_id='PATH21'`.
 
 ---
 
@@ -872,7 +917,17 @@ Each entry has:
   2. Where `resolved_test_date` is NULL (903 rows), fall back to `report_date` or FNA-event date match; if still null, use a row hash + manual-review flag.
   3. Rename existing `molecular_episode_id` → `molecular_episode_ordinal_deprecated`.
   4. Downstream specimen_genomic_assay_v1 linkage (GEN09) will rebind on the new uid.
-- **Status**: pending
+- **Status**: RESOLVED 2026-04-23 (migration 05)
+- **Resolution (2026-04-23)**:
+  - View: `manuscript_workspace.molecular_episode_uid_v1` over `main.canonical_molecular_genetics_v2`.
+  - Final hash: `md5(research_id | COALESCE(resolved_test_date,'') | COALESCE(platform,'') | COALESCE(report_text_ref,''))`.
+  - Deviations from original spec (documented in migration header):
+    1. Dropped `platform_version` from the hash (100% NULL across all 1,384 rows; zero discriminative value).
+    2. Added `report_text_ref` as tie-breaker (100% populated, 4 distinct values — reduces collisions from 36 → 1 on date-NULL rows).
+    3. Emitted auxiliary `molecular_episode_uid_source` ∈ {`date_platform_report` (481 rows with resolved_test_date), `platform_report_no_date` (903 rows without)}.
+  - Final counts: 1,384 rows → **1,383 distinct UIDs** across 1,151 patients. 1 residual collision is a byte-identical duplicate (research_id=10771, NGS_unspecified, null date, 2 identical rows collapsing to UID `16d2c48494aa51ac9b9998871e1881b4`).
+  - Queue: 1 row in `qc_manual_review_queue_v1` with `issue_id='GEN01'` / `reason='byte-identical duplicate row — confirm intended collapse'` — human review confirms whether the collapse is intended before downstream rebinds.
+  - Downstream unblocked: GEN09 (specimen_genomic_assay_v1), GEN13 (assay molecular_episode_id mismatch), GEN15 (molecular linked_fna_episode_id).
 
 ### GEN02 — `platform_version` NULL when raw text contains a version signal
 - **Table/col**: `canonical_molecular_genetics_v2` (`platform`, `platform_version`, `platform_raw`)
