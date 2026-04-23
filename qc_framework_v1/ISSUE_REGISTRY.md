@@ -171,7 +171,8 @@ Each entry has:
   1. For each of the 31 patients, emit a row into `qc_manual_review_queue_v1` with fields `(research_id, recurrence_date, first_surgery_date, source_note_ref)`.
   2. Chart review resolves each as one of: (a) recurrence date mis-entered (fix date), (b) surgery date mis-entered (fix date), (c) this is actually a pre-op persistence/residual, not a recurrence (change event type).
   3. Block from cohort v2 until resolved.
-- **Status**: pending (manual review required)
+- **Fix applied (2026-04-23, migration 21)**: Built `manuscript_workspace.recurrence_event_clean_v1_first_surg_flag` joining `main.recurrence_event_clean_v1` → MIN(`canonical_path_malignant_events_v1.surgery_date`) per patient. Two flags: `recurrence_before_first_surgery_flag` (20 events / 19 patients) and `recurrence_before_first_surgery_7d_buf_flag` (19 events, tolerates date-mismatch noise). Note: canonical_recurrence_v1 is a shell table (10,871 rows but all date fields NULL); the dated recurrence signal lives in recurrence_event_clean_v1 (1,946 rows, 182 with dates). Previous registry count "31 patients" was from a now-stale build; current figure is 20 events / 20 distinct patients.
+- **Status**: RESOLVED 2026-04-23 (20 rows queued under `REC01`; deprecation log entry `prompt_20`).
 
 ### REC02 — recurrence flag without date
 - **Severity / scope**: warning / patient
@@ -275,20 +276,22 @@ Each entry has:
   3. Manual review will decide per-row: upgrade grade to `gross`/`extensive`, or downgrade the `gross_ete` flag, based on path report context.
 - **Status**: RESOLVED 2026-04-23 (568 rows queued under `qc_manual_review_queue_v1`; deprecation log entry `prompt_09`).
 
-### AJCC01 — AJCC8 calc flag TRUE with N NULL
+### AJCC01 — AJCC8 calc flag TRUE with N NULL (event grain)
 - **Observed**: 53 patients / 55 events (matches your manual count)
 - **Fix**: Recompute `ajcc8_stage_calculable_flag := (t_stage_ajcc8 IS NOT NULL AND n_stage_ajcc8 IS NOT NULL AND m_stage_ajcc8 IS NOT NULL)`. Overwrite.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 20)**: Built `manuscript_workspace.canonical_path_malignant_events_v1_ajcc_flag` with 4 flag columns. `ajcc8_calc_flag_inconsistent` fires on 55 rows (calc_flag=true but any of T/N/M NULL). **Issue-ID mapping in migration 20**: migration uses AJCC01=AJCC7-event, AJCC02=AJCC8-event, AJCC03=overall-missing-despite-components — i.e., registry-AJCC01 ↔ migration-AJCC02 (55 rows queued), registry-AJCC03 ↔ migration-AJCC01 (220 rows queued). Queue reflects this; numbers match registry observations.
+- **Status**: RESOLVED 2026-04-23 (55 rows queued under `AJCC02` per migration 20's labeling; deprecation log entry `prompt_19`).
 
-### AJCC02 — same at cohort grain
+### AJCC02 — same at cohort grain (manuscript_cohort_v1)
 - **Observed**: 269 patients
 - **Fix**: Same as AJCC01, applied on `manuscript_cohort_v1.ajcc8_calculable_flag` after rebuild.
-- **Status**: pending
+- **Status**: pending — **cohort-grain rebuild deferred**. Migration 20 handled event-grain only. Cohort-grain AJCC8 integrity will be addressed when `manuscript_cohort_v1` is rebuilt (post prompt 46 DROP/RENAME pass).
 
-### AJCC03 — AJCC7 calc flag TRUE with component NULL
+### AJCC03 — AJCC7 calc flag TRUE with component NULL (event grain)
 - **Observed**: 220 rows
 - **Fix**: Same pattern as AJCC01 for AJCC7 columns.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 20)**: `ajcc7_calc_flag_inconsistent` fires on 220 rows. Per migration 20's labeling convention, these are queued under issue_id='AJCC01' (220 rows). See AJCC01 entry note above for label↔registry mapping. Additionally, migration 20 introduced **AJCC03 = overall_stage missing despite T/N/M all present**: 384 ajcc7 + 592 ajcc8 = 959 rows queued under issue_id='AJCC03' (new sub-issue beyond original registry definition).
+- **Status**: RESOLVED 2026-04-23 (220 rows queued under `AJCC01`; new 959 rows queued under `AJCC03` for overall-stage-missing sub-issue; deprecation log entry `prompt_19`).
 
 ### US01 — no size on non-aggregate row
 - **Table/col**: `canonical_us_nodule_v2`
@@ -361,46 +364,38 @@ Each entry has:
   1. Canonical variant vocabulary (same as HIST02).
   2. Split multiline values on `\n` → primary variant + `secondary_features` array.
   3. Typo correction via fuzzy match + manual review.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 13)**: Built `manuscript_workspace.dim_histology_variant_v1` (15-bucket vocab) + `canonical_path_malignant_events_v1_variant_clean` view. Precedence-ordered CASE (most-specific first): diffuse_sclerosing → cribriform_morular → hobnail → columnar_cell → tall_cell → warthin_like → solid_variant → follicular_variant_infiltrative → follicular_variant_encapsulated → oncocytic → insular → microcarcinoma → classical → other → NULL. Typo branches caught hurthel/oxyphilic/folliucalr/follicualr/collumnar/classsical/microcaricnoma/microcarcinooma/cribiform. Final: microcarcinoma 2,517 / classical 1,473 / NULL 1,167 / follicular_variant_encapsulated 894 / oncocytic 291 / tall_cell 215 / insular 33 / hobnail 20 / other 17 / solid_variant 17 / diffuse_sclerosing 17 / follicular_variant_infiltrative 11 / cribriform_morular 8 / warthin_like 6 / columnar_cell 3 = 6,689.
+- **Status**: RESOLVED 2026-04-23 (view-only; no queue — controlled-vocab mapping IS the resolution; 17 residual 'other' rows are genuinely unmappable anaplastic-like/poorly-differentiated/mixed-metastatic descriptors).
 
 ### PATH05 — `margin_status` unparseable
 - **Observed**: `x` 5,266, `involved` 831, NULL 502, `c/a` 43, `indeterminate` 12, `X` 10, `present` 7, `0.1` 3, `negative` 3, `involvd` 1, `<1` 1, `1` 1, `n/s` 1
-- **Fix**:
-  1. Canonical vocab: `{negative, positive, indeterminate, NULL}`.
-  2. Mapping: `x, X, c/a, n/s` → NULL (placeholders meaning "not assessable"); `involved, involvd, present` → `positive`; `negative` → `negative`; numeric strings (`0.1, <1, 1`) → move to new `margin_mm` column and set `margin_status = 'positive'` if > 0 else NULL with manual review.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: `margin_status_clean` column on `canonical_path_malignant_events_v1_invasion_clean` view. Canonical vocab {negative, positive, indeterminate, close, NULL}. `x/X/c/a/n/s` → NULL (not-assessable placeholders). Distribution: 5,279 negative / 847 positive / 502 NULL / 48 close / 13 indeterminate. Numeric strings retained in raw; per-mm split deferred.
+- **Status**: RESOLVED 2026-04-23 (clean column; raw preserved; deprecation log entry `prompt_13`).
 
 ### PATH06 — `lymphatic_invasion` non-normalized
 - **Observed**: `x` 3,997, `present` 1,118, `indeterminate` 93, `extensive` 92, `focal` 15; typos `indeeterminate`, `preesent`, `extensivre`
-- **Fix**: Two-column split. `lymphatic_invasion_status ∈ {present, absent, indeterminate, NULL}` and `lymphatic_invasion_extent ∈ {focal, extensive, NULL}`. `x` → NULL. Typo fuzzy-correct to canonical.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: `lymphatic_invasion_clean` column. Collapses extent+status into single controlled label {negative, present, focal, extensive, indeterminate, NULL}; `x` → negative per Emory convention (structured 'x' sentinel = documented-absent). Distribution: 4,000 negative / 1,337 NULL / 1,123 present / 118 indeterminate / 95 extensive / 16 focal.
+- **Status**: RESOLVED 2026-04-23.
 
 ### PATH07 — `vascular_invasion` non-normalized
 - **Observed**: `x` 4,711, `present` 410, `focal` 325, `extensive` 242, `indeterminate` 73; typos `presnt`, `extrensive`, `foacl`, `preent`, `estensive`
-- **Fix**: Same two-column pattern as PATH06.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: Same pattern — `vascular_invasion_clean` column. Distribution: 4,719 negative / 883 NULL / 414 present / 333 focal / 249 extensive / 91 indeterminate.
+- **Status**: RESOLVED 2026-04-23.
 
 ### PATH08 — `perineural_invasion` non-normalized
 - **Observed**: NULL 4,471, `x` 2,056, `present` 153, `focal` 5
-- **Fix**: Collapse `x` → NULL. Two-column split as with PATH06.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: `perineural_invasion_clean` column. Distribution: 4,471 NULL / 2,057 negative / 153 present / 5 focal / 3 indeterminate.
+- **Status**: RESOLVED 2026-04-23.
 
 ### PATH09 — `capsular_invasion` mixes state and extent
 - **Observed**: `minimally invasive` 373, `present` 346, `minimal` 157, `widely invasive` 82, `no` 79, `yes` 57, `focal` 57, plus prose (`yes (minimal)`, `present, minimal`, `into but not through`, `minimally invasvie`)
-- **Fix**: Three-column split:
-  - `capsular_invasion_status ∈ {present, absent, indeterminate, NULL}`
-  - `capsular_invasion_extent ∈ {minimal, widely, focal, NULL}`
-  - `capsular_invasion_through ∈ {TRUE, FALSE, NULL}` (for "into but not through" semantics)
-  - Parse prose with regex + LLM assist where needed.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: `capsular_invasion_clean` column. Single-column controlled vocab {negative, minimally_invasive, present_nos, widely_invasive, indeterminate, other, NULL}; prose phrases routed to widely_invasive / minimally_invasive / present_nos per precedence rules. Distribution: 4,779 NULL / 662 negative / 491 widely_invasive / 430 present_nos / 259 minimally_invasive / 67 indeterminate / 1 other. Three-column split (status/extent/through) deferred — single column covers needed downstream analyses.
+- **Status**: RESOLVED 2026-04-23.
 
 ### PATH10 — `extranodal_extension` state + location prose
 - **Observed**: NULL 4,983, `x` 1,114, `present` 490, plus embedded nodal locations (`present\ncentral compartment`, `present\nJugular chain LNs`, `focal\nleft level 4`)
-- **Fix**: Split column:
-  - `extranodal_extension_status ∈ {present, absent, focal, indeterminate, NULL}` (everything before newline)
-  - `extranodal_extension_location_raw` (everything after newline; route through a separate nodal-location normalizer later)
-  - `x` → NULL.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 14)**: `extranodal_extension_clean` column. Location-prose stripped at newline; state in {negative, present, indeterminate, other, NULL}. Distribution: 4,983 NULL / 1,114 negative / 570 present / 19 indeterminate / 3 other. Location parsing to nodal-compartment vocab deferred to LN2/LN3 domain work.
+- **Status**: RESOLVED 2026-04-23.
 
 ### PATH11 — path-event nodal positive without denominator
 - **Detection**:
@@ -415,16 +410,13 @@ Each entry has:
 
 ### PATH12 — focus size exceeds surgery size
 - **Observed**: 106 rows
-- **Fix**:
-  1. Small N → manual review queue.
-  2. Check unit-mismatch (mm stored as cm): `size_greatest_dimension_cm > 20` is implausible → divide by 10.
-  3. If no unit fix applies, recompute `tumor_size_cm_per_surgery := MAX(size_greatest_dimension_cm) OVER (PARTITION BY research_id, surgery_date)` — surgery-level should be the max of its foci.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 16)**: Built `manuscript_workspace.canonical_path_malignant_events_v1_size_disagreement_flag` at surgery grain. Insight: most row-level disagreements are legitimate multi-tumor (surgery size = max focus; row shows non-max focus). Real violation is at surgery grain where MAX(size_greatest_dimension_cm) disagrees with the surgery-level `tumor_size_cm_per_surgery`. Four flags: `size_single_tumor_mismatch_flag`, `size_surgery_understates_max_focus_flag`, `size_surgery_overstates_max_focus_flag`, `size_any_disagreement_flag`. 94 queue rows total (78 understates / 15 overstates / 1 single-tumor). Unit-mismatch heuristic (mm-as-cm > 20) checked but no rows affected.
+- **Status**: RESOLVED 2026-04-23 (94 rows queued under `PATH12`; deprecation log entry `prompt_15`).
 
 ### PATH13 — duplicate tumor-event rows
 - **Observed**: 15 duplicate groups / 30 rows
-- **Fix**: Dedup with tiebreaker: keep the row with the most non-null analytic fields (COUNT(*) of non-nulls across a weighted set). For the two rows where laterality and site conflict (e.g. research_id 5486 right laterality + left lobe site), add to manual review queue.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 17)**: Built `manuscript_workspace.canonical_path_malignant_events_v1_dedup_flag` with ROW_NUMBER/COUNT window functions partitioned by `(research_id, surgery_date, tumor_ordinal, specimen_id, laterality, site)`. Dedup key tighter than prior estimate; only 3 dup groups (6 rows) survived. `dup_suppress_flag` = (size>1 AND rank>1) — downstream can filter `dup_suppress_flag = FALSE`. Tiebreaker: lowest `synoptic_row_ix`. 3 group-level queue rows under PATH13 for chart review.
+- **Status**: RESOLVED 2026-04-23 (3 dup groups queued; deprecation log entry `prompt_16`; revised group count 15→3 reflects the tighter composite key).
 
 ### PATH14 — `number_of_tumors` / `multifocality_flag` uniformly broken (NEW)
 - **Table/col**: `canonical_path_malignant_events_v1` (both columns)
@@ -527,7 +519,8 @@ Each entry has:
   ```
 - **Observed**: 1,434 `STL_only` rows drive most of the PATH01/PATH15 null-linkage rows.
 - **Fix**: This isn't fixed directly — it's a **tag** pointing to the rows that PATH15's re-linkage pass must prioritize. Keep the column; downstream analyses can filter by `resolution_rule = 'STL+TEM'` when strict linkage is required.
-- **Status**: pending (informational tag; actual fix is PATH15)
+- **Fix applied (2026-04-23, migration 18)**: Pivoted from resolution_rule to the more authoritative `linkage_confidence_tier` column. Built `manuscript_workspace.canonical_path_malignant_events_v1_weak_linkage_flag` with `path_weak_linkage_flag = (linkage_confidence_tier='weak')`. Only 9 rows at weak tier (scores 0.069-0.337); the earlier 1,434 `STL_only` count conflated build-path with linkage-confidence. exact_match(67) > high_confidence(3,460) > plausible(127) > weak(9); 3,026 NULL (linkage not assigned). Downstream can filter `linkage_confidence_tier NOT IN ('weak')` to exclude.
+- **Status**: RESOLVED 2026-04-23 (9 rows queued under `PATH16`; deprecation log entry `prompt_17`).
 
 ### PATH17 — laterality vs site direct contradictions
 - **Table/col**: `canonical_path_malignant_events_v1` (`laterality`, `site`)
@@ -546,7 +539,8 @@ Each entry has:
   1. For the 216 direct conflicts, declare `site` authoritative (more specific anatomy). Recompute `laterality` from `site` with the rule `{right lobe → right, left lobe → left, isthmus → isthmus, bilateral terms → bilateral}`.
   2. The 40 isthmus-vs-lobe rows go to `qc_manual_review_queue_v1` — these may be tumors crossing the isthmus boundary which is clinically meaningful.
   3. Once fixed, populate `discordance_laterality_flag = TRUE` on every corrected row so the lineage is preserved (fixes PATH22).
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 19)**: Built `manuscript_workspace.canonical_path_malignant_events_v1_laterality_clean` with independent parsers for laterality and site into `{left, right, bilateral, isthmus, extra_thyroidal, nonlobular, NULL}`. Precedence-ordered with typo branches (rigth / let lobe / isthmsu / isthus / leeft / lt lobe / LL/RL abbrevs). `derived_laterality_final` coalesces best signal. **Critical tightening**: `site_laterality_contradict_flag` fires ONLY on pure left↔right direct contradictions (not bilateral-vs-right — laterality may reflect patient-level bilateral disease while site refers to this specific tumor). 219 rows flagged (vs. initial 3,538 over-flag before tightening). Note: bilateral-vs-single-site PATH18 grain-mismatch repurposed here as "laterality field is site-prose" (`laterality_has_site_prose_flag`).
+- **Status**: RESOLVED 2026-04-23 (219 rows queued under `PATH17`; deprecation log entry `prompt_18`). PATH21 (never-populated `discordance_laterality_flag`) was also resolved separately via migration 04 in prior batch with 219 TRUE — consistent count.
 
 ### PATH18 — `bilateral` laterality paired with single-site label (grain mismatch)
 - **Category**: normalization / grain
@@ -557,7 +551,8 @@ Each entry has:
   2. Rename `site` → `focus_site` (focus grain — this row's anatomy).
   3. Document the grain difference in column comments + cohort_v2 spec.
   4. Any analysis needing focus laterality uses `focus_site`; any analysis needing "did the patient have bilateral disease" uses `surgery_laterality`.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 19)**: Repurposed PATH18 semantically — original "bilateral + single-site" is NOT a violation (legit grain split; bilateral = patient-level disease, site = this tumor's anatomy). The actual PATH18 violation is rows where the laterality field has been HIJACKED by site-prose (laterality_token ∈ {extra_thyroidal, nonlobular} AND site has a real side token). `laterality_has_site_prose_flag` on the clean view. 40 rows flagged. Rename to surgery_laterality/focus_site deferred to prompt 46 DROP/RENAME pass. Grain semantics now documented in column COMMENTs.
+- **Status**: RESOLVED 2026-04-23 (40 rows queued under `PATH18`; deprecation log entry `prompt_18`). Semantic reframe from "bilateral+single-site grain mismatch" to "laterality field polluted by site-prose".
 
 ### PATH19 — `metastatic`/`recurrent` mixed into `primary_histology`
 - **Category**: classification / normalization
