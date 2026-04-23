@@ -95,7 +95,7 @@ Each entry has:
 | GEN07 | canonical_molecular_genetics_v2 | warning | event | TBD | `risk_of_malignancy_pct` out of 0–100 range |
 | GEN08 | canonical_molecular_genetics_v2 | critical | event | 496 rows / 465 pts (172 PTC) | `fusion_flag=TRUE` but `gene_fusions_list` empty/NULL (direct row-level check, not unnest-view) |
 | GEN09 | specimen_genomic_assay_v1 | critical | **schema** | 98% broken → research_id-only binding (RESOLVED 2026-04-23) | linkage to specimen + molecular episode missing |
-| GEN10 | canonical_molecular_genetics_from_notes_v2 | warning | **schema** | table-wide | rename to `molecular_mentions_*` to disambiguate from structured layer |
+| GEN10 | canonical_molecular_genetics_from_notes_v2 | warning | **schema** | table-wide (RESOLVED 2026-04-23) | rename to `molecular_mentions_*` to disambiguate from structured layer |
 | GEN11 | canonical_molecular_genetics_v2 | warning | event | mostly NULL | `specimen_adequacy` not populated |
 | GEN12 | canonical_molecular_genetics_v2 | warning | event | TBD | `mutation_status` / `fusion_status` / `cna_status` / `gep_status` non-normalized |
 | FNA02 | canonical_fna_events_v1 | warning | event | 1,516 rows / 1,141 pts (464 PTC) | `fna_date_raw` present but `fna_date_resolved` NULL |
@@ -1074,7 +1074,11 @@ Each entry has:
   2. Document: "Use for signal corroboration, not primary assay attribution. Analysts must not treat a mention here as an assay result."
   3. **Optional cross-link pass**: attempt soft-linkage to `canonical_molecular_genetics_v2.molecular_episode_uid` by `(research_id, note_date within ±90 days of resolved_test_date, entity_value_norm matches a known variant/fusion)`. Populate `linked_test_episode_id` where match confidence > 0.8. Leave unverified where confidence is lower.
   4. `verification_status` vocabulary for soft-linked rows: `{matches_canonical, contradicts_canonical, unlinked, mention_only}`.
-- **Status**: pending (design rename + optional soft-linkage pass)
+- **Status**: RESOLVED 2026-04-23 (migration 07) — rename portion only; soft-linkage deferred
+- **Resolution (2026-04-23)**:
+  - View: `manuscript_workspace.molecular_mentions_from_notes_v2` — 1:1 pass-through over `main.canonical_molecular_genetics_from_notes_v2` (1,738 rows / 605 patients / 28 columns).
+  - Deprecation note added to `qc_framework_v1/README.md` stating the source table must not be joined as a peer of `canonical_molecular_genetics_v2`; it is an NLP mentions layer for corroboration only.
+  - Deferred: the optional soft-linkage pass (joining on `(research_id, note_date ± 90d, variant match)` to populate `linked_test_episode_id` with confidence scoring). Can be built later if a downstream analysis needs notes↔canonical attribution; out of scope for the rename.
 
 ### GEN11 — `specimen_adequacy_norm` mostly NULL
 - **Table/col**: `canonical_molecular_genetics_v2.specimen_adequacy_norm`

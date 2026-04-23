@@ -122,6 +122,19 @@ you confirm column names on the source tables, they're one-liners each:
 - **Nodule-level linkage** — US-nodule ↔ FNA ↔ pathology. This is genuinely
   hard and a source-data problem, not a query problem. Address separately.
 
+## Deprecation notes (2026-04-23 onward)
+
+- **`main.canonical_molecular_genetics_from_notes_v2` is deprecated in favor of
+  `manuscript_workspace.molecular_mentions_from_notes_v2`**; it is a mentions
+  layer and must never be joined as a peer of
+  `main.canonical_molecular_genetics_v2`. The `_from_notes` table holds NLP
+  entity extractions from narrative notes (op notes, path reports, addenda) —
+  it encodes "a note mentioned this variant/fusion/gene" signals, not verified
+  structured assay results. Treat it as evidence for signal corroboration
+  only; for primary molecular attribution, use
+  `main.canonical_molecular_genetics_v2` (or the UID view
+  `manuscript_workspace.molecular_episode_uid_v1`).
+
 ## Design notes
 
 - **Schema:** Everything is written to `main`. If you prefer `qa` for
