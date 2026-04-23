@@ -1,6 +1,6 @@
 # Script 399 — Close-out (malignant NULL stage_group)
 
-- **Git commit / SHA:** `(pending — Phase 4 commit)`
+- **Git commit / SHA:** `e8559c133c6518a62fb3d439309f294d0a7c7d12`
 - **Tag:** `v1_0-malignant-null-stage-group-closeout-20260423_034419`
 - **UTC timestamp:** 2026-04-23T03:47:16.624290+00:00
 - **Probe SHA256 (consumed):** `57955aec7541a05483b6846256da917ac2c88cbc17083caab7bc3aa3d1079a68`
