@@ -1,0 +1,9 @@
+2026-04-23T02:44:10.760905+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+2026-04-23T02:44:12.853685+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/apply_dtc_null_n_stage_group_fill_probe.md
+2026-04-23T02:44:13.790949+00:00 2A: CREATE TABLE snapshot (4 rows)
+2026-04-23T02:44:18.499003+00:00 Wrote /Users/loganglosser/THYROID_2026/cursor_prompts/CLOSE_OUT_396.md
+2026-04-23T02:44:18.499228+00:00 Script 396 apply + verify complete.
+2026-04-23T02:47:20.808178+00:00 NO-OP: snapshot + script_396 __readme + planned stage_group values present — running Phase 3 verify only.
+2026-04-23T02:47:22.747449+00:00 Phase 4: NO-OP path — git using snapshot stamp 20260423_024412
+2026-04-23T02:47:35.050791+00:00 NO-OP: snapshot + script_396 __readme + planned stage_group values present — running Phase 3 verify only.
+2026-04-23T02:47:37.232851+00:00 Phase 4: NO-OP path — git using snapshot stamp 20260423_024412
