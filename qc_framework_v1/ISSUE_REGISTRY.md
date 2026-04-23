@@ -178,30 +178,35 @@ Each entry has:
 - **Severity / scope**: warning / patient
 - **Observed**: 1,764 patients
 - **Fix**: Chart review for imputation of a date where possible; where no date is recoverable, downgrade `any_recurrence_flag` to NULL and add `any_recurrence_unknown_date = TRUE`. Time-to-event analyses drop these, cumulative-incidence analyses can keep via interval-censoring.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 22)**: View `manuscript_workspace.manuscript_cohort_v1_recurrence_clean` adds `any_recurrence_final` (TRUE/FALSE/NULL triple-state) + `recurrence_unknown_date_flag` (REC02) + `recurrence_orphan_date_flag` (REC03 guard). Time-to-event analytics filter `recurrence_unknown_date_flag=FALSE`.
+- **Status**: RESOLVED 2026-04-23 (1,764 rows queued under `REC02`; deprecation log entry `prompt_21`).
 
 ### REC03 — date without flag
 - **Severity / scope**: warning / patient
+- **Observed**: 0 patients (guard against future regression).
 - **Fix**: If `recurrence_date` is present, force `any_recurrence_flag = TRUE`. Standardize the derivation rule.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 22)**: `recurrence_orphan_date_flag` in `manuscript_cohort_v1_recurrence_clean` fires if date populated without flag; 0 rows currently trip it.
+- **Status**: RESOLVED 2026-04-23 (regression guard only — no queue emission).
 
 ### SURG01 — three surgery-date columns disagree
 - **Table/col**: `main.manuscript_cohort_v1` (`first_surgery_date`, `surg_first_date`, `surgery_date`)
 - **Category**: linkage / rollup
 - **Severity / scope**: critical / patient
-- **Observed**: 171 patients
+- **Observed**: 171 patients (all are sd=sfd with first_surgery_date dissenting — no true 3-way disagreement).
 - **Fix**:
   1. Declare `surgery_date` column (source: `canonical_path_malignant_events_v1` / `specimen_master_v1`) the authoritative first surgery date.
   2. Overwrite `first_surgery_date := MIN(surgery_date)` per patient from the path events.
   3. Drop `surg_first_date` from cohort_v2 (deprecated).
   4. For 171 disagreement patients, recompute from path events; if still disagreement, add to `qc_manual_review_queue_v1`.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 23)**: View `manuscript_cohort_v1_surgery_reconciled` adds `surgery_date_canonical` (consensus-of-2 rule → first_surgery_date fallback) and `surgery_date_source_rank` ∈ {all_three_agree, consensus_2of3, all_three_disagree_first_surgery_fallback, two_agree, two_disagree_first_surgery_fallback, single_only, all_null}. `surg_first_date` scheduled for DROP at prompt 46.
+- **Status**: RESOLVED 2026-04-23 (171 rows queued under `SURG01`; deprecation log entry `prompt_22`).
 
 ### SURG02 — all three surgery-date columns identical
 - **Severity / scope**: info / patient
 - **Observed**: 8,559 patients (schema smell)
 - **Fix**: Once SURG01 is fixed, drop `surg_first_date` and `surgery_date` from cohort_v1, keep only `first_surgery_date`. Zero data loss.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 23)**: No queue emission — captured in `surgery_date_source_rank='all_three_agree'`. `surg_first_date` DROP scheduled for prompt 46.
+- **Status**: RESOLVED 2026-04-23 (architecturally — covered by migration 23's surgery_date_canonical).
 
 ### HIST01 — whitespace in `histology_final`
 - **Observed**: 77 patients with leading/trailing/internal whitespace variants ("PTC ", " metastatic PTC follicular", embedded newlines in "**THYROID bIOPSY\nAnaplastic carcinoma" and "MTC\nPTC mixed composit").
@@ -221,17 +226,20 @@ Each entry has:
 - **Status**: RESOLVED 2026-04-23 (migration 08) — no queue emission (the flag is the resolution; downstream cohort rules decide whether to include metastatic-presentation rows).
 
 ### FNA01 — FNA after first surgery
-- **Observed**: 211 patients / 262 events
+- **Observed**: 349 events / 286 patients (154 PTC) — refined from earlier 211/262 estimate using operative SoT (canonical_operative_events_v1).
 - **Fix**: Add `fna_context` column ∈ {`preop`, `intraop`, `postop`, `unknown`} on `canonical_fna_events_v1`. Rule: `CASE WHEN fna_date_resolved <= first_surgery_date THEN 'preop' WHEN fna_date_resolved > first_surgery_date THEN 'postop' ELSE 'unknown' END`. Preop-covariate features must filter `fna_context = 'preop'`. Do NOT drop postop FNAs from the table — they are legitimate surveillance events.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 24)**: Built `manuscript_workspace.first_surgery_date_v1` (MIN TRY_CAST resolved_surgery_date AS DATE, per research_id) + `canonical_fna_events_v1_temporal` with `first_surgery_date`, `post_surgery_fna_flag`, `fna_pre_surgery_flag`, and `fna_temporal_status` ∈ {pre_op, post_op, no_surgery_date, no_fna_date}. Index-FNA selection downstream filters `fna_pre_surgery_flag=TRUE`.
+- **Status**: RESOLVED 2026-04-23 (349 rows queued under `FNA01`; deprecation log entry `prompt_23`).
 
 ### TIR01 — points vs category band mismatch
 - **Observed**: 0 rows. **No fix needed.** (Confirms the ACR 2017 bands 0=TR1, 2=TR2, 3=TR3, 4–6=TR4, 7+=TR5 are honored in the source.)
-- **Status**: closed (nothing to fix)
+- **Fix applied (2026-04-23, migration 25)**: Regression guard view `canonical_us_nodule_v2_tirads_guard` with `tirads_band_expected` + `tirads_band_mismatch_flag`. 0 violations on 37,579 rows — guard fires if future data loads introduce band drift.
+- **Status**: RESOLVED 2026-04-23 (regression guard only — no queue emission).
 
 ### TIR02 — concordance flag wrong
 - **Observed**: 0 rows. **No fix needed.**
-- **Status**: closed
+- **Fix applied (2026-04-23, migration 25)**: Same guard view carries `tirads_concordance_mismatch_flag` cross-checking `acr2017_vs_updated_concordant` against categorical equality. 0 violations on 37,579 rows.
+- **Status**: RESOLVED 2026-04-23 (regression guard only — no queue emission).
 
 ### TIR03 — multi-nodule report under-exploded (parsing bug)
 - **Table/col**: `canonical_us_nodule_v2`
@@ -247,12 +255,13 @@ Each entry has:
      AND COUNT(DISTINCT tirads_reported_in_text) >= 3
      AND COUNT(DISTINCT acr2017_tirads_category) <= 2;
   ```
-- **Observed**: 56 patients / 60 exams (concentrated in `resolution_rule='inm_v1_only'`)
+- **Observed**: registry-stale 56 pts / 60 exams vs current detection **448 exams / 319 patients** on 2026-04-23 snapshot. Growth reflects canonical_us_nodule_v2 batch-3 expansion and possibly noisier inm_v1_only rows. Logan to review.
 - **Fix**:
-  1. Re-run the LLM-assisted nodule extraction (the `inm_v1+llm` branch, which is clean) over the 60 affected exams.
+  1. Re-run the LLM-assisted nodule extraction (the `inm_v1+llm` branch, which is clean) over the 448 affected exams.
   2. Replace those exams' rows in `canonical_us_nodule_v2`.
   3. Blocked until rebuilt; patients drop from cohort_v2.
-- **Status**: pending (upstream rebuild required)
+- **Candidate list built (2026-04-23, migration 26)**: `manuscript_workspace.qc_tir03_llm_candidates_v1` (TABLE, static snapshot) with 448 exams / 319 patients. LLM re-parse skeleton at `qc_framework_v1/tir03_llm_reparse.py` — NOT executed; awaits Logan authorization after candidate review.
+- **Status**: candidates-built 2026-04-23 (LLM run pending authorization; deprecation log entry `prompt_25`).
 
 ### ETE01 — `extrathyroidal_extension` not in controlled vocab
 - **Table/col**: `canonical_path_malignant_events_v1.extrathyroidal_extension`
@@ -295,26 +304,30 @@ Each entry has:
 
 ### US01 — no size on non-aggregate row
 - **Table/col**: `canonical_us_nodule_v2`
-- **Observed**: 3,657 rows
+- **Observed**: 3,647 rows (3,067 shell + 580 sizeless-only). Registry estimate 3,657 — within churn.
 - **Fix**: Two-step.
   1. Re-run LLM extraction on source imaging notes for these rows; merge any size values recovered.
   2. Rows that remain all-size-null after re-extraction: mark `row_quality = 'incomplete'`. Analytic views filter `row_quality = 'complete'`.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 27)**: View `canonical_us_nodule_v2_filtered` adds `us_row_type` ∈ {nodule_with_measures (31,819), nodule_sizeless (580), nodule_locationless (1,972), aggregate_row (141), shell (3,067)}. Downstream per-nodule analytics filter `us_row_type='nodule_with_measures'`. LLM re-extraction remains future work (same LLM infrastructure as TIR03).
+- **Status**: RESOLVED 2026-04-23 (3,647 rows queued under `US01`; deprecation log entry `prompt_26`).
 
 ### US02 — no laterality + no location
-- **Observed**: 5,039 rows
+- **Observed**: 5,039 rows (3,067 shell + 1,972 locationless-only). Exact match to registry.
 - **Fix**: Same two-step pattern as US01 — LLM re-extraction, then mark incomplete.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 27)**: Same `us_row_type` classifier handles locationless rows. Queue emission tagged `US02`.
+- **Status**: RESOLVED 2026-04-23 (5,039 rows queued under `US02`; deprecation log entry `prompt_26`).
 
 ### US03 — aggregate rows mixed into nodule-grain table
-- **Observed**: 141 rows
+- **Observed**: 141 rows (exact match to registry). `is_aggregate_row=TRUE` is the definitive signal; `nodule_index_within_exam` is never NULL in practice (placeholder logic from prompt would catch 0 rows).
 - **Fix**: Split into its own table `canonical_us_exam_aggregate_v1`. Remove from `canonical_us_nodule_v2`. Any analysis needing "overall thyroid findings" joins the aggregate table; nodule-grain analyses use the cleaned nodule table.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 27)**: View-based solution — `us_row_type='aggregate_row'` filters them out of per-nodule analytics without deleting. Split into a separate table deferred to the prompt 46 DROP/RENAME pass.
+- **Status**: RESOLVED 2026-04-23 (141 rows queued under `US03`; deprecation log entry `prompt_26`; table-level split deferred).
 
 ### US04 — `inm_v1_only` rows with incompleteness
-- **Observed**: large overlap with US01/US02 — ~3,339 size-null + ~4,619 location-null concentrated here
+- **Observed**: `resolution_rule` distribution: inm_v1_only=32,145 + inm_v1+llm=4,812 + NULL=622 → 32,767 weak / 4,812 strong.
 - **Fix**: Re-route these exams through the `inm_v1+llm` resolution (the clean branch). Rebuild `canonical_us_nodule_v2` with `resolution_rule = 'inm_v1_only'` as a fallback only when LLM returns empty.
-- **Status**: pending (upstream rebuild)
+- **Fix applied (2026-04-23, migration 28)**: Added `us_resolution_strength` ∈ {weak (inm_v1_only | NULL), strong (any _llm), other} to `canonical_us_nodule_v2_filtered`. Downstream cohort filters `us_resolution_strength='strong'` when high-confidence phenotype required. Upstream rebuild remains pending but no longer blocks the analytic layer.
+- **Status**: RESOLVED 2026-04-23 (parser-provenance band; no queue emission; deprecation log entry `prompt_27`). Upstream rebuild tracked as separate future work.
 
 ### PATH01 — surgery linkage collapsed (SCHEMA-LEVEL)
 - **Table/col**: `canonical_path_malignant_events_v1.surgery_episode_id`, `.path_surgery_id`
@@ -630,27 +643,30 @@ Each entry has:
   1. Re-parse the 6,785 shell rows' source imaging notes with the gland-measurement extractor. If measurements exist in the narrative, populate.
   2. Rows where measurements genuinely don't exist in the report: keep the row (exam-linkage is useful) but add `row_quality = 'no_measurements'` for analytic filtering.
   3. Analytic views filter `row_quality = 'complete'` when gland-size covariates are needed.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 29)**: View `canonical_us_thyroid_gland_v2_shape` adds `gland_row_type` ∈ {measured, shell} + `shell_row_flag`. Queue emission at per-patient grain: 6,785 patients have only-shell exams (each with exactly 1 gland exam).
+- **Status**: RESOLVED 2026-04-23 (6,785 rows queued under `USGLAND01`; deprecation log entry `prompt_28`). LLM re-parse deferred to USGLAND02 workstream.
 
 ### USGLAND02 — all parenchymal-phenotype fields uniformly NULL
 - **Table/col**: `canonical_us_thyroid_gland_v2` (`background_echogenicity`, `heterogeneity`, `hashimoto_pattern`, `vascularity_overall`, `calcifications_parenchymal`)
 - **Category**: derivation (planned-but-not-executed backfill)
 - **Severity / scope**: critical / schema
-- **Observed**: 13,578 / 13,578 rows have all five phenotype fields NULL. All rows have `nlp_backfill_pending = TRUE`.
-- **Fix**: Execute the planned NLP backfill. The infrastructure exists (columns + flag), just the backfill hasn't been run. Write a backfill script that runs an LLM extractor over the source imaging narratives and populates these five columns. Set `nlp_backfill_pending = FALSE` on success. Ship as `qc_framework_v1/20_us_gland_phenotype_backfill.py`.
-- **Status**: pending (new backfill script to write)
+- **Observed**: 13,578 / 13,578 rows have all 8 phenotype fields NULL (including `goiter_flag`, `pyramidal_present_flag`, `substernal_extension_flag`). All rows have `nlp_backfill_pending = TRUE`.
+- **Fix**: Execute the planned NLP backfill. The infrastructure exists (columns + flag), just the backfill hasn't been run. Write a backfill script that runs an LLM extractor over the source imaging narratives and populates these columns. Set `nlp_backfill_pending = FALSE` on success.
+- **Tracked (2026-04-23, migration 29)**: `parenchymal_all_null_flag` regression guard on `canonical_us_thyroid_gland_v2_shape`. TODO + execution gate in `qc_framework_v1/NOTES/usgland_parenchymal_rebuild.md` (patch target: `canonical_us_thyroid_gland_v2_parench_patch_v1`). No queue emission — this is a schema-wide rebuild, not a row-level defect.
+- **Status**: tracked 2026-04-23 — LLM rebuild script pending cost/sample sign-off.
 
 ### USLN01 — US lymph node table is entirely shell
 - **Table/col**: `main.canonical_us_lymph_node_v2` (everything except `us_exam_id`)
 - **Category**: build
 - **Severity / scope**: critical / schema
-- **Observed**: 6,801 / 6,801 rows have NULL laterality, neck_level, region, size, and confidence.
+- **Observed**: 6,801 / 6,801 rows — 6,793 all-NULL structured fields (99.9% shell). Non-shell count = 8.
 - **Fix**: Full rebuild from source imaging reports.
   1. Write a new LLM extraction pipeline targeting cervical LN findings in US reports.
-  2. For each of the 6,801 exams, extract per-LN rows with fields: laterality, neck_level (I–VI), region, short_axis_mm, long_axis_mm, suspicion features (microcalcifications, cystic change, hyperechoic foci, round shape, loss of hilum), suspicion_level (ACR TI-RADS LN criteria), biopsy_recommended.
+  2. For each exam, extract per-LN rows with fields: laterality, neck_level (I–VI), region, short_axis_mm, long_axis_mm, suspicion features (microcalcifications, cystic change, hyperechoic foci, round shape, loss of hilum), suspicion_level (ACR TI-RADS LN criteria), biopsy_recommended.
   3. Replace the shell rows in `canonical_us_lymph_node_v2`.
   4. Until rebuilt, the table is unusable and LN-US-source columns on cohort_v2 (`ln_us_suspicious_count`, etc. per Resolved Decision #2) remain NULL.
-- **Status**: pending (major upstream build — scoped separately)
+- **Candidate list built (2026-04-23, migration 30)**: `manuscript_workspace.qc_usln01_llm_candidates_v1` (TABLE, static snapshot) = 855 exams where parent-gland impression text mentions LN concerns (lymph node / lymphadenopath / abnormal node / cervical node / LAD). LLM skeleton at `qc_framework_v1/usln01_llm_extract.py` — NOT executed.
+- **Status**: candidates-built 2026-04-23 (LLM run pending authorization; deprecation log entry `prompt_29`).
 
 ---
 
@@ -665,36 +681,40 @@ Each entry has:
     AND lymph_node_locations IS NULL
     AND lymph_node_details IS NULL;
   ```
-- **Observed**: 975 rows
-- **Fix**: Re-run LN-detail extraction on the 975 source reports with an upgraded prompt targeting location (neck level) and size. Merge results. For reports where no detail genuinely exists in text, leave NULL + set `ln_detail_extraction_attempted = TRUE` so we don't re-try forever.
-- **Status**: pending
+- **Observed**: registry 975 rows; current snapshot 4,080 rows with `lymph_nodes_mentioned=TRUE` and `lymph_node_locations IS NULL`. Delta flagged — parser may have been tightened since registry draft; Logan to reconcile.
+- **Fix**: Re-run LN-detail extraction on the source reports with an upgraded prompt targeting location (neck level) and size. Merge results. For reports where no detail genuinely exists in text, leave NULL + set `ln_detail_extraction_attempted = TRUE` so we don't re-try forever.
+- **Fix applied (2026-04-23, migration 31)**: Advisory flag `ct_ln_underspecified_flag` on `manuscript_workspace.ct_imaging_clean`. No queue emission — number overshoots registry pending reconciliation.
+- **Status**: flagged 2026-04-23 (advisory flag on clean view; queue deferred until registry count reconciled; deprecation log entry `prompt_30`).
 
 ### CT02 — `thyroid_not_visualized=TRUE` paired with other thyroid flags
 - **Table/col**: `ct_imaging` (flag set)
 - **Category**: rule-violation (boolean semantic conflict)
 - **Severity / scope**: warning / event
-- **Observed**: 170 rows
-- **Fix**: Declare `thyroid_not_visualized` the dominant flag. For the 170 rows, null out every other thyroid_* flag (nodule, enlarged, heterogeneous, postsurgical, other_abnormality) because they can't simultaneously be TRUE with "not visualized." Log original values to `ct_imaging_flag_overrides_v1` for audit.
-- **Status**: pending
+- **Observed**: 140 rows (registry estimate 170).
+- **Fix**: Declare `thyroid_not_visualized` the dominant flag. For the 140 rows, null out every other thyroid_* flag (nodule, enlarged, heterogeneous, postsurgical, other_abnormality) because they can't simultaneously be TRUE with "not visualized." Log original values to `ct_imaging_flag_overrides_v1` for audit.
+- **Fix applied (2026-04-23, migration 31)**: `ct02_notvisualized_contradiction` flag on `ct_imaging_clean`. 140 rows queued under `CT02`. Flag-only — no silent overwrite of source values.
+- **Status**: RESOLVED 2026-04-23 (140 rows queued under `CT02`; deprecation log entry `prompt_30`).
 
 ### CT03 — `thyroid_normal=TRUE` paired with other thyroid abnormality flags
 - **Table/col**: `ct_imaging`
 - **Category**: rule-violation
 - **Severity / scope**: warning / event
-- **Observed**: 23 rows
+- **Observed**: 23 rows (exact match to registry).
 - **Fix**: Declare the **abnormality flags** dominant (if any abnormality is coded, the thyroid isn't "normal"). For 23 rows, set `thyroid_normal = FALSE`, preserve the abnormality flags. Log to the override table.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 31)**: `ct03_normal_contradiction` flag on `ct_imaging_clean`. 23 rows queued under `CT03`.
+- **Status**: RESOLVED 2026-04-23 (23 rows queued under `CT03`; deprecation log entry `prompt_30`).
 
 ### CT04 — `tracheal_deviation` present but `tracheal_deviation_direction` NULL
 - **Table/col**: `ct_imaging` (`tracheal_deviation`, `tracheal_deviation_direction`)
 - **Category**: parsing (incomplete structuring)
 - **Severity / scope**: warning / event
-- **Observed**: 5,233 rows (very large share of the CT table)
+- **Observed**: registry 5,233; current snapshot 3,413 rows with `tracheal_deviation NOT IN ('none')` and direction unresolvable (NULL / not_mentioned / unknown / none / present_unspecified / null-text). Schema: `tracheal_deviation` enum = {present, none, not_mentioned, NULL}; when `='present'` alone, only 49 rows have unresolvable direction.
 - **Fix**:
-  1. Re-extract direction from the source report text on these 5,233 rows with a targeted prompt: "If tracheal deviation is mentioned, extract direction ∈ {left, right, anterior, posterior, NULL}."
+  1. Re-extract direction from the source report text with a targeted prompt: "If tracheal deviation is mentioned, extract direction ∈ {left, right, anterior, posterior, NULL}."
   2. Rows where direction genuinely isn't stated in the report → leave NULL + `tracheal_direction_unstated = TRUE`.
   3. The manuscript doesn't currently use this covariate, so low analytic priority — but it's a symptom of incomplete structuring worth fixing.
-- **Status**: pending (low priority for first manuscript)
+- **Fix applied (2026-04-23, migration 31)**: Advisory flag `ct_tracheal_direction_missing_flag` on `ct_imaging_clean` (3,413 rows). No queue emission — low analytic priority and count differs from registry.
+- **Status**: flagged 2026-04-23 (advisory flag on clean view; low analytic priority; deprecation log entry `prompt_30`).
 
 ---
 
