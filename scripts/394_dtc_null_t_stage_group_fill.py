@@ -6,8 +6,11 @@ from ajcc8_stage_group_corrected for 20 rows (T NULL, N/M set, stage_group NULL)
 
 Phases
 ------
-* default           — read-only Q0-A..E; writes scripts/output/394_prestate_probe_report.md
-* --apply           — idempotency check, 2A snapshot, 2B UPDATE, 2C __readme, 3 verify
+* default           — read-only Q0-A..E; writes scripts/output/394_prestate_probe_report.md;
+                    prints PROBE_REPORT_SHA256=<hex> for --i-approve on apply.
+* --apply           — idempotency check (NO-OP exits without touching probe/close-out files),
+                    fresh runs require --i-approve=<sha256> matching that probe body;
+                    2A snapshot, 2B UPDATE, 2C __readme, 3 verify
 
 Token: motherduck_client.get_token() (never printed).
 """
@@ -22,8 +25,11 @@ from typing import Any
 import duckdb
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(SCRIPTS_DIR))
 
+from _md_script_runner_utils import normalize_i_approve, probe_report_sha256  # noqa: E402
 from motherduck_client import get_token, token_mode  # noqa: E402
 
 # --------------------------------------------------------------------------- #
@@ -544,31 +550,28 @@ def main() -> int:
         default="",
         help="Override RUN_STAMP for snapshot name (default: UTC YYYYMMDD_HHMMSS)",
     )
+    ap.add_argument(
+        "--i-approve",
+        default="",
+        metavar="SHA256",
+        help=(
+            "Required for a fresh --apply: hex SHA256 of the prestate probe report body "
+            "(from probe-only run; optional sha256: prefix). Ignored on idempotent NO-OP."
+        ),
+    )
     args = ap.parse_args()
 
     fresh_log()
     con = connect()
 
+    # Idempotency first: NO-OP must not rewrite probe or close-out reports.
     if args.apply:
         snap, readme = idempotency_state(con)
         if snap and readme:
-            probe = run_probe(con)
-            PRESTATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-            PRESTATE_PATH.write_text(format_probe_md(probe), encoding="utf-8")
-            log(f"Wrote {PRESTATE_PATH}")
             log(
                 f"NO-OP: snapshot {snap} and Script 394 __readme present — "
-                "idempotent success."
+                "idempotent success (probe/close-out files untouched)."
             )
-            if CLOSE_OUT_PATH.is_file() and "Close-out (Phase 3)" in CLOSE_OUT_PATH.read_text(
-                encoding="utf-8"
-            ):
-                log("Close-out report unchanged (Phase 3 already recorded).")
-            else:
-                CLOSE_OUT_PATH.write_text(
-                    f"# Script 394 — NO-OP\n\nIdempotent: `{snap}` + __readme present.\n",
-                    encoding="utf-8",
-                )
             return 0
         if snap and not readme:
             log("HALT: partial apply — snapshot exists but no __readme")
@@ -579,8 +582,11 @@ def main() -> int:
 
     probe = run_probe(con)
     PRESTATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PRESTATE_PATH.write_text(format_probe_md(probe), encoding="utf-8")
+    prestate_body = format_probe_md(probe)
+    PRESTATE_PATH.write_text(prestate_body, encoding="utf-8")
     log(f"Wrote {PRESTATE_PATH}")
+    digest = probe_report_sha256(prestate_body)
+    print(f"PROBE_REPORT_SHA256={digest}", flush=True)
 
     ok, errs = halt_gate(probe)
     if not ok:
@@ -589,8 +595,26 @@ def main() -> int:
         print("\n--- HALT GATE FAILED ---\n" + "\n".join(errs), flush=True)
         return 1
 
+    if args.apply:
+        approved = normalize_i_approve(args.i_approve)
+        if not approved:
+            log("HALT: fresh --apply requires --i-approve=<sha256> from probe-only output")
+            print(
+                "\nAfter greenlight, run:\n"
+                f"  python3 scripts/394_dtc_null_t_stage_group_fill.py --apply "
+                f"--i-approve={digest}\n",
+                flush=True,
+            )
+            return 5
+        if approved != digest:
+            log(
+                f"HALT: --i-approve mismatch (file {digest}, got {approved}) — "
+                "probe drift or wrong hash"
+            )
+            return 5
+
     if not args.apply:
-        log("Probe only — use --apply after greenlight to mutate.")
+        log("Probe only — re-run with --apply --i-approve=<sha256> after greenlight.")
         return 0
 
     run_stamp = args.force_stamp.strip() or datetime.now(timezone.utc).strftime(
