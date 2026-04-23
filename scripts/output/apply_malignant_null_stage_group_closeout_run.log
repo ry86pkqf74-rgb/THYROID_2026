@@ -1,0 +1,11 @@
+2026-04-23T03:44:14.041300+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+2026-04-23T03:44:18.663624+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/apply_malignant_null_stage_group_closeout_probe.md
+2026-04-23T03:44:19.296113+00:00 S-1: ensure ajcc8_t_stage on queue (ALTER if needed)
+2026-04-23T03:44:20.438125+00:00 S-2, S-3: backfill queue T for 1404, 12198 from CPM
+2026-04-23T03:44:51.349999+00:00 VERIFY: P3: malignant NULL stage_group=8, expected 2
+2026-04-23T03:44:51.350377+00:00 VERIFY: P3: NULL malignant rids=['12198', '1404', '4015', '423', '6275', '6768', '924', '9600'], expected ['1404', '12198']
+2026-04-23T03:45:34.458364+00:00 NO-OP: snapshot + script_399 __readme + queue ajcc8_t_stage VARCHAR + 111/106=I + 6×399 queue rows + 8/8 T-stage expectations — Phase 3 verify only. Close-out not overwritten.
+2026-04-23T03:46:02.697936+00:00 Phase 4: NO-OP path — run_stamp 20260423_034419
+2026-04-23T03:46:48.829563+00:00 NO-OP: snapshot + script_399 __readme + queue ajcc8_t_stage VARCHAR + 111/106=I + 6×399 queue rows + 8/8 T-stage expectations — Phase 3 verify only. Close-out: created if missing, else not overwritten.
+2026-04-23T03:47:16.623897+00:00 Phase 4: NO-OP path — run_stamp 20260423_034419
+2026-04-23T03:47:16.624949+00:00 Wrote /Users/loganglosser/THYROID_2026/cursor_prompts/CLOSE_OUT_399.md (was missing)
