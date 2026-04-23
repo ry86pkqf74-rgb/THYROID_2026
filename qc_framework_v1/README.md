@@ -124,16 +124,65 @@ you confirm column names on the source tables, they're one-liners each:
 
 ## Deprecation notes (2026-04-23 onward)
 
-- **`main.canonical_molecular_genetics_from_notes_v2` is deprecated in favor of
-  `manuscript_workspace.molecular_mentions_from_notes_v2`**; it is a mentions
-  layer and must never be joined as a peer of
-  `main.canonical_molecular_genetics_v2`. The `_from_notes` table holds NLP
-  entity extractions from narrative notes (op notes, path reports, addenda) —
-  it encodes "a note mentioned this variant/fusion/gene" signals, not verified
-  structured assay results. Treat it as evidence for signal corroboration
-  only; for primary molecular attribution, use
-  `main.canonical_molecular_genetics_v2` (or the UID view
-  `manuscript_workspace.molecular_episode_uid_v1`).
+As of migration 09 (2026-04-23), every `main.*` object superseded by a
+prompt-01-to-08 view is marked with `COMMENT ON TABLE` / `COMMENT ON COLUMN`
+metadata in MotherDuck, and a single-table index lives at
+`manuscript_workspace.canonical_deprecation_log_v1`. Query it to see what's
+deprecated, what replaces it, and which prompt is gated to hard-drop it
+(if any):
+
+```sql
+SELECT closing_prompt, deprecation_kind, deprecated_object, superseding_object
+FROM manuscript_workspace.canonical_deprecation_log_v1
+ORDER BY closing_prompt;
+```
+
+Current (prompts 01-08) entries:
+
+| Prompt | Kind | Deprecated | Superseded by |
+|--------|------|------------|---------------|
+| 01 | pointer_only | `main.canonical_path_malignant_events_v1` | `manuscript_workspace.canonical_path_malignant_events_v1_keyed` |
+| 05 | column_only | `main.canonical_molecular_genetics_v2.molecular_episode_id` | `manuscript_workspace.molecular_episode_uid_v1.molecular_episode_uid` |
+| 06 | linkage_only | `main.specimen_genomic_assay_v1` | `manuscript_workspace.specimen_genomic_assay_v1_relinked` |
+| 07 | full | `main.canonical_molecular_genetics_from_notes_v2` | `manuscript_workspace.molecular_mentions_from_notes_v2` |
+| 08 | column_only | `main.manuscript_cohort_v1.histology_final` | `manuscript_workspace.manuscript_cohort_v1_histology_clean` |
+
+`deprecation_kind` legend:
+
+- `full` — whole object is deprecated; use the replacement.
+- `linkage_only` — the table stays, but its FK-style columns are unreliable; bind via the replacement.
+- `column_only` — the table stays, one column is broken; read from the replacement's clean column.
+- `pointer_only` — not actually deprecated; a cleaner derivative is available for the common join pattern.
+
+**Non-breaking by design.** No `main.*` objects were dropped or renamed.
+Hard drops are gated to prompt 46 (manuscript_cohort_v2 assembly). The
+`hard_drop_gate` column on the deprecation log records which prompt, if any,
+is allowed to drop the deprecated object.
+
+**`views_readable.Genetics_from_Notes_LLM`** was re-pointed in migration 09
+to `manuscript_workspace.molecular_mentions_from_notes_v2` (row count
+unchanged at 1,738). Other `views_readable.*` views left as-is — they read
+columns that are not deprecated.
+
+**What "deprecated" means for each kind in practice:**
+
+- `main.canonical_molecular_genetics_from_notes_v2` (full) — an NLP mentions
+  layer. It holds "a note mentioned this variant/fusion/gene" signals, not
+  verified structured assay results. Never join as a peer of
+  `main.canonical_molecular_genetics_v2`. Use
+  `manuscript_workspace.molecular_mentions_from_notes_v2` instead (same
+  data, name disambiguates intent).
+- `main.canonical_molecular_genetics_v2.molecular_episode_id` (column_only)
+  — 3 distinct values across 1,384 rows; useless as a key. Use
+  `manuscript_workspace.molecular_episode_uid_v1.molecular_episode_uid`.
+- `main.specimen_genomic_assay_v1` (linkage_only) — its FK-style columns are
+  ~98% broken. The table is fine for audit/provenance; downstream joins
+  should go through
+  `manuscript_workspace.specimen_genomic_assay_v1_relinked` and bind on
+  `research_id` with the two boolean presence flags.
+- `main.manuscript_cohort_v1.histology_final` (column_only) — raw, dirty.
+  Analysis should use the clean columns on
+  `manuscript_workspace.manuscript_cohort_v1_histology_clean`.
 
 ## Design notes
 
