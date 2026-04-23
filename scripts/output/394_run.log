@@ -1,0 +1,12 @@
+2026-04-23T00:04:45.968272+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+2026-04-23T00:04:47.144937+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/394_prestate_probe_report.md
+2026-04-23T00:04:47.145200+00:00 Probe only — use --apply after greenlight to mutate.
+2026-04-23T00:04:49.225432+00:00 Connecting md:thyroid_canonical_publication_v1_0 (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+2026-04-23T00:04:52.476931+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/394_prestate_probe_report.md
+2026-04-23T00:04:52.477238+00:00 2A: CREATE OR REPLACE "thyroid_canonical_publication_v1_0"."archive_pub_v1_0"."cpm_stage_group_pre394_20260423_000452" AS ...
+2026-04-23T00:04:52.863454+00:00 2A OK — 33 rows
+2026-04-23T00:04:52.863834+00:00 2B: UPDATE ajcc8_stage_group FROM builder (with AJCC8 guard) ...
+2026-04-23T00:04:52.937711+00:00 2B done
+2026-04-23T00:04:52.938895+00:00 2C: __readme
+2026-04-23T00:04:53.484563+00:00 Wrote /Users/loganglosser/THYROID_2026/scripts/output/394_close_out_report.md
+2026-04-23T00:04:53.484832+00:00 Script 394 apply + verify complete.
