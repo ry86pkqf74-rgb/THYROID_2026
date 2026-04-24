@@ -1155,7 +1155,11 @@ Each entry has:
 - **Fix**:
   1. Run a date-parse pass over `fna_date_raw` using the standard parsers (`TRY_STRPTIME` for ISO, US month/day, natural-language), plus a contextual fallback (note date ±14d if a tied note exists). Populate `fna_date_resolved_v2` and `fna_date_resolved_source` in {`existing`, `reparsed_iso`, `reparsed_us`, `contextual_note`, `unresolved`}.
   2. Rows that remain `unresolved` after all parsers → `qc_manual_review_queue_v1` with `issue_id='FNA02'`.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 42). View `manuscript_workspace.canonical_fna_events_v1_date_clean` carries `fna_date_resolved_final` + `fna_date_resolved_source` ∈ {existing 6537, reparsed_mdy_4d 1431, null_raw 66, unresolved 35, reparsed_mdy_2d 33, reparsed_regex_extract_4d 16, reparsed_regex_extract_2d 1}. 35 unresolved queued. Regex-guarded parser (`\d{4}
+
+ vs `\d{2}
+
+) avoids DuckDB lenient `%Y` traps.
 
 ### FNA03 — `days_to_surgery < 0` (redundant with FNA01 but derived column)
 - **Table/col**: `main.canonical_fna_events_v1.days_to_surgery`
@@ -1163,18 +1167,18 @@ Each entry has:
 - **Severity / scope**: warning / event
 - **Observed**: 280 rows / 222 pts (115 PTC). Overlaps partially with FNA01 but is its own derived column signal.
 - **Fix**: Recompute `days_to_surgery` from `fna_date_resolved_v2` and the operative SoT date (see SURG reconciliation). Where still negative, apply the FNA01 post-surgery logic. Rows with `days_to_surgery IS NULL AND both dates populated` → manual review.
-- **Status**: pending (follows FNA01, SURG reconciliation, FNA02)
+- **Status**: ✅ CLOSED 2026-04-24 (migration 43). View `manuscript_workspace.canonical_fna_events_v1_dts_clean` recomputes `days_to_surgery_recomputed = earliest_surgery_date - fna_date_resolved_final`. 310 implausible (|Δ|>3650d) queued; 120 drift-flag + 527 surveillance-flag surfaced for filtering.
 
 ### FNA04 — strict duplicate-signature FNA rows
 - **Observed**: 4 duplicate-signature rows / 2 excess / 2 pts (1 PTC) — low volume, but fixable deterministically.
 - **Fix**: In `manuscript_workspace.canonical_fna_events_v1_dedup`, keep the row with (a) non-NULL `fna_date_resolved`, (b) highest `bethesda_final_num` among ties, (c) lowest `fna_event_id`. Queue dropped rows with `issue_id='FNA04'`.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 44). View `manuscript_workspace.canonical_fna_events_v1_dedup` with `fna_row_rank=1` as canonical; partition (rid, fna_date_resolved, specimen_location, laterality, bethesda_final_num); tie-break bethesda DESC NULLS LAST, fna_event_id ASC. Registry was stale (claimed 2, actual 16 excess). 16 rows queued.
 
 ### FNA05 — rollup `bethesda_final` NULL despite event-level Bethesda present
 - **Table/col**: `main.canonical_fna_patient_rollup_v1.bethesda_final`
 - **Observed**: 6 pts (2 PTC).
 - **Fix**: Rebuild the rollup's `bethesda_final` as `MAX(bethesda_final_num) FILTER (WHERE fna_pre_surgery_flag=TRUE)` over the event-level clean table. The existing rollup code has a bug where pre-op filter drops valid rows for these 6 patients.
-- **Status**: pending
+- **Status**: ✅ CLOSED-BY-AUDIT 2026-04-24 (migration 45). Registry was stale — actual scope is 0 pts with the described pattern (240 NULLs all legitimate: 38 truly no event-Bethesda + 202 post-surgery-only; 60 looser-window informational). 1 true stored/recomputed disagreement (rid 462: stored=6, recomputed=1) queued. View `manuscript_workspace.canonical_fna_patient_rollup_v1_clean` surfaces `bethesda_final_recomputed`.
 
 ### IFNA01-06 — `imaging_fna_linkage_v3` rebuild
 - **Table**: `main.imaging_fna_linkage_v3`
@@ -1193,22 +1197,22 @@ Each entry has:
 ### OP01 — `total_thyroidectomy` with unilateral laterality
 - **Observed**: 33 rows / 33 pts (23 PTC).
 - **Fix**: Emit to queue with `issue_id='OP01'`. Under normal AJCC/procedure semantics, a total thyroidectomy cannot be unilateral. Likely OR-note misclassification (really a completion or lobectomy mis-labeled). Chart review required. Set `procedure_normalized_trusted=NULL` for these rows until resolved.
-- **Status**: pending (chart review)
+- **Status**: ✅ CLOSED 2026-04-24 (migration 46). View `manuscript_workspace.canonical_operative_events_v1_rule_clean` surfaces `procedure_normalized_trusted` (NULL where `op01_tt_unilateral_flag`). 33 rows queued for chart review.
 
 ### OP02 — `hemithyroidectomy` with `laterality='bilateral'`
 - **Observed**: 3 rows / 3 pts (1 PTC).
 - **Fix**: Same pattern — queue with `issue_id='OP02'`, chart review.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 46, shared view with OP01). 3 rows queued.
 
 ### OP03 — ambiguous multi-episode procedure code rows
 - **Observed**: 904 rows / 212 pts (81 PTC).
 - **Fix**: For each ambiguous row, attempt re-attribution to a single surgery episode by (a) same `procedure_normalized` match, (b) date proximity ≤7 days. Rows still ambiguous after re-attribution → queue with `issue_id='OP03'`. Build `manuscript_workspace.canonical_operative_procedure_codes_v1_relinked`.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 47). View `manuscript_workspace.canonical_operative_procedure_codes_v1_relinked` with ROW_NUMBER((proc_match DESC, gap_days ASC, episode_id ASC)) re-attributes all 904 ambiguous rows to unique winners: 290 `procedure_match_tightest` (trusted), 614 `tightest_date_only` (queued). COALESCE NULL-safety fix applied mid-apply.
 
 ### OP04 — procedure code rows with NULL `linked_surgery_episode_id`
 - **Observed**: 11,134 rows / 3,611 pts (1,289 PTC).
 - **Fix**: Patch into the relink view from OP03. For rows that can't be linked to any surgery episode (no candidate surgery in same patient), flag as `orphan_procedure_code_flag=TRUE`. Cohort queries should exclude orphans unless explicitly joined.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 47, shared view with OP03). 11,134 orphan rows queued. Distribution: same_day 9575, temporal_30d 78, procedure_match_tightest 290, tightest_date_only 614, orphan_unlinked 11134.
 
 ### OP05 — path_malignant `surgery_episode_id` not matching operative namespace
 - **Table/col**: `main.canonical_path_malignant_events_v1.surgery_episode_id`
@@ -1223,22 +1227,22 @@ Each entry has:
      - `surgery_episode_uid`: `COALESCE(surgery_episode_uid_global, surgery_episode_uid_fallback)`.
      - `surgery_episode_uid_source` ∈ {`operative_match`, `md5_fallback`, `unknown_no_date`}.
   3. Emit rows with `surgery_episode_uid_source='md5_fallback'` to queue with `issue_id='OP05'`; these are pathology records for surgeries the operative table doesn't know about. Chart review required before including in staging analyses.
-- **Status**: pending (critical — blocks nearly all path-surgery joins)
+- **Status**: ✅ CLOSED 2026-04-24 (migration 48). `(rid, surgery_date_native)` is 1:1 with `surgery_episode_id` in op (11,773 unique pairs) — all 6,689 path rows rebind: 1 already_match + 5,254 op_rebind + 1,434 op_rebind (path_null). **Zero orphans.** No queue rows. View: `manuscript_workspace.canonical_path_malignant_events_v1_global_epi.surgery_episode_id_global`. Registry's "md5_fallback" fallback path ended up unused.
 
 ### GEN13 — assay → molecular canonical match fails
 - **Observed**: 9,267 rows / 9,250 pts (2,737 PTC). Assay `molecular_episode_id` values are ordinals 1/2/3 and do not correspond to `canonical_molecular_genetics_v2.molecular_episode_id` values (also ordinals but not synchronized across the two tables).
 - **Fix**: After GEN01 (assign `molecular_episode_uid` on canonical_molecular_genetics_v2) and a parallel pass on `specimen_genomic_assay_v1` using the same MD5 formula with the same inputs available in the assay table (`research_id`, `resolved_test_date`, `platform`, `platform_version`), LEFT JOIN on the shared UID. Gap rows → queue with `issue_id='GEN13'`.
-- **Status**: pending (blocked on GEN01)
+- **Status**: ✅ CLOSED-BY-SCOPE 2026-04-24 (migration 49). Probe: 100% of 9,267 broken rows have `platform='Other'` — non-thyroid-specific genomic assays legitimately outside `canonical_molecular_genetics_v2` scope. Flag-only closure: view `manuscript_workspace.specimen_genomic_assay_v1_rebound` surfaces `gen13_platform_other_orphan_flag`; 1 summary queue row (no per-row queue) labeled `closed-by-scope`.
 
 ### GEN14 — assay `surgery_episode_id` non-null but no op match
 - **Observed**: 311 rows / 223 pts (105 PTC).
 - **Fix**: Same `(research_id, surgery_date ≈ resolved_test_date or tied surgery)` join used in OP05 to map assay's local surgery ordinal to the global op ID. Unmatched → queue with `issue_id='GEN14'`.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 49, shared view with GEN13). 311 op-link gaps → 300 rebound via (rid, |test_date - surgery_date| ≤365d fuzzy pick); 2 no-candidate + 9 no-date queued (11 total).
 
 ### GEN15 — molecular `linked_fna_episode_id` non-null but no FNA match
 - **Observed**: 360 rows / 347 pts (122 PTC).
 - **Fix**: Rebuild `linked_fna_episode_uid` on the canonical molecular table by joining to `main.canonical_fna_events_v1` on `(research_id, fna_index = linked_fna_episode_id)`. Unmatched rows → queue with `issue_id='GEN15'`. Do NOT silently null — flag so analyst can see which molecular tests have broken FNA provenance.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 50). `linked_fna_episode_id` carries legacy global 1..8117 ordinals (not fna_index nor fna_event_id). Per-patient nearest-FNA rebind (partition by (rid, molecular_episode_id), order |gap| ASC): 290 exact + 17 high_7d + 35 high_30d + 24 medium_90d + 1 low_365d + 7 over_365d. View `manuscript_workspace.canonical_molecular_genetics_v2_fna_rebind` surfaces `fna_index_rebound`. 7 over-365d queued.
 
 ### GEN16 — `braf_flag=TRUE` but `braf_variant` NULL
 - **Observed**: 180 rows / 175 pts (115 PTC) — the 115 PTC number is clinically significant because BRAF is the dominant PTC driver.
@@ -1246,7 +1250,7 @@ Each entry has:
   1. Re-extract from raw reports where available: look for `V600E`, `K601E`, `p\.V600E`, `c\.1799T>A` patterns in `platform_raw`, `test_result_summary`, `report_text_ref`.
   2. Populate `braf_variant_reparsed` and `braf_variant_source` ∈ {`existing`, `reparsed`, `flag_without_variant`}.
   3. Rows that remain `flag_without_variant=TRUE` → queue with `issue_id='GEN16'`. In cohort_v2, require `braf_variant` non-null for any BRAF-stratified analysis.
-- **Status**: pending
+- **Status**: ✅ CLOSED 2026-04-24 (migration 51). All 180 rows recovered via `gene_mutations_variants` STRUCT + `p.?` prefix strip + upper-case normalizer: 177 V600E (incl. pV600E typo) + 2 K601E + 1 V600. 1 true stored/derived disagreement (V600 stored, V600L derived). View `manuscript_workspace.canonical_molecular_genetics_v2_braf_variant` surfaces `braf_variant_derived`. 5 non-V600E rows queued (K601E/V600/V600L — clinically distinct from canonical V600E). Fix for (epi-NULL) LEFT JOIN: `IS NOT DISTINCT FROM` on molecular_episode_id.
 
 ### REC04 — recurrence after last-known-alive
 - **Observed**: 2 rows / 2 pts (both PTC).
@@ -1274,3 +1278,4 @@ Each entry has:
 
 - **2026-04-22 17:48** — backup snapshot captured (`thyroid_2026_full_backup_20260422_174849.duckdb`, 323 MB).
 - **2026-04-22 PM** — Logan fed batch #6: FNA02-05, IFNA01-06, OP01-05, GEN13-16, REC04-05, SPEC01 clean; revised counts on FNA01, PATH01, PATH03, PATH17, REC01, GEN02, GEN08. Key reframing: (a) PATH01 fix changes from MD5 to global op namespace mapping (OP05); (b) `imaging_fna_linkage_v3` is a linker design defect requiring full rebuild rather than overlay; (c) specimen scaffold is clean (SPEC01).
+- **2026-04-24** — Prompts 41–50 / migrations 42–51 applied. Closed 13 issues (FNA02 35 / FNA03 310 / FNA04 16 / FNA05 1 / OP01 33 / OP02 3 / OP03 614 / OP04 11,134 / OP05 0 / GEN13 closed-by-scope 1 summary / GEN14 11 / GEN15 7 / GEN16 5). Total queue delta: +12,170 open + 1 closed-by-scope. Several stale registry counts reconciled: FNA04 was 2→16; FNA05 was 6→0 (closed-by-audit); OP05 was 5,254→0 (rebind is deterministic via (rid, surgery_date_native)). Patterns reused: view-layer overlay under `manuscript_workspace.*`, queue-idempotency (`DELETE+INSERT`), `CAST(CURRENT_TIMESTAMP AS TIMESTAMP)`, regex-guarded date parsers, `IS NOT DISTINCT FROM` for NULL-safe joins, COALESCE for NULL-safe CASE branches. 10 new deprecation-log rows under `closing_prompt='prompt_41'..'prompt_50'`.
