@@ -9,38 +9,14 @@ that needs it, (b) source notes to parse, (c) expected vocabulary, (d) priority.
 
 ---
 
-## 1. T4b — invasion of prevertebral fascia, carotid, or mediastinal vessels
+## Done — Tier-2 extractions (closed)
 
-- **Rule it unblocks**: AJCC8 thyroid T4b = "any size, gross ETE into
-  prevertebral fascia or encases carotid artery or mediastinal vessels"
-  (all tumor types: DTC, MTC, ATC).
-- **Why it's not derivable now**: `canonical_path_malignant_events_v1` carries
-  `extrathyroidal_extension` (35 free-text variants) and `gross_ete` (BIGINT
-  flag) but no structured column for prevertebral-fascia or carotid-encasement
-  involvement. T4a (strap muscle / larynx / trachea / esophagus / RLN) vs T4b
-  (prevertebral fascia / carotid / mediastinal) are clinically and
-  prognostically distinct but collapsed in the current ETE free text.
-- **Source notes to parse**:
-  - Operative notes — gross dissection descriptions, resectability language
-  - Pathology reports — gross description section, microscopic, final comment
-  - CT/MRI radiology reports — may describe carotid encasement pre-op
-- **Expected output fields**:
-  - `t4b_prevertebral_fascia_invasion` ∈ {`present`, `absent`, `unknown`}
-  - `t4b_carotid_encasement`           ∈ {`present`, `absent`, `unknown`}
-  - `t4b_mediastinal_vessel_invasion`  ∈ {`present`, `absent`, `unknown`}
-  - `t4b_evidence_span`                (verbatim quote + source_table, row id)
-  - `t4b_confidence`                   ∈ {`high`, `medium`, `low`}
-- **Priority**: HIGH — blocks exact AJCC8 T-stage derivation for all ATC rows
-  and the long tail of DTC/MTC with gross ETE (~1,571 path_malignant rows
-  with `gross_ete=1`, subset of which are T4b candidates).
-- **Interim handling in migration 04**: rows with `reported t_stage='T4b'` or
-  `reported t_stage='T4a' with extensive/macroscopic ETE` are flagged
-  `derived_t_stage='indeterminate_t4b_requires_llm'` rather than forced to T4a.
-  The T-stage discordance flag stays NULL on those rows (not TRUE / not
-  FALSE — honestly missing).
-- **Owner / follow-up**: add to the next Tier-2 LLM extraction batch; align
-  prompt with the round-2 `esophageal_invasion` / `vascular_invasion` /
-  `airway_invasion` extractor pattern (same 9-domain v5 architecture).
+### T4b — invasion of prevertebral fascia, carotid, or mediastinal vessels (CLOSED 2026-04-24)
+
+- **Delivered**: `main.canonical_t4b_invasion_events_v1`, `main.canonical_t4b_invasion_patient_rollup_v1`, loader flattener `main.v_note_entities_llm_t4b_invasion_v1`; crosswalk columns on `main.canonical_ete_subgrade_patient_rollup_v1` (`any_pT4b_from_t4b_invasion`, `pT4b_ete_vs_t4b_invasion_discordant`).
+- **Migration**: `qc_framework_v1/migrations/56_t4b_invasion_canonical_tier2_v1.sql` (`build_script` = `mig_55_t4b_invasion_20260424`).
+- **Close-out**: `project_mig_55_t4b_invasion_closeout.md`.
+- **Source**: `main.note_entities_llm_t4b_invasion_v1` (gpt-oss-120b tier-2 pass).
 
 ---
 
