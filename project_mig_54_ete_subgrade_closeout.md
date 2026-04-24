@@ -7,7 +7,7 @@
 
 ## Final commit SHA
 
-`00cdbc1` (main; includes closeout). Migration SQL + registry: `36e6446`.
+`36e6446` — adds `55_ete_subgrade_canonical_tier2_v1.sql` and this closeout; applied to MotherDuck 2026-04-24.
 
 ## Source
 
