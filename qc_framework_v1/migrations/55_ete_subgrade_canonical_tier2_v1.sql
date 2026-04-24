@@ -206,4 +206,6 @@ FROM main.v_note_entities_llm_ete_subgrade_v1;
 UPDATE manuscript_workspace.detail_table_registry_v1
 SET description = description
   || ' | 2026-04-24: For document-derived ETE subgrade at scale, use canonical_ete_subgrade_patient_rollup_v1; ete_adjudication_v1 remains the curated 45-case override layer.'
-WHERE detail_table_name = 'ete_adjudication_v1';
+WHERE detail_table_name = 'ete_adjudication_v1'
+  AND (description IS NULL
+       OR description NOT LIKE '%document-derived ETE subgrade at scale%');
