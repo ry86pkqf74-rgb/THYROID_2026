@@ -1,0 +1,95 @@
+[[KEYWORDS]]
+trachea
+tracheal
+tracheal invasion
+tracheal wall
+tracheal cartilage
+tracheal mucosa
+shaved off the trachea
+shave excision
+larynx
+laryngeal
+laryngeal cartilage
+cricoid
+cricoid cartilage
+thyroid cartilage
+recurrent laryngeal nerve
+RLN
+vocal cord
+vocal cord paralysis
+shave
+shaved
+window resection
+tracheostomy
+tracheal resection
+sleeve resection
+esophagus
+esophageal
+[[/KEYWORDS]]
+You are extracting AJCC8 pT4a aerodigestive-invasion features from a thyroid surgery note or pathology note.
+
+AJCC8 pT4a definition (thyroid):
+  "Moderately advanced disease — tumor of any size extending beyond the thyroid capsule
+   to invade subcutaneous soft tissues, LARYNX, TRACHEA, ESOPHAGUS, or RECURRENT LARYNGEAL NERVE."
+
+Return ONLY a JSON object with these keys:
+  tracheal_invasion       : "present" | "shaved" | "absent" | "unknown"
+  tracheal_invasion_depth : "mucosal" | "cartilage" | "adventitia" | "serosa" | "full_thickness" | null
+  laryngeal_invasion      : "present" | "absent" | "unknown"
+  cricoid_invasion        : "present" | "absent" | "unknown"
+  rln_invasion            : "present" | "absent" | "unknown"
+  rln_paralysis_preop     : "present" | "absent" | "unknown"
+  esophageal_invasion     : "present" | "shaved" | "absent" | "unknown"
+  t4a_implication         : "pT4a" | "not_pT4a" | "unable_to_determine"
+  confidence              : "high" | "medium" | "low"
+  evidence_quote          : short quote (<= 30 words); redact names/dates
+  reasoning               : one-sentence rationale
+
+RULES:
+
+TRACHEAL INVASION — distinguish three states:
+  - "invades the trachea" / "tracheal wall invasion" / "through the tracheal cartilage" → present
+  - "tumor SHAVED off the trachea" / "tumor adherent to trachea, shave excision performed" → "shaved"
+    (important: shaved = gross adherence requiring shave, but no full-thickness invasion; this is
+     often classified as T3b/T4a grey zone — preserve the distinction)
+  - "trachea free of tumor" / "no tracheal invasion" → absent
+  - Not mentioned → unknown
+
+TRACHEAL INVASION DEPTH (only when present or shaved):
+  - mucosal: through the mucosa into the lumen
+  - cartilage: into the tracheal cartilage but not through
+  - adventitia: tumor into outer adventitia / perichondrium only
+  - serosa: same as adventitia
+  - full_thickness: through the wall
+  - null if depth not stated
+
+LARYNGEAL / CRICOID:
+  - "invades the cricoid cartilage" → cricoid_invasion=present AND laryngeal_invasion=present
+  - "larynx free of tumor" → laryngeal_invasion=absent
+  - Not mentioned → unknown
+
+RECURRENT LARYNGEAL NERVE (RLN):
+  - "RLN invaded" / "tumor encasing the RLN" / "sacrificed the RLN" → rln_invasion=present
+  - "RLN preserved" / "RLN dissected free of tumor" → rln_invasion=absent
+  - "preop vocal cord paralysis" → rln_paralysis_preop=present (STRONG correlate of RLN invasion but different field)
+  - "normal preop vocal cord function" → rln_paralysis_preop=absent
+  - Not mentioned → both fields = unknown
+
+ESOPHAGEAL INVASION:
+  - Same logic as tracheal: present / shaved / absent / unknown
+
+T4A_IMPLICATION:
+  - "pT4a" if ANY of these is present: tracheal_invasion=present, laryngeal_invasion=present,
+    cricoid_invasion=present, esophageal_invasion=present, rln_invasion=present.
+  - "not_pT4a" if all five are absent.
+  - "unable_to_determine" otherwise.
+
+Shave-only invasion does NOT automatically confer pT4a — capture it separately and let downstream SQL decide T3b vs T4a based on institutional convention.
+
+NOTE TYPE: {note_type}
+NOTE SNIPPET:
+---
+{note_text}
+---
+
+Return the JSON object and nothing else.

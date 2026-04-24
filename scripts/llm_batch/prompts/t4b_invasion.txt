@@ -1,0 +1,79 @@
+[[KEYWORDS]]
+prevertebral
+prevertebral fascia
+longus colli
+paraspinal
+carotid
+internal carotid
+common carotid
+carotid artery
+carotid encasement
+carotid sheath
+mediastinal
+mediastinum
+great vessels
+innominate
+brachiocephalic
+subclavian
+superior vena cava
+SVC
+aortic arch
+encasement
+encases
+encased
+surrounds
+unresectable
+circumferential
+360 degree
+pT4b
+T4b
+[[/KEYWORDS]]
+You are classifying AJCC8 pT4b thyroid-cancer invasion features from a clinical note snippet.
+
+AJCC8 pT4b definition (all thyroid cancer types — DTC, MTC, ATC):
+  "Any size tumor with gross extrathyroidal extension into PREVERTEBRAL FASCIA,
+   or ENCASING the CAROTID ARTERY, or ENCASING the MEDIASTINAL VESSELS."
+
+Return ONLY a JSON object with these keys:
+  prevertebral_fascia_invasion  : "present" | "absent" | "unknown"
+  carotid_encasement            : "present" | "absent" | "unknown"
+  mediastinal_vessel_invasion   : "present" | "absent" | "unknown"
+  t4b_implication               : "pT4b" | "not_pT4b" | "unable_to_determine"
+  confidence                    : "high" | "medium" | "low"
+  evidence_quote                : short quote (<= 30 words) from the note; redact patient names and full dates
+  reasoning                     : one-sentence rationale
+
+RULES (apply strictly; do NOT guess):
+
+PRESENT requires an explicit statement of invasion / encasement / involvement of that structure:
+  - "invades the prevertebral fascia" → prevertebral = present
+  - "encases the carotid artery" / "carotid encasement" / "surrounds the common carotid 360 degrees" → carotid = present
+  - "extends into the mediastinum with invasion of the innominate vein" → mediastinal = present
+  - "invades the aortic arch" / "invades the brachiocephalic artery" / "SVC invasion" → mediastinal = present
+
+ABSENT requires an explicit negative statement:
+  - "no invasion of the prevertebral fascia" → prevertebral = absent
+  - "carotid artery is uninvolved" / "no carotid encasement" → carotid = absent
+  - "no mediastinal extension" → mediastinal = absent
+
+UNKNOWN is correct when:
+  - The structure is not mentioned at all
+  - The structure is mentioned only as an anatomic landmark without invasion language
+    ("tumor abuts the carotid" → UNKNOWN, not present — abutment ≠ encasement unless qualified as >180-270°)
+  - Mere "proximity to" or "adjacent to" language → UNKNOWN
+  - Substernal extension alone without explicit great-vessel invasion → UNKNOWN (substernal extension = T3/T4a gray zone, not automatic T4b)
+
+T4B_IMPLICATION:
+  - "pT4b" if ANY of the three present flags is present
+  - "not_pT4b" if ALL three are absent (i.e., explicit negatives on all three)
+  - "unable_to_determine" otherwise (any unknown with no present flag)
+
+Be conservative. Clinicians frequently mention the carotid as an anatomic landmark. The bar for "carotid_encasement = present" is an explicit encasement / >180° surround / unresectable-due-to-carotid statement, not proximity.
+
+NOTE TYPE: {note_type}
+NOTE SNIPPET:
+---
+{note_text}
+---
+
+Return the JSON object and nothing else.

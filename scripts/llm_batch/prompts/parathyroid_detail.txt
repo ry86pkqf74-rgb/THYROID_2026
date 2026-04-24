@@ -1,0 +1,83 @@
+[[KEYWORDS]]
+parathyroid
+parathyroid gland
+superior parathyroid
+inferior parathyroid
+parathyroid identified
+parathyroid preserved
+parathyroid autotransplant
+autotransplanted
+reimplanted
+parathyroidectomy
+incidental parathyroid
+parathyroid adenoma
+parathyroid hyperplasia
+hyperparathyroidism
+hypoparathyroidism
+hypocalcemia
+calcium
+PTH
+parathyroid hormone
+intact PTH
+parathyromatosis
+[[/KEYWORDS]]
+You are extracting structured parathyroid-related findings from a thyroid-surgery operative note or pathology note.
+
+Return ONLY a JSON object with these keys:
+  glands_identified_count     : integer 0..4 or null      (total parathyroid glands the operator explicitly identified)
+  glands_preserved_in_situ    : integer 0..4 or null
+  glands_autotransplanted     : integer 0..4 or null      (reimplanted into SCM or forearm)
+  glands_inadvertently_removed: integer 0..4 or null      (found in specimen on pathology)
+  autotransplant_location     : "SCM" | "forearm" | "other" | null
+  parathyroid_pathology       : "normal" | "hyperplasia" | "adenoma" | "parathyromatosis" | "not_assessed" | null
+  incidental_parathyroidectomy: "present" | "absent" | "unknown"   (unplanned parathyroid in specimen)
+  hypocalcemia_postop         : "present" | "absent" | "unknown"
+  hypoparathyroidism_permanent: "present" | "absent" | "unknown"   (>6 months on calcium/calcitriol)
+  intact_pth_value_ngL        : float or null             (numeric iPTH if stated with units pg/mL or ng/L)
+  confidence                  : "high" | "medium" | "low"
+  evidence_quote              : short quote (<= 30 words); redact names/dates
+  reasoning                   : one-sentence rationale
+
+RULES:
+
+GLAND COUNTS — extract only when explicitly stated. If the note says "all four parathyroids
+identified and preserved", set glands_identified_count=4 AND glands_preserved_in_situ=4. If it
+says "three parathyroids identified; one autotransplanted to SCM", set identified=3,
+autotransplanted=1, autotransplant_location="SCM". If counts not stated, leave as null.
+
+AUTOTRANSPLANT LOCATION:
+  - "SCM" = sternocleidomastoid muscle (most common)
+  - "forearm" = brachioradialis
+  - null if not stated
+
+INCIDENTAL PARATHYROIDECTOMY:
+  - "present" if final pathology report mentions parathyroid tissue in the thyroid specimen
+    and the op note did NOT describe intentional removal
+  - "absent" if pathology confirms no parathyroid in specimen
+  - "unknown" if not discussed
+
+HYPOCALCEMIA / HYPOPARATHYROIDISM:
+  - Postop hypocalcemia is transient if resolves < 6 months; set "present" when calcium
+    supplementation required during admission or early postop period
+  - Permanent hypoparathyroidism requires explicit statement of persistence > 6 months
+    OR continued calcitriol/rocaltrol therapy beyond 6 months
+  - "absent" if note says "no postoperative hypocalcemia" or similar
+
+PARATHYROID PATHOLOGY:
+  - "normal" if pathology describes the parathyroid as histologically normal
+  - "hyperplasia" if multiple enlarged / hypercellular
+  - "adenoma" if single enlarged with pathology-confirmed adenoma diagnosis
+  - "parathyromatosis" if seeding / multiple deposits
+  - "not_assessed" if parathyroid not formally examined by pathology
+  - null if not mentioned at all
+
+iPTH value: only populate if explicitly stated with units. Convert pg/mL → ng/L by passing through
+(1 pg/mL = 1 ng/L). If stated as ">65" or "<10", capture the numeric; prefer exact values.
+
+NOTE TYPE: {note_type}
+NOTE SNIPPET:
+---
+{note_text}
+---
+
+Return the JSON object and nothing else.

@@ -1,0 +1,68 @@
+[[KEYWORDS]]
+vascular invasion
+lymphovascular invasion
+LVI
+angioinvasion
+angio-invasion
+angio invasion
+vessel invasion
+vessels involved
+tumor thrombus
+vascular tumor embolism
+intravascular
+perineural invasion
+PNI
+lymphatic invasion
+focally present
+extensive
+widely invasive
+minimally invasive
+encapsulated angioinvasive
+[[/KEYWORDS]]
+You are extracting vascular and perineural invasion features from a thyroid pathology note.
+
+Return ONLY a JSON object with these keys:
+  vascular_invasion        : "present" | "absent" | "unknown"
+  vascular_invasion_extent : "focal" | "extensive" | "widely_invasive" | "minimal" | null
+  vessel_count             : integer or null  (n vessels involved if explicitly stated)
+  lymphatic_invasion       : "present" | "absent" | "unknown"
+  perineural_invasion      : "present" | "absent" | "unknown"
+  lvi_collapsed            : "present" | "absent" | "unknown"   (TRUE if EITHER vascular OR lymphatic is present)
+  tumor_type_context       : "follicular_pattern" | "papillary" | "medullary" | "anaplastic" | "other" | "unknown"
+  confidence               : "high" | "medium" | "low"
+  evidence_quote           : short quote (<= 30 words); redact names/dates
+  reasoning                : one-sentence rationale
+
+RULES:
+
+VASCULAR INVASION — count + extent:
+  - "focal vascular invasion" → present + extent="focal" + vessel_count=null (unless N stated)
+  - "extensive vascular invasion" → present + extent="extensive"
+  - "widely invasive follicular carcinoma" → present + extent="widely_invasive"
+  - "angioinvasion in 3 vessels" → present + extent="focal" if <4 vessels; "extensive" if ≥4; vessel_count=3
+  - "no vascular invasion identified" → absent
+  - "vascular invasion cannot be assessed" → unknown
+
+IMPORTANT for follicular-pattern tumors (FTC, Hurthle / oncocytic, follicular variant PTC):
+  Clinical significance: <4 foci of vascular invasion = minimally invasive; ≥4 foci = widely invasive.
+  If vessel count is explicit, use it; extent field should reflect the <4 / ≥4 split when possible.
+
+LYMPHATIC vs VASCULAR:
+  - "lymphovascular invasion (LVI)" → set lymphatic=present AND vascular=present; lvi_collapsed=present
+  - "lymphatic invasion only" → lymphatic=present, vascular=absent, lvi_collapsed=present
+  - If note says only "LVI" without distinguishing, set lvi_collapsed=present but lymphatic/vascular each = "unknown"
+
+PERINEURAL INVASION:
+  - "perineural invasion present" → present
+  - "no perineural invasion" → absent
+  - Not mentioned → unknown
+
+TUMOR TYPE CONTEXT: infer from note if stated; default "unknown".
+
+NOTE TYPE: {note_type}
+NOTE SNIPPET:
+---
+{note_text}
+---
+
+Return the JSON object and nothing else.

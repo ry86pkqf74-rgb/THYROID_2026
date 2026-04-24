@@ -1,0 +1,74 @@
+{
+  "batch_id": "llm_batch_20260424",
+  "target_db": "thyroid_canonical_publication_v1_0",
+  "model": "gpt-oss-120b",
+  "inference_server": "vllm-openai",
+  "inference_url": "http://localhost:8000/v1",
+  "domains": [
+    {
+      "name": "ete_subgrade",
+      "priority": 1,
+      "status": "candidates_extracted",
+      "extractor": "extractors/ete_subgrade.py",
+      "prompt": "prompts/ete_subgrade.txt",
+      "input_jsonl": "output/ete_subgrade_notes.jsonl",
+      "output_jsonl": "output/ete_subgrade_results.jsonl",
+      "loader_table": "main.note_entities_llm_ete_subgrade_v1",
+      "fresh_or_reprompt": "fresh",
+      "target_cohort": "167 PTC unspec_remaining (post-migration 53)",
+      "expected_rows_est": 132
+    },
+    {
+      "name": "t4b_invasion",
+      "priority": 2,
+      "status": "pending",
+      "extractor": "extractors/t4b_invasion.py",
+      "prompt": "prompts/t4b_invasion.txt",
+      "input_jsonl": "output/t4b_invasion_notes.jsonl",
+      "output_jsonl": "output/t4b_invasion_results.jsonl",
+      "loader_table": "main.note_entities_llm_t4b_invasion_v1",
+      "fresh_or_reprompt": "fresh",
+      "target_cohort": "all path_malignant with gross_ete=1 OR t_stage IN ('T4a','T4b') + their matching op/path/imaging notes",
+      "expected_rows_est": 800
+    },
+    {
+      "name": "vascular_invasion_v2",
+      "priority": 3,
+      "status": "pending",
+      "extractor": "extractors/vascular_invasion_v2.py",
+      "prompt": "prompts/vascular_invasion_v2.txt",
+      "input_jsonl": "output/vascular_invasion_v2_notes.jsonl",
+      "output_jsonl": "output/vascular_invasion_v2_results.jsonl",
+      "loader_table": "main.note_entities_llm_vascular_invasion_v2",
+      "fresh_or_reprompt": "reprompt",
+      "target_cohort": "path_malignant with lvi/vi/pni language + op path gross",
+      "expected_rows_est": 1500
+    },
+    {
+      "name": "airway_invasion_v2",
+      "priority": 4,
+      "status": "pending",
+      "extractor": "extractors/airway_invasion_v2.py",
+      "prompt": "prompts/airway_invasion_v2.txt",
+      "input_jsonl": "output/airway_invasion_v2_notes.jsonl",
+      "output_jsonl": "output/airway_invasion_v2_results.jsonl",
+      "loader_table": "main.note_entities_llm_airway_invasion_v2",
+      "fresh_or_reprompt": "reprompt",
+      "target_cohort": "op/path notes mentioning trachea/larynx/RLN on path_malignant rows",
+      "expected_rows_est": 600
+    },
+    {
+      "name": "parathyroid_detail",
+      "priority": 5,
+      "status": "pending",
+      "extractor": "extractors/parathyroid_detail.py",
+      "prompt": "prompts/parathyroid_detail.txt",
+      "input_jsonl": "output/parathyroid_detail_notes.jsonl",
+      "output_jsonl": "output/parathyroid_detail_results.jsonl",
+      "loader_table": "main.note_entities_llm_parathyroid_detail_v1",
+      "fresh_or_reprompt": "fresh",
+      "target_cohort": "~5,386 patients with path_synoptic parathyroid cols populated OR clinical note autotransplant/hypocalcemia/parathyroidectomy hit; limit 3 notes/pt",
+      "expected_rows_est": 8697
+    }
+  ]
+}

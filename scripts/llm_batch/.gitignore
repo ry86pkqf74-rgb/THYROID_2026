@@ -1,0 +1,4 @@
+# PHI safety — candidate-note JSONLs contain clinical note text with patient names.
+# Results JSONLs contain short evidence quotes from those notes.
+# Both are gitignored; only scaffolding + scripts are tracked.
+output/

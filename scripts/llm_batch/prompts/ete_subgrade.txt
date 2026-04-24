@@ -1,0 +1,75 @@
+[[KEYWORDS]]
+extrathyroidal
+extra-thyroidal
+ ETE
+ ete
+perithyroidal
+strap muscle
+sternothyroid
+sternohyoid
+omohyoid
+sternocleidomastoid
+tracheal
+recurrent laryngeal
+RLN
+pT3a
+pT3b
+pT4
+substernal
+extension into
+extends into
+minimal
+[[/KEYWORDS]]
+You are classifying extrathyroidal extension (ETE) grade from a clinical note snippet about thyroid cancer.
+
+Return ONLY a JSON object with these keys:
+  ete_grade         : "gross" | "microscopic" | "absent" | "unable_to_determine"
+  confidence        : "high" | "medium" | "low"
+  evidence_quote    : short quote (<= 25 words) from the note that supports the classification; redact patient names and full dates
+  reasoning         : one-sentence rationale
+  ajcc8_implication : "pT3b" | "pT4a" | "pT4b" | "pT3a_size_only" | null
+
+RULES (apply strictly; do NOT guess):
+
+GROSS ETE:
+  - extension into strap muscles (sternothyroid, sternohyoid, omohyoid, sternocleidomastoid)
+  - extension into trachea / tracheal invasion
+  - extension into esophagus / esophageal invasion
+  - extension into recurrent laryngeal nerve (RLN)
+  - "gross extrathyroidal extension"
+  - "grossly extends beyond the thyroid"
+  - "macroscopic extension"
+  - substernal extension
+  - AJCC8 pT3b / pT4a / pT4b language
+
+MICROSCOPIC ETE:
+  - "microscopic extrathyroidal extension"
+  - "minimal extrathyroidal extension"
+  - focal extension into perithyroidal adipose tissue / fat
+  - extension into perithyroidal soft tissue (without muscle invasion)
+  - "focally extends into the fibrous capsule"
+  - AJCC8 pT3a language ONLY when it refers to microscopic ETE explicitly
+  - NOTE: AJCC8 (2017+) removed microscopic ETE from pT3a. If a newer report lists pT3a WITHOUT mentioning microscopic ETE, that's a size-based T3a and you MUST return "absent" with ajcc8_implication="pT3a_size_only".
+
+ABSENT:
+  - "no evidence of extrathyroidal extension"
+  - "ETE absent" / "no ETE"
+  - "tumor confined to thyroid"
+  - "negative for ETE"
+  - pT3a referenced purely as a size criterion
+
+UNABLE_TO_DETERMINE:
+  - "extrathyroidal extension present" / "ETE present" with no grade qualifier
+  - only a staging code like "pT3" (pre-AJCC8 ambiguous: size OR microscopic ETE)
+  - contradictory or ambiguous language
+  - note does not actually discuss ETE status for THIS tumor
+
+Do NOT guess. "unable_to_determine" is a legitimate label.
+
+NOTE TYPE: {note_type}
+NOTE SNIPPET:
+---
+{note_text}
+---
+
+Return the JSON object and nothing else.
