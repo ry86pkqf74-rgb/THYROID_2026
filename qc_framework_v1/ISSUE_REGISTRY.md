@@ -728,7 +728,8 @@ Each entry has:
   1. Re-run the MRI extractor on the 45 source reports with a hardened JSON parser (strip markdown fences, retry with structured output mode).
   2. Rows that still fail: move to `qc_manual_review_queue_v1` with `issue_id='MRI01'` for hand-annotation.
   3. Clear `error` column on successful re-extraction.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 32)**: `mri_parse_error_flag` on `manuscript_workspace.mri_imaging_clean`; 45 rows queued for hardened re-extraction.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_31`).
 
 ### MRI02 — LN mentioned but no location/details
 - **Table/col**: `mri_imaging` (`lymph_nodes_mentioned`, `lymph_node_locations`, `lymph_node_details`, `lymph_node_locations_with_size`)
@@ -736,7 +737,8 @@ Each entry has:
 - **Severity / scope**: warning / event
 - **Observed**: 71 rows
 - **Fix**: Same pattern as CT01. Targeted re-extraction; if still missing, mark attempted + leave NULL.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 32)**: `mri_ln_underspecified_flag` on `mri_imaging_clean` surfaces 129 rows (registry 71 — count overshoot, parser tightened since registry draft). Advisory-only — no queue emission pending Logan's count reconciliation.
+- **Status**: flagged 2026-04-23 advisory (count overshoot; deprecation log `prompt_31`).
 
 ### MRI03 — `thyroid_normal=1` paired with other abnormal flags
 - **Table/col**: `mri_imaging`
@@ -744,7 +746,8 @@ Each entry has:
 - **Severity / scope**: warning / event
 - **Observed**: 5 rows
 - **Fix**: Same as CT03 pattern. Abnormality flags dominant; set `thyroid_normal = 0`.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 32)**: `mri_normal_contradiction_flag` on `mri_imaging_clean`; 5 rows queued for human review.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_31`).
 
 ---
 
@@ -763,7 +766,8 @@ Each entry has:
   1. Join back to each source table (`raw_us_tirads_excel_v1`, `raw_imaging_12_slots_v1`, `raw_us_tirads_scored_v1`) on `exam_id` and re-pull the date column. Source-specific date columns likely exist under different names.
   2. If multiple sources carry the date and they agree, use any. If they disagree, use the earliest (conservative for time-anchored analyses).
   3. Rows where no source carries a date: set `exam_date_unresolved = TRUE`, leave `exam_date = NULL`. Downstream views must filter these out of time-anchored analyses.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 33)**: `manuscript_workspace.imaging_exam_master_v1_datecheck` surfaces `exam_date_unresolved_flag`. All 2,050 NULL-date rows come from source `raw_imaging_12_slots_v1`, which has been archived to `"Thyroid 2026 UPdated".archive_legacy.main__raw_imaging_12_slots_v1_20260417T073708Z` (column `exam_date_norm`). Per "no cross-DB canonical sourcing" rule, recovery path documented but not executed. 2,050 rows queued under IEM01.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_32`; recovery blocked on cross-DB policy).
 
 ### IEM02 — `imaging_exam_master_v1.largest_nodule_cm` NULL despite canonical having sizes
 - **Table/col**: `imaging_exam_master_v1.largest_nodule_cm`
@@ -787,7 +791,8 @@ Each entry has:
   FROM c WHERE i.exam_id = c.exam_id;
   ```
   Rows where canonical also has no size (rolls up from US01) remain NULL. Blocked on TIR03 fix + US01 rebuild so the canonical source is trustworthy first.
-- **Status**: pending (blocked on TIR03, US01)
+- **Fix applied (2026-04-23, migration 34)**: `manuscript_workspace.imaging_exam_master_v1_size_clean` exposes `largest_nodule_cm_final` (COALESCE(IEM, canonical)), `largest_nodule_cm_source`, `iem02_size_recovered_flag`. Of 7,319 NULL rows: 4,289 backfilled from canonical (silent), 3,030 unresolvable — 204 US-source unresolvables queued (12_slots excluded as canonical has no coverage there).
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_33`).
 
 ### IEM03 — exam-level nodule count mismatch vs canonical
 - **Table/col**: `imaging_exam_master_v1.n_nodules` vs `canonical_us_nodule_v2` nodule count per exam
@@ -807,7 +812,8 @@ Each entry has:
   ```
 - **Observed**: 19 exams disagree. Examples: `4052d82b...` has IEM n=14 vs canonical=7; `514a3690...` has IEM=17 vs canonical=10.
 - **Fix**: Declare `canonical_us_nodule_v2` the authoritative source for `n_nodules`. Overwrite IEM's `n_nodules` from the CTE above. Run **after** TIR03 fix so canonical is trustworthy. Log pre/post values to `imaging_exam_master_n_nodules_audit_v1` for traceability.
-- **Status**: pending (blocked on TIR03)
+- **Fix applied (2026-04-23, migration 35)**: `manuscript_workspace.imaging_exam_master_v1_count_clean` exposes `n_nodules_canonical`, `n_nodules_final` (canonical wins), `n_nodules_source`, `iem03_n_nodules_mismatch_flag`. Current mismatch count: **116** (registry 19 — count risen since snapshot). All 116 concentrate in source `raw_us_tirads_scored_v1`. 116 rows queued as audit trail (canonical authoritative; no human review needed).
+- **Status**: flagged 2026-04-23 (view + audit queue; deprecation log `prompt_34`).
 
 ### IEM04 — exam-level largest-nodule size mismatch
 - **Category**: rollup / synchronization
@@ -815,7 +821,8 @@ Each entry has:
 - **Detection**: `ABS(i.largest_nodule_cm - c.largest_nodule_cm) > 0.1` between IEM and canonical
 - **Observed**: 7 exams
 - **Fix**: Same rebuild as IEM02 — overwrite from canonical. Folded into IEM02's fix.
-- **Status**: pending (rolled into IEM02)
+- **Fix applied (2026-04-23, migration 34)**: `iem04_size_mismatch_flag` on `imaging_exam_master_v1_size_clean`; 7 rows queued. Resolution rule: prefer IEM value (legacy analytic history), but flag for reviewer — canonical correctness triggers row-level update via queue resolution.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_33`).
 
 ### IEM05 — `raw_us_tirads_scored_v1` source pathway overcounts
 - **Table/col**: `imaging_exam_master_v1.source` = `'raw_us_tirads_scored_v1'`
@@ -823,7 +830,8 @@ Each entry has:
 - **Severity / scope**: warning / event (source-level marker)
 - **Observed**: Most IEM03 mismatches concentrate in `raw_us_tirads_scored_v1`-sourced rows (2,506 rows from this source total; `n_nodules` appears roughly 2× canonical in affected exams).
 - **Fix**: This isn't fixed directly — IEM02/IEM03's canonical overwrite corrects the symptoms. Keep the source tag for audit. Downstream views that need raw-parsed exam counts (none currently in manuscript) would need to further filter this source.
-- **Status**: pending (informational; actual fix is IEM02+IEM03)
+- **Fix applied (2026-04-23, migration 35)**: `iem05_legacy_source_flag` on `imaging_exam_master_v1_count_clean` (= `source='raw_us_tirads_scored_v1'`, 2,506 rows). Advisory only — no queue. All IEM05 rows ride on the IEM03 canonical rebuild.
+- **Status**: flagged 2026-04-23 advisory (view flag only; deprecation log `prompt_34`).
 
 ### IPS01 — `imaging_patient_summary_v1` passed all integrity checks (CLEAN)
 - **Table**: `main.imaging_patient_summary_v1`
@@ -860,7 +868,8 @@ Each entry has:
   3. For remaining unparseable rows (~edge cases), pass the raw string through an LLM date-extractor with retry; populate `scandate_parsed` if the LLM returns a confident date.
   4. Rows still unresolved: `scandate_parsed = NULL`, preserve raw in `scandate_raw`. Log distinct unresolved formats to `nuclear_med_scandate_unresolved_formats_v1` for one-shot review.
   5. Rename original `scandate` → `scandate_raw`, promote `scandate_parsed` → `scandate`.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 36)**: `manuscript_workspace.nuclear_med_clean` surfaces `scandate_parsed`, `scandate_parse_source`, `nm01_scandate_unresolved_flag`. Distribution: 855 ISO + 1,363 MM/DD/YY + 1 NULL + 1 unresolved (`"2/18/216"` typo). Two-format tiered parser resolves 100% of well-formed rows — no LLM pass needed. 1 row queued (the typo).
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_35`; 2,218/2,220 non-null dates fully parsed).
 
 ### NM02 — `nuclear_med.scan_present` uniformly non-standard
 - **Table/col**: `nuclear_med.scan_present`
@@ -877,7 +886,8 @@ Each entry has:
   1. **Inspect first**: `SELECT scan_present, COUNT(*) FROM nuclear_med GROUP BY 1 ORDER BY 2 DESC LIMIT 50;` to see what the column actually holds. The 100% non-standard result suggests the column isn't storing yes/no at all — likely scan-type codes, boolean-as-int, or some freetext indicator.
   2. Build `scan_present_map(raw_value, scan_present_bool BOOLEAN)` based on what the inspection reveals. Apply the map, replace column. Preserve raw in `scan_present_raw`.
   3. If the column turns out to encode something different than "did the scan happen" (e.g., modality codes), rename the column to match its actual semantic and add a real boolean `scan_present_bool` derived from `scandate_parsed IS NOT NULL`.
-- **Status**: pending (**needs inspection pass before map can be written** — I'll run the GROUP BY next session if you want)
+- **Fix applied (2026-04-23, migration 37)**: Inspection confirmed `scan_present` is the full **radiology report narrative** (2,220/2,220 rows populated; avg ~1,911 / max 11,985 chars). Column is mislabeled. `manuscript_workspace.nuclear_med_clean` adds `scan_report_text_length` (INT) + `scan_present_bool` (BOOLEAN, derived from `scandate_parsed IS NOT NULL`) — 2,218 TRUE + 1 FALSE + 1 NULL. No queue emission (pure semantic fix).
+- **Status**: RESOLVED 2026-04-23 (semantic rename at view layer; deprecation log `prompt_36`).
 
 ### NM03 — `nuclear_med` rows with no findings and no impression
 - **Table/col**: `nuclear_med` (`findings_text`, `impression_text`)
@@ -889,7 +899,8 @@ Each entry has:
   1. Cross-reference with `scan_present` (after NM02 fix). If `scan_present_bool = FALSE`, empty text is expected — accept and move on.
   2. If `scan_present_bool = TRUE` or `NULL` with empty text, re-run text extractor on source report. Populate whichever field the report yields.
   3. Rows still empty after re-extraction: `text_extraction_attempted = TRUE` flag set; leave NULL.
-- **Status**: pending (blocked on NM02)
+- **Fix applied (2026-04-23, migration 38)**: `nm03_narrative_empty_flag` on `nuclear_med_clean` surfaces 522 rows with both `findings_text` and `impression_text` empty. All 522 queued as Tier-2 LLM-re-parse candidates (source: `scan_present` narrative text — see LLM_TODO.md).
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_37`; LLM pass deferred).
 
 ### NM04 — `nuclear_med.scantype` / `radiotracer` NULL
 - **Table/col**: `nuclear_med` (`scantype`, `radiotracer`)
@@ -900,7 +911,8 @@ Each entry has:
   - `scantype ∈ {I-123 uptake/scan, I-131 uptake/scan, Tc-99m pertechnetate, PET-CT, whole-body I-131, other}`
   - `radiotracer ∈ {I-123, I-131, Tc-99m pertechnetate, F-18 FDG, F-18 DOPA, other}`
   For the overlap with NM03 (no text at all), unrecoverable — leave NULL.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 38)**: `nm04_scantype_null_flag` (64 rows, registry-numbered) + `nm04_radiotracer_null_flag` (110 rows, advisory) on `nuclear_med_clean`. 64 scantype-null rows queued as LLM-re-parse candidates from `scan_present` narrative; radiotracer-null flagged but not queued (advisory).
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_37`; LLM pass deferred).
 
 ---
 
@@ -910,6 +922,7 @@ Each entry has:
 - 2026-04-22: Batch #3 appended — PATH15–21 (linkage, laterality/site, metastatic-in-histology, discordance flags), USGLAND01/02, USLN01, CT01–04, MRI01–03. Resolved-decisions block replaces open questions: ETE vocab locked, LN multi-source architecture, TIR03 scope=60 exams, manual-review queue to be created.
 - 2026-04-22: Batch #4 appended — IEM01–05 (exam-master sync to canonical), IPS01 clean validation, NM01–04 (nuclear_med normalization). NM02 flagged as "inspect first, then map" since 100% non-standard suggests a semantic mismatch, not a dirty vocabulary.
 - 2026-04-22: Batch #5 appended — GEN01 (molecular_episode_id collapse, like PATH01), GEN02 (platform_version missing only when raw-text signal exists: 267 ThyroSeq + 119 Afirma + 36 NGS = 422 rows, **not** all 1,384), GEN03-12. Logan's correction incorporated: null platform_version is NOT inherently a defect; only the narrow "raw signal present, structured column NULL" case is in scope.
+- 2026-04-23: **Prompts 31–40 applied** (migrations 32–41). 10 manuscript_workspace views + 10 deprecation log entries (`prompt_31..prompt_40`) + 4,549 queue rows across 12 issue IDs. Coverage: MRI01/02/03 (mig 32); IEM01 (33) + IEM02/04 (34) + IEM03/05 (35); NM01 (36) + NM02 (37) + NM03/04 (38); GEN02 (39) + GEN06/07 (40) + GEN12/05 (41). RESOLVED without queue: NM02 (semantic rename), GEN12 (0 residual post-normalization). Registry count drift noted on several issues (IEM03 19→116; MRI02 71→129; GEN07 6→2) — counts reconciled in migration headers.
 
 ---
 
@@ -963,7 +976,8 @@ Each entry has:
   2. Populate `platform_version` on the 422 rows.
   3. **Do not** touch rows where `platform_raw` has no version signal — those legitimately stay NULL (Logan's explicit decision).
   4. Add column comment: "NULL indicates no version stated in source; not a defect unless `platform_raw` contains a version signal."
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 39)**: `manuscript_workspace.canonical_molecular_genetics_v2_platform_clean` adds `platform_subversion` (VARCHAR) + `platform_version_derived` (INTEGER; 3=ThyroSeq v3/Afirma GSC, 2=ThyroSeq v2/Afirma GEC). 376 of 1,384 rows get a derived version via regex chain (238 ThyroSeq + 138 Afirma; registry numbers were snapshot-stale). 1,008 rows queued under GEN02 as LLM-pass candidates (raw text lacks version token).
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_38`).
 
 ### GEN03 — `parse_status` sparse / shallow
 - **Table/col**: `canonical_molecular_genetics_v2.parse_status`
@@ -1002,7 +1016,8 @@ Each entry has:
   - `parse_status IN ('no_detailed_block','empty_block') OR specimen_adequacy_norm IN ('INADEQUATE','LOW_THYROID_CELL_CONTENT')` → `low`
   - Cancelled/inadequate flags → `unknown`
   Run after GEN03 so `parse_status` is trustworthy first.
-- **Status**: pending (blocked on GEN03)
+- **Fix applied (2026-04-23, migration 41)**: `gen05_molecular_confidence_stub_flag` on `canonical_molecular_genetics_v2_status_clean` — always TRUE (100% NULL on canonical). Advisory-only flag; no queue emission (1,384 identical rows = noise). Full derivation deferred pending GEN03 re-parse.
+- **Status**: flagged 2026-04-23 advisory stub (no queue; deprecation log `prompt_40`; full derivation still blocked on GEN03).
 
 ### GEN06 — `resolved_test_date` NULL (65%)
 - **Table/col**: `canonical_molecular_genetics_v2.resolved_test_date`
@@ -1013,7 +1028,8 @@ Each entry has:
   1. If `report_date` is present → use it (rename resolved column derivation to include this path).
   2. If not, match to `canonical_fna_events_v1` on `(research_id, assay_type)` within a ±90 day window → use FNA date.
   3. If still NULL, the test is temporally unanchored; set `resolved_test_date_unresolved = TRUE`. Exclude from time-anchored analyses.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 40)**: `manuscript_workspace.canonical_molecular_genetics_v2_date_clean` exposes `resolved_test_date_final` + `resolved_test_date_source` ∈ {resolved, native, sga, unresolved}. Tier chain: `resolved_test_date` → `test_date_native` → `specimen_genomic_assay_v1_relinked.test_date_native` (MIN per molecular_episode_id) → unresolved. Of the 903 NULL rows, 378 recovered via SGA fallback, 525 unresolvable — 525 queued.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_39`).
 
 ### GEN07 — ROM numeric out-of-range
 - **Table/col**: `canonical_molecular_genetics_v2` (`rom_percent_point`, `rom_percent_low`, `rom_percent_high`)
@@ -1021,7 +1037,8 @@ Each entry has:
 - **Severity / scope**: warning / event
 - **Observed**: 2 + 2 + 2 = 6 values out of [0,100]
 - **Fix**: For 6 affected rows, re-extract from `rom_percent_raw` + source text. Negative values are likely parser sign-flip on leading `-` or `(-`; fix by taking absolute value when the raw text starts with `(~` or `(-`. Values > 100 → manual review (edge case).
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 40)**: `gen07_rom_out_of_range_flag` on `canonical_molecular_genetics_v2_date_clean` catches any of `rom_percent_point/low/high` outside [0,100]. Current count: **2** (registry 6 — count dropped since snapshot; both are raw `"395%"` / `"599%"` strings — classic OCR typos). 2 rows queued for hand correction.
+- **Status**: flagged 2026-04-23 (view + queue; deprecation log `prompt_39`).
 
 ### GEN08 — fusion flag TRUE but no structured fusion rows (patient-level)
 - **Table/col**: `canonical_molecular_genetics_v2.fusion_flag` vs `molecular_fusions_unnested_VIEW_v2`
@@ -1112,7 +1129,8 @@ Each entry has:
   3. Empty strings → NULL.
   4. `Failed` → `Inadequate`.
   5. Apply via mapping table.
-- **Status**: pending
+- **Fix applied (2026-04-23, migration 41)**: `manuscript_workspace.canonical_molecular_genetics_v2_status_clean` exposes 6 `*_status_norm` columns mapped to canonical vocab `{Positive, Negative, Failed, Inadequate, NotApplicable}` (CNA adds `{Positive_high, Positive_low}`). Empty strings → NULL; `"no result"/"no result due to inadequate rn"` → `Inadequate`; `"N/A"` → `NotApplicable`. Post-normalization, `gen12_status_nonstandard_flag` = **0 rows** — all observed values mapped cleanly; no queue emission.
+- **Status**: RESOLVED 2026-04-23 (0 residual after normalization; deprecation log `prompt_40`).
 
 ---
 
