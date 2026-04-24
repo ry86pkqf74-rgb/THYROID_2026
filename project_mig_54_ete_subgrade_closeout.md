@@ -7,7 +7,7 @@
 
 ## Final commit SHA
 
-`36e6446` (main)
+`00cdbc1` (main; includes closeout). Migration SQL + registry: `36e6446`.
 
 ## Source
 
