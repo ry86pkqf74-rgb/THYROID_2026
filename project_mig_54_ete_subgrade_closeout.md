@@ -7,6 +7,8 @@
 
 ## Final commit SHA
 
+`36e6446` (main)
+
 ## Source
 
 - `main.note_entities_llm_ete_subgrade_v1` — 287 rows, `error=0`, `parsed_json` JSON (gpt-oss-120b run).
