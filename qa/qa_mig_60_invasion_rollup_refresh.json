@@ -1,0 +1,291 @@
+{
+  "migration": "mig_60_invasion_rollup_v2_refresh_20260424",
+  "database": "thyroid_canonical_publication_v1_0",
+  "generated_at": "2026-04-24 23:32:57.346143",
+  "preflight_before_migration": {
+    "build_tag": [
+      {
+        "build_script": "363",
+        "build_ts": "2026-04-21 23:30:02.514209",
+        "total_rows": 10871
+      }
+    ],
+    "baseline_counts": [
+      {
+        "gross_ete": 1146,
+        "microscopic_ete": 279,
+        "vascular_microscopic": 1109,
+        "lymphatic_microscopic": 780,
+        "capsular": 941,
+        "perineural": 122,
+        "soft_tissue": 493,
+        "airway": 1,
+        "tracheal": 14,
+        "esophageal": 69
+      }
+    ],
+    "feeder_sanity": [
+      {
+        "t": "vascular_v2",
+        "pts": 3745,
+        "tag": "mig_56_vascular_invasion_v2_20260424",
+        "ts": "2026-04-24 19:50:25.413750"
+      },
+      {
+        "t": "airway_v2",
+        "pts": 2820,
+        "tag": "mig_57_airway_invasion_v2_20260424",
+        "ts": "2026-04-24 20:24:07.760316"
+      },
+      {
+        "t": "ete_subgrade",
+        "pts": 151,
+        "tag": "mig_54_ete_subgrade_20260424",
+        "ts": "2026-04-24 19:16:57.911968"
+      },
+      {
+        "t": "t4b_invasion",
+        "pts": 434,
+        "tag": "mig_55_t4b_invasion_20260424",
+        "ts": "2026-04-24 19:16:57.690542"
+      }
+    ],
+    "overlap": [
+      {
+        "total": 10871,
+        "in_vascular_v2": 3745,
+        "in_airway_v2": 2820,
+        "in_ete_subgrade": 151,
+        "in_t4b_invasion": 434
+      }
+    ],
+    "feeder_outside": [
+      {
+        "t": "vascular_v2",
+        "outside": 0
+      },
+      {
+        "t": "airway_v2",
+        "outside": 0
+      },
+      {
+        "t": "ete_subgrade",
+        "outside": 0
+      },
+      {
+        "t": "t4b_invasion",
+        "outside": 0
+      }
+    ]
+  },
+  "implementation_note": "Final SQL preserves Script 363 finding_status=present positives and additively ORs v2 feeder positives. A structured-only replacement was tested and rejected because it caused G2 retractions for vascular_microscopic and perineural.",
+  "baseline_vs_post": [
+    {
+      "flag": "gross_ete",
+      "pre": 1146,
+      "post": 1146,
+      "delta": 0,
+      "no_retraction": true
+    },
+    {
+      "flag": "microscopic_ete",
+      "pre": 279,
+      "post": 318,
+      "delta": 39,
+      "no_retraction": true
+    },
+    {
+      "flag": "vascular_microscopic",
+      "pre": 1109,
+      "post": 1114,
+      "delta": 5,
+      "no_retraction": true
+    },
+    {
+      "flag": "lymphatic_microscopic",
+      "pre": 780,
+      "post": 902,
+      "delta": 122,
+      "no_retraction": true
+    },
+    {
+      "flag": "capsular",
+      "pre": 941,
+      "post": 941,
+      "delta": 0,
+      "no_retraction": true
+    },
+    {
+      "flag": "perineural",
+      "pre": 122,
+      "post": 124,
+      "delta": 2,
+      "no_retraction": true
+    },
+    {
+      "flag": "soft_tissue",
+      "pre": 493,
+      "post": 493,
+      "delta": 0,
+      "no_retraction": true
+    },
+    {
+      "flag": "airway",
+      "pre": 1,
+      "post": 119,
+      "delta": 118,
+      "no_retraction": true
+    },
+    {
+      "flag": "tracheal",
+      "pre": 14,
+      "post": 101,
+      "delta": 87,
+      "no_retraction": true
+    },
+    {
+      "flag": "esophageal",
+      "pre": 69,
+      "post": 92,
+      "delta": 23,
+      "no_retraction": true
+    }
+  ],
+  "qa_gates": {
+    "G1_row_count": {
+      "observed": 10871,
+      "expected": 10871,
+      "pass": true
+    },
+    "G2_no_retractions": {
+      "baseline_vs_post": [
+        {
+          "flag": "gross_ete",
+          "pre": 1146,
+          "post": 1146,
+          "delta": 0,
+          "no_retraction": true
+        },
+        {
+          "flag": "microscopic_ete",
+          "pre": 279,
+          "post": 318,
+          "delta": 39,
+          "no_retraction": true
+        },
+        {
+          "flag": "vascular_microscopic",
+          "pre": 1109,
+          "post": 1114,
+          "delta": 5,
+          "no_retraction": true
+        },
+        {
+          "flag": "lymphatic_microscopic",
+          "pre": 780,
+          "post": 902,
+          "delta": 122,
+          "no_retraction": true
+        },
+        {
+          "flag": "capsular",
+          "pre": 941,
+          "post": 941,
+          "delta": 0,
+          "no_retraction": true
+        },
+        {
+          "flag": "perineural",
+          "pre": 122,
+          "post": 124,
+          "delta": 2,
+          "no_retraction": true
+        },
+        {
+          "flag": "soft_tissue",
+          "pre": 493,
+          "post": 493,
+          "delta": 0,
+          "no_retraction": true
+        },
+        {
+          "flag": "airway",
+          "pre": 1,
+          "post": 119,
+          "delta": 118,
+          "no_retraction": true
+        },
+        {
+          "flag": "tracheal",
+          "pre": 14,
+          "post": 101,
+          "delta": 87,
+          "no_retraction": true
+        },
+        {
+          "flag": "esophageal",
+          "pre": 69,
+          "post": 92,
+          "delta": 23,
+          "no_retraction": true
+        }
+      ],
+      "pass": true
+    },
+    "G3_new_column_rates": {
+      "observed": {
+        "rln": 81,
+        "pT4a": 148,
+        "pT4b": 12,
+        "carotid": 9,
+        "mediastinal": 4,
+        "prevertebral": 0
+      },
+      "pass": true
+    },
+    "G4_hierarchy_violations": {
+      "observed": 0,
+      "expected": 0,
+      "pass": true
+    },
+    "G5_feeder_roundtrip_violations": {
+      "observed": {
+        "vascular_v2_to_rollup": 0,
+        "airway_tracheal_v2_to_rollup": 0,
+        "airway_rln_v2_to_rollup": 0,
+        "t4b_final_v2_to_rollup": 0,
+        "ete_gross_v2_to_rollup": 0
+      },
+      "pass": true
+    },
+    "G6_build_tag": {
+      "observed": [
+        {
+          "build_script": "mig_60_invasion_rollup_v2_refresh_20260424",
+          "build_ts": "2026-04-24 23:32:01.219507"
+        }
+      ],
+      "pass": true
+    }
+  },
+  "sidecar": {
+    "offender_pre_patch": {
+      "research_id": "9371",
+      "parathyroid_event_id": "9371|OPNOTE|1",
+      "source_workbook": "Notes 12_1_25.xlsx",
+      "source_sheet": "Sheet2",
+      "raw": 5,
+      "evidence": "Five parathyroid glands identified with the right supernumerary gland being a 6 mm adenoma."
+    },
+    "decision": "Clamp to contract max 4; evidence documents a supernumerary fifth gland, but canonical gland-count contract is 0-4.",
+    "remaining_glands_identified_count_5": 0,
+    "patched_rollup": [
+      {
+        "research_id": "9371",
+        "max_glands_identified": 4,
+        "build_script": "mig_58_parathyroid_detail_20260424;mig_60_parathyroid_glands5_patch_20260424"
+      }
+    ]
+  },
+  "overall_pass": true
+}
