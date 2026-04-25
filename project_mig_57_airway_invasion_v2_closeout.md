@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-24  
 **Database:** `thyroid_canonical_publication_v1_0`  
-**Repo SHA (migration committed):** `28445db`  
+**Repo SHA (migration committed):** `dfade85`  
 **`build_script` / provenance tag:** `mig_57_airway_invasion_v2_20260424`  
 **Source LLM table:** `main.note_entities_llm_airway_invasion_v2` (`error = 0`; build `9b82651` family)
 
