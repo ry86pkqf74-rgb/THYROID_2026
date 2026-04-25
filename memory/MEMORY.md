@@ -15,4 +15,4 @@ per topic (citations, cross-references, future audit).
 - [Frozen CPM source DB](reference_thyroid_ete_fix_20260413_namespace.md) — holds 78 frozen CPM cols via Scripts 212/215 lineage; do not delete
 - [Dry-run before build](feedback_dryrun_signoff_before_build.md) — Tier-2 builds need dry-run + QA sign-off before any main.* CREATE OR REPLACE
 - [CPM frozen at publication](feedback_cpm_frozen_at_publication.md) — Never repoint frozen CPM cols in cleanup; frozen-at-publication is correct
-- [Mig 60 invasion rollup v2 refresh](../project_mig_60_invasion_rollup_refresh_closeout.md) — Closed 2026-04-24; v2 additive OR rollup; RLN/T4 cols; glands=5 patched
+- [Mig 60 invasion rollup v2 refresh](../project_mig_60_invasion_rollup_refresh_closeout.md) — Closed 2026-04-24 SHA 5454cf5; v2 additive OR rollup; glands=5 patched

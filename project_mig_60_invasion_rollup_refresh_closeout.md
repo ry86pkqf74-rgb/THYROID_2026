@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-24  
 **Database:** `thyroid_canonical_publication_v1_0`  
-**Git (`main`):** final SHA pending GitHub commit  
+**Git (`main`):** core migration commit `5454cf55cbc0e18dc4b73b6d1c944e4f03971f2a`  
 **`build_script` / provenance tag:** `mig_60_invasion_rollup_v2_refresh_20260424`
 
 ## Repo artifacts
