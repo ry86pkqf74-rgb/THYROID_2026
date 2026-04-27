@@ -1,0 +1,75 @@
+-- =============================================================================
+-- Migration 65a -- stage FNA source-long table for Protocol v2 Step B
+-- =============================================================================
+-- Date:   2026-04-27
+-- Author: Logan Glosser (drafted with Claude / Cowork)
+-- Plan:   qc_framework_v1/MASTER_VERIFICATION_PLAN.md (Protocol v2 Step B)
+-- Scope:  manuscript_workspace.fna_source_long_v1_step_b
+--
+-- Source workbook: raw/FNAs 12_5_2025.xlsx > sheet 'FNA Bethesda'
+-- Extractor:       qc_framework_v1/scripts/extract_fna_source_long.py
+-- Loader:          qc_framework_v1/scripts/stage_fna_source_long_via_local_duckdb.py
+--
+-- Purpose:
+--   This staging table is the source-side companion to canonical_fna_events_v1
+--   for Protocol v2 mechanical_source_compare verification. It carries one row
+--   per (research_id, fna_index 1..12) where the source workbook holds any
+--   FNA-episode field, and preserves the full long-form payload (5 raw text
+--   fields + workbook locator) so each of the 7 source columns in the FNA
+--   pilot can be verified against it.
+--
+-- Schema (16 cols):
+--   research_id           VARCHAR
+--   fna_index             INTEGER (1..12)
+--   source_workbook       VARCHAR (constant: 'FNAs 12_5_2025.xlsx')
+--   source_sheet          VARCHAR (constant: 'FNA Bethesda')
+--   source_row            INTEGER (1-based Excel row, header=1, data starts row 2)
+--   source_col_date       INTEGER (1-based Excel column ordinal for Date field)
+--   source_col_specimen   INTEGER
+--   source_col_path       INTEGER
+--   source_col_history    INTEGER
+--   source_col_bethesda   INTEGER
+--   source_col_name_date  VARCHAR (literal header text for Date column, normalized)
+--   date_raw              VARCHAR
+--   specimen_raw          VARCHAR
+--   path_raw              VARCHAR
+--   history_raw           VARCHAR
+--   bethesda_raw          VARCHAR
+--
+-- Row count after load: 8,120
+--
+-- Loaded via direct parquet read from the local extractor output. The Cowork
+-- session called duckdb.connect('md:') as MD account logan.glosser.eras@gmail.com
+-- and executed:
+--
+--   CREATE TABLE manuscript_workspace.fna_source_long_v1_step_b AS
+--   SELECT * FROM read_parquet('verification_csvs/canonical_fna_events_v1/_source_long.parquet');
+--
+-- The intermediate parquet is gitignored (PHI-adjacent: pairs research_id with
+-- raw clinical narrative). To rebuild from scratch:
+--
+--   1. python3 qc_framework_v1/scripts/extract_fna_source_long.py
+--      (regenerates the parquet from raw/FNAs 12_5_2025.xlsx)
+--   2. python3 qc_framework_v1/scripts/stage_fna_source_long_via_local_duckdb.py
+--      (re-runs the CREATE TABLE AS SELECT into MotherDuck)
+--
+-- Lifecycle: persists for the full FNA pilot table sign-off (all 7 source +
+-- 16 derived + 3 adjudicated columns of canonical_fna_events_v1). Dropped
+-- via mig_NN_drop_fna_source_long_v1_step_b.sql at table sign-off.
+--
+-- Executed via Cowork mode 2026-04-27. This file is the canonical record of
+-- the change for replay/audit.
+-- =============================================================================
+
+-- For replay (assumes the parquet has been regenerated locally):
+--
+--   DROP TABLE IF EXISTS manuscript_workspace.fna_source_long_v1_step_b;
+--   CREATE TABLE manuscript_workspace.fna_source_long_v1_step_b AS
+--   SELECT * FROM read_parquet('verification_csvs/canonical_fna_events_v1/_source_long.parquet');
+--
+-- The CTAS uses the loader script's MD-attached duckdb session; the Cowork
+-- query_rw tool cannot read local-filesystem paths from the cloud-side server.
+
+-- =============================================================================
+-- end of migration 65a
+-- =============================================================================

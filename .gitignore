@@ -128,3 +128,16 @@ phi_forensic/
 qa/qa_script_365b_*.json
 psh_pmh_meds_cpm_feeder_audit_*.md
 scripts/output/365b_*
+
+# ── Protocol v2 verification — local-only PHI-adjacent artifacts ──
+# verification_csvs holds per-column canary CSVs and source-long parquet
+# intermediates that pair research_id with raw clinical fields/dates.
+# Never push to GitHub (repo is public). The migration .sql files in
+# qc_framework_v1/migrations/ ARE the audit record; the CSVs are working
+# copies for Logan's review.
+verification_csvs/
+# Chunked-INSERT SQL produced by build_mig_65a_stage_sql.py contains 8k+
+# rows of (research_id, fna_index, date) tuples inline. Gitignore — the
+# clean migration audit lives at qc_framework_v1/migrations/65a_stage_fna_source_long_v1_step_b.sql.
+qc_framework_v1/migrations/_chunks/
+qc_framework_v1/migrations/65a_stage_fna_source_long_date_v1.sql

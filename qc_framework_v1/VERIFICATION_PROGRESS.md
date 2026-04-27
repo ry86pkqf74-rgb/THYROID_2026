@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-27 (post-mig_64 — pilot Step A re-tier complete)
+**Last refreshed:** 2026-04-27 (post-mig_65 — first column signed off in pilot)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -18,8 +18,8 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 | Tables registered | 175 |
 | Tables verified | **0 / 184** (0 %) |
 | Columns in scope | 5,496 |
-| Columns Logan-verified | **0 / 5,496** |
-| Columns at `not_started` (in v2 queue) | **4,734** |
+| Columns Logan-verified | **1 / 5,496** |
+| Columns at `not_started` (in v2 queue) | **4,733** |
 | Columns at `na` (legacy v1 auto-skip, pending re-tier) | **762** |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
@@ -32,7 +32,7 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 
 | Tier | Tables | Cols | Verified | Not started | NA (v1 legacy) |
 |---|---|---|---|---|---|
-| pilot | 1 | 40 | 0 | **40** | 0 |
+| pilot | 1 | 40 | **1** | **39** | 0 |
 | tier1_anchor | 1 | 1,592 | 0 | 1,588 | 4 |
 | tier1_events | 18 | 466 | 0 | 320 | 146 |
 | tier1_source | 12 | 909 | 0 | 860 | 49 |
@@ -40,7 +40,7 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 | tier2_rollups | 19 | 616 | 0 | 569 | 47 |
 | tier3_extraction | 17 | 372 | 0 | 63 | 309 |
 | tier3_helper | 91 | 1,168 | 0 | 1,012 | 156 |
-| **total** | **175** | **5,496** | **0** | **4,734** | **762** |
+| **total** | **175** | **5,496** | **1** | **4,733** | **762** |
 
 ## Pilot table snapshot — `main.canonical_fna_events_v1`
 
@@ -55,10 +55,15 @@ After mig_64 Step A re-tier, all 40 columns have a verification method assigned:
 
 **Adjudicated columns requiring full per-row review:** `laterality`, `bethesda_calculated_num`, `subtype` (3 of 40).
 
+## Recently verified
+
+- **`main.canonical_fna_events_v1.fna_date_raw`** — verified 2026-04-27 via mig_65 (`mig_65_fna_date_raw`). 8,042 MATCH / 72 AMBIGUOUS (raw-cell agreement, 2-digit year) / 8 edge-case dispositions (audit log: `manuscript_workspace.canonical_logan_review_log_v1`). Method: `mechanical_source_compare` against `FNAs 12_5_2025.xlsx > FNA Bethesda > Date`. Logan ratified rule **2-digit YY → 20YY** (00=2000, 25=2025) for downstream `fna_date_resolved` derivation compare.
+
 ## Next up
 
-1. **`main.canonical_fna_events_v1.fna_date_raw`** — first canary verification CSV. Pure source compare against the `Date` cell of `FNAs 12_5_2025.xlsx > FNA Bethesda`. Will validate the CSV format before batch-generating the remaining 22 substantive columns.
-2. After pilot signs off, queue is `tier1_events` alphabetical: `canonical_path_malignant_events_v1` (60 cols), `canonical_operative_events_v1` (54), `canonical_path_benign_events_v1` (55), …
+1. **`main.canonical_fna_events_v1.fna_date_resolved`** (or another column of Logan's choosing) — derived column, `mechanical_derivation_compare`. Rule: parse `fna_date_raw` to DATE applying the 2-digit-year → 20YY convention.
+2. Remaining FNA pilot columns: 22 substantive (6 source + 13 derived + 3 adjudicated) plus 14 deferred `auto_no_source_counterpart` flips at table sign-off.
+3. After pilot signs off, queue is `tier1_events` alphabetical: `canonical_path_malignant_events_v1` (60 cols), `canonical_operative_events_v1` (54), `canonical_path_benign_events_v1` (55), …
 
 ## Verified tables
 
