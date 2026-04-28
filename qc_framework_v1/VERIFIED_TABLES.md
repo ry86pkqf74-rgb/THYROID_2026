@@ -72,6 +72,20 @@ Order: chronological (newest at the bottom).
   - **Carry-forward CF-87-AJCC:** AJCC7/8 staging cols verified as faithful copies of CTC pre361 staging values. The findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (in CTC's build pipeline, scripts 251/266). Future round can either (a) restore CTC and validate its staging derivation against findings, or (b) re-derive staging post-canonical from verified findings and audit diff.
   - **Carry-forward CF-87-GROSS-ETE:** 6 of 6,695 join-duplicate rows show inconsistent gross_ete between paired archive rows; each canonical row matches at least one archive row. Cosmetic. Defer.
 
+### 2026-04-28 — main.canonical_vascular_invasion_events_v1
+
+- **Rows:** 3,861 (100% synoptic_pathology source)
+- **Columns:** 22 verified
+- **Sign-off migration:** `qc_framework_v1/migrations/94_vascular_invasion_table_signoff.sql`
+- **Notes:**
+  - Third (and final) sibling LLM-output invasion canonical closed (after t4b mig_92, esophageal mig_93). Closes the LLM-output sibling family for invasion findings.
+  - **Total cleanup: 9 row-writes (0.23% false-positive rate)** vs 67% on esophageal — reflects the highly structured CAP synoptic source format vs unstructured operative narrative.
+    - 6 lvi_collapsed disagreement rows: 5 reclassed to `unknown` (indeterminate/suspicious evidence) + 1 reclassed to `absent` (rid 6214 "Not identified").
+    - 3 purely-hedged-evidence rows (rids 10001, 7773, 9785): vi/li/lvi reclassed `present` → `unknown` for "suspected"/"suggestive of"/"focally suspicious for" with no confirmed positive.
+  - **Final distribution:** vi 739/2985/137 · li 886/2408/567 · pni 103/1360/2398 · lvi 1184/2561/113 · vessel_count vs vi: 0 disagreements (100% consistent).
+  - 15-row random sample of positive subset: 100% correctly classified.
+  - Verification methods: 4 finding cols (`manual_source_review`); 2 derivation cols `vascular_invasion_extent` + `vessel_count` (`mechanical_derivation_compare`); 4 LLM-internal cols (`auto_no_source_counterpart`); 12 provenance/pipeline cols (`auto_no_source_counterpart`, Step D batch).
+
 ### 2026-04-28 — main.canonical_esophageal_invasion_events_v1
 
 - **Rows:** 188
