@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_94 — VASCULAR INVASION SIGNED OFF — 7th table)
+**Last refreshed:** 2026-04-28 (post-mig_94 — VASCULAR INVASION SIGNED OFF — 7th table; canonical_invasion_events_v1 verification IN PROGRESS, awaiting Logan orphan review)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -66,6 +66,35 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 **Architectural innovations established (carry forward to subsequent tables):**
 1. **CTC-equivalence verification pattern** — for canonicals built via SELECT * + filter + UPDATE chains, archived pre-script snapshot is the value-source-of-truth; one mass-equivalence query verifies dozens of inherited cols at once.
 2. **Script-rule re-run verification** — for post-build UPDATE-derived cols, re-execute original UPDATE logic as SELECT and compare.
+
+## In progress
+
+### `main.canonical_invasion_events_v1` — CTC-equivalence verified, awaiting Logan orphan review
+
+51,773 rows / 20 cols / 10,871 patients / 6 modality×kind slices.
+
+CTC-equivalence verification (mig_91 addendum, 2026-04-28) against `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_invasion_events_v1_pre363v3_20260422_032942`:
+
+| Result | Cols |
+|---|---|
+| 0 diffs (CTC-pass) | 7 — `invasion_type`, `finding_date`, `source_modality`, `source_kind`, `linkage_method`, `n_candidate_episodes`, `linkage_ambiguous_multi_episode` |
+| Localized diffs | 4 — `finding_status` (1,353 rows), `evidence_qualifier` (70), `evidence_span_hash` (4), `confidence` (2) |
+
+`finding_status` diffs are 100% on `source_kind='llm'` and 100% confidence-downgrades (`present`→`indeterminate` 1,077; `absent`→`indeterminate` 184; `present`→`suspected` 92). Decomposition:
+
+| Bucket | Rows | Status |
+|---|---|---|
+| Rule-library matches (cannot/equivocal/compression/adjacency/etc.) | ~312 | DEFENSIBLE |
+| De-duplicated by structured `present` finding | ~828 | DEFENSIBLE |
+| Compression/adjacency/explicit-negative/adherent orphans | ~113 | DEFENSIBLE |
+| **Z-bucket orphans** (invasion-phrase, no structured fallback) | **52** | **REVIEW** |
+| **Y-bucket orphans** (uncategorized phrase) | **48** | **REVIEW** |
+
+Output: `verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xlsx` (3 review sheets + summary). Build script: `qc_framework_v1/scripts/build_invasion_events_orphan_review.py`.
+
+Sign-off path: Logan reviews 100 priority orphans → mig_91b applies FLIPs as targeted UPDATE on `main.canonical_invasion_events_v1` → all 11 cols flagged `verified` → table_status=`verified` (would push verified count to 8/184, ~238 cols).
+
+Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchanged from verified state. Defer multi-finding rename via CF-91-LINKAGE-COL-NAME.
 
 ## Recently verified
 

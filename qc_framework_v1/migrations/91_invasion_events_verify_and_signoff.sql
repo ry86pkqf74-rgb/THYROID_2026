@@ -326,8 +326,75 @@
 -- WHERE ts.schema_name = subq.schema_name AND ts.table_name = subq.table_name;
 
 -- =============================================================================
--- end of migration 91 SKELETON
--- 4 invasion canonicals (1 multi-source UNION + 3 LLM-output siblings)
--- pending Logan adjudication of 4 review CSVs.
--- After fill-in, this becomes the FIFTH-EIGHTH tables verified under Protocol v2.
+-- mig_91 ADDENDUM (Cowork session 2026-04-28, post-mig_94b)
+--   Subject: canonical_invasion_events_v1 ONLY (the 3 sibling LLM-output
+--   canonicals were closed in mig_92 / mig_93 / mig_94 + 94b).
+--
+--   Discovery: live thyroid_canonical_publication_v1_0.main
+--   .canonical_invasion_events_v1 (51,773 rows / 20 cols / 10,871 patients)
+--   shares an identical row count and identical row-identifying-key set with
+--   the archived snapshot
+--     "Thyroid 2026 UPdated".archive_pub_v1_0
+--         .canonical_invasion_events_v1_pre363v3_20260422_032942
+--   This admits a CTC-equivalence verification pattern even though
+--   canonical_invasion_events_v1 was assembled by Script 363's UNION
+--   pipeline rather than a SELECT*+filter+UPDATE chain on a single source.
+--
+--   Mass-equivalence on the 11 not_started cols against the snapshot, keyed
+--   on (invasion_event_id, research_id, invasion_type, source_table,
+--       source_row_id, ROW_NUMBER() OVER (...)) for collision-prone
+--   mention-grain rows:
+--
+--     ZERO diffs on 7 of 11 cols  -> CTC-pass:
+--       invasion_type
+--       finding_date
+--       source_modality
+--       source_kind
+--       linkage_method
+--       n_candidate_episodes
+--       linkage_ambiguous_multi_episode
+--
+--     LOCALIZED diffs on 4 of 11 cols:
+--       finding_status     1,353 rows changed (100% on source_kind='llm';
+--                                              100% confidence-downgrades)
+--       evidence_qualifier 70 rows  (mostly row-pair swaps + 1 typo fix)
+--       evidence_span_hash 4  rows  (pair swap on 2 patients -- informational)
+--       confidence         2  rows  (pair swap on 1 patient -- informational)
+--
+--   finding_status downgrade transition matrix (33 distinct cells, 1,353 rows):
+--     present     -> indeterminate    1,077
+--     absent      -> indeterminate      184
+--     present     -> suspected           92
+--   No upgrades; no other transitions.
+--
+--   Decomposition of the 1,353 finding_status downgrades by defensibility:
+--      ~312  rule-library matches (cannot be assessed / equivocal /
+--             not applicable / compression / adjacency / explicit-negative /
+--             adherent-only)                          -> DEFENSIBLE
+--      ~828  patient has structured 'present' covering same/related invasion
+--             type (Script 363 correctly de-duplicated) -> DEFENSIBLE
+--      ~113  compression/adjacency/explicit-negative/adherent orphans
+--                                                     -> DEFENSIBLE
+--       100  ORPHAN downgrades requiring Logan eyes:
+--              52 Z-bucket (invasion-phrase downgrades w/ no structured fallback)
+--              48 Y-bucket (uncategorized-phrase orphans)
+--
+--   Linkage cluster: linkage_method, n_candidate_episodes,
+--   linkage_ambiguous_multi_episode all 0 diffs vs pre-363. The 759-group
+--   ambiguous-linkage CSV from earlier in this migration is unchanged from
+--   verified pre-363 state; defer multi-finding rename via CF-91-LINKAGE-COL-NAME.
+--
+--   Output of this addendum:
+--     verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xlsx
+--     qc_framework_v1/scripts/build_invasion_events_orphan_review.py
+--
+--   Sign-off path (next session, after Logan review):
+--     1) Apply Logan's ACCEPT/FLIP/REJECT decisions on z_orphans + y_orphans
+--        as targeted UPDATE on main.canonical_invasion_events_v1.
+--     2) Flip all 11 not_started cols to verification_status='verified'
+--        in canonical_column_verification_registry_v1 with this migration
+--        path as signoff_migration.
+--     3) Refresh main.canonical_table_signoff_registry_v1 (table_status='verified').
+-- =============================================================================
+-- end of migration 91 SKELETON + 2026-04-28 CTC-equivalence addendum
 -- =============================================================================
