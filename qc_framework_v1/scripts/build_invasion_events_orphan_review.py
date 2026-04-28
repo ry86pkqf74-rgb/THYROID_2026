@@ -36,18 +36,24 @@ Of the 1,353 finding_status downgrades:
   ~828  patient has structured 'present' covering same/related invasion type
         (Script 363 correctly de-duplicated)
   ~213  remaining defensible (compression/adjacency/explicit-negative orphans)
-  100   ORPHAN downgrades requiring Logan eyes:
-          52 Z-bucket  (invasion-phrase downgrades w/ no structured fallback)
-          48 Y-bucket  (uncategorized-phrase orphans)
+  101   ORPHAN downgrades, split by Rule #1 (cancer-only):
+          54 BENIGN orphans (canonical_path_benign_events_v1 entry, NO
+                             malignant path) -- per Rule #1 Script 363
+                             correctly downgraded; massive goiter / MNG
+                             substernal extension being mis-extracted as
+                             malignant ETE. AUDIT-confirm only.
+          47 CANCER orphans (canonical_path_malignant_events_v1 entry).
+                             TRUE review queue.
 
 Output:
   verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xlsx
 
 Sheets:
-  1. summary         — methodology, statistics, sign-off block
-  2. z_orphans       — 52 priority-1 rows (PRIORITY review)
-  3. y_orphans       — 48 priority-2 rows
-  4. hash_conf_swaps — 6 rows of informational pair swaps
+  1. summary         -- methodology, statistics, sign-off block
+  2. cancer_orphans  -- 47 PRIORITY review rows (patient has malignant path)
+  3. benign_orphans  -- 54 audit-only rows (benign path; Rule #1 cancer-only
+                        confirms Script 363 correctly downgraded these)
+  4. hash_conf_swaps -- 6 informational pair-swap rows
 
 Decision vocabulary (your_decision col):
   ACCEPT             — downgrade is correct (LLM finding correctly weakened)
@@ -147,8 +153,82 @@ def _diff_cte(con):
     """
 
 
+def fetch_all_orphans(con):
+    """Pull ALL orphan rows (LLM-only, no structured fallback) split into
+    Z + Y buckets, with a cancer_status flag (CANCER if patient has
+    canonical_path_malignant_events_v1 entry, else BENIGN).
+
+    Per Rule #1 (cancer-only) of the clinical rule library, BENIGN orphans
+    are correctly downgraded by Script 363 -- they represent massive goiter /
+    MNG / multinodular substernal extension being mis-extracted as malignant
+    ETE on patients with NO malignant pathology. CANCER orphans are the true
+    review queue.
+    """
+    sql = f"""
+    {_diff_cte(con)}
+    , diffs AS (
+      SELECT *,
+        LOWER(TRIM(evidence_qualifier)) AS qn
+      FROM paired
+      WHERE source_kind = 'llm'
+        AND finding_status IS DISTINCT FROM arc_finding_status
+    )
+    SELECT
+      invasion_event_id,
+      research_id,
+      invasion_type,
+      source_modality,
+      finding_date,
+      arc_finding_status   AS arc_status,
+      finding_status       AS live_status,
+      evidence_qualifier,
+      confidence,
+      CASE WHEN EXISTS (SELECT 1 FROM {LIVE_DB}.main.canonical_path_malignant_events_v1 pm
+                        WHERE pm.research_id = d.research_id)
+           THEN 'CANCER' ELSE 'BENIGN' END AS cancer_status,
+      CASE WHEN qn LIKE '%extrathyroidal%' OR qn LIKE '%ete%'
+                OR qn LIKE '%strap muscle%' OR qn LIKE '%muscle invasion%'
+                OR qn LIKE '%invasion%' THEN 'Z' ELSE 'Y' END AS rule_bucket
+    FROM diffs d
+    WHERE NOT EXISTS (
+      SELECT 1 FROM {LIVE_DB}.main.canonical_invasion_events_v1 s
+      WHERE s.research_id = d.research_id
+        AND s.source_kind = 'structured'
+        AND s.finding_status = 'present'
+    )
+    AND (
+      -- Z bucket
+      ((qn LIKE '%extrathyroidal%' OR qn LIKE '%ete%' OR qn LIKE '%strap muscle%'
+        OR qn LIKE '%muscle invasion%' OR qn LIKE '%invasion%')
+       AND qn NOT LIKE '%no %invasion%' AND qn NOT LIKE '%not %invasion%'
+       AND qn NOT LIKE '%cannot%' AND qn NOT LIKE '%equivoc%'
+       AND qn NOT LIKE '%suspect%' AND qn NOT LIKE '%suggest%'
+       AND qn NOT LIKE '%possib%' AND qn NOT LIKE '%question%'
+       AND qn NOT LIKE '%uncert%')
+      OR
+      -- Y bucket
+      (NOT (qn LIKE '%cannot%' OR qn LIKE '%equivoc%' OR qn LIKE '%uncertain%'
+            OR qn LIKE '%probable%' OR qn LIKE '%suspect%' OR qn LIKE '%suggest%'
+            OR qn LIKE '%possib%' OR qn LIKE '%question%'
+            OR qn LIKE '%not_applicable%' OR qn LIKE '%not applicable%')
+       AND NOT (qn LIKE '%compress%' OR qn LIKE '%displace%'
+            OR qn LIKE '%mass effect%' OR qn LIKE '%deviate%' OR qn LIKE '%efface%')
+       AND NOT (qn LIKE '%adjacent%' OR qn LIKE '%abut%'
+            OR qn LIKE '%posterior to%' OR qn LIKE '%along the%')
+       AND NOT (qn LIKE '%no %invasion%' OR qn LIKE '%no entrance%'
+            OR qn LIKE '%not identified%' OR qn LIKE '%not violated%')
+       AND NOT (qn LIKE '%adherent%' OR qn LIKE '%adhesion%')
+       AND NOT (qn LIKE '%extrathyroidal%' OR qn LIKE '%ete%'
+            OR qn LIKE '%strap muscle%' OR qn LIKE '%muscle invasion%'
+            OR qn LIKE '%invasion%'))
+    )
+    ORDER BY cancer_status, invasion_type, research_id
+    """
+    return con.execute(sql).fetchall()
+
+
 def fetch_orphans(con, bucket: str):
-    """Pull Z-bucket or Y-bucket orphan rows (LLM-only, no structured fallback)."""
+    """[DEPRECATED] use fetch_all_orphans -- kept for backward compat."""
     if bucket == "Z":
         clause = (
             "(qn LIKE '%extrathyroidal%' OR qn LIKE '%ete%' "
@@ -272,12 +352,14 @@ def write_summary(wb):
         ("Downgrade decomposition (1,353 finding_status changes):", ""),
         ("  rule-library matches",      "~312 rows — DEFENSIBLE"),
         ("  de-duplicated by structured", "~828 rows — DEFENSIBLE"),
-        ("  ORPHAN downgrades",         "100 rows for review (Z-bucket 52 + Y-bucket 48)"),
-        ("  remaining ~113",            "compression/adjacency/explicit-negative/adherent orphans — defensible"),
+        ("  ORPHAN downgrades",         "101 rows split by Rule #1 (cancer-only):"),
+        ("    BENIGN orphans (54)",     "patient has canonical_path_benign_events_v1; NO malignant path. Per Rule #1, Script 363 correctly downgraded -- massive goiter / MNG substernal extension mis-extracted as malignant ETE. AUDIT-CONFIRM ONLY."),
+        ("    CANCER orphans (47)",     "patient has canonical_path_malignant_events_v1. TRUE review queue."),
+        ("  remaining ~113",            "compression/adjacency/explicit-negative/adherent orphans -- defensible"),
         ("", ""),
         ("Linkage cluster",             "All linkage cols show 0 diffs vs pre-363. 759-group ambiguous-linkage CSV unchanged from verified pre-363 — defer as CF-91-LINKAGE-COL-NAME."),
         ("", ""),
-        ("Sign-off plan",               "1) Logan reviews z_orphans + y_orphans, ACCEPT/FLIP/REJECT per row. 2) FLIPs applied as UPDATE on canonical. 3) All 11 cols flagged 'verified'. 4) table_status='verified'."),
+        ("Sign-off plan",               "1) Logan reviews cancer_orphans (47), ACCEPT/FLIP/REJECT per row. 2) Spot-check ~5 benign_orphans for Rule #1 audit. 3) FLIPs applied as UPDATE on canonical. 4) All 11 cols flagged 'verified'. 5) table_status='verified' (8/184 tables)."),
         ("", ""),
         ("Decision vocabulary:", ""),
         ("  ACCEPT",                    "downgrade is correct (LLM finding correctly weakened)"),
@@ -295,18 +377,23 @@ def write_summary(wb):
             ws.row_dimensions[r].height = 30
 
 
-def write_orphan_sheet(wb, name, data, intro):
+def write_orphan_sheet(wb, name, data, intro, fill=None):
+    """Write an orphan-review sheet. Each row is a 11-tuple from
+    fetch_all_orphans:
+        (eid, rid, itype, smod, fdate, arc_s, live_s, eq, conf,
+         cancer_status, rule_bucket)
+    """
     ws = wb.create_sheet(name)
     ws.sheet_view.showGridLines = False
     ws.cell(1, 1, intro).font = Font(size=11, bold=True, color="9C5700")
-    ws.cell(1, 1).fill = PRIORITY_FILL
-    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=10)
-    ws.row_dimensions[1].height = 32
+    ws.cell(1, 1).fill = fill if fill is not None else PRIORITY_FILL
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=11)
+    ws.row_dimensions[1].height = 40
 
     headers = [
         "invasion_event_id", "research_id", "invasion_type", "source_modality",
-        "finding_date", "arc_status", "live_status", "evidence_qualifier",
-        "your_decision", "your_note",
+        "finding_date", "arc_status", "live_status", "rule_bucket",
+        "evidence_qualifier", "your_decision", "your_note",
     ]
     for c, h in enumerate(headers, start=1):
         ws.cell(2, c, h)
@@ -314,7 +401,8 @@ def write_orphan_sheet(wb, name, data, intro):
     ws.row_dimensions[2].height = 32
 
     for r_idx, row in enumerate(data, start=3):
-        (eid, rid, itype, smod, fdate, arc_s, live_s, eq, conf) = row
+        (eid, rid, itype, smod, fdate, arc_s, live_s, eq, conf,
+         _cancer, bucket) = row
         ws.cell(r_idx, 1, eid)
         ws.cell(r_idx, 2, rid)
         ws.cell(r_idx, 3, itype)
@@ -322,16 +410,17 @@ def write_orphan_sheet(wb, name, data, intro):
         ws.cell(r_idx, 5, str(fdate) if fdate is not None else "")
         ws.cell(r_idx, 6, arc_s)
         ws.cell(r_idx, 7, live_s)
-        ws.cell(r_idx, 8, eq).alignment = WRAP
-        ws.cell(r_idx, 9, "")
+        ws.cell(r_idx, 8, bucket)
+        ws.cell(r_idx, 9, eq).alignment = WRAP
         ws.cell(r_idx, 10, "")
+        ws.cell(r_idx, 11, "")
         ws.row_dimensions[r_idx].height = 30
-        for c in range(1, 11):
+        for c in range(1, 12):
             ws.cell(r_idx, c).border = BORDER
-            if c == 8:
+            if c == 9:
                 ws.cell(r_idx, c).alignment = WRAP
 
-    _set_widths(ws, [22, 10, 14, 14, 12, 12, 14, 60, 22, 28])
+    _set_widths(ws, [22, 10, 14, 14, 12, 12, 14, 7, 60, 22, 28])
     ws.freeze_panes = "A3"
 
 
@@ -363,8 +452,9 @@ def write_swap_sheet(wb, data):
 
 def main():
     con = _connect()
-    z = fetch_orphans(con, "Z")
-    y = fetch_orphans(con, "Y")
+    rows = fetch_all_orphans(con)
+    cancer = [r for r in rows if r[9] == "CANCER"]
+    benign = [r for r in rows if r[9] == "BENIGN"]
     swaps = fetch_swaps(con)
 
     wb = Workbook()
@@ -372,24 +462,29 @@ def main():
 
     write_summary(wb)
     write_orphan_sheet(
-        wb, "z_orphans", z,
-        "PRIORITY 1 — Z-bucket orphans: invasion-phrase downgrades on patients "
-        "with NO structured 'present' fallback. Many are radiologist-explicit "
-        "ETE calls or pathology strap-muscle/ENE findings being downgraded to "
-        "indeterminate. Decide ACCEPT/FLIP/REJECT per row.",
+        wb, "cancer_orphans", cancer,
+        f"PRIORITY 1 -- {len(cancer)} CANCER orphans (patient has "
+        "canonical_path_malignant_events_v1 entry). These LLM findings of ETE / "
+        "cartilage erosion / strap muscle invasion / extranodal extension may "
+        "represent REAL signals that Script 363 over-aggressively downgraded. "
+        "Decide ACCEPT/FLIP/REJECT per row.",
+        fill=PRIORITY_FILL,
     )
     write_orphan_sheet(
-        wb, "y_orphans", y,
-        "PRIORITY 2 — Y-bucket orphans: uncategorized-phrase downgrades. Mix of "
-        "radiologic findings (cartilage erosion, vocal cord paralysis, tracheal "
-        "deviation) and pathology extranodal extension. Decide whether each "
-        "downgrade preserved a real signal.",
+        wb, "benign_orphans", benign,
+        f"AUDIT ONLY -- {len(benign)} BENIGN orphans (patient has "
+        "canonical_path_benign_events_v1 only; NO malignant path). Per Rule #1 "
+        "(cancer-only), Script 363 correctly downgraded these -- they are massive "
+        "goiter / MNG / multinodular substernal extension being mis-extracted by "
+        "the LLM as malignant ETE. Spot-check ~5 to audit-confirm Rule #1; "
+        "default disposition = ACCEPT all.",
+        fill=SAFE_FILL,
     )
     write_swap_sheet(wb, swaps)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     wb.save(OUT)
-    print(f"wrote {OUT} (z={len(z)}, y={len(y)}, swaps={len(swaps)})")
+    print(f"wrote {OUT} (cancer={len(cancer)}, benign={len(benign)}, swaps={len(swaps)})")
 
 
 if __name__ == "__main__":

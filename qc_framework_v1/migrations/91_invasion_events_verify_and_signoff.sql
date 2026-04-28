@@ -375,9 +375,15 @@
 --             type (Script 363 correctly de-duplicated) -> DEFENSIBLE
 --      ~113  compression/adjacency/explicit-negative/adherent orphans
 --                                                     -> DEFENSIBLE
---       100  ORPHAN downgrades requiring Logan eyes:
---              52 Z-bucket (invasion-phrase downgrades w/ no structured fallback)
---              48 Y-bucket (uncategorized-phrase orphans)
+--       101  ORPHAN downgrades, split by Rule #1 (cancer-only):
+--              54 BENIGN orphans (canonical_path_benign_events_v1 entry, NO
+--                                 malignant path) -> per Rule #1, Script 363
+--                                 correctly downgraded; massive goiter / MNG /
+--                                 multinodular substernal extension being
+--                                 mis-extracted by LLM as malignant ETE.
+--                                 AUDIT-confirm only.
+--              47 CANCER orphans (canonical_path_malignant_events_v1 entry).
+--                                 TRUE review queue.
 --
 --   Linkage cluster: linkage_method, n_candidate_episodes,
 --   linkage_ambiguous_multi_episode all 0 diffs vs pre-363. The 759-group
