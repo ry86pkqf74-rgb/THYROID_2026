@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_78 — PILOT TABLE SIGNED OFF)
+**Last refreshed:** 2026-04-28 (post-mig_83 — AIRWAY INVASION SIGNED OFF)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,11 +16,13 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified | **1 / 184** (0.5 %) |
-| Columns in scope | 5,494 (was 5,496 — dropped subtype + is_index_fna; renames net-zero) |
-| Columns Logan-verified | **38 / 5,494** |
-| Columns at `not_started` (in v2 queue) | **4,694** |
-| Columns at `na` (legacy v1 auto-skip, pending re-tier) | **762** |
+| Tables verified under Protocol v2 | **2 / 184** (1.1 %) — FNA pilot + airway invasion |
+| Tables `verified` in registry (pre-v2 legacy + v2) | 12 (10 are pre-v2 placeholders with NULL signed_off_ts) |
+| Columns in scope | 5,494 |
+| Columns Logan-verified (v2) | **61 / 5,494** (38 FNA + 23 airway invasion) |
+| Columns at `not_started` (in v2 queue) | **4,683** |
+| Columns at `na` (legacy v1 auto-skip, pending re-tier) | **750** |
+| Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
 its slot in the priority queue, its remaining `na` columns will be re-tiered
@@ -28,50 +30,51 @@ under v2 (Step A) and either reset to `not_started` (if they have a source
 counterpart) or kept at `not_started` and flipped to `verified` only at table
 sign-off (Step D) for `auto_no_source_counterpart` columns.
 
-## By tier
+## Verified table snapshots
 
-| Tier | Tables | Cols | Verified | Not started | NA (v1 legacy) |
-|---|---|---|---|---|---|
-| pilot | 1 | 38 | **38** | **0** | 0 |
-| tier1_anchor | 1 | 1,592 | 0 | 1,588 | 4 |
-| tier1_events | 18 | 466 | 0 | 320 | 146 |
-| tier1_source | 12 | 909 | 0 | 860 | 49 |
-| tier2_canonical | 16 | 333 | 0 | 282 | 51 |
-| tier2_rollups | 19 | 616 | 0 | 569 | 47 |
-| tier3_extraction | 17 | 372 | 0 | 63 | 309 |
-| tier3_helper | 91 | 1,168 | 0 | 1,012 | 156 |
-| **total** | **175** | **5,496** | **1** | **4,733** | **762** |
+### `main.canonical_fna_events_v1` (PILOT)
 
-## Pilot table snapshot — `main.canonical_fna_events_v1`
-
-After mig_64 Step A re-tier, all 40 columns have a verification method assigned:
+38 columns / 8,050 rows / 14-migration arc (mig_65 → mig_78):
 
 | Method | Cols | Source / Rule |
 |---|---|---|
-| `auto_no_source_counterpart` | 14 | Pure provenance + pipeline trace; verified at Step D table sign-off |
-| `mechanical_source_compare` | 7 | `FNAs 12_5_2025.xlsx` sheet `FNA Bethesda` (wide), unpivoted by FNA index 1..12 |
-| `mechanical_derivation_compare` | 16 | Re-run derivation rule against stored value |
-| `manual_source_review` | 3 | Logan reviews each row alongside upstream raw text |
+| `auto_no_source_counterpart` | 14 | Provenance + pipeline trace; verified at Step D |
+| `mechanical_source_compare` | 7 | `FNAs 12_5_2025.xlsx > FNA Bethesda` |
+| `mechanical_derivation_compare` | 14 | Re-run derivation rule against stored value |
+| `manual_source_review` | 3 | Per-row review (`laterality`, `bethesda_calculated_num`, `fna_site`) |
 
-**Adjudicated columns requiring full per-row review:** `laterality`, `bethesda_calculated_num`, `subtype` (3 of 40).
+### `main.canonical_airway_invasion_events_v1`
+
+23 columns / 3,155 rows / 4-migration arc (mig_80 → mig_83):
+
+| Method | Cols | Source / Rule |
+|---|---|---|
+| `auto_no_source_counterpart` | 15 | Provenance + LLM metadata; verified at Step D |
+| `mechanical_derivation_compare` | 1 | `t4a_implication` (derived per Logan's findings-vs-staging rule) |
+| `manual_source_review` | 7 | 7 clinical findings (per-row Logan review across mig_80-82) |
 
 ## Recently verified
 
-- **`main.canonical_fna_events_v1.fna_date_raw`** — verified 2026-04-27 via mig_65 (`mig_65_fna_date_raw`). 8,042 MATCH / 72 AMBIGUOUS (raw-cell agreement, 2-digit year) / 8 edge-case dispositions (audit log: `manuscript_workspace.canonical_logan_review_log_v1`). Method: `mechanical_source_compare` against `FNAs 12_5_2025.xlsx > FNA Bethesda > Date`. Logan ratified rule **2-digit YY → 20YY** (00=2000, 25=2025) for downstream `fna_date_resolved` derivation compare.
+- **`main.canonical_airway_invasion_events_v1`** — signed off 2026-04-28 via mig_83 (4-migration arc mig_80 → mig_83). Final state: 3,155 rows / 2,622 patients / 196 positive (138 pT4a + 58 not_pT4a). Established **findings-vs-staging separation rule** (memory: `feedback_findings_vs_staging.md`).
+- **`main.canonical_fna_events_v1`** — signed off 2026-04-28 via mig_78 (PILOT, 14-migration arc). Final state: 8,050 rows / 38 cols verified + 1 deferred carry-forward (`days_to_surgery`).
 
 ## Next up
 
-1. **`main.canonical_fna_events_v1.fna_date_resolved`** (or another column of Logan's choosing) — derived column, `mechanical_derivation_compare`. Rule: parse `fna_date_raw` to DATE applying the 2-digit-year → 20YY convention.
-2. Remaining FNA pilot columns: 22 substantive (6 source + 13 derived + 3 adjudicated) plus 14 deferred `auto_no_source_counterpart` flips at table sign-off.
-3. After pilot signs off, queue is `tier1_events` alphabetical: `canonical_path_malignant_events_v1` (60 cols), `canonical_operative_events_v1` (54), `canonical_path_benign_events_v1` (55), …
+Logan's "final cleaning" plan continues with cohort-priority Tier 2 tables. Suggested queue based on staging/clinical importance:
+
+1. **`canonical_path_malignant_events_v1`** (~60 cols) — primary path findings, drives most cohort definitions
+2. **`canonical_operative_events_v1`** (~54 cols) — surgery dates/procedures, unblocks FNA `days_to_surgery` carry-forward
+3. **`canonical_extrathyroidal_extension_events_v1`** — ETE is the other major staging concern (pT3b vs pT4a); same pattern as airway likely applies
+4. **`canonical_lymph_node_events_v1`** family — pN staging
+5. Other Tier 2 events tables alphabetically
 
 ## Verified tables
 
-(none yet — see [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md))
+See [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md) — 2 entries.
 
 ## Failed / blocked
 
-(none)
+- **`canonical_fna_events_v1.days_to_surgery`** — DEFERRED carry-forward. Cross-table derivation (fna_date_resolved + canonical_operative_events_v1.surgery_date). Will be revisited when operative events table is verified.
 
 ---
 
