@@ -320,8 +320,10 @@ def build_summary(wb, counts):
     ws["A25"] = "  Initials: _______________"
 
 
-REAL_HEADERS = [
+ALL_HEADERS = [
     "research_id",
+    "candidate_tier",
+    "claude_suggested",
     "earliest_finding_date",
     "statuses",
     "onsets",
@@ -336,6 +338,7 @@ REAL_HEADERS = [
     "vcp_overlap_mig98a",
     "n_real_pattern_mentions",
     "n_template_mentions",
+    "n_total_mentions",
     "source1", "evidence1",
     "source2", "evidence2",
     "source3", "evidence3",
@@ -345,62 +348,106 @@ REAL_HEADERS = [
 ]
 
 
-def build_real_sheet(wb, candidates, per_pt, aug_info, vcp_keepers):
-    ws = wb.create_sheet("REAL_CANDIDATES")
-    for j, h in enumerate(REAL_HEADERS, start=1):
+def _row_for_pt(rid, per_pt, aug_info, vcp_keepers, candidates):
+    """Build one consolidated row for a patient — used for both candidate
+    and non-candidate sheets so Logan has the same evidence structure
+    everywhere."""
+    info = per_pt.get(rid, {"real": [], "template": [], "unmarked": [], "all_count": 0})
+    aug = aug_info.get(rid, (rid, None, None, None, None, None, None, None, None, None, None, None))
+    # aug: (rid, has_phen, has_v2, has_refined, any_definitive, phen_confirmed,
+    #       phen_permanent, phen_transient, phen_treat_req, earliest_date, statuses, onsets)
+
+    # Per note_type, prefer REAL excerpt if any, else best TEMPLATE, else UNMARKED.
+    # Picks one excerpt per note_type, ordered by clinical priority.
+    by_nt: dict[str, list[str]] = defaultdict(list)
+    for entry in info["real"]:
+        by_nt[entry["note_type"]].append(_squash(entry["context"]))
+    # If a note_type has NO real, surface its template/unmarked excerpts as evidence anyway
+    for entry in info["template"] + info["unmarked"]:
+        nt = entry["note_type"]
+        if not by_nt.get(nt):
+            by_nt[nt].append(_squash(entry["context"]))
+    ordered = [nt for nt in NOTE_TYPE_PRIORITY if nt in by_nt]
+    sources = (ordered + [""] * 4)[:4]
+    evidences = ["; ".join(by_nt.get(nt, [])[:2]) if nt else "" for nt in sources]
+
+    is_phen_conf = bool(aug[5])
+    is_v2 = bool(aug[2])
+    is_vcp = rid in vcp_keepers
+    is_real_text = bool(info["real"])
+
+    # candidate tier label
+    if rid in candidates:
+        tiers = []
+        if is_phen_conf:
+            tiers.append("phen_conf")
+        if is_v2:
+            tiers.append("v2")
+        if is_vcp:
+            tiers.append("vcp_overlap")
+        tier_label = "+".join(tiers) if tiers else "real_text"
+    else:
+        tier_label = "no_signal"
+
+    # claude_suggested = "REVIEW" for candidates, "NO" for others (template-only)
+    claude_suggested = "REVIEW" if rid in candidates else "NO"
+
+    return [
+        rid,
+        tier_label,
+        claude_suggested,
+        aug[9],
+        aug[10],
+        aug[11],
+        bool(aug[1]),
+        is_v2,
+        bool(aug[3]),
+        aug[5],
+        aug[6],
+        aug[7],
+        aug[8],
+        bool(aug[4]),
+        is_vcp,
+        len(info["real"]),
+        len(info["template"]),
+        info["all_count"],
+        sources[0], evidences[0],
+        sources[1], evidences[1],
+        sources[2], evidences[2],
+        sources[3], evidences[3],
+        "",
+        "",
+    ]
+
+
+def build_consolidated_sheet(wb, all_rids, per_pt, aug_info, vcp_keepers, candidates):
+    """One sheet with EVERY patient + full source/evidence columns. Sorted with
+    candidates first (alphabetic by rid), then non-candidates (alphabetic)."""
+    ws = wb.create_sheet("ALL_PATIENTS")
+    for j, h in enumerate(ALL_HEADERS, start=1):
         c = ws.cell(row=1, column=j, value=h)
         c.font = Font(bold=True)
         c.fill = HEADER_FILL
 
-    for rid in sorted(candidates):
-        info = per_pt.get(rid, {"real": [], "template": [], "unmarked": [], "all_count": 0})
-        aug = aug_info.get(rid, (rid, None, None, None, None, None, None, None, None, None, None, None))
-        # aug: (rid, has_phen, has_v2, has_refined, any_definitive, phen_confirmed,
-        #       phen_permanent, phen_transient, phen_treat_req, earliest_date, statuses, onsets)
-        by_nt = defaultdict(list)
-        for e in info["real"]:
-            by_nt[e["note_type"]].append(_squash(e["context"]))
-        ordered = [nt for nt in NOTE_TYPE_PRIORITY if nt in by_nt]
-        sources = (ordered + [""] * 4)[:4]
-        evidences = ["; ".join(by_nt.get(nt, [])[:2]) if nt else "" for nt in sources]
-
-        ws.append([
-            rid,
-            aug[9],
-            aug[10],
-            aug[11],
-            bool(aug[1]),
-            bool(aug[2]),
-            bool(aug[3]),
-            aug[5],
-            aug[6],
-            aug[7],
-            aug[8],
-            bool(aug[4]),
-            rid in vcp_keepers,
-            len(info["real"]),
-            len(info["template"]),
-            sources[0], evidences[0],
-            sources[1], evidences[1],
-            sources[2], evidences[2],
-            sources[3], evidences[3],
-            "",
-            "",
-        ])
+    cand_sorted = sorted(r for r in all_rids if r in candidates)
+    other_sorted = sorted(r for r in all_rids if r not in candidates)
+    for rid in cand_sorted + other_sorted:
+        ws.append(_row_for_pt(rid, per_pt, aug_info, vcp_keepers, candidates))
 
     dec_cols = {
-        get_column_letter(REAL_HEADERS.index("your_decision") + 1),
-        get_column_letter(REAL_HEADERS.index("your_note") + 1),
+        get_column_letter(ALL_HEADERS.index("your_decision") + 1),
+        get_column_letter(ALL_HEADERS.index("your_note") + 1),
+        get_column_letter(ALL_HEADERS.index("claude_suggested") + 1),
     }
     wrap_cols = {
-        get_column_letter(REAL_HEADERS.index(h) + 1)
+        get_column_letter(ALL_HEADERS.index(h) + 1)
         for h in ("evidence1", "evidence2", "evidence3", "evidence4", "your_note")
     }
     for row in ws.iter_rows(min_row=2):
         for cell in row:
             if cell.column_letter in dec_cols:
                 cell.fill = DEC_FILL
-    ws.freeze_panes = "A2"
+    ws.freeze_panes = "C2"
     _autosize(ws, max_w=70.0, wrap_cols=wrap_cols)
 
 
@@ -558,8 +605,7 @@ def main():
     wb = Workbook()
     wb.remove(wb.active)
     build_summary(wb, counts)
-    build_real_sheet(wb, candidates, per_pt, aug_info, vcp_keepers)
-    build_no_sheet(wb, rids, candidates, per_pt)
+    build_consolidated_sheet(wb, rids, per_pt, aug_info, vcp_keepers, candidates)
     wb.properties.creator = "Logan Glosser <logan.glosser@gmail.com>"
     wb.save(OUT_XLSX)
 
