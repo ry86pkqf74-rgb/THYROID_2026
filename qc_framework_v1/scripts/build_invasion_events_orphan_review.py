@@ -48,12 +48,26 @@ Of the 1,353 finding_status downgrades:
 Output:
   verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xlsx
 
-Sheets:
-  1. summary         -- methodology, statistics, sign-off block
-  2. cancer_orphans  -- 47 PRIORITY review rows (patient has malignant path)
-  3. benign_orphans  -- 54 audit-only rows (benign path; Rule #1 cancer-only
-                        confirms Script 363 correctly downgraded these)
-  4. hash_conf_swaps -- 6 informational pair-swap rows
+Sheets (v3 with cancer sub-buckets per Logan's clinical rules):
+  1. summary                      -- methodology, statistics, sign-off block
+  2. 1_high_pos                   -- HIGH-CONFIDENCE POSITIVES (anatomic +
+                                     invasion verb). Default = FLIP_TO_PRESENT.
+  3. 2_keyword_needs_context      -- bare 'extrathyroidal extension' rows;
+                                     mark NEEDS_CONTEXT and I'll pull source.
+  4. 3_ln_ene                     -- lymph node extranodal extension rows;
+                                     NOT thyroid-tumor ETE. Default = RECLASS
+                                     (probably to lymphatic_microscopic) or
+                                     REJECT.
+  5. 4_ambig_extracap             -- 'extracapsular extension' without
+                                     thyroid-vs-LN qualifier; usually LN in
+                                     pathology context. NEEDS_CONTEXT.
+  6. 5_vocal_or_not_invasion      -- vocal cord paralysis (different column)
+                                     or pure mass effect / incidental.
+                                     Default = REJECT or RECLASS.
+  7. 6_benign_orphans             -- 54 audit-only rows (benign path; Rule #1
+                                     confirms Script 363 correctly downgraded
+                                     -- goiter / MNG substernal extension).
+  8. hash_conf_swaps              -- 6 informational pair-swap rows.
 
 Decision vocabulary (your_decision col):
   ACCEPT             — downgrade is correct (LLM finding correctly weakened)
@@ -61,6 +75,24 @@ Decision vocabulary (your_decision col):
   FLIP_TO_SUSPECTED  — indeterminate too weak; should be 'suspected'
   REJECT             — drop the row entirely (LLM mis-extracted)
   RECLASS_INVASION_TYPE — row should be a different invasion_type (specify)
+  NEEDS_CONTEXT      — pull source-note context before deciding (KEYWORD /
+                       AMBIG_EC rows)
+
+Cancer sub-bucket categorization rules (categorize_cancer_orphan):
+  HIGH_POS  -- contains anatomic structure + invasion verb (strap muscle
+               invasion, cartilage erosion, extends into trachea, encasement,
+               mediastinum involvement, etc.)
+  LN_ENE    -- contains 'extranodal' OR ('lymph node' + 'invasion'/'extension')
+               OR 'pericapsular' + 'lymph node'. Lymph node ENE is NOT
+               thyroid-tumor ETE.
+  VOCAL_OR_NOT_INVASION -- contains vocal cord / vocal fold / RLN /
+               recurrent laryngeal (different column entirely) OR pure
+               deviation/displacement without invasion verb (mass effect)
+               OR incidental finding (laryngocele).
+  AMBIG_EC  -- 'extracapsular extension' without thyroid-vs-LN qualifier
+               (usually LN in pathology context but ambiguous w/o source).
+  KEYWORD   -- default for bare 'extrathyroidal extension' / 'ETE' without
+               surrounding anatomic detail.
 
 Usage:
   Re-pulls the data via duckdb-py with MotherDuck SSO (logan.glosser.eras
@@ -151,6 +183,64 @@ def _diff_cte(con):
         AND live.rn = arc.rn
     )
     """
+
+
+def categorize_cancer_orphan(evidence_qualifier: str) -> str:
+    """Sub-bucket a CANCER orphan row per Logan's clinical rules (2026-04-28).
+
+    Returns one of:
+        HIGH_POS               -- anatomic structure + invasion verb
+        LN_ENE                 -- lymph node extranodal extension
+                                  (NOT thyroid-tumor ETE)
+        VOCAL_OR_NOT_INVASION  -- vocal cord / RLN (different column) OR
+                                  pure mass effect / displacement / incidental
+        AMBIG_EC               -- 'extracapsular extension' without thyroid
+                                  vs LN qualifier; usually LN in path context
+        KEYWORD                -- bare 'extrathyroidal extension' / 'ETE'
+                                  without surrounding anatomic detail;
+                                  needs source-note context
+    """
+    q = (evidence_qualifier or "").lower()
+
+    # LN ENE -- explicit
+    if "extranodal" in q:
+        return "LN_ENE"
+    if "lymph node" in q and ("invasion" in q or "extension" in q):
+        return "LN_ENE"
+    if "pericapsular" in q and "lymph node" in q:
+        return "LN_ENE"
+
+    # Vocal cord / RLN / paralysis -- different column
+    if any(t in q for t in ["vocal cord", "vocal fold", "rln",
+                              "recurrent laryngeal"]):
+        return "VOCAL_OR_NOT_INVASION"
+
+    # Pure mass effect / displacement / incidental finding
+    if "laryngocele" in q:
+        return "VOCAL_OR_NOT_INVASION"
+    if any(t in q for t in ["deviation", "displaced", "displacement",
+                              "deviated"]) \
+            and not any(v in q for v in ["invasion", "extension", "erosion",
+                                          "involvement", "extends",
+                                          "encasement"]):
+        return "VOCAL_OR_NOT_INVASION"
+
+    # Ambiguous extracapsular (could be LN or thyroid tumor; needs source)
+    if "extracapsular" in q and "extrathyroidal" not in q and "thyroid" not in q:
+        return "AMBIG_EC"
+
+    # High-confidence positive: anatomic structure + invasion verb
+    high_pos_patterns = (
+        "strap muscle invasion", "cartilage erosion", "tracheoesophageal",
+        "cricothyroid membrane", "cricoid cartilage", "thyroid cartilage",
+        "extends into", "encasement", "encased", "circumferential",
+        "brachiocephalic", "svc", "trachea", "esophagus", "mediastinum",
+        "involvement of",
+    )
+    if any(t in q for t in high_pos_patterns):
+        return "HIGH_POS"
+
+    return "KEYWORD"
 
 
 def fetch_all_orphans(con):
@@ -457,34 +547,82 @@ def main():
     benign = [r for r in rows if r[9] == "BENIGN"]
     swaps = fetch_swaps(con)
 
+    # Sub-bucket cancer orphans per Logan's clinical rules (rule_bucket col
+    # is overridden with the finer-grained sub-bucket).
+    def relabel(t, sub):
+        # Replace position 10 (rule_bucket -- index 10) with the new label.
+        return tuple(list(t[:10]) + [sub])
+
+    cancer_sub = [relabel(t, categorize_cancer_orphan(t[7])) for t in cancer]
+
+    HIGH_POS = [t for t in cancer_sub if t[10] == "HIGH_POS"]
+    KEYWORD  = [t for t in cancer_sub if t[10] == "KEYWORD"]
+    LN_ENE   = [t for t in cancer_sub if t[10] == "LN_ENE"]
+    AMBIG_EC = [t for t in cancer_sub if t[10] == "AMBIG_EC"]
+    VOCAL_OR = [t for t in cancer_sub if t[10] == "VOCAL_OR_NOT_INVASION"]
+
     wb = Workbook()
     wb.remove(wb.active)
 
     write_summary(wb)
     write_orphan_sheet(
-        wb, "cancer_orphans", cancer,
-        f"PRIORITY 1 -- {len(cancer)} CANCER orphans (patient has "
-        "canonical_path_malignant_events_v1 entry). These LLM findings of ETE / "
-        "cartilage erosion / strap muscle invasion / extranodal extension may "
-        "represent REAL signals that Script 363 over-aggressively downgraded. "
-        "Decide ACCEPT/FLIP/REJECT per row.",
+        wb, "1_high_pos", HIGH_POS,
+        f"PRIORITY 1 -- {len(HIGH_POS)} HIGH-CONFIDENCE POSITIVES. Anatomic "
+        "structure + invasion verb. Default disposition = FLIP_TO_PRESENT.",
         fill=PRIORITY_FILL,
     )
     write_orphan_sheet(
-        wb, "benign_orphans", benign,
+        wb, "2_keyword_needs_context", KEYWORD,
+        f"PRIORITY 2 -- {len(KEYWORD)} KEYWORD-ONLY rows. Bare 'extrathyroidal "
+        "extension' or similar without surrounding anatomic detail. Mark rows "
+        "with your_decision = NEEDS_CONTEXT and I'll re-pull with the source-"
+        "note sentence(s) for those rows.",
+        fill=PRIORITY_FILL,
+    )
+    write_orphan_sheet(
+        wb, "3_ln_ene", LN_ENE,
+        f"REVIEW -- {len(LN_ENE)} LN_ENE rows. Lymph node extranodal extension "
+        "-- NOT thyroid-tumor ETE. Default disposition = RECLASS_INVASION_TYPE "
+        "(probably to lymphatic_microscopic) or REJECT. NOT FLIP_TO_PRESENT for "
+        "soft_tissue / perineural ETE.",
+        fill=SAFE_FILL,
+    )
+    write_orphan_sheet(
+        wb, "4_ambig_extracap", AMBIG_EC,
+        f"REVIEW -- {len(AMBIG_EC)} AMBIGUOUS 'extracapsular extension' rows. "
+        "Without thyroid-vs-LN qualifier, these are usually LN ENE in pathology "
+        "context but ambiguous without source-note context. Mark NEEDS_CONTEXT "
+        "and I'll pull surrounding text.",
+        fill=PRIORITY_FILL,
+    )
+    write_orphan_sheet(
+        wb, "5_vocal_or_not_invasion", VOCAL_OR,
+        f"REVIEW -- {len(VOCAL_OR)} VOCAL CORD / NOT-INVASION rows. Vocal cord "
+        "paralysis / RLN involvement go in a different column. Mass effect / "
+        "displacement / laryngoceles are not invasion. Default = REJECT or "
+        "RECLASS.",
+        fill=SAFE_FILL,
+    )
+    write_orphan_sheet(
+        wb, "6_benign_orphans", benign,
         f"AUDIT ONLY -- {len(benign)} BENIGN orphans (patient has "
         "canonical_path_benign_events_v1 only; NO malignant path). Per Rule #1 "
-        "(cancer-only), Script 363 correctly downgraded these -- they are massive "
-        "goiter / MNG / multinodular substernal extension being mis-extracted by "
-        "the LLM as malignant ETE. Spot-check ~5 to audit-confirm Rule #1; "
-        "default disposition = ACCEPT all.",
+        "(cancer-only), Script 363 correctly downgraded these -- they are "
+        "massive goiter / MNG / multinodular substernal extension being mis-"
+        "extracted by the LLM as malignant ETE. Spot-check ~5 to audit-confirm "
+        "Rule #1; default disposition = ACCEPT all.",
         fill=SAFE_FILL,
     )
     write_swap_sheet(wb, swaps)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     wb.save(OUT)
-    print(f"wrote {OUT} (cancer={len(cancer)}, benign={len(benign)}, swaps={len(swaps)})")
+    print(
+        f"wrote {OUT} "
+        f"(cancer: HIGH_POS={len(HIGH_POS)} KEYWORD={len(KEYWORD)} "
+        f"LN_ENE={len(LN_ENE)} AMBIG_EC={len(AMBIG_EC)} "
+        f"VOCAL_OR_NOT={len(VOCAL_OR)} | benign={len(benign)} swaps={len(swaps)})"
+    )
 
 
 if __name__ == "__main__":

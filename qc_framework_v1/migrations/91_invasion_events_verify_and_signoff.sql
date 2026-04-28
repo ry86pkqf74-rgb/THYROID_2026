@@ -383,7 +383,23 @@
 --                                 mis-extracted by LLM as malignant ETE.
 --                                 AUDIT-confirm only.
 --              47 CANCER orphans (canonical_path_malignant_events_v1 entry).
---                                 TRUE review queue.
+--                                 Sub-bucketed per Logan's clinical rules
+--                                 (2026-04-28 v3):
+--                  HIGH_POS  13 (anatomic structure + invasion verb;
+--                                strap muscle invasion, cartilage erosion,
+--                                trachea/SVC/mediastinum involvement, etc.)
+--                                -> default FLIP_TO_PRESENT
+--                  KEYWORD   19 (bare 'extrathyroidal extension' without
+--                                anatomic detail) -> NEEDS_CONTEXT
+--                  LN_ENE     8 (extranodal extension on lymph nodes;
+--                                NOT thyroid-tumor ETE)
+--                                -> RECLASS_INVASION_TYPE or REJECT
+--                  AMBIG_EC   4 ('extracapsular extension' without thyroid
+--                                vs LN qualifier; usually LN in path
+--                                context) -> NEEDS_CONTEXT
+--                  VOCAL_OR_NOT_INVASION 3 (vocal cord paralysis -- different
+--                                column; or pure mass effect / incidental
+--                                like laryngocele) -> REJECT or RECLASS
 --
 --   Linkage cluster: linkage_method, n_candidate_episodes,
 --   linkage_ambiguous_multi_episode all 0 diffs vs pre-363. The 759-group

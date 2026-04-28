@@ -87,13 +87,17 @@ CTC-equivalence verification (mig_91 addendum, 2026-04-28) against `"Thyroid 202
 | Rule-library matches (cannot/equivocal/compression/adjacency/etc.) | ~312 | DEFENSIBLE |
 | De-duplicated by structured `present` finding | ~828 | DEFENSIBLE |
 | Compression/adjacency/explicit-negative/adherent orphans | ~113 | DEFENSIBLE |
-| 101 ORPHAN downgrades — split by Rule #1 (cancer-only): | | |
-| **CANCER orphans** (patient has malignant path) | **47** | **REVIEW** |
+| 101 ORPHAN downgrades — split by Rule #1 (cancer-only) + Logan's clinical sub-buckets: | | |
+| **CANCER / HIGH_POS** (anatomic + invasion verb; strap muscle / cartilage / trachea / SVC) | **13** | **PRIORITY 1 — default FLIP_TO_PRESENT** |
+| **CANCER / KEYWORD** (bare "extrathyroidal extension" — needs source-note context) | **19** | **NEEDS_CONTEXT** |
+| **CANCER / LN_ENE** (extranodal extension on LNs — NOT thyroid-tumor ETE) | **8** | RECLASS or REJECT |
+| **CANCER / AMBIG_EC** ("extracapsular extension" without thyroid-vs-LN qualifier) | **4** | NEEDS_CONTEXT |
+| **CANCER / VOCAL_OR_NOT** (vocal cord — different column; or mass effect / incidental) | **3** | REJECT or RECLASS |
 | **BENIGN orphans** (patient has only benign path; goiter/MNG ETE mis-extracted) | **54** | AUDIT-CONFIRM (Rule #1: Script 363 correctly downgraded) |
 
 Output: `verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xlsx` (3 review sheets + summary). Build script: `qc_framework_v1/scripts/build_invasion_events_orphan_review.py`.
 
-Sign-off path: Logan reviews 47 cancer_orphans (TRUE priority) + spot-checks ~5 benign_orphans for Rule #1 audit → mig_91b applies FLIPs as targeted UPDATE on `main.canonical_invasion_events_v1` → all 11 cols flagged `verified` → table_status=`verified` (would push verified count to 8/184, ~238 cols).
+Sign-off path: Logan reviews 13 HIGH_POS (rapid FLIP) + 8 LN_ENE (RECLASS) + 3 VOCAL_OR_NOT (REJECT) + spot-checks BENIGN; flags KEYWORD (19) + AMBIG_EC (4) rows needing source-note context, I re-pull and re-surface; final dispositions applied → mig_91b applies FLIPs/RECLASSes as targeted UPDATE on `main.canonical_invasion_events_v1` → all 11 cols flagged `verified` → table_status=`verified` (would push verified count to 8/184, ~238 cols).
 
 Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchanged from verified state. Defer multi-finding rename via CF-91-LINKAGE-COL-NAME.
 
