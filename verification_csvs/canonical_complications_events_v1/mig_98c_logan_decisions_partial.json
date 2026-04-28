@@ -1,0 +1,572 @@
+{
+  "10047": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative"
+  },
+  "10145": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "1015": {
+    "raw_decision": "? no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "10237": {
+    "raw_decision": "True",
+    "raw_note": "2/6/2024 date; not operative related",
+    "mapped_decision": "NOT_OPERATIVE",
+    "rationale": "Logan: True + not operative-related"
+  },
+  "1054": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "10563": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "10615": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative"
+  },
+  "10622": {
+    "raw_decision": "True",
+    "raw_note": "prior op related",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op"
+  },
+  "1063": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "10685": {
+    "raw_decision": "Intentional sacrifice (TRUE)",
+    "raw_note": "",
+    "mapped_decision": "INTENTIONAL_SACRIFICE",
+    "rationale": "Logan: explicit intentional sacrifice"
+  },
+  "10887": {
+    "raw_decision": "True",
+    "raw_note": "prrior op",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op"
+  },
+  "10932": {
+    "raw_decision": "True",
+    "raw_note": "prior",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op"
+  },
+  "11101": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11142": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11226": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11231": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11245": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11345": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11348": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "11388": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "11533": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative"
+  },
+  "11609": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "1167": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "11739": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative"
+  },
+  "11898": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "11915": {
+    "raw_decision": "True",
+    "raw_note": "non-op/preop",
+    "mapped_decision": "NOT_OPERATIVE",
+    "rationale": "Logan: True + not operative-related"
+  },
+  "1208": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "121": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "12195": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "1341": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "1378": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "148": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "251": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "334": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "3587": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "3891": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear"
+  },
+  "394": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "4287": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "4430": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "469": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "541": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "545": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "578": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "625": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "6320": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "6662": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "6732": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7175": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7276": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7346": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear"
+  },
+  "7428": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "744": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7462": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "755": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7580": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related"
+  },
+  "7690": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "7901": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear"
+  },
+  "794": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence"
+  },
+  "8033": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8088": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "8105": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8188": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "8252": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8333": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related"
+  },
+  "8425": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8460": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8503": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8564": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "8616": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8618": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related"
+  },
+  "8636": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8772": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "8815": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "8885": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing"
+  },
+  "8917": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "9012": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "9026": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "9132": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9229": {
+    "raw_decision": "True",
+    "raw_note": "intentional operative",
+    "mapped_decision": "INTENTIONAL_SACRIFICE",
+    "rationale": "Logan: True + intentional operative (treat as sacrifice)"
+  },
+  "9292": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9337": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9397": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9398": {
+    "raw_decision": "indeterminate",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: indeterminate \u2014 needs explicit call"
+  },
+  "9502": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9703": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "9809": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9850": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real"
+  },
+  "9910": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "9921": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)"
+  },
+  "795": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  },
+  "807": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  },
+  "809": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  },
+  "845": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  },
+  "8545": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  },
+  "963": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed"
+  }
+}
