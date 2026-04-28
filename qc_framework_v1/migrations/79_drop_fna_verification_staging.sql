@@ -1,0 +1,41 @@
+-- =============================================================================
+-- Migration 79 -- drop FNA verification staging tables
+-- =============================================================================
+-- Date:   2026-04-28
+-- Author: Logan Glosser (drafted with Claude / Cowork)
+-- Plan:   Logan's 'no stale FNA/bethesda tables' check confirms the FNA pilot
+--         is closed. The 2 verification staging tables I created during
+--         mig_65/71 are no longer needed.
+--
+-- Tables dropped:
+--   manuscript_workspace.fna_source_long_v1_step_b
+--     - Created in mig_65a from raw/FNAs 12_5_2025.xlsx > FNA Bethesda
+--     - Used to verify source columns against canonical_fna_events_v1
+--     - Replayable via qc_framework_v1/scripts/extract_fna_source_long.py +
+--       qc_framework_v1/scripts/stage_fna_source_long_via_local_duckdb.py
+--
+--   manuscript_workspace.fna_bethesda_rescore_staging_v1
+--     - Created in mig_71 from raw/FNAs_Rescored_Long_Format.xlsx
+--     - Used to verify bethesda_calculated_num against rescore overlay
+--     - Replayable via qc_framework_v1/scripts/stage_rescore_file.py
+--
+-- Final FNA/Bethesda inventory in thyroid_canonical_publication_v1_0:
+--   Base tables (3):
+--     main.canonical_fna_events_v1          (THE verified table, 38 cols)
+--     main.canonical_fna_patient_rollup_v1  (patient rollup; tier2 verification later)
+--     main.imaging_fna_linkage_v3           (imaging cross-link)
+--   Views (12; all functional, no stale column refs after mig_73 renames):
+--     manuscript_workspace.canonical_fna_events_v1_{date_clean,dts_clean,dedup,temporal}
+--     manuscript_workspace.canonical_fna_patient_rollup_v1_clean
+--     manuscript_workspace.canonical_molecular_genetics_v2_fna_rebind
+--     manuscript_workspace.cohort_m011/m028/m029/m035/m046/m053_*
+--
+-- Executed via Cowork query_rw 2026-04-28.
+-- =============================================================================
+
+DROP TABLE IF EXISTS manuscript_workspace.fna_source_long_v1_step_b;
+DROP TABLE IF EXISTS manuscript_workspace.fna_bethesda_rescore_staging_v1;
+
+-- =============================================================================
+-- end of migration 79
+-- =============================================================================
