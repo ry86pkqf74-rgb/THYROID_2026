@@ -123,3 +123,26 @@ Order: chronological (newest at the bottom).
   - Method: Path A (CTC-equivalence) for 38 inherited cols against `archive_pub_v1_0.operative_episode_detail_v2_pre362_20260422_005646` — 11,773/11,773 MATCH. Path B (Step 1b UPDATE rule re-run) for 6 op_detail enrichment cols against LIVE `note_entities_operative_detail` — 11,773/11,773 MATCH. Step D batch flip for 10 na_provenance cols.
   - **Carry-forward CF-90-DATE-FORMAT:** `resolved_surgery_date` is stored as `MM/DD/YYYY` in canonical vs `YYYY-MM-DD` in pre362 archive. Date values are identical under date-parsing; only format differs (reformatted by a downstream normalization pass, not Script 362 itself which was a literal SELECT *). Defer.
   - **Unblocks** `canonical_fna_events_v1.days_to_surgery` deferred carry-forward — cross-table derivation against this table's `resolved_surgery_date` / `surgery_date_native` is now operable.
+
+### 2026-04-28 — main.canonical_invasion_events_v1
+
+- **Rows:** 51,751 (post-mig_91b; 51,773 pre - 22 LN_ENE/complications/non-thyroid DELETEs)
+- **Patients:** 10,871
+- **Columns:** 11 verified + 9 auto-skipped (na) = 20
+- **Sign-off migration:** `qc_framework_v1/migrations/91_invasion_events_verify_and_signoff.sql` (verification + addendum) + `qc_framework_v1/migrations/91b_invasion_events_apply_decisions.sql` (apply)
+- **Method:** CTC-equivalence vs `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_invasion_events_v1_pre363v3_20260422_032942`. 7 of 11 cols had 0 diffs (CTC-pass): invasion_type, finding_date, source_modality, source_kind, linkage_method, n_candidate_episodes, linkage_ambiguous_multi_episode. 4 cols had localized diffs: finding_status (1,353 LLM downgrades), evidence_qualifier (70 swaps), evidence_span_hash (4 swaps), confidence (2 swaps).
+- **Notes:**
+  - 1,353 finding_status downgrades decomposed: ~312 rule-library matches DEFENSIBLE; ~828 de-duplicated by structured present DEFENSIBLE; ~113 comp/adj/neg orphans DEFENSIBLE; **101 ORPHAN downgrades** dispositioned by Logan + Cowork extrapolation.
+  - **Rule #1 (cancer-only):** 54 of 101 orphans on patients with `canonical_path_benign_events_v1` only (NO malignant path) — Script 363 correctly downgraded; massive goiter / MNG / multinodular substernal extension being mis-extracted as malignant ETE. ACCEPT-default.
+  - **47 cancer orphans dispositioned:** 13 HIGH_POS Logan FLIP_TO_PRESENT; 3 KEYWORD source-text-confirmed FLIP (FVPTC perithyroidal extension, microcarcinoma capsule+muscle, TGDC PTC hyoid bone); 4 RECLASS to invasion_type='capsular' + FLIP (encapsulated tumors per Logan's rule); 17 DELETE for LN ENE (separate domain); 2 DELETE for vocal cord/mass effect (belongs in canonical_complications_events_v1 per Logan); 1 DELETE incidental laryngocele; 2 DELETE non-primary-thyroid CT context (post-thyroidectomy recurrence + lung-metastatic-to-thyroid); 5 ACCEPT correct downgrades (CAP template echoes, age-related arytenoid sclerosis, "focus suspicious", N/A).
+  - **Architectural innovation:** *CTC-equivalence on a UNION canonical*. Even though Script 363 assembled this canonical via UNION pipeline (not SELECT*+filter+UPDATE), live and pre-363 snapshot share identical row count + identical row-identifying-key set, so CTC-equivalence applies. Established 2026-04-28; carry forward to other UNION canonicals.
+  - **Memory:** `feedback_invasion_orphan_clinical_rules.md` — 6-rule library + path_synoptics structured probe + typical disposition split (carry forward to other invasion-canonical orphan reviews).
+  - **Carry-forwards:**
+    - **CF-91-VOCAL-CORD** — 5048-airway + 11862 deleted from invasion_events; should re-emerge in `canonical_complications_events_v1`.
+    - **CF-91-NON-PRIMARY-THYROID** — 4107 + 5048-ct deleted because patient is post-thyroidectomy or metastatic-from-non-thyroid; may need a non-primary-thyroid invasion canonical.
+    - **CF-91-LN-ENE-DOMAIN** — 17 LN ENE rows deleted; should re-emerge in `canonical_lymph_node_events_v1` / `canonical_path_malignant_events_v1.lymph_node_ene` when that domain is built.
+    - **CF-91-LINKAGE-COL-NAME** — `linkage_ambiguous_multi_episode` counts findings not episodes; cosmetic rename to `linkage_ambiguous_multi_finding`.
+    - **CF-91-GROSS-VS-MICRO-ETE-NAMING** — `gross_ete` is acting as default bucket for any synoptic ETE without explicit 'microscopic' label; numbers reversed from clinical expectation (gross 1,084 > micro 279 pts at patient level). Domain re-derivation may be needed for clean gross/micro split.
+  - **Analysis-ready ETE breakdown** (post-mig_91b, finding_status='present'):
+    - CANCER (4,137 pts): pathology gross_ete 1,084 pts / microscopic_ete 279 pts / soft_tissue 493 pts / any-pathology-ETE 1,208 pts (deduped union); imaging ETE 56 pts.
+    - BENIGN (6,734 pts): pathology ETE 7 pts (residual, audit-confirm); imaging ETE 41 pts (substernal goiter mis-extractions, awaiting cleanup in benign canonical).
