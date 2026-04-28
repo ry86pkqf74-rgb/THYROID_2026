@@ -35,10 +35,13 @@ ARCH_NEC = (
     '"Thyroid 2026 UPdated".archive_pub_v1_0.'
     "note_entities_complications_pre364_20260422_050902"
 )
-ONSET_WINDOW_VCP = 30
 ACCEPT_INDETERMINATE_RID = "7306"
 CF91_RID = "5048"
-CF91_FINDING_DATE = "2015-10-08"
+# CT finding date from deleted invasion row invasion_event_id=b79ddab49f77d446c6d232e4819ee2b0
+# (mig_91 RECLASS_VOCAL_OR_MASS_EFFECT); NOT surgery date — preserves post-op granularity.
+CF91_FINDING_DATE = "2016-12-02"
+# Draft mistake used first_surgery_date; repair by source_row_id hash if present.
+CF91_WRONG_SYNTH_FINDING_DATE = "2015-10-08"
 CF91_EVIDENCE_PHRASE = (
     "medialization of the right true vocal cord and arytenoid"
 )
@@ -185,9 +188,14 @@ def phase_flip_negation_risk(con: duckdb.DuckDBPyConnection, do_writes: bool) ->
         f"AND finding_status = 'indeterminate' "
         f"AND research_id != '{ACCEPT_INDETERMINATE_RID}'"
     ).fetchone()[0]
+    if int(pre) == 0:
+        print(
+            "  FLIP_TO_PRESENT — skip (0 rows; likely already applied)"
+        )
+        return 0
     if int(pre) != 23:
         raise SystemExit(
-            f"Precondition failed: expected 23 indeterminate VCP rows "
+            f"Precondition failed: expected 0 or 23 indeterminate VCP rows "
             f"(excl {ACCEPT_INDETERMINATE_RID}), got {pre}"
         )
     if do_writes:
@@ -207,7 +215,48 @@ def phase_flip_negation_risk(con: duckdb.DuckDBPyConnection, do_writes: bool) ->
     return int(pre)
 
 
+def _cf91_synth_source_row_id_sql(finding_date_literal: str) -> str:
+    return (
+        f"CAST(hash(CAST(5048 AS BIGINT), '{SYNTH_SOURCE_TAG}', "
+        f"CAST('{finding_date_literal}' AS DATE)) AS VARCHAR)"
+    )
+
+
 def phase_insert_cf91_5048(con: duckdb.DuckDBPyConnection, do_writes: bool) -> None:
+    wrong_sid = _cf91_synth_source_row_id_sql(CF91_WRONG_SYNTH_FINDING_DATE)
+    right_sid = _cf91_synth_source_row_id_sql(CF91_FINDING_DATE)
+
+    if do_writes:
+        n_wrong = con.execute(
+            f"""
+            SELECT COUNT(*) FROM {EVENTS}
+            WHERE research_id = '{CF91_RID}'
+              AND complication_type = 'vocal_cord_paralysis'
+              AND source_table = 'note_entities_complications'
+              AND source_row_id = {wrong_sid}
+            """
+        ).fetchone()[0]
+        if int(n_wrong) > 0:
+            con.execute(
+                f"""
+                UPDATE {EVENTS}
+                SET finding_date = CAST('{CF91_FINDING_DATE}' AS DATE),
+                    source_row_id = {right_sid},
+                    source_modality = 'clinic_note',
+                    source_evidence_type = 'nlp_proxy',
+                    finding_date_source = 'cf91_invasion_absorption_synthetic',
+                    build_ts = CURRENT_TIMESTAMP
+                WHERE research_id = '{CF91_RID}'
+                  AND complication_type = 'vocal_cord_paralysis'
+                  AND source_table = 'note_entities_complications'
+                  AND source_row_id = {wrong_sid}
+                """
+            )
+            print(
+                f"  CF91 REPAIR — corrected draft finding_date / keys "
+                f"({n_wrong} row(s))"
+            )
+
     n = con.execute(
         f"SELECT COUNT(*) FROM {EVENTS} "
         f"WHERE research_id = '{CF91_RID}' "
@@ -217,14 +266,13 @@ def phase_insert_cf91_5048(con: duckdb.DuckDBPyConnection, do_writes: bool) -> N
         print(f"  CF91 INSERT — skip (already {n} VCP row(s) for {CF91_RID})")
         return
     if not do_writes:
-        print(f"  [dry-run] would INSERT synthetic VCP row for rid {CF91_RID}")
+        print(
+            f"  [dry-run] would REPAIR wrong-date synth row (if any) then "
+            f"INSERT synthetic VCP row for rid {CF91_RID} "
+            f"(finding_date={CF91_FINDING_DATE})"
+        )
         return
 
-    # Match Script 364 entity source_row_id pattern (research_id is BIGINT in NEC).
-    src_row_sql = (
-        f"CAST(hash(CAST(5048 AS BIGINT), '{SYNTH_SOURCE_TAG}', "
-        f"CAST('{CF91_FINDING_DATE}' AS DATE)) AS VARCHAR)"
-    )
     ins = f"""
     INSERT INTO {EVENTS} (
         research_id, source_table, source_row_id, source_modality, source_kind,
@@ -236,11 +284,11 @@ def phase_insert_cf91_5048(con: duckdb.DuckDBPyConnection, do_writes: bool) -> N
     SELECT
         '{CF91_RID}',
         'note_entities_complications',
-        {src_row_sql},
-        'op_note',
+        {right_sid},
+        'clinic_note',
         'entity_legacy',
         'vocal_cord_paralysis',
-        'operative_note',
+        'nlp_proxy',
         'possible',
         'unspecified',
         'indeterminate',
@@ -255,11 +303,21 @@ def phase_insert_cf91_5048(con: duckdb.DuckDBPyConnection, do_writes: bool) -> N
         'cf91_invasion_absorption_synthetic'
     """
     con.execute(ins)
-    print(f"  CF91 INSERT — rid {CF91_RID} (synthetic entity row)")
+    print(
+        f"  CF91 INSERT — rid {CF91_RID} (synthetic entity row; "
+        f"finding_date={CF91_FINDING_DATE})"
+    )
 
 
 def phase_derive_onset(con: duckdb.DuckDBPyConnection, do_writes: bool) -> None:
-    """Mirror Script 364 onset refinement for vocal_cord_paralysis only."""
+    """Derive onset_class for present VCP with unspecified native onset.
+
+    Uses the same day-bucket rules as Script 364 (intraop / early_postop /
+    late_postop). 364's *linkage* step caps the surgery→finding window at
+    30 days (Script 364 linkage cap), which leaves long-interval findings (e.g. post-op
+    CT months later) unlinked. Here we anchor to the latest surgery on or before
+    finding_date (no upper cap) so CF-91-style rows classify as late_postop.
+    """
     sql = f"""
     WITH op AS (
         SELECT
@@ -285,8 +343,6 @@ def phase_derive_onset(con: duckdb.DuckDBPyConnection, do_writes: bool) -> None:
         LEFT JOIN op
             ON op.research_id = c.research_id
            AND op.surgery_date <= c.finding_date
-           AND DATE_DIFF('day', op.surgery_date, c.finding_date) <= {ONSET_WINDOW_VCP}
-           AND DATE_DIFF('day', op.surgery_date, c.finding_date) >= 0
         WHERE c.complication_type = 'vocal_cord_paralysis'
           AND c.finding_status = 'present'
           AND c.onset_class = 'unspecified'
@@ -384,10 +440,11 @@ def main() -> int:
     try:
         before = _counts(con)
         print("  pre-counts:", before)
-        if before["vcp_indeterminate"] != 24:
+        ind_pre = before["vcp_indeterminate"]
+        if ind_pre not in (1, 24):
             raise SystemExit(
-                f"Expected 24 indeterminate VCP rows pre-apply, "
-                f"got {before['vcp_indeterminate']}"
+                f"Expected 24 (fresh) or 1 (already applied) indeterminate "
+                f"VCP rows, got {ind_pre}"
             )
 
         phase_add_and_backfill_finding_date_source(con, do_writes)

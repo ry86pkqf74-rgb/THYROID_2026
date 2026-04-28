@@ -9,10 +9,10 @@
 | Bucket / case | Disposition |
 |---------------|-------------|
 | NEGATION_RISK (24 rows) | 23 × **FLIP_TO_PRESENT** (`finding_status` indeterminate → present). **1 × ACCEPT** — `research_id` **7306** (mixed present/negated). |
-| CF91_ABSORPTION | **5048** — **ADD** synthetic `note_entities_complications`-style row (per-mention granularity; evidence hash only). **11862** — **NO_ADD** (mass effect, not VC paralysis). |
+| CF91_ABSORPTION | **5048** — **ADD** synthetic `note_entities_complications`-style row (per-mention granularity; evidence hash only). **`finding_date` = `2016-12-02`** (CT date from deleted invasion row `invasion_event_id=b79ddab49f77d446c6d232e4819ee2b0`, mig_91 — not surgery date). **11862** — **NO_ADD** (mass effect, not VC paralysis). |
 | CONFIRMED_POSITIVE (32) | **ACCEPT** (no change). |
 | CONFIRMED_NEGATIVE (153) | **ACCEPT** (no change). |
-| ONSET_AMBIGUOUS (present + `onset_class = unspecified`) | **AUTO_DERIVE** `onset_class` using Script **364** linkage to `canonical_operative_events_v1` (30-day window for `vocal_cord_paralysis`). |
+| ONSET_AMBIGUOUS (present + `onset_class = unspecified`) | **AUTO_DERIVE** `onset_class`: same day-bucket rules as Script 364 (intraop / early_postop / late_postop), anchored to **latest surgery on or before `finding_date`** (mig_98a uses no 30-day link cap so long-interval CT/post-op findings classify as `late_postop`; 364’s build caps linkage at 30 days). |
 | PERMANENCE_UNKNOWN (49) | **ACCEPT_AS_INDETERMINATE** — no `permanence_class` mutation. |
 
 ## Schema carry-forward (this migration)
