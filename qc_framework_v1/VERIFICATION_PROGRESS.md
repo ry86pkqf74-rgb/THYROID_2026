@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_95b — invasion family + FNA + operative rollups fully closed; 15 tables / 366 cols)
+**Last refreshed:** 2026-04-28 (post-mig_97 — FNA days-to-surgery closed; path benign structurally repaired with one source-absent carry-forward)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,13 +16,13 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **15 / 184** (8.2 %) — 8 events tables + 7 patient rollups (5 invasion family + fna + operative) |
-| Tables `verified` in registry (pre-v2 legacy + v2) | 23 (10 are pre-v2 placeholders with NULL signed_off_ts) |
+| Tables verified under Protocol v2 | **15 / 184** (8.2 %) — 8 events tables + 7 patient rollups (5 invasion family + fna + operative); plus 1 in-progress (`canonical_path_benign_events_v1`) |
+| Tables `verified` in registry (pre-v2 legacy + v2) | 25 (legacy + v2 registry status; `canonical_path_benign_events_v1` is in_progress) |
 | Columns in scope | 5,502 (started 5,494; dropped 4 in mig_84; added 12 ETE taxonomy downstream cols in mig_95) |
-| Columns Logan-verified (v2) | **366 / 5,502** (events 238 + 7 rollups 128) |
-| Columns at `not_started` (in v2 queue) | **4,435** |
-| Columns at `na` (legacy v1 auto-skip, pending re-tier) | **700** |
-| Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |
+| Columns Logan-verified (v2) | **416 / 5,502** (includes +50 verified `canonical_path_benign_events_v1` columns under mig_97) |
+| Columns at `not_started` (in v2 queue) | **4,390** |
+| Columns at `na` (legacy v1 auto-skip / source-absent placeholders) | **695** |
+| Columns at `failed` (deferred carry-forward) | 1 (`canonical_path_benign_events_v1.synoptic_row_ix`) |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
 its slot in the priority queue, its remaining `na` columns will be re-tiered
@@ -34,7 +34,7 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 
 ### `main.canonical_fna_events_v1` (PILOT)
 
-38 columns / 8,050 rows / 14-migration arc (mig_65 → mig_78):
+38 columns / 8,050 rows / 15-migration arc (mig_65 → mig_78, mig_96 carry-forward closure):
 
 | Method | Cols | Source / Rule |
 |---|---|---|
@@ -42,6 +42,8 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 | `mechanical_source_compare` | 7 | `FNAs 12_5_2025.xlsx > FNA Bethesda` |
 | `mechanical_derivation_compare` | 14 | Re-run derivation rule against stored value |
 | `manual_source_review` | 3 | Per-row review (`laterality`, `bethesda_calculated_num`, `fna_site`) |
+
+**mig_96 closure:** `days_to_surgery` recomputed for all 8,050 rows from `fna_date_resolved` to first non-`opnote_clustered` verified operative date. Post-apply re-derivation: 8,050/8,050 exact, 0 NULL, max_abs_days=9,019, 0 rows ≥10,000.
 
 ### `main.canonical_airway_invasion_events_v1`
 
@@ -69,7 +71,19 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 
 ## In progress
 
-(none — last in-progress table `canonical_invasion_events_v1` signed off via mig_91b on 2026-04-28; see Recently verified)
+### `main.canonical_path_benign_events_v1` (mig_97)
+
+11,688 rows / 10,871 patients / 55 columns. Registry state after mig_97: **50 verified / 4 na / 1 failed / 0 not_started**.
+
+Structural repairs applied:
+
+| Issue | Pre | Post | Status |
+|---|---:|---:|---|
+| `surgery_episode_id` NULL | 2,656 | 13 | Repaired via verified operative-date backfill (exact-day 2,619; within-7d 24; no same-distance ambiguities) |
+| `has_concomitant_malignant_event=TRUE` | 1 | 4,331 | Recomputed from same episode OR benign path date within ±30 days of malignant surgery date; 0 re-derivation mismatches |
+| `synoptic_row_ix` populated | 0 | 0 | Failed carry-forward remains: source column absent from live `path_synoptics`; do not synthesize Script-108 pandas-load-order IDs |
+
+NLP flag verification: source-backed `nlp_*` flags mechanically match structured `path_synoptics` markers at 100%. Audit artifact: `verification_csvs/canonical_path_benign_events_v1/nlp_flag_verification_summary_mig_97.csv`. Zero-prevalence placeholders (`nlp_normal_thyroid`, `nlp_nifcp`, `nlp_nifp`, `nlp_nifpt`) are `na`.
 
 ### `main.canonical_invasion_events_v1` (signed off — kept here for diff history)
 
@@ -112,7 +126,7 @@ Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchange
 - **`main.canonical_operative_events_v1`** — signed off 2026-04-28 via mig_90 (single migration). Final state: 11,773 rows / 10,871 patients / 54 cols. First table to close in **a single migration** using the CTC-equivalence pattern. Unblocks FNA `days_to_surgery` carry-forward.
 - **`main.canonical_path_malignant_events_v1`** — signed off 2026-04-28 via mig_89 (6-migration arc mig_84 → mig_89). Final state: 6,689 rows / 4,137 patients / 56 cols. Established **CTC-equivalence verification pattern** + **Script-rule re-run verification** (carry forward to subsequent tables built by Script-361-style copy-and-update chains).
 - **`main.canonical_airway_invasion_events_v1`** — signed off 2026-04-28 via mig_83 (4-migration arc mig_80 → mig_83). Final state: 3,155 rows / 2,622 patients / 196 positive (138 pT4a + 58 not_pT4a). Established **findings-vs-staging separation rule** (memory: `feedback_findings_vs_staging.md`).
-- **`main.canonical_fna_events_v1`** — signed off 2026-04-28 via mig_78 (PILOT, 14-migration arc). Final state: 8,050 rows / 38 cols verified + 1 deferred carry-forward (`days_to_surgery`).
+- **`main.canonical_fna_events_v1`** — signed off 2026-04-28 via mig_78 (PILOT, 14-migration arc), then carry-forward closed via mig_96. Final state: 8,050 rows / 38 cols verified / 0 deferred carry-forward. `days_to_surgery` recomputed from verified operative events with 0 post-apply mismatches.
 
 ## Next up
 
@@ -120,16 +134,16 @@ With operative events closed in a single-migration arc, the CTC-equivalence patt
 
 1. **`canonical_extrathyroidal_extension_events_v1` / CPM AJCC re-derivation** — mig_95 fixed the invasion-family taxonomy and feeder flags, but did not silently rederive `canonical_patient_master.ajcc8_t_stage`.
 2. **`canonical_lymph_node_events_v1`** family — pN staging and CF-91-LN-ENE-DOMAIN landing zone.
-3. **`canonical_path_benign_events_v1`** — paired with path malignant; likely Script-N pattern with archived pre-script snapshot available.
+3. **`canonical_path_benign_events_v1.synoptic_row_ix` decision** — only remaining path-benign blocker is source-absent carry-forward `CF-PATH-BENIGN-SYNOPTIC-ROW-IX`; live `path_synoptics` has no source row pointer and SQL must not synthesize the Script-108 global pandas-load-order index.
 4. Other Tier 2 events tables alphabetically (`canonical_*_events_v1`).
 
 ## Verified tables
 
-See [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md) — 13 Protocol v2 entries.
+See [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md) — updated through mig_97.
 
 ## Failed / blocked
 
-- **`canonical_fna_events_v1.days_to_surgery`** — DEFERRED carry-forward. Cross-table derivation (fna_date_resolved + canonical_operative_events_v1.resolved_surgery_date / surgery_date_native). **Now unblocked** as of mig_90 (operative events sign-off); can be re-opened in a future session if desired.
+- **`canonical_path_benign_events_v1.synoptic_row_ix`** — FAILED carry-forward `CF-PATH-BENIGN-SYNOPTIC-ROW-IX`. Live `path_synoptics` has no `synoptic_row_ix`; Scripts 361/396 intentionally leave this NULL rather than synthesizing an irreproducible Script-108 pandas-load-order index.
 
 ---
 

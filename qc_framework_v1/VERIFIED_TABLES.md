@@ -179,3 +179,28 @@ Order: chronological (newest at the bottom).
 - **Notes:**
   - 7 simple-aggregation cols >99% match: n_fnas (1.3% delta), n_bethesda_calculated (0.7%), n_nondiagnostic (0.7%), first_fna_date (0.9%), last_fna_date (0.5%), worst_bethesda_num (0.3%), best_bethesda_num (0.4%). Residuals reflect filter rules (dates exclude `fna_date_status='unresolved_date'`; n_bethesda_calculated may exclude nondiagnostic).
   - 11 complex-Bethesda cols deterministic from upstream per build-script derivation rules: bethesda_final, bethesda_final_name, bethesda_index_nodule, bethesda_index_nodule_linkage_source, bethesda_max_preop_2010/2015/2023, latest_bethesda_num, cross_fna_concordance, bethesda_confidence, bethesda_derivation_methods, ingest_script_version. Verified via upstream-table-verification + build-script-ran-successfully (same pattern as Logan's mig_95 invasion rollups).
+
+### 2026-04-28 — main.canonical_fna_events_v1 (mig_96 carry-forward closure)
+
+- **Rows:** 8,050 / 5,229 patients
+- **Columns:** 38 verified / 0 deferred carry-forward
+- **Sign-off migration:** `qc_framework_v1/migrations/96_fna_days_to_surgery_recompute.sql`
+- **Method:** Mechanical derivation compare against verified `canonical_operative_events_v1`.
+- **Notes:**
+  - Closed `CF-FNA-D2S`: all 8,050 `days_to_surgery` values recomputed from `fna_date_resolved` to each patient's first non-`opnote_clustered` operative date.
+  - Literal first-surgery `MIN(all operative dates)` failed the sanity gate with 26 intervals ≥10,000 days because early-1990s `opnote_clustered` rows were historical-date artifacts. Excluding `opnote_clustered` preserves all 8,050 derivable rows, yields max_abs_days=9,019, and produces 0 mismatches on post-apply re-derivation.
+  - Final FNA signoff registry state: 38 verified / 0 not_started / 0 failed / 0 na; `table_status='verified'`.
+
+### 2026-04-28 — main.canonical_path_benign_events_v1 (mig_97 in-progress; one failed carry-forward remains)
+
+- **Rows:** 11,688 / 10,871 patients
+- **Columns:** 50 verified + 4 na + 1 failed carry-forward = 55
+- **Sign-off migration:** `qc_framework_v1/migrations/97_path_benign_repair.sql`
+- **Method:** Mechanical derivation compare against Script 361/396 path benign build rules plus targeted verified-operative date backfill.
+- **Notes:**
+  - Live build lineage confirmed as `build_script=396` (`scripts/396_specimen_master_repair.py` Phase C), inheriting Script 361 Step 2 path-benign semantics.
+  - `surgery_episode_id` NULLs reduced 2,656 → 13 by deterministic same-patient operative-date backfill from verified `canonical_operative_events_v1`, excluding `opnote_clustered` artifacts. Backfill was exact-day for 2,619 rows and within 7 days for 24 rows; no same-distance ambiguities.
+  - `has_concomitant_malignant_event` recomputed from same surgery episode OR benign path date within ±30 days of malignant surgery date. TRUE rows: 1 → 4,331; post-apply re-derivation mismatches: 0.
+  - NLP flag audit summary written to `verification_csvs/canonical_path_benign_events_v1/nlp_flag_verification_summary_mig_97.csv`; no clinical text exported. All source-backed flags mechanically match structured `path_synoptics` markers at 100%; no <80% review workbook required.
+  - Zero-prevalence placeholder NLP flags marked `na`: `nlp_normal_thyroid`, `nlp_nifcp`, `nlp_nifp`, `nlp_nifpt`.
+  - Remaining failed carry-forward: `CF-PATH-BENIGN-SYNOPTIC-ROW-IX`. Live `path_synoptics` has no `synoptic_row_ix`; Scripts 361/396 intentionally leave `synoptic_row_ix` NULL rather than synthesizing Script-108 pandas-load-order row IDs with SQL `ROW_NUMBER()`.
