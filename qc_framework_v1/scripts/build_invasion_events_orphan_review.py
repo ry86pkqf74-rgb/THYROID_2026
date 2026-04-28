@@ -23,7 +23,8 @@ Mass-equivalence on the 11 not_started cols against the snapshot:
 
   ZERO diffs:    invasion_type, finding_date, source_modality, source_kind,
                  linkage_method, n_candidate_episodes,
-                 linkage_ambiguous_multi_episode  (7 cols → CTC-pass)
+                 linkage_ambiguous_multi_finding  (renamed by mig_95;
+                 formerly linkage_ambiguous_multi_episode; 7 cols → CTC-pass)
 
   Localized:     finding_status (1,353 rows / 100% LLM / 100% downgrades)
                  evidence_qualifier (70 rows — mostly row-pair swaps)
@@ -431,7 +432,7 @@ def write_summary(wb):
         ("CTC-equivalence pattern",     "Live vs pre-363 snapshot — same row count, same identifying keys, deterministic key-pair JOIN"),
         ("", ""),
         ("RESULT — 7 of 11 not_started cols pass at 0 diffs:", ""),
-        ("",  "invasion_type / finding_date / source_modality / source_kind / linkage_method / n_candidate_episodes / linkage_ambiguous_multi_episode"),
+        ("",  "invasion_type / finding_date / source_modality / source_kind / linkage_method / n_candidate_episodes / linkage_ambiguous_multi_finding"),
         ("", ""),
         ("4 of 11 cols carry localized diffs:", ""),
         ("  finding_status",            "1,353 rows changed (100% on source_kind='llm'; 100% confidence-downgrades)"),

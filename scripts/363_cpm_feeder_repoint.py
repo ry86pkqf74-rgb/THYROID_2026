@@ -8,7 +8,7 @@ operative BOOL flags. Runs between the v3-iter-2 build commit
 (`b0a03b0`) and the cascade strip (`--commit --phase 7`).
 
 REPOINT (8 existing CPM BOOL cols updated from rollup):
-    nlp_path_ete_mentioned          ← any_gross_ete_anywhere
+    nlp_path_ete_mentioned          ← any_ete_in_op_or_path
     op_esophageal_inv_any            ← any_esophageal_anywhere
     op_intraop_gross_ete_any         ← any_gross_ete_anywhere
     op_local_invasion_any            ← any_soft_tissue_anywhere
@@ -30,6 +30,8 @@ ADD (7 new CPM BOOL cols, populated from rollup):
     any_perineural_anywhere
     any_soft_tissue_anywhere
     any_microscopic_ete_anywhere
+    any_ete_present_not_further_specified_anywhere
+    any_ete_anywhere
     any_airway_anywhere
 
 EXPLICIT SKIPS (8 cols flagged in heuristic plan but NOT real feeders):
@@ -97,8 +99,9 @@ RUN_DATE = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 # (cpm_col, rollup_col, rationale)
 REPOINT: list[tuple[str, str, str]] = [
     ("nlp_path_ete_mentioned",
-     "any_gross_ete_anywhere",
-     "NLP-extracted path ETE → cross-modal gross ETE present"),
+     "any_ete_in_op_or_path",
+     "NLP-extracted path ETE → path/operative ETE union "
+     "(gross + microscopic + present-not-further-specified + soft_tissue)"),
     ("op_esophageal_inv_any",
      "any_esophageal_anywhere",
      "operative esophageal invasion any → cross-modal"),
@@ -146,6 +149,14 @@ ADD: list[tuple[str, str, str]] = [
      "any_microscopic_ete_anywhere",
      "v3 ETE subtype: microscopic_ete (separate from gross_ete; "
      "disambiguated via entity_value modifier in LLM CTE)"),
+    ("any_ete_present_not_further_specified_anywhere",
+     "any_ete_present_not_further_specified_anywhere",
+     "mig_95 ETE taxonomy: ETE present but not further graded; "
+     "generic present/yes path ETE is not gross"),
+    ("any_ete_anywhere",
+     "any_ete_anywhere",
+     "mig_95 ETE union: gross + microscopic + present-not-further-specified "
+     "+ soft_tissue"),
     ("any_airway_anywhere",
      "any_airway_anywhere",
      "v3 vocab: direct airway invasion (NOT deviation/compression "

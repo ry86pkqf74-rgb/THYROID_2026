@@ -1,13 +1,13 @@
 # Cowork Session Continuation Prompt — Protocol v2 verification
 
-**Generated:** 2026-04-28 post-mig_94b (vascular invasion family complete)
-**State on MotherDuck `thyroid_canonical_publication_v1_0`:** 7 / 184 tables verified · 226 / 5,490 cols · all `table_status='verified'` confirmed via registry probe.
+**Updated:** 2026-04-28 post-mig_95 (ETE taxonomy + invasion-family rollups complete)
+**State on MotherDuck `thyroid_canonical_publication_v1_0`:** 13 / 184 Protocol v2 tables verified · 328 / 5,502 cols · all invasion-family rollups `table_status='verified'` confirmed via registry probe.
 
 ## Session goal
 
 Continue clean-master-canonical verification of `thyroid_canonical_publication_v1_0` (MotherDuck account `logan.glosser.eras@gmail.com`).
 
-**Next table to close:** `canonical_invasion_events_v1` (cross-modal UNION, 51,773 rows / 20 cols / 6 modality×kind slices). After that, work through the remaining ~177 tables one at a time using the established playbook.
+**Next table to close:** CPM AJCC/ETE downstream re-derivation or `canonical_lymph_node_events_v1`, depending on whether you want to immediately propagate the corrected ETE taxonomy into staging. The invasion events + five invasion-family rollups are now closed.
 
 ## What's verified through mig_94b
 
@@ -61,7 +61,7 @@ Continue clean-master-canonical verification of `thyroid_canonical_publication_v
 
 ## Open carry-forwards (non-blocking)
 
-- **CF-91-LINKAGE-COL-NAME** — rename `canonical_invasion_events_v1.linkage_ambiguous_multi_episode` → `linkage_ambiguous_multi_finding`
+- **CF-91-LINKAGE-COL-NAME** — CLOSED by mig_95: `canonical_invasion_events_v1.linkage_ambiguous_multi_episode` → `linkage_ambiguous_multi_finding`
 - **CF-91-PSID** — `canonical_path_malignant_events_v1.path_surgery_id` only 3 distinct non-null values; investigate Script 361
 - **CF-91-LLM-V1-V2-DRIFT** — LLM source tables substantially reshaped post Script 363; ct/llm 477 + mri/llm 25 + most op_note/llm 120/168 source rows GONE
 - **CF-91-SOURCE-ROW-ID-COLLISION** — Script 363's `note_row_id|source_line|entity_type` not unique
@@ -81,8 +81,15 @@ mig_91 SQL is a SKELETON with `TODO_LOGAN` sections. With 4 sibling LLM canonica
 
 ## After invasion_events — table queue
 
-### Tier 1: invasion-family rollups (auto-verify cascade, ~5 tables)
-`canonical_airway_invasion_patient_rollup_v1` (20) · `..._esophageal_..._rollup_v1` (11) · `..._t4b_..._rollup_v1` (13) · `..._vascular_..._rollup_v1` (14) · `canonical_invasion_patient_rollup_v1` (41). Deterministic patient-grain rollups; verify via re-derivation rule probe; ~15-30 min each.
+### Tier 1: invasion-family rollups (closed by mig_95)
+`canonical_airway_invasion_patient_rollup_v1` (20) · `..._esophageal_..._rollup_v1` (11) · `..._t4b_..._rollup_v1` (13) · `..._vascular_..._rollup_v1` (14) · `canonical_invasion_patient_rollup_v1` (47). Deterministic patient-grain rollups verified by re-derivation rule probe.
+
+ETE taxonomy is now three-bucket:
+- `gross_ete` = explicit gross / extensive / macroscopic
+- `microscopic_ete` = explicit microscopic / minimal / focal
+- `ete_present_not_further_specified` = generic present / yes / true ETE
+
+Downstream `canonical_invasion_patient_rollup_v1` exposes `any_ete_present_not_further_specified_*` and `any_ete_*` union columns. CPM feeder flags were synced from the corrected rollup, but `canonical_patient_master.ajcc8_t_stage` was not silently rederived.
 
 ### Tier 2: remaining tier1_events canonicals (~10 tables)
 path_benign (55) · path_gland (20) · frozen_section (31) · parathyroid (25) · complications (18) · pmh (19) · psh (19) · medications (19) · pathology_clinical (15) · cervical_ln_clinical (15). Most close single-mig via CTC-equivalence or Script-rule re-run.

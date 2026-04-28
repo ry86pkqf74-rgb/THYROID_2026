@@ -130,7 +130,7 @@ Order: chronological (newest at the bottom).
 - **Patients:** 10,871
 - **Columns:** 11 verified + 9 auto-skipped (na) = 20
 - **Sign-off migration:** `qc_framework_v1/migrations/91_invasion_events_verify_and_signoff.sql` (verification + addendum) + `qc_framework_v1/migrations/91b_invasion_events_apply_decisions.sql` (apply)
-- **Method:** CTC-equivalence vs `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_invasion_events_v1_pre363v3_20260422_032942`. 7 of 11 cols had 0 diffs (CTC-pass): invasion_type, finding_date, source_modality, source_kind, linkage_method, n_candidate_episodes, linkage_ambiguous_multi_episode. 4 cols had localized diffs: finding_status (1,353 LLM downgrades), evidence_qualifier (70 swaps), evidence_span_hash (4 swaps), confidence (2 swaps).
+- **Method:** CTC-equivalence vs `"Thyroid 2026 UPdated".archive_pub_v1_0.canonical_invasion_events_v1_pre363v3_20260422_032942`. 7 of 11 cols had 0 diffs (CTC-pass): invasion_type, finding_date, source_modality, source_kind, linkage_method, n_candidate_episodes, linkage_ambiguous_multi_finding (renamed by mig_95). 4 cols had localized diffs: finding_status (1,353 LLM downgrades), evidence_qualifier (70 swaps), evidence_span_hash (4 swaps), confidence (2 swaps).
 - **Notes:**
   - 1,353 finding_status downgrades decomposed: ~312 rule-library matches DEFENSIBLE; ~828 de-duplicated by structured present DEFENSIBLE; ~113 comp/adj/neg orphans DEFENSIBLE; **101 ORPHAN downgrades** dispositioned by Logan + Cowork extrapolation.
   - **Rule #1 (cancer-only):** 54 of 101 orphans on patients with `canonical_path_benign_events_v1` only (NO malignant path) — Script 363 correctly downgraded; massive goiter / MNG / multinodular substernal extension being mis-extracted as malignant ETE. ACCEPT-default.
@@ -141,8 +141,20 @@ Order: chronological (newest at the bottom).
     - **CF-91-VOCAL-CORD** — 5048-airway + 11862 deleted from invasion_events; should re-emerge in `canonical_complications_events_v1`.
     - **CF-91-NON-PRIMARY-THYROID** — 4107 + 5048-ct deleted because patient is post-thyroidectomy or metastatic-from-non-thyroid; may need a non-primary-thyroid invasion canonical.
     - **CF-91-LN-ENE-DOMAIN** — 17 LN ENE rows deleted; should re-emerge in `canonical_lymph_node_events_v1` / `canonical_path_malignant_events_v1.lymph_node_ene` when that domain is built.
-    - **CF-91-LINKAGE-COL-NAME** — `linkage_ambiguous_multi_episode` counts findings not episodes; cosmetic rename to `linkage_ambiguous_multi_finding`.
-    - **CF-91-GROSS-VS-MICRO-ETE-NAMING** — `gross_ete` is acting as default bucket for any synoptic ETE without explicit 'microscopic' label; numbers reversed from clinical expectation (gross 1,084 > micro 279 pts at patient level). Domain re-derivation may be needed for clean gross/micro split.
-  - **Analysis-ready ETE breakdown** (post-mig_91b, finding_status='present'):
-    - CANCER (4,137 pts): pathology gross_ete 1,084 pts / microscopic_ete 279 pts / soft_tissue 493 pts / any-pathology-ETE 1,208 pts (deduped union); imaging ETE 56 pts.
+    - **CF-91-LINKAGE-COL-NAME** — CLOSED by mig_95: renamed to `linkage_ambiguous_multi_finding`.
+    - **CF-91-GROSS-VS-MICRO-ETE-NAMING** — CLOSED by mig_95: generic structured path ETE now routes to `ete_present_not_further_specified` instead of defaulting to `gross_ete`.
+  - **Analysis-ready ETE breakdown** (post-mig_95, finding_status='present'):
+    - CANCER (4,137 pts): pathology gross_ete 923 pts / microscopic_ete 279 pts / present-not-further-specified 291 pts / soft_tissue 493 pts / any-ETE union available in `canonical_invasion_patient_rollup_v1.any_ete_*`; imaging ETE 56 pts.
     - BENIGN (6,734 pts): pathology ETE 7 pts (residual, audit-confirm); imaging ETE 41 pts (substernal goiter mis-extractions, awaiting cleanup in benign canonical).
+
+### 2026-04-28 — main.canonical_invasion_patient_rollup_v1 and sibling invasion rollups
+
+- **Rows:** 10,871 for `canonical_invasion_patient_rollup_v1`
+- **Columns:** 44 verified + 3 na = 47 for `canonical_invasion_patient_rollup_v1`; sibling rollups verified: airway 17+3, esophageal 9+2, t4b 10+3, vascular 11+3
+- **Sign-off migration:** `qc_framework_v1/migrations/95_ete_taxonomy_and_invasion_rollups.sql`
+- **Notes:**
+  - Mig_95 closes the invasion-family rollup cascade after the event-level canonical was signed off.
+  - Added `any_ete_present_not_further_specified_{anywhere,in_op_or_path,in_imaging}` and `any_ete_{anywhere,in_op_or_path,in_imaging}`.
+  - Live verification after apply: `gross=1,056`, `microscopic=318`, `present_not_further_specified=291`, `soft_tissue=498`, `any_ete=1,277` patients in `canonical_invasion_patient_rollup_v1`.
+  - CPM feeder sync updated `gross_ete_flag`, `op_intraop_gross_ete_any`, `op_nlp_gross_invasion`, `nlp_path_ete_mentioned`, `ete_any_present_path`, and the new ETE taxonomy columns from the corrected rollup. `canonical_patient_master.cpm_built_at` is non-null for all 10,871 rows.
+  - AJCC8 T-stage was not silently rederived in this migration; that remains a CPM AJCC pipeline task because T-stage depends on size, T4 substrate flags, and adjudicated ETE fields.

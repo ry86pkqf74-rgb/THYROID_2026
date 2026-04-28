@@ -53,9 +53,13 @@
 ### B. Invasion_type taxonomy — NEW vocabulary (10 types, was 7)
 
 **KEEP / FIX:**
-- `gross_ete` (existing — fix sourcing per A)
+- `gross_ete` (existing — explicit gross / extensive / macroscopic ETE)
 - `microscopic_ete` (existing — disambiguated via entity_value modifier
   for LLM ETE entities)
+- `ete_present_not_further_specified` (added by mig_95 — ETE present
+  without explicit gross/extensive/macroscopic or microscopic/minimal/focal
+  qualifier; generic `present` / `yes` path ETE belongs here, not in
+  `gross_ete`)
 - `vascular_microscopic` — `vascular_invasion` ONLY (no lymphatic)
 - `airway` — direct airway invasion (NOT deviation/compression)
 - `tracheal` — direct tracheal invasion (NOT deviation/compression)
@@ -92,9 +96,12 @@
 - `esophageal_invasion` / `esophageal_involvement` → `esophageal`
 - `extrathyroidal_extension` / `ete_on_imaging` /
   `extrathyroidal_extension_present` / `extranodal_extension` /
-  `strap_muscle_invasion` → `gross_ete` OR `microscopic_ete`
+  `strap_muscle_invasion` → `gross_ete`, `microscopic_ete`, or
+  `ete_present_not_further_specified`
   (disambiguated by `entity_value` modifier: contains
-  "minimal"/"microscopic"/"focal" → microscopic_ete; else gross_ete)
+  "minimal"/"microscopic"/"focal" → microscopic_ete; explicit
+  gross/macroscopic/extensive or named invasive structures → gross_ete;
+  otherwise present-not-further-specified)
 
 **EXCISE (NULL invasion_type → CTE filter drops):**
 - `tracheal_deviation`, `tracheal_displacement`, `tracheal_compression`,
@@ -116,8 +123,9 @@
 - `lymphatic_invasion` → `lymphatic_microscopic`
 - `capsular_invasion` → `capsular`
 - `perineural_invasion` → `perineural`
-- `extrathyroidal_extension` → `gross_ete` (gross-flavored values) or
-  `microscopic_ete` (minimal/microscopic/focal modifiers)
+- `extrathyroidal_extension` → `gross_ete` (gross/extensive/macroscopic
+  values), `microscopic_ete` (minimal/microscopic/focal modifiers), or
+  `ete_present_not_further_specified` (generic present / yes / true)
 - `gross_ete` BIGINT → `gross_ete` (1 → present; 0 → absent)
 
 **FROM `main.canonical_operative_events_v1` (LIVE structured BOOL flags):**
@@ -166,8 +174,9 @@ audit trail captures exactly what's being thrown away.
 | `lymphatic_microscopic` | ~783 | ~7.20% | Per-FIELD lymphatic alone (LLM gain may add) |
 | `capsular` | ~827 | ~7.60% | Per-FIELD capsular |
 | `perineural` | ~102 | ~0.94% | Per-FIELD perineural |
-| `gross_ete` | ~1,209 | ~11.12% | v2 11.56% minus 48 narrative-unique |
-| `microscopic_ete` | TBD | TBD | Subset of v2 ETE-via-modifier |
+| `gross_ete` | corrected by mig_95 | — | Explicit gross / extensive / macroscopic only; no generic-present default |
+| `microscopic_ete` | corrected by mig_95 | — | Explicit minimal / microscopic / focal |
+| `ete_present_not_further_specified` | corrected by mig_95 | — | Generic present / yes / true ETE |
 | `soft_tissue` | TBD | TBD | Surgeon-noted local + LLM soft_tissue_invasion |
 | `airway` | ~72 | ~0.66% | Roughly v2 |
 | `tracheal` | ~14 | ~0.13% | Roughly v2 |

@@ -1,6 +1,6 @@
 # Remaining Work Inventory — `thyroid_canonical_publication_v1_0`
 
-**Status as of:** 2026-04-28 (post-mig_90 — operative events signed off)
+**Status as of:** 2026-04-28 (post-mig_95 — ETE taxonomy + invasion-family rollups signed off)
 **Goal:** Build a clean master canonical database at `thyroid_canonical_publication_v1_0`. Archive deprecated/legacy/intermediate tables to `"Thyroid 2026 UPdated"` (cross-account MotherDuck DB used as the read-only verification reference + cold storage).
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Dashboard:** [`VERIFICATION_PROGRESS.md`](VERIFICATION_PROGRESS.md)
@@ -8,7 +8,7 @@
 
 ---
 
-## 1. Verified tables (4 / 184 = 2.2 %)
+## 1. Verified tables (13 / 184 = 7.1 %)
 
 | Table | Rows | Cols | Sign-off | Pattern |
 |---|---|---|---|---|
@@ -16,8 +16,17 @@
 | `canonical_airway_invasion_events_v1` | 3,155 | 23 | mig_83 | per-finding Logan review (LLM-output canonical) |
 | `canonical_path_malignant_events_v1` | 6,689 | 56 | mig_89 | **CTC-equivalence** + Script-rule re-run |
 | `canonical_operative_events_v1` | 11,773 | 54 | mig_90 | **CTC-equivalence (single migration)** |
+| `canonical_t4b_invasion_events_v1` | 944 | 19 | mig_92 | per-finding Logan review |
+| `canonical_esophageal_invasion_events_v1` | 188 | 15 | mig_93 | per-finding Logan review |
+| `canonical_vascular_invasion_events_v1` | 3,861 | 22 | mig_94 | per-finding Logan review |
+| `canonical_invasion_events_v1` | 51,751 | 20 | mig_91b + mig_95 | UNION CTC-equivalence + ETE taxonomy hardening |
+| `canonical_airway_invasion_patient_rollup_v1` | 2,820 | 20 | mig_95 | rollup re-derivation |
+| `canonical_esophageal_invasion_patient_rollup_v1` | 60 | 11 | mig_95 | rollup re-derivation |
+| `canonical_t4b_invasion_patient_rollup_v1` | 434 | 13 | mig_95 | rollup re-derivation |
+| `canonical_vascular_invasion_patient_rollup_v1` | 3,745 | 14 | mig_95 | rollup re-derivation |
+| `canonical_invasion_patient_rollup_v1` | 10,871 | 47 | mig_95 | family rollup re-derivation |
 
-**Cumulative cols verified:** 171 / 5,490 = 3.1 %.
+**Cumulative cols verified:** 328 / 5,502 = 6.0 %.
 
 ---
 
@@ -114,7 +123,7 @@ Outstanding rollups (the big ones):
 - `canonical_frozen_section_patient_rollup_v1` — **188 cols** (largest rollup)
 - `canonical_pmh_patient_rollup_v1` — 79 cols
 - `canonical_complications_patient_rollup_v1` — 51 cols
-- `canonical_invasion_patient_rollup_v1` — 41 cols
+- `canonical_invasion_patient_rollup_v1` — **closed by mig_95** (47 cols)
 - `canonical_psh_patient_rollup_v1`, `canonical_medications_patient_rollup_v1` — 28 cols each
 - `canonical_operative_patient_rollup_v1` — 22 cols (already unblocked since operative events is closed)
 - `canonical_fna_patient_rollup_v1` — 20 cols (rollup of the closed FNA events)
@@ -160,6 +169,8 @@ Misc canonical tables — labs, molecular, recurrence, ETE adjudication, surviva
 | CF-86-1 | mig_86 | 64 path_malignant `tumor_ordinal` rows came via archived TEM v2 text-extraction (not Script 108 SLOT_MAP). Verifiable against `archive_pub_v1_0.tumor_episode_master_v2_pre361_*` if future restore-and-reverify run | Open |
 | CF-87-AJCC | mig_87 | path_malignant AJCC7/8 staging cols verified as faithful copies of CTC pre361. Findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (CTC build, scripts 251/266) | Open |
 | CF-87-GROSS-ETE | mig_87 | 6 of 6,695 join-duplicate rows show inconsistent `gross_ete` between paired archive rows; canonical row matches at least one archive row in every case | Open (cosmetic) |
+| CF-91-GROSS-VS-MICRO-ETE-NAMING | mig_91b | Generic path ETE was defaulted to `gross_ete`; mig_95 introduced `ete_present_not_further_specified` and rebuilt rollups/CPM feeders | **Closed** |
+| CF-91-LINKAGE-COL-NAME | mig_91b | `linkage_ambiguous_multi_episode` counted findings, not episodes; mig_95 renamed to `linkage_ambiguous_multi_finding` | **Closed** |
 | CF-90-DATE-FORMAT | mig_90 | operative_events `resolved_surgery_date` stored as `MM/DD/YYYY` in canonical vs `YYYY-MM-DD` in pre362 archive; same dates, format reformat by downstream normalization (not Script 362 itself) | Open (cosmetic) |
 | FNA CF (open from pilot) | mig_78 | `bethesda_calculated_num` 1,450 rows differ from source `bethesda_raw` (intentional rescore overlay; verified vs `fna_bethesda_rescore_staging_v1` instead) | Open |
 
@@ -222,7 +233,7 @@ A self-contained brief is at the end of this file (section "Continuation prompt 
 > 3. For each `source_modality` slice in `canonical_invasion_events_v1`, **re-derive that slice from its source table** (via the CTE logic) and compare row-by-row. This is the same Script-rule re-run methodology that worked for path_malignant mig_88 and operative_events mig_90b — just per-modality instead of single-source.
 > 4. Where source tables have been archived (note_entities_llm_*_pre*), verify against the archive (read-only).
 > 5. For each source modality, generate a per-row CSV at `verification_csvs/canonical_invasion_events_v1/<modality>__mig_91.csv` with cols: `(invasion_event_id, research_id, source_kind, source_row_id, db_value_<col>, recomputed_value_<col>, match_flag)`. Mismatches sort to top. CSV is gitignored (PHI-adjacent).
-> 6. **Surface ambiguous cases for my review.** Specifically: rows where the linkage method is `temporal_90d_ambiguous` (`linkage_ambiguous_multi_episode = TRUE`) — those are cases where canonical picked one of multiple candidate surgery episodes within a 90-day window. I want to see a CSV with `(research_id, finding_date, n_candidate_episodes, picked_episode_id, alternative_episode_ids, evidence_text)` so I can adjudicate which linkage is correct. Save at `verification_csvs/canonical_invasion_events_v1/ambiguous_linkage_review__mig_91.csv`.
+> 6. **Surface ambiguous cases for my review.** Specifically: rows where the linkage method is `temporal_90d_ambiguous` (`linkage_ambiguous_multi_finding = TRUE`; renamed by mig_95) — those are cases where canonical picked one of multiple candidate surgery episodes within a 90-day window. I want to see a CSV with `(research_id, finding_date, n_candidate_episodes, picked_episode_id, alternative_episode_ids, evidence_text)` so I can adjudicate which linkage is correct. Save at `verification_csvs/canonical_invasion_events_v1/ambiguous_linkage_review__mig_91.csv`.
 > 7. Findings-vs-staging rule applies: invasion findings are primary; any staging implications must follow findings (not the inverse). Flag any rows where `finding_status` disagrees with the source extraction's status.
 > 8. Once mismatches and ambiguous cases are resolved (via my review of the CSV(s)), write `qc_framework_v1/migrations/91_invasion_events_verify_and_signoff.sql`, execute via `mcp__motherduck__query_rw`, commit + push.
 > 9. Update `qc_framework_v1/VERIFIED_TABLES.md` and `qc_framework_v1/VERIFICATION_PROGRESS.md`.

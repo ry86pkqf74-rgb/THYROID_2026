@@ -27,8 +27,8 @@ Two outputs:
         verification_csvs/canonical_invasion_events_v1/
           ambiguous_linkage_review__mig_91.csv
 
-      The canonical's `linkage_ambiguous_multi_episode` boolean is
-      MIS-NAMED -- it actually counts FINDINGS per
+      The canonical's `linkage_ambiguous_multi_finding` boolean was named
+      `linkage_ambiguous_multi_episode` before mig_95. It counts FINDINGS per
       (research_id, finding_date) partition, not candidate surgery
       episodes. Re-define ambiguity as: TWO OR MORE distinct
       surgery_episode_ids from canonical_operative_events_v1 within +/-90d
@@ -43,13 +43,10 @@ Two outputs:
             sample_evidence_qualifier_1, sample_evidence_qualifier_2,
             sample_evidence_qualifier_3, your_chosen_episode_id, your_note.
 
-Carry-forward (write into mig_91 closeout):
-  CF-91-LINKAGE-COL-NAME: rename
+Carry-forward status:
+  CF-91-LINKAGE-COL-NAME CLOSED by mig_95:
     canonical_invasion_events_v1.linkage_ambiguous_multi_episode
-    -> linkage_ambiguous_multi_finding (the column counts findings,
-    not episodes; the actual multi-episode case set is the 759 groups
-    in ambiguous_linkage_review__mig_91.csv). Defer; cosmetic but
-    affects downstream consumer interpretation.
+    -> linkage_ambiguous_multi_finding.
 
 PHI rule: never print clinical text. evidence_qualifier is captured
 because Script 363 stores it as the raw entity_value; clinical-narrative
@@ -649,11 +646,10 @@ def write_ambiguous(con: duckdb.DuckDBPyConnection) -> Path:
         # the group are summarised by sample_evidence_qualifier_{1,2,3} (truncated
         # to 200 chars, no clinical text printed).
         #
-        # IMPORTANT: the canonical column `linkage_ambiguous_multi_episode` is
-        # MIS-NAMED -- it counts FINDINGS per partition, not surgery episodes.
-        # The actual multi-episode case set is THIS file. Carry-forward
-        # CF-91-LINKAGE-COL-NAME: rename the column to
-        # linkage_ambiguous_multi_finding (or fix the definition).
+        # IMPORTANT: the canonical column was renamed by mig_95 from
+        # `linkage_ambiguous_multi_episode` to
+        # `linkage_ambiguous_multi_finding`; it counts FINDINGS per partition,
+        # not surgery episodes. The actual multi-episode case set is THIS file.
         #
         # your_chosen_episode_id vocabulary:
         #   ACCEPT     -- keep the canonical's picked_surgery_episode_id (default)

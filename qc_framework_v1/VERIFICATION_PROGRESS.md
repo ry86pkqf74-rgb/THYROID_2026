@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_91b — INVASION_EVENTS SIGNED OFF — 8th table)
+**Last refreshed:** 2026-04-28 (post-mig_95 — ETE taxonomy + invasion-family rollups signed off)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,12 +16,12 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **8 / 184** (4.3 %) — FNA pilot + airway invasion + path malignant + operative events + t4b invasion + esophageal invasion + vascular invasion + invasion events |
-| Tables `verified` in registry (pre-v2 legacy + v2) | 14 (10 are pre-v2 placeholders with NULL signed_off_ts) |
-| Columns in scope | 5,490 (started 5,494; dropped 4 in mig_84) |
-| Columns Logan-verified (v2) | **238 / 5,490** (38 FNA + 23 airway invasion + 56 path malignant + 54 operative events + 19 t4b invasion + 15 esophageal invasion + 22 vascular invasion + 11 invasion events) |
-| Columns at `not_started` (in v2 queue) | **4,583** |
-| Columns at `na` (legacy v1 auto-skip, pending re-tier) | **731** |
+| Tables verified under Protocol v2 | **13 / 184** (7.1 %) — FNA pilot + 7 event tables + 5 invasion-family patient rollups |
+| Tables `verified` in registry (pre-v2 legacy + v2) | 23 (10 are pre-v2 placeholders with NULL signed_off_ts) |
+| Columns in scope | 5,502 (started 5,494; dropped 4 in mig_84; added 12 ETE taxonomy downstream cols in mig_95) |
+| Columns Logan-verified (v2) | **328 / 5,502** (events + invasion-family rollups) |
+| Columns at `not_started` (in v2 queue) | **4,473** |
+| Columns at `na` (legacy v1 auto-skip, pending re-tier) | **700** |
 | Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
@@ -79,7 +79,7 @@ CTC-equivalence verification (mig_91 addendum, 2026-04-28) against `"Thyroid 202
 
 | Result | Cols |
 |---|---|
-| 0 diffs (CTC-pass) | 7 — `invasion_type`, `finding_date`, `source_modality`, `source_kind`, `linkage_method`, `n_candidate_episodes`, `linkage_ambiguous_multi_episode` |
+| 0 diffs (CTC-pass) | 7 — `invasion_type`, `finding_date`, `source_modality`, `source_kind`, `linkage_method`, `n_candidate_episodes`, `linkage_ambiguous_multi_finding` (renamed by mig_95) |
 | Localized diffs | 4 — `finding_status` (1,353 rows), `evidence_qualifier` (70), `evidence_span_hash` (4), `confidence` (2) |
 
 `finding_status` diffs are 100% on `source_kind='llm'` and 100% confidence-downgrades (`present`→`indeterminate` 1,077; `absent`→`indeterminate` 184; `present`→`suspected` 92). Decomposition:
@@ -101,11 +101,12 @@ Output: `verification_csvs/canonical_invasion_events_v1/orphan_review__mig_91.xl
 
 Sign-off path: Logan reviews 13 HIGH_POS (rapid FLIP) + 8 LN_ENE (RECLASS) + 3 VOCAL_OR_NOT (REJECT) + spot-checks BENIGN; flags KEYWORD (19) + AMBIG_EC (4) rows needing source-note context, I re-pull and re-surface; final dispositions applied → mig_91b applies FLIPs/RECLASSes as targeted UPDATE on `main.canonical_invasion_events_v1` → all 11 cols flagged `verified` → table_status=`verified` (would push verified count to 8/184, ~238 cols).
 
-Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchanged from verified state. Defer multi-finding rename via CF-91-LINKAGE-COL-NAME.
+Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchanged from verified state. Multi-finding rename closed by mig_95 (`linkage_ambiguous_multi_finding`).
 
 ## Recently verified
 
-- **`main.canonical_invasion_events_v1`** — signed off 2026-04-28 via mig_91 (verification + addendum) + mig_91b (apply). Final state: 51,751 rows / 10,871 pts / 11 cols verified + 9 na = 20 cols. **8th table.** First UNION canonical closed via CTC-equivalence on row-identifying-key set. Established 6-rule clinical adjudication library for orphan finding_status downgrades (memory: `feedback_invasion_orphan_clinical_rules.md`). 47 cancer orphans dispositioned: 16 FLIP + 4 RECLASS-to-capsular + 22 DELETE (LN_ENE/complications/non-thyroid) + 5 ACCEPT. 5 carry-forwards: CF-91-VOCAL-CORD, CF-91-NON-PRIMARY-THYROID, CF-91-LN-ENE-DOMAIN, CF-91-LINKAGE-COL-NAME, CF-91-GROSS-VS-MICRO-ETE-NAMING.
+- **`main.canonical_invasion_events_v1`** — signed off 2026-04-28 via mig_91 (verification + addendum) + mig_91b (apply), then taxonomy-hardened via mig_95. Final state remains 51,751 rows / 10,871 pts / 11 cols verified + 9 na = 20 cols. `linkage_ambiguous_multi_episode` was renamed to `linkage_ambiguous_multi_finding`. Generic structured path ETE (`present` / `yes` / `true`) moved from `gross_ete` to `ete_present_not_further_specified`; explicit `gross_ete=1` and extensive/macroscopic evidence remain gross.
+- **Invasion-family patient rollups** — signed off 2026-04-28 via mig_95: `canonical_airway_invasion_patient_rollup_v1`, `canonical_esophageal_invasion_patient_rollup_v1`, `canonical_t4b_invasion_patient_rollup_v1`, `canonical_vascular_invasion_patient_rollup_v1`, and `canonical_invasion_patient_rollup_v1`. The family rollup now exposes `any_ete_present_not_further_specified_*` and `any_ete_*` union columns.
 - **`main.canonical_t4b_invasion_events_v1`** — signed off 2026-04-28 via mig_92 (single migration). Final state: 944 rows / 19 cols. First sibling LLM-output invasion canonical closed (esophageal + vascular + invasion_events still queued). Three-pass Logan review: 47 CSV rows + 5 LLM-extraction-miss inline + 892 baseline default-not. **Final distribution: 19 pT4b / 925 not_pT4b / 0 unable_to_determine.** New rule: omission of t4b-anatomy descriptors → not_pT4b (default-not interpretation).
 - **`main.canonical_operative_events_v1`** — signed off 2026-04-28 via mig_90 (single migration). Final state: 11,773 rows / 10,871 patients / 54 cols. First table to close in **a single migration** using the CTC-equivalence pattern. Unblocks FNA `days_to_surgery` carry-forward.
 - **`main.canonical_path_malignant_events_v1`** — signed off 2026-04-28 via mig_89 (6-migration arc mig_84 → mig_89). Final state: 6,689 rows / 4,137 patients / 56 cols. Established **CTC-equivalence verification pattern** + **Script-rule re-run verification** (carry forward to subsequent tables built by Script-361-style copy-and-update chains).
@@ -116,14 +117,14 @@ Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchange
 
 With operative events closed in a single-migration arc, the CTC-equivalence pattern is fully validated. Queue:
 
-1. **`canonical_extrathyroidal_extension_events_v1`** — ETE is the other major staging concern (pT3b vs pT4a); same airway-style findings-vs-staging pattern likely applies.
-2. **`canonical_lymph_node_events_v1`** family — pN staging.
+1. **`canonical_extrathyroidal_extension_events_v1` / CPM AJCC re-derivation** — mig_95 fixed the invasion-family taxonomy and feeder flags, but did not silently rederive `canonical_patient_master.ajcc8_t_stage`.
+2. **`canonical_lymph_node_events_v1`** family — pN staging and CF-91-LN-ENE-DOMAIN landing zone.
 3. **`canonical_path_benign_events_v1`** — paired with path malignant; likely Script-N pattern with archived pre-script snapshot available.
 4. Other Tier 2 events tables alphabetically (`canonical_*_events_v1`).
 
 ## Verified tables
 
-See [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md) — 4 entries.
+See [`VERIFIED_TABLES.md`](VERIFIED_TABLES.md) — 13 Protocol v2 entries.
 
 ## Failed / blocked
 

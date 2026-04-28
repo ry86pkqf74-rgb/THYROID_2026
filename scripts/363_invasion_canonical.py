@@ -107,14 +107,15 @@ JSON_KEYS_PATH = REPO_ROOT / f"invasion_llm_json_keys_{BUILD_TS}.md"
 CPM_AUDIT_PATH = REPO_ROOT / "invasion_cpm_feeder_repoint_plan.md"
 CLOSEOUT_PATH = REPO_ROOT / f"script_363_closeout_{BUILD_TS}.md"
 
-# 10 invasion types (v3 — per Logan rejection of v2 'local' bundling
+# 11 invasion types (v3 + mig_95 ETE taxonomy — per Logan rejection of
+# v2 'local' bundling and 2026-04-28 gross-vs-micro follow-up.
 # bug + V/L aggregation bug). Direct-extension findings only;
 # mass-effect entities (tracheal_deviation, substernal_extension,
 # esophageal_compression, vascular_encasement, airway_compromise_grade,
 # vocal_cord_imaging, mass_effect) are EXCISED — they belong in a
 # future mass-effect canonical or in 364 complications, not here.
 INVASION_TYPES = [
-    "gross_ete", "microscopic_ete",
+    "gross_ete", "microscopic_ete", "ete_present_not_further_specified",
     "vascular_microscopic",       # vascular_invasion ONLY (not lymphatic)
     "lymphatic_microscopic",      # NEW v3 — split from vascular
     "capsular",                   # NEW v3 — split from 'local'
@@ -239,15 +240,17 @@ VARCHAR_TO_FINDING_STATUS: dict[str, str] = {
 GROSS_ETE_BIGINT_MAP: dict[int, str] = {1: "present", 0: "absent"}
 
 # ETE subtype mapping (used only when source column is
-# extrathyroidal_extension; default 'present'-ish values without
-# microscopic indicator → gross_ete).
+# extrathyroidal_extension). Generic present/yes values are NOT gross;
+# they are ETE present, not further specified. Only explicit gross /
+# extensive / macroscopic-flavored evidence maps to gross_ete.
 EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE: dict[str, str] = {
     # ------------------------------------------------------------------
     # Subtype only applies to PRESENT findings. Values that map to
     # 'absent' / 'indeterminate' / 'suspected' in
     # VARCHAR_TO_FINDING_STATUS are NOT in this dict. The Step 1 SQL
     # only consults this dict when finding_status='present'; if the
-    # value isn't found here, default invasion_type='gross_ete'.
+    # value isn't found here, default invasion_type is
+    # ete_present_not_further_specified.
     # 'Infiltrative?' is suspected (not present), so it doesn't appear
     # here — the suspected row gets invasion_type='gross_ete' by
     # default since suspicion of ETE without a microscopic qualifier
@@ -278,23 +281,30 @@ EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE: dict[str, str] = {
     "present (microscopic perithyroidal soft tissue only with no "
     "clinical or macroscopic evidence of invasion)": "microscopic_ete",
     "into but not through": "microscopic_ete",
-    # ----- GROSS_ETE (extensive/wide qualifiers OR unspecified-present)
+    # ----- GROSS_ETE (explicit extensive/wide/gross/macroscopic qualifiers)
     "extensive": "gross_ete", "widely invasive": "gross_ete",
     "yes, extensive": "gross_ete", "yes (extensive)": "gross_ete",
     "extensiver": "gross_ete", "extensivre": "gross_ete",
     "extrensive": "gross_ete", "estensive": "gross_ete",
     "extesive": "gross_ete",
     "widely invasivre": "gross_ete", "widely invasvie": "gross_ete",
-    # Unspecified-present → gross by default (per spec convention)
-    "yes": "gross_ete", "true": "gross_ete", "present": "gross_ete",
-    "preesent": "gross_ete", "presnt": "gross_ete",
-    "preent": "gross_ete", "preseent": "gross_ete", "prewent": "gross_ete",
-    "preewnt": "gross_ete",
     "infiltrative": "gross_ete", "invasive": "gross_ete",
     "present, widely invasive": "gross_ete",
     "multifocal invasion": "gross_ete",
     "multiple foci": "gross_ete",
-    "present (perithyroidal fibroadipose tissue involved)": "gross_ete",
+    # ----- PRESENT, NOT FURTHER SPECIFIED
+    "yes": "ete_present_not_further_specified",
+    "true": "ete_present_not_further_specified",
+    "present": "ete_present_not_further_specified",
+    "preesent": "ete_present_not_further_specified",
+    "presnt": "ete_present_not_further_specified",
+    "preent": "ete_present_not_further_specified",
+    "preseent": "ete_present_not_further_specified",
+    "prewent": "ete_present_not_further_specified",
+    "preewnt": "ete_present_not_further_specified",
+    "present (perithyroidal fibroadipose tissue involved)": (
+        "ete_present_not_further_specified"
+    ),
 }
 
 # ---------------------------------------------------------------------------
@@ -335,10 +345,10 @@ ENTITY_TYPE_TO_INVASION_TYPE: dict[str, str] = {
     "tracheal_involvement": "tracheal",
     "esophageal_invasion": "esophageal",
     "esophageal_involvement": "esophageal",
-    # ETE entities — disambiguated via entity_value modifier in CTE
-    # (entity_value containing 'minimal'/'microscopic'/'focal' →
-    # microscopic_ete; else gross_ete). Default mapping here is
-    # gross_ete; the CTE overrides when modifier is present.
+    # ETE entities — disambiguated via entity_value modifier in CTE.
+    # The dict-level default remains gross_ete only for legacy callers that
+    # do not pass entity_value; live SQL callers pass entity_value and return
+    # microscopic, gross, or present_not_further_specified.
     "ete_on_imaging": "gross_ete",
     "extrathyroidal_extension": "gross_ete",
     "extrathyroidal_extension_present": "gross_ete",
@@ -668,12 +678,16 @@ def _ete_subtype_case_sql(norm_expr: str) -> str:
     for k, v in EXTRATHYROIDAL_VALUE_TO_ETE_SUBTYPE.items():
         by_subtype.setdefault(v, []).append(k.replace("'", "''"))
     parts = ["CASE"]
-    for subtype in ("microscopic_ete", "gross_ete"):
+    for subtype in (
+        "microscopic_ete",
+        "gross_ete",
+        "ete_present_not_further_specified",
+    ):
         if subtype not in by_subtype:
             continue
         in_list = ", ".join(f"'{v}'" for v in by_subtype[subtype])
         parts.append(f"  WHEN {norm_expr} IN ({in_list}) THEN '{subtype}'")
-    parts.append("  ELSE 'gross_ete'")  # default unspecified to gross
+    parts.append("  ELSE 'ete_present_not_further_specified'")
     parts.append("END")
     return "\n".join(parts)
 
@@ -683,11 +697,9 @@ def _entity_invasion_case_sql(et_expr: str,
     """Build CASE WHEN ladder for ENTITY_TYPE_TO_INVASION_TYPE.
 
     When `ev_expr` (entity_value SQL expression) is provided, ETE
-    entity_types disambiguate to gross_ete vs microscopic_ete via the
-    entity_value modifier ('minimal' / 'microscopic' / 'focal' →
-    microscopic_ete; else gross_ete). v3 fix per Logan: ETE imaging
-    findings shouldn't blanket-default to gross_ete; the modifier in
-    entity_value carries the subtype.
+    entity_types disambiguate to microscopic_ete, gross_ete, or
+    ete_present_not_further_specified via the entity_value modifier.
+    Generic yes/present ETE is not treated as gross.
     """
     ete_entities = [k for k, v in ENTITY_TYPE_TO_INVASION_TYPE.items()
                     if v == "gross_ete"]
@@ -704,7 +716,19 @@ def _entity_invasion_case_sql(et_expr: str,
             f"    WHEN LOWER({ev_expr}) LIKE '%microscopic%' "
             f"OR LOWER({ev_expr}) LIKE '%minimal%' "
             f"OR LOWER({ev_expr}) LIKE '%focal%' "
-            f"THEN 'microscopic_ete' ELSE 'gross_ete' END"
+            f"THEN 'microscopic_ete' "
+            f"    WHEN LOWER({ev_expr}) LIKE '%gross%' "
+            f"OR LOWER({ev_expr}) LIKE '%macroscopic%' "
+            f"OR LOWER({ev_expr}) LIKE '%extensive%' "
+            f"OR LOWER({ev_expr}) LIKE '%strap%' "
+            f"OR LOWER({ev_expr}) LIKE '%trache%' "
+            f"OR LOWER({ev_expr}) LIKE '%esophag%' "
+            f"OR LOWER({ev_expr}) LIKE '%laryn%' "
+            f"OR LOWER({ev_expr}) LIKE '%cricoid%' "
+            f"OR LOWER({ev_expr}) LIKE '%cartilage%' "
+            f"OR LOWER({ev_expr}) LIKE '%recurrent laryngeal%' "
+            f"THEN 'gross_ete' "
+            f"ELSE 'ete_present_not_further_specified' END"
         )
     for invtype in INVASION_TYPES:
         if invtype not in by_invtype:
@@ -1809,7 +1833,7 @@ SELECT
     END AS linkage_method,
     CAST(n_candidate_episodes_window AS INTEGER) AS n_candidate_episodes,
     (n_candidate_episodes_window > 1
-     AND exact_linked_episode_id IS NULL) AS linkage_ambiguous_multi_episode,
+     AND exact_linked_episode_id IS NULL) AS linkage_ambiguous_multi_finding,
     confidence,
     evidence_span_hash,
     evidence_qualifier,
@@ -1930,6 +1954,33 @@ def step_2_build_rollup(
             cross_modal_clauses.append(
                 f"FALSE::BOOLEAN AS any_{inv}_in_imaging"
             )
+
+    ete_union = (
+        "('gross_ete', 'microscopic_ete', "
+        "'ete_present_not_further_specified', 'soft_tissue')"
+    )
+    cross_modal_clauses.extend([
+        "BOOL_OR(invasion_type IN "
+        f"{ete_union} AND finding_status='present') AS any_ete_anywhere",
+    ])
+    if op_or_path_modalities:
+        mods_in = ", ".join(f"'{m}'" for m in op_or_path_modalities)
+        cross_modal_clauses.append(
+            "BOOL_OR(invasion_type IN "
+            f"{ete_union} AND finding_status='present' "
+            f"AND source_modality IN ({mods_in})) AS any_ete_in_op_or_path"
+        )
+    else:
+        cross_modal_clauses.append("FALSE::BOOLEAN AS any_ete_in_op_or_path")
+    if imaging_modalities:
+        mods_in = ", ".join(f"'{m}'" for m in imaging_modalities)
+        cross_modal_clauses.append(
+            "BOOL_OR(invasion_type IN "
+            f"{ete_union} AND finding_status='present' "
+            f"AND source_modality IN ({mods_in})) AS any_ete_in_imaging"
+        )
+    else:
+        cross_modal_clauses.append("FALSE::BOOLEAN AS any_ete_in_imaging")
 
     select_csv = ",\n        ".join(cross_modal_clauses)
 
