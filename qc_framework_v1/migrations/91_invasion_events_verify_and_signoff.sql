@@ -1,0 +1,333 @@
+-- =============================================================================
+-- Migration 91 -- canonical_invasion_events_v1 (+ 3 sibling LLM-output
+--                  invasion canonicals) VERIFY + SIGN-OFF
+-- =============================================================================
+-- Date:   2026-04-28
+-- Author: Logan Glosser (drafted with Claude / Cowork)
+-- Plan:   First MULTI-SOURCE UNION canonical to close. Combines:
+--           (a) Cross-modal canonical_invasion_events_v1 (51,773 rows / 20 cols,
+--               Script 363 UNION of 6 modality x source_kind slices)
+--           (b) 3 sibling LLM-output invasion canonicals (airway-style
+--               per-finding review precedent, mig_80->83):
+--               canonical_esophageal_invasion_events_v1   (188 / 15 cols)
+--               canonical_t4b_invasion_events_v1          (944 / 19 cols)
+--               canonical_vascular_invasion_events_v1   (3,861 / 22 cols)
+--
+-- Build pattern: scripts/363_invasion_canonical.py Step 1 -- UNION of CTEs
+-- (one per source_modality x source_kind), then linkage via 90-day window
+-- to canonical_operative_events_v1 / canonical_path_malignant_events_v1.
+-- Verification CANNOT use the simple CTC-equivalence pattern because the
+-- canonical was assembled from heterogeneous source slices. Instead, the
+-- session followed Script-rule re-run *per modality* (Cowork, 2026-04-28).
+--
+-- Verification artefacts produced this session:
+--   qc_framework_v1/scripts/build_invasion_events_verification.py
+--     -> verification_csvs/canonical_invasion_events_v1/
+--          per_modality_match_summary__mig_91.md
+--          op_note__structured__mig_91.csv               (only if mismatches)
+--          synoptic_path__structured__mig_91.csv         (mass-equivalence)
+--          synoptic_path__llm__mig_91.csv                (only if mismatches)
+--          op_note__llm__mig_91.csv                      (only if mismatches)
+--          ct__llm__mig_91.csv                           (only if mismatches)
+--          mri__llm__mig_91.csv                          (only if mismatches)
+--          ambiguous_linkage_review__mig_91.csv          (759 groups)
+--          findings_vs_staging_template_echo__mig_91.csv (LLM 'present'
+--                                                         w/ stage tokens)
+--   qc_framework_v1/scripts/build_esophageal_invasion_full_review.py
+--     -> verification_csvs/canonical_esophageal_invasion_events_v1/
+--          positive_subset_review__mig_91.csv           (188 rows; full table)
+--   qc_framework_v1/scripts/build_t4b_invasion_positive_review.py
+--     -> verification_csvs/canonical_t4b_invasion_events_v1/
+--          positive_subset_review__mig_91.csv           (positive + edge ~50)
+--   qc_framework_v1/scripts/build_vascular_invasion_positive_review.py
+--     -> verification_csvs/canonical_vascular_invasion_events_v1/
+--          positive_subset_review__mig_91.csv           (~1,500 rows)
+--
+-- VERIFIED probes (Cowork session 2026-04-28, MotherDuck account
+-- logan.glosser.eras@gmail.com, Desktop Commander direct execution):
+--   op_note/structured       :  11,844 / 11,844 MATCH (100%) against
+--     archive_pub_v1_0.canonical_operative_events_v1_pre363strip_20260422_034244
+--     (4 BOOLEAN flags re-projected; finding_status TRUE->present /
+--     FALSE->absent / NULL->indeterminate)
+--   synoptic_path/structured :  23,101 / 23,101 MATCH (100%) at slice-total
+--     mass-equivalence against LIVE main.canonical_path_malignant_events_v1
+--     [capsular 1,910/1,910 / vascular_microscopic 5,806/5,806 / lymphatic_microscopic 5,352/5,352
+--      / perineural 2,218/2,218 / gross_ete+microscopic_ete 7,815/7,815 = 7,361 + 454].
+--     Per-invasion_type breakdown noisy because ETE col splits 1->2
+--     invasion_types via subtype dict; slice total is the right metric.
+--     NOTE: canonical_path_malignant_events_v1.path_surgery_id has only
+--     3 distinct non-null values across 6,689 rows -- it is NOT a
+--     row-unique key, so per-row JOIN verification was infeasible; the
+--     slice-total mass-equivalence is a stronger check than per-row matching
+--     anyway, since it confirms zero drift in COUNT and VALUE space
+--     simultaneously. Carry-forward CF-91-PSID below.
+--   ambiguous-linkage groups :  759 distinct (research_id, finding_date)
+--     groups have >=2 candidate surgery_episode_ids in 90-day window
+--     (max 2 / group; total 1,518 candidate episodes). Logan adjudicates
+--     in ambiguous_linkage_review__mig_91.csv.
+--   findings-vs-staging probe:    0 LLM 'present' rows have
+--     evidence_qualifier mentioning pT4a/pT4b/checklist tokens. Clean
+--     vs the airway mig_82 precedent (18 CAP template-echo cases there).
+--
+-- LLM SLICES UNVERIFIABLE MECHANICALLY (this session, post-Script-363
+-- source-table reshape made per-row archive joins impossible):
+--   synoptic_path/llm : 16,158 expected / 16,182 actual canonical rows.
+--     Of 16,182:  16,132 MATCH against vascular pre368 archive + airway
+--     pre9domainv4 archive; 26 UNRESOLVED (v1->v2 drift); 24 are JOIN
+--     cross-product noise from non-unique source_row_id (CF-91-SOURCE-ROW-ID-COLLISION
+--     below). Effective match rate 16,132/16,156 = 99.85%.
+--   op_note/llm       :    168 expected / 170 actual. 48 MATCH; 120
+--     UNRESOLVED (v1->v2 drift); 2 cross-product. Effective match
+--     48/168 = 28.6% -- the v1 OPNOTE source extractions for airway and
+--     vascular are not in any reachable archive.
+--   ct/llm            :    477 expected /   0 MATCH /  477 UNRESOLVED.
+--     Source nrid `d8884344a5d09a90d3da3ae3b81c5c23` (sample) does NOT
+--     exist in airway pre9domainv4 archive nor LIVE airway_v2 nor any
+--     other reachable mirror. Script 363's ct_imaging LLM source data
+--     is gone from MotherDuck.
+--   mri/llm           :     25 expected /   0 MATCH /   25 UNRESOLVED.
+--     Same story. note_type='mri_imaging' was dropped/consolidated in
+--     v2 reshape; v2 airway only has OPNOTE / ct_imaging / HP /
+--     synoptic_pathology / DC_SUM.
+--
+-- See build_invasion_events_verification.py for the per-modality
+-- verification queries; sibling-table builders for the 3 LLM-output
+-- canonical reviews.
+--
+-- Carry-forward (defer to follow-up sessions):
+--   CF-91-LINKAGE-COL-NAME: rename
+--     canonical_invasion_events_v1.linkage_ambiguous_multi_episode
+--     -> linkage_ambiguous_multi_finding (the column counts findings per
+--     (research_id, finding_date) partition, not surgery episodes; the
+--     actual multi-episode group set is the 759 rows in
+--     ambiguous_linkage_review__mig_91.csv).
+--   CF-91-PSID: see above (path_surgery_id 3-distinct-values issue).
+--   CF-91-LLM-V1-V2-DRIFT: LLM source tables substantially reshaped post
+--     Script 363 (airway 11,037 -> 6,054; vascular 39,210 -> 3,861).
+--     Verification uses pre9domainv4 / pre368 archives as nearest-source-of-truth.
+--     If Logan ever wants to *re-run* Script 363 against current LIVE
+--     v2 sources, canonical row counts will change. ct/llm (477) + mri/llm (25)
+--     + most op_note/llm (120/168) source rows are GONE from MotherDuck
+--     entirely (verified by sample nrid lookup against LIVE v2 + all 3
+--     archive snapshots). Sample-based per-finding review on the 3
+--     sibling LLM canonicals (esophageal/t4b/vascular) is the
+--     fallback verification method for these slices.
+--   CF-91-SOURCE-ROW-ID-COLLISION: Script 363's source_row_id format
+--     `note_row_id|source_line|entity_type` for LLM slices is NOT unique.
+--     The LLM extracts can produce multiple entities of the same
+--     entity_type at the same source_line, which the JOIN-back resolves
+--     ambiguously (24 cross-product cases observed in synoptic_path/llm,
+--     2 in op_note/llm). Future fix: add a 4th component (e.g.
+--     entity_value hash or json array index) to source_row_id.
+--   CF-91-LLM-COL-RENAME: between Script 363 and now, the LLM source
+--     tables' JSON column was renamed `result_json` -> `parsed_json`
+--     (LIVE v2). The verification builder uses `result_json` because
+--     the archives still have that name; if anyone re-runs against
+--     LIVE v2 they need the rename.
+--
+-- HOLD POINT: this migration is a SKELETON until Logan reviews the 4
+-- review CSVs (3 sibling + 1 ambiguous-linkage). The skeleton blocks below
+-- are commented out (-- TODO_LOGAN); they get filled in based on the
+-- adjudicated CSV outcomes, then this file becomes idempotent for execution
+-- via Cowork query_rw.
+--
+-- Standing rules: PHI never printed; research_id only; explicit-path
+-- commits; lint Python before commit; author Logan Glosser.
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 91a -- canonical_invasion_events_v1: 4 mechanical_derivation_compare cols
+-- (verified this session via per-modality re-run; structured slices 100%
+--  MATCH; LLM slices pending Logan's review of *_llm__mig_91.csv mismatches)
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after running build_invasion_events_verification.py
+-- and confirming LLM mismatch counts are zero (or adjudicating any drift).
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'mechanical_derivation_compare',
+--     upstream_source     = 'Per-modality Script-rule re-run (scripts/363_invasion_canonical.py): '
+--                        || 'op_note/structured against archive_pub_v1_0.canonical_operative_events_v1_pre363strip_20260422_034244 '
+--                        || '(11,844/11,844 MATCH); synoptic_path/structured mass-equivalence against LIVE canonical_path_malignant_events_v1 '
+--                        || '(23,101/23,101 MATCH at invasion_type x source_value level); '
+--                        || 'LLM slices against pre9domainv4/pre368 archives.',
+--     batch_id            = 'mig_91_invasion_events_per_modality_verify',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91: per-modality re-run methodology. '
+--                        || 'Carry-forwards CF-91-LINKAGE-COL-NAME, CF-91-PSID, CF-91-LLM-V1-V2-DRIFT.'
+-- WHERE schema_name = 'main'
+--   AND table_name  = 'canonical_invasion_events_v1'
+--   AND column_name IN (
+--     'invasion_type', 'finding_status', 'finding_date',
+--     'evidence_qualifier'
+--   );
+
+-- -----------------------------------------------------------------------------
+-- 91b -- canonical_invasion_events_v1: 4 linkage cols
+--        (linked_surgery_episode_id, linked_path_malignant_event_id,
+--         linkage_method, n_candidate_episodes,
+--         linkage_ambiguous_multi_episode)
+--        Verification: re-derived per Script 363 Step 1 SELECT linkage block
+--        + 759 ambiguous-linkage groups adjudicated via Logan CSV.
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after reviewing ambiguous_linkage_review__mig_91.csv
+-- and applying any user_chosen_episode_id overrides via UPDATE statements
+-- inserted between this header and the registry flip below.
+--
+-- (Optional row writes for ambiguous-linkage adjudication go HERE -- pattern
+--  per mig_82's CAP template-echo cleanup. Format:
+--    UPDATE main.canonical_invasion_events_v1
+--    SET linked_surgery_episode_id = <Logan's chosen episode>
+--    WHERE research_id = <rid> AND finding_date = <date>;
+--  Skip rows where Logan's adjudication == ACCEPT.)
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'mechanical_derivation_compare',
+--     upstream_source     = 'Script 363 Step 1 SELECT linkage block re-derived as SELECT '
+--                        || '(MIN(surgery_episode_id) within +/-90d; MIN(path_surgery_id) where surgery_date=finding_date; '
+--                        || 'COUNT(*) OVER PARTITION BY (research_id, finding_date)). '
+--                        || '759 ambiguous-linkage (research_id, finding_date) groups (>=2 candidate surgery_episode_ids '
+--                        || 'in window) Logan-adjudicated via ambiguous_linkage_review__mig_91.csv.',
+--     batch_id            = 'mig_91_invasion_events_linkage_verify',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91b: linkage re-derived; 759 ambiguous groups Logan-adjudicated. '
+--                        || 'CF-91-LINKAGE-COL-NAME: linkage_ambiguous_multi_episode is mis-named (counts findings per partition, not episodes).'
+-- WHERE schema_name = 'main'
+--   AND table_name  = 'canonical_invasion_events_v1'
+--   AND column_name IN (
+--     'linked_surgery_episode_id', 'linked_path_malignant_event_id',
+--     'linkage_method', 'n_candidate_episodes',
+--     'linkage_ambiguous_multi_episode'
+--   );
+
+-- -----------------------------------------------------------------------------
+-- 91c -- canonical_invasion_events_v1: 11 auto_*_skip cols (Step D batch)
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment to close the 11 cols below in one batch.
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'auto_no_source_counterpart',
+--     batch_id            = 'mig_91_invasion_events_step_d',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91c: pure provenance / identifier / pipeline-trace; '
+--                        || 'no source counterpart (Step D batch flip per FNA pilot precedent mig_78c).'
+-- WHERE schema_name = 'main'
+--   AND table_name  = 'canonical_invasion_events_v1'
+--   AND column_name IN (
+--     'invasion_event_id', 'research_id',           -- identifiers
+--     'source_modality', 'source_kind',
+--     'source_table', 'source_row_id',              -- provenance
+--     'confidence', 'evidence_span_hash',
+--     'extraction_run_id',
+--     'build_script', 'build_ts'                    -- pipeline-trace
+--   );
+
+-- -----------------------------------------------------------------------------
+-- 91d -- canonical_esophageal_invasion_events_v1 (188 rows / 15 cols)
+--        per-finding Logan review (airway-style, mig_80->83 precedent)
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after reviewing positive_subset_review__mig_91.csv
+-- (full 188 rows). Apply any REJECT (drop row) or RECLASS (override
+-- entity_value/present_or_negated) decisions via UPDATE/DELETE BEFORE the
+-- registry flip below.
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'manual_source_review',
+--     batch_id            = 'mig_91_esophageal_invasion_signoff',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91d: full 188-row Logan review; '
+--                        || 'findings-vs-staging rule applied (procedural-context-only mentions REJECTED).'
+-- WHERE schema_name='main' AND table_name='canonical_esophageal_invasion_events_v1';
+
+-- -----------------------------------------------------------------------------
+-- 91e -- canonical_t4b_invasion_events_v1 (944 rows / 19 cols)
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after reviewing positive_subset_review__mig_91.csv
+-- (~50 positive+edge rows out of 944). Apply RECLASS decisions
+-- (RECLASS_T4B / RECLASS_NOT_T4B / RECLASS_UTD) via UPDATE before flip.
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'manual_source_review',
+--     batch_id            = 'mig_91_t4b_invasion_signoff',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91e: positive-subset Logan review (per findings-vs-staging rule, '
+--                        || 't4b_implication follows the 3 anatomic findings, not inverse).'
+-- WHERE schema_name='main' AND table_name='canonical_t4b_invasion_events_v1';
+
+-- -----------------------------------------------------------------------------
+-- 91f -- canonical_vascular_invasion_events_v1 (3,861 rows / 22 cols)
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after reviewing positive_subset_review__mig_91.csv
+-- (~1,500 positive rows out of 3,861). Apply RECLASS_VASCULAR /
+-- RECLASS_LYMPHATIC / RECLASS_PERINEURAL / RECLASS_LVI / RECLASS_MULTI /
+-- REJECT decisions via UPDATE/DELETE before flip.
+--
+-- UPDATE main.canonical_column_verification_registry_v1
+-- SET verification_status = 'verified',
+--     verified_by         = 'logan',
+--     verification_method = 'manual_source_review',
+--     batch_id            = 'mig_91_vascular_invasion_signoff',
+--     verified_ts         = CURRENT_TIMESTAMP,
+--     notes               = COALESCE(notes,'')
+--                        || ' | mig_91f: positive-subset Logan review (per findings-vs-staging, '
+--                        || 'lvi_collapsed must follow vascular_invasion OR lymphatic_invasion; '
+--                        || 'vessel_count > 0 implies vascular_invasion = present).'
+-- WHERE schema_name='main' AND table_name='canonical_vascular_invasion_events_v1';
+
+-- -----------------------------------------------------------------------------
+-- 91g -- table_signoff_registry refresh for the 4 invasion canonicals
+-- -----------------------------------------------------------------------------
+-- TODO_LOGAN: uncomment after 91a-91f have all run.
+--
+-- UPDATE main.canonical_table_signoff_registry_v1 ts
+-- SET n_columns_total = subq.n_total,
+--     n_verified      = subq.n_verified,
+--     n_not_started   = subq.n_not_started,
+--     n_failed        = COALESCE(subq.n_failed, 0),
+--     n_na            = subq.n_na,
+--     table_status    = CASE
+--       WHEN subq.n_not_started + COALESCE(subq.n_failed,0) = 0 THEN 'verified'
+--       WHEN subq.n_verified > 0 THEN 'in_progress'
+--       ELSE 'not_started'
+--     END,
+--     signed_off_ts   = CURRENT_TIMESTAMP,
+--     signoff_migration = 'qc_framework_v1/migrations/91_invasion_events_verify_and_signoff.sql'
+-- FROM (
+--   SELECT schema_name, table_name,
+--          COUNT(*) AS n_total,
+--          SUM(CASE WHEN verification_status='verified'    THEN 1 ELSE 0 END) AS n_verified,
+--          SUM(CASE WHEN verification_status='not_started' THEN 1 ELSE 0 END) AS n_not_started,
+--          SUM(CASE WHEN verification_status='failed'      THEN 1 ELSE 0 END) AS n_failed,
+--          SUM(CASE WHEN verification_status='na'          THEN 1 ELSE 0 END) AS n_na
+--   FROM main.canonical_column_verification_registry_v1
+--   WHERE schema_name='main'
+--     AND table_name IN (
+--       'canonical_invasion_events_v1',
+--       'canonical_esophageal_invasion_events_v1',
+--       'canonical_t4b_invasion_events_v1',
+--       'canonical_vascular_invasion_events_v1'
+--     )
+--   GROUP BY 1,2
+-- ) subq
+-- WHERE ts.schema_name = subq.schema_name AND ts.table_name = subq.table_name;
+
+-- =============================================================================
+-- end of migration 91 SKELETON
+-- 4 invasion canonicals (1 multi-source UNION + 3 LLM-output siblings)
+-- pending Logan adjudication of 4 review CSVs.
+-- After fill-in, this becomes the FIFTH-EIGHTH tables verified under Protocol v2.
+-- =============================================================================
