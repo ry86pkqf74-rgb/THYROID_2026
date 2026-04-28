@@ -72,6 +72,21 @@ Order: chronological (newest at the bottom).
   - **Carry-forward CF-87-AJCC:** AJCC7/8 staging cols verified as faithful copies of CTC pre361 staging values. The findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (in CTC's build pipeline, scripts 251/266). Future round can either (a) restore CTC and validate its staging derivation against findings, or (b) re-derive staging post-canonical from verified findings and audit diff.
   - **Carry-forward CF-87-GROSS-ETE:** 6 of 6,695 join-duplicate rows show inconsistent gross_ete between paired archive rows; each canonical row matches at least one archive row. Cosmetic. Defer.
 
+### 2026-04-28 — main.canonical_t4b_invasion_events_v1
+
+- **Rows:** 944
+- **Columns:** 19 verified
+- **Sign-off migration:** `qc_framework_v1/migrations/92_t4b_invasion_table_signoff.sql`
+- **Notes:**
+  - Single-migration arc following the airway-style per-finding review precedent (mig_80 → mig_83).
+  - Logan reviewed all 47 positive + edge rows via `verification_csvs/canonical_t4b_invasion_events_v1/t4b_implication_signoff__mig_91__LOGAN_REVIEWED.xlsx` (Pass 1).
+  - Logan adjudicated 5 LLM-extraction-miss rows inline (Pass 2): rid 5278 ct_imaging "involving the prevertebral space" promoted to pT4b w/ prevertebral_fascia_invasion=present; rids 2139/3347/6487/6744 confirmed not_pT4b (LLM was correct or appropriately conservative).
+  - Logan default-not interpretation (Pass 3): omission of t4b-anatomy descriptors in LLM evidence is sufficient evidence of absence; 892 baseline rows bulk-reclassed unable_to_determine → not_pT4b.
+  - **Final two-branch staging rule:** `pT4b` iff ≥1 anatomic finding `'present'`; `not_pT4b` otherwise. `unable_to_determine` eliminated.
+  - **Row writes (mig_92a-row-1/2/3):** 29 + 1 (with prevertebral promotion) + 896 = 926 rows total touched.
+  - Final distribution: **19 pT4b / 925 not_pT4b / 0 unable_to_determine = 944**.
+  - Verification methods: 3 anatomic findings via `manual_source_review`; `t4b_implication` via `mechanical_derivation_compare`; 3 LLM metadata + 12 provenance via `auto_no_source_counterpart`.
+
 ### 2026-04-28 — main.canonical_operative_events_v1
 
 - **Rows:** 11,773 / 10,871 patients

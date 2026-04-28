@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_90 — OPERATIVE EVENTS SIGNED OFF)
+**Last refreshed:** 2026-04-28 (post-mig_92 — T4B INVASION SIGNED OFF — 5th table)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,10 +16,10 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **4 / 184** (2.2 %) — FNA pilot + airway invasion + path malignant + operative events |
+| Tables verified under Protocol v2 | **5 / 184** (2.7 %) — FNA pilot + airway invasion + path malignant + operative events + t4b invasion |
 | Tables `verified` in registry (pre-v2 legacy + v2) | 14 (10 are pre-v2 placeholders with NULL signed_off_ts) |
 | Columns in scope | 5,490 (started 5,494; dropped 4 in mig_84) |
-| Columns Logan-verified (v2) | **171 / 5,490** (38 FNA + 23 airway invasion + 56 path malignant + 54 operative events) |
+| Columns Logan-verified (v2) | **190 / 5,490** (38 FNA + 23 airway invasion + 56 path malignant + 54 operative events + 19 t4b invasion) |
 | Columns at `not_started` (in v2 queue) | **4,583** |
 | Columns at `na` (legacy v1 auto-skip, pending re-tier) | **731** |
 | Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |
@@ -69,6 +69,7 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 
 ## Recently verified
 
+- **`main.canonical_t4b_invasion_events_v1`** — signed off 2026-04-28 via mig_92 (single migration). Final state: 944 rows / 19 cols. First sibling LLM-output invasion canonical closed (esophageal + vascular + invasion_events still queued). Three-pass Logan review: 47 CSV rows + 5 LLM-extraction-miss inline + 892 baseline default-not. **Final distribution: 19 pT4b / 925 not_pT4b / 0 unable_to_determine.** New rule: omission of t4b-anatomy descriptors → not_pT4b (default-not interpretation).
 - **`main.canonical_operative_events_v1`** — signed off 2026-04-28 via mig_90 (single migration). Final state: 11,773 rows / 10,871 patients / 54 cols. First table to close in **a single migration** using the CTC-equivalence pattern. Unblocks FNA `days_to_surgery` carry-forward.
 - **`main.canonical_path_malignant_events_v1`** — signed off 2026-04-28 via mig_89 (6-migration arc mig_84 → mig_89). Final state: 6,689 rows / 4,137 patients / 56 cols. Established **CTC-equivalence verification pattern** + **Script-rule re-run verification** (carry forward to subsequent tables built by Script-361-style copy-and-update chains).
 - **`main.canonical_airway_invasion_events_v1`** — signed off 2026-04-28 via mig_83 (4-migration arc mig_80 → mig_83). Final state: 3,155 rows / 2,622 patients / 196 positive (138 pT4a + 58 not_pT4a). Established **findings-vs-staging separation rule** (memory: `feedback_findings_vs_staging.md`).
