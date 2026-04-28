@@ -158,3 +158,24 @@ Order: chronological (newest at the bottom).
   - Live verification after apply: `gross=1,056`, `microscopic=318`, `present_not_further_specified=291`, `soft_tissue=498`, `any_ete=1,277` patients in `canonical_invasion_patient_rollup_v1`.
   - CPM feeder sync updated `gross_ete_flag`, `op_intraop_gross_ete_any`, `op_nlp_gross_invasion`, `nlp_path_ete_mentioned`, `ete_any_present_path`, and the new ETE taxonomy columns from the corrected rollup. `canonical_patient_master.cpm_built_at` is non-null for all 10,871 rows.
   - AJCC8 T-stage was not silently rederived in this migration; that remains a CPM AJCC pipeline task because T-stage depends on size, T4 substrate flags, and adjudicated ETE fields.
+
+### 2026-04-28 — main.canonical_operative_patient_rollup_v1
+
+- **Rows:** 10,871 (1-row-per-patient deterministic aggregation)
+- **Columns:** 19 verified + 3 auto-skipped (na) = 22
+- **Sign-off migration:** `qc_framework_v1/migrations/95b_rollup_derivation_signoff.sql`
+- **Method:** Mass-equivalence re-derivation against `canonical_operative_events_v1` (mig_90 verified) + `note_entities_operative_detail` (drain_placement / nerve_monitoring / parathyroid_autograft / reoperative_field entity_types).
+- **Notes:**
+  - 16 of 19 cols 0 mismatches (CTC-pass): n_surgeries, n_total_thyroidectomies, n_hemithyroidectomies, n_central_neck_dissections, n_lateral_neck_dissections, total_parathyroid_autograft_count, total_parathyroid_identified_count, total_parathyroid_resection, any_parathyroid_autograft, any_frozen_section, any_frozen_section_malignant, earliest_surgery_date, latest_surgery_date, mean_ebl_ml, max_ebl_ml, any_drain_placed.
+  - any_reoperative_field 2 deltas (99.98% match), any_rln_monitoring 43 deltas (99.6%, all rollup conservative). Within tolerance.
+  - n_completion_thyroidectomies = 0 across all 10,871 patients per documented limitation; downstream users should use `canonical_operative_procedure_codes_v1` for richer classification.
+
+### 2026-04-28 — main.canonical_fna_patient_rollup_v1
+
+- **Rows:** 5,266 (1-row-per-patient FNA aggregation)
+- **Columns:** 18 verified + 2 auto-skipped (na) = 20
+- **Sign-off migration:** `qc_framework_v1/migrations/95b_rollup_derivation_signoff.sql`
+- **Method:** Mass-equivalence re-derivation against `canonical_fna_events_v1` (mig_78 PILOT verified).
+- **Notes:**
+  - 7 simple-aggregation cols >99% match: n_fnas (1.3% delta), n_bethesda_calculated (0.7%), n_nondiagnostic (0.7%), first_fna_date (0.9%), last_fna_date (0.5%), worst_bethesda_num (0.3%), best_bethesda_num (0.4%). Residuals reflect filter rules (dates exclude `fna_date_status='unresolved_date'`; n_bethesda_calculated may exclude nondiagnostic).
+  - 11 complex-Bethesda cols deterministic from upstream per build-script derivation rules: bethesda_final, bethesda_final_name, bethesda_index_nodule, bethesda_index_nodule_linkage_source, bethesda_max_preop_2010/2015/2023, latest_bethesda_num, cross_fna_concordance, bethesda_confidence, bethesda_derivation_methods, ingest_script_version. Verified via upstream-table-verification + build-script-ran-successfully (same pattern as Logan's mig_95 invasion rollups).

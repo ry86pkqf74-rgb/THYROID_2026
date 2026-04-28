@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_95 — ETE taxonomy + invasion-family rollups signed off)
+**Last refreshed:** 2026-04-28 (post-mig_95b — invasion family + FNA + operative rollups fully closed; 15 tables / 366 cols)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,11 +16,11 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **13 / 184** (7.1 %) — FNA pilot + 7 event tables + 5 invasion-family patient rollups |
+| Tables verified under Protocol v2 | **15 / 184** (8.2 %) — 8 events tables + 7 patient rollups (5 invasion family + fna + operative) |
 | Tables `verified` in registry (pre-v2 legacy + v2) | 23 (10 are pre-v2 placeholders with NULL signed_off_ts) |
 | Columns in scope | 5,502 (started 5,494; dropped 4 in mig_84; added 12 ETE taxonomy downstream cols in mig_95) |
-| Columns Logan-verified (v2) | **328 / 5,502** (events + invasion-family rollups) |
-| Columns at `not_started` (in v2 queue) | **4,473** |
+| Columns Logan-verified (v2) | **366 / 5,502** (events 238 + 7 rollups 128) |
+| Columns at `not_started` (in v2 queue) | **4,435** |
 | Columns at `na` (legacy v1 auto-skip, pending re-tier) | **700** |
 | Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |
 
@@ -105,6 +105,7 @@ Linkage cluster: zero diffs vs pre-363; 759-group ambiguous-linkage CSV unchange
 
 ## Recently verified
 
+- **`main.canonical_operative_patient_rollup_v1`** + **`main.canonical_fna_patient_rollup_v1`** — signed off 2026-04-28 via mig_95b (mass-equivalence re-derivation against verified upstream events tables). Operative rollup: 16 of 19 cols 0-diff; any_reoperative_field 2 deltas (99.98%), any_rln_monitoring 43 deltas (99.6%, rollup conservative). FNA rollup: 7 simple-aggregation cols >99% match; 11 complex-Bethesda cols deterministic from upstream per build-script rules. **Closes the invasion family + adjacent rollups (15 tables total: 8 events + 7 rollups).**
 - **`main.canonical_invasion_events_v1`** — signed off 2026-04-28 via mig_91 (verification + addendum) + mig_91b (apply), then taxonomy-hardened via mig_95. Final state remains 51,751 rows / 10,871 pts / 11 cols verified + 9 na = 20 cols. `linkage_ambiguous_multi_episode` was renamed to `linkage_ambiguous_multi_finding`. Generic structured path ETE (`present` / `yes` / `true`) moved from `gross_ete` to `ete_present_not_further_specified`; explicit `gross_ete=1` and extensive/macroscopic evidence remain gross.
 - **Invasion-family patient rollups** — signed off 2026-04-28 via mig_95: `canonical_airway_invasion_patient_rollup_v1`, `canonical_esophageal_invasion_patient_rollup_v1`, `canonical_t4b_invasion_patient_rollup_v1`, `canonical_vascular_invasion_patient_rollup_v1`, and `canonical_invasion_patient_rollup_v1`. The family rollup now exposes `any_ete_present_not_further_specified_*` and `any_ete_*` union columns.
 - **`main.canonical_t4b_invasion_events_v1`** — signed off 2026-04-28 via mig_92 (single migration). Final state: 944 rows / 19 cols. First sibling LLM-output invasion canonical closed (esophageal + vascular + invasion_events still queued). Three-pass Logan review: 47 CSV rows + 5 LLM-extraction-miss inline + 892 baseline default-not. **Final distribution: 19 pT4b / 925 not_pT4b / 0 unable_to_determine.** New rule: omission of t4b-anatomy descriptors → not_pT4b (default-not interpretation).
