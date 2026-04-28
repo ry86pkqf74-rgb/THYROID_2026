@@ -19,27 +19,33 @@ OUT = REPO_ROOT / "verification_csvs" / "canonical_airway_invasion_events_v1" / 
 DB = "thyroid_canonical_publication_v1_0"
 
 PREAMBLE = """\
-# Airway invasion pT4a candidates review (post-mig_81)
+# Airway invasion pT4a candidates review (post-mig_82)
 # Generated 2026-04-28
 #
 # 138 rows currently labeled t4a_implication='pT4a'. Sorted with the most
 # concerning rows (multiple full-thickness 'present' findings, high
 # confidence) at the top.
 #
-# n_full_thickness column counts how many of these are 'present':
-#   tracheal_invasion='present', laryngeal_invasion='present',
-#   cricoid_invasion='present', rln_invasion='present',
-#   esophageal_invasion='present'
+# Post-mig_82 (CAP template-echo cleanup): 18 synoptic rows had their
+# individual finding columns reset to 'unknown' because the LLM evidence
+# was CAP checklist OPTION TEXT only (template echo, not a specific
+# anatomic finding). t4a_implication=pT4a retained on all 18 (pathologist
+# DID check the box -> their call stands).
+#
+# n_full_thickness counts how many of these are 'present':
+#   tracheal_invasion, laryngeal_invasion, cricoid_invasion,
+#   rln_invasion, esophageal_invasion
 # (rln_paralysis_preop and 'shaved' do NOT count as full-thickness.)
 #
-# For each row, valid override values are:
-#   tracheal_invasion:   absent | shaved | present | unknown
-#   laryngeal_invasion:  absent | present | unknown
-#   cricoid_invasion:    absent | present | unknown
-#   rln_invasion:        absent | present | unknown
-#   rln_paralysis_preop: absent | present | unknown
-#   esophageal_invasion: absent | shaved | present | unknown
-#   t4a_implication:     pT4a | not_pT4a | unable_to_determine
+# evidence_flag values:
+#   pathologist_call_only  -- post-mig_82, all anatomic findings unknown;
+#                             pT4a anchored solely on pathologist's stage
+#                             assertion (template echo cleanup)
+#   short_quote            -- evidence quote is < 60 chars (often thin)
+#   has_or_disjunction     -- evidence contains "or recurrent laryngeal" or
+#                             similar AJCC-definition disjunctive language
+#                             (potential additional template echo)
+#   normal                 -- substantive narrative-style evidence
 #
 # Decision values:
 #   your_row_decision:
@@ -71,14 +77,36 @@ def main() -> None:
             +(CASE WHEN cricoid_invasion='present'    THEN 1 ELSE 0 END)
             +(CASE WHEN rln_invasion='present'        THEN 1 ELSE 0 END)
             +(CASE WHEN esophageal_invasion='present' THEN 1 ELSE 0 END)
-            ) AS n_full_thickness
+            ) AS n_full_thickness,
+            CASE
+              WHEN (tracheal_invasion='unknown' OR tracheal_invasion IS NULL)
+               AND (laryngeal_invasion='unknown' OR laryngeal_invasion IS NULL)
+               AND (cricoid_invasion='unknown' OR cricoid_invasion IS NULL)
+               AND (rln_invasion='unknown' OR rln_invasion IS NULL)
+               AND (esophageal_invasion='unknown' OR esophageal_invasion IS NULL)
+                THEN 'pathologist_call_only'
+              WHEN evidence_quote ILIKE '%or recurrent laryngeal%'
+                OR evidence_quote ILIKE '%(i.e., pT4a)%'
+                OR evidence_quote ILIKE '%(ie, pT4a)%'
+                THEN 'has_or_disjunction'
+              WHEN LENGTH(evidence_quote) < 60 THEN 'short_quote'
+              ELSE 'normal'
+            END AS evidence_flag
           FROM main.canonical_airway_invasion_events_v1
           WHERE t4a_implication = 'pT4a'
         )
         SELECT * FROM ranked
-        ORDER BY n_full_thickness DESC,
-                 CASE confidence WHEN 'high' THEN 0 WHEN 'medium' THEN 1 WHEN 'low' THEN 2 ELSE 3 END,
-                 research_id, note_type, note_index
+        ORDER BY
+          -- Substantive findings first; pathologist_call_only at the end
+          CASE evidence_flag
+            WHEN 'pathologist_call_only' THEN 3
+            WHEN 'short_quote' THEN 2
+            WHEN 'has_or_disjunction' THEN 1
+            ELSE 0
+          END,
+          n_full_thickness DESC,
+          CASE confidence WHEN 'high' THEN 0 WHEN 'medium' THEN 1 WHEN 'low' THEN 2 ELSE 3 END,
+          research_id, note_type, note_index
     """).fetchall()
     print(f"pT4a candidate rows: {len(rows)}")
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +115,7 @@ def main() -> None:
         w = csv.writer(f)
         w.writerow([
             "research_id", "note_type", "note_index", "airway_event_id",
-            "n_full_thickness",
+            "evidence_flag", "n_full_thickness",
             "tracheal_invasion", "tracheal_invasion_depth",
             "laryngeal_invasion", "cricoid_invasion",
             "rln_invasion", "rln_paralysis_preop",
@@ -101,10 +129,10 @@ def main() -> None:
         for r in rows:
             (eid, rid, nt, nidx,
              trach, trach_depth, laryn, cric, rln, rln_par, esoph, t4a,
-             conf, evidence, reasoning, n_ft) = r
+             conf, evidence, reasoning, n_ft, ev_flag) = r
             w.writerow([
                 rid, nt, nidx, eid,
-                n_ft,
+                ev_flag, n_ft,
                 trach or "", trach_depth or "",
                 laryn or "", cric or "", rln or "", rln_par or "",
                 esoph or "", t4a or "", conf or "",
