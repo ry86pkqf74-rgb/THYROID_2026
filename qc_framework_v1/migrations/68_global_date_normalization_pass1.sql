@@ -1,0 +1,60 @@
+-- =============================================================================
+-- Migration 68 -- global date normalization pass 1
+-- =============================================================================
+-- Date:   2026-04-27
+-- Author: Logan Glosser (drafted with Claude / Cowork)
+-- Plan:   Logan directive: "globally normalize all dates across the master
+--         canonical V1_0 motherduck database to month/date/year including
+--         the 2-digit year rule. Remove exact time of day (as that is
+--         irrelevant)."
+-- Scope:  every clinical-date column in main + manuscript_workspace base
+--         tables (excluding _legacy, _archived, _pre_cleanup snapshots).
+-- Driver: qc_framework_v1/scripts/normalize_dates_v1_0_pass1.py
+-- Report: qc_framework_v1/reports/date_normalization_pass1_report.md
+--
+-- This file does NOT contain row-level UPDATE statements (would be tens of
+-- thousands of rows). The driver script connects via duckdb.connect('md:')
+-- as logan.glosser.eras@gmail.com and applies UPDATEs per column. To
+-- replay, regenerate the parquet (extract_fna_source_long.py) then run:
+--
+--   python3 qc_framework_v1/scripts/normalize_dates_v1_0_pass1.py
+--
+-- Summary by action class (see report for per-column detail):
+--
+--   timestamp_truncate_to_day   191 cols  -- DATE_TRUNC('day', col); time set
+--                                            to 00:00:00, type stays TIMESTAMP
+--                                            for view-compat. Includes audit
+--                                            timestamps (build_ts, extracted_at,
+--                                            created_at, etc.) per Logan's
+--                                            literal "remove exact time of day".
+--   skip_already_date_typed     129 cols  -- DATE storage is canonical
+--   varchar_normalized_mm_dd_yyyy 62 cols -- VARCHAR -> MM/DD/YYYY string with
+--                                            20YY rule (00=2000, 25=2025).
+--                                            Idempotent: existing MM/DD/YYYY
+--                                            values are skipped.
+--   skip_metadata_name           25 cols  -- *_status, *_source, *_confidence,
+--                                            *_traceability, *_kind, *_dtype,
+--                                            *_extraction_method, *_keyword,
+--                                            *_key_finding -- not actual dates
+--   skip_not_date_values         20 cols  -- <70% of sampled values parsed as
+--                                            dates (free-text columns mis-named)
+--   skip_empty                    8 cols  -- no non-null data
+--
+-- Notable per-column summaries:
+--   canonical_fna_events_v1.fna_date_raw:
+--     8,052 non-null -> 7,255 normalized + 53 left unparseable (handled in
+--     mig_67) + 744 already in MM/DD/YYYY (skipped, idempotent).
+--   canonical_frozen_section_events_v1.frozen_section_date:
+--     7,080 non-null -> 7,080 normalized, 0 unparseable.
+--   path_synoptics.surg_date (TIMESTAMP):
+--     11,686 rows -> 126 had non-zero time component, all truncated to 00:00:00.
+--
+-- Executed via Cowork mode 2026-04-27. The driver script is the canonical
+-- record of the change for replay/audit.
+-- =============================================================================
+
+-- See driver script. No inline DML in this file.
+
+-- =============================================================================
+-- end of migration 68
+-- =============================================================================
