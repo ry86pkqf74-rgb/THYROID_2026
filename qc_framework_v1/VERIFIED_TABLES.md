@@ -71,3 +71,14 @@ Order: chronological (newest at the bottom).
   - **Carry-forward CF-86-1:** 64 Path-B `tumor_ordinal` rows came via archived TEM v2 text-extraction (Script 108 SLOT_MAP misses them). Verifiable against `archive_pub_v1_0.tumor_episode_master_v2_pre361_*` if future restore-and-reverify is run. Defer.
   - **Carry-forward CF-87-AJCC:** AJCC7/8 staging cols verified as faithful copies of CTC pre361 staging values. The findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (in CTC's build pipeline, scripts 251/266). Future round can either (a) restore CTC and validate its staging derivation against findings, or (b) re-derive staging post-canonical from verified findings and audit diff.
   - **Carry-forward CF-87-GROSS-ETE:** 6 of 6,695 join-duplicate rows show inconsistent gross_ete between paired archive rows; each canonical row matches at least one archive row. Cosmetic. Defer.
+
+### 2026-04-28 — main.canonical_operative_events_v1
+
+- **Rows:** 11,773 / 10,871 patients
+- **Columns:** 54 verified
+- **Sign-off migration:** `qc_framework_v1/migrations/90_operative_events_verify_and_signoff.sql`
+- **Notes:**
+  - Single-migration arc (mig_90 only). The CTC-equivalence verification pattern from mig_87 paid off — 54 cols closed in one migration vs the 6-migration arc for path malignant.
+  - Method: Path A (CTC-equivalence) for 38 inherited cols against `archive_pub_v1_0.operative_episode_detail_v2_pre362_20260422_005646` — 11,773/11,773 MATCH. Path B (Step 1b UPDATE rule re-run) for 6 op_detail enrichment cols against LIVE `note_entities_operative_detail` — 11,773/11,773 MATCH. Step D batch flip for 10 na_provenance cols.
+  - **Carry-forward CF-90-DATE-FORMAT:** `resolved_surgery_date` is stored as `MM/DD/YYYY` in canonical vs `YYYY-MM-DD` in pre362 archive. Date values are identical under date-parsing; only format differs (reformatted by a downstream normalization pass, not Script 362 itself which was a literal SELECT *). Defer.
+  - **Unblocks** `canonical_fna_events_v1.days_to_surgery` deferred carry-forward — cross-table derivation against this table's `resolved_surgery_date` / `surgery_date_native` is now operable.
