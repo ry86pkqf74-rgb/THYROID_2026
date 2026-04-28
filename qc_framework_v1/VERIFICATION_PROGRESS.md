@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_97 — FNA days-to-surgery closed; path benign structurally repaired with one source-absent carry-forward)
+**Last refreshed:** 2026-04-28 (post-mig_97b — path_benign synoptic_row_ix CF closed via specimen_master_v1 inheritance; 16 tables / 417 cols verified)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,13 +16,13 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **15 / 184** (8.2 %) — 8 events tables + 7 patient rollups (5 invasion family + fna + operative); plus 1 in-progress (`canonical_path_benign_events_v1`) |
+| Tables verified under Protocol v2 | **16 / 184** (8.7 %) — 9 events tables + 7 patient rollups (5 invasion family + fna + operative); path_benign closed via mig_97 + mig_97b |
 | Tables `verified` in registry (pre-v2 legacy + v2) | 25 (legacy + v2 registry status; `canonical_path_benign_events_v1` is in_progress) |
 | Columns in scope | 5,502 (started 5,494; dropped 4 in mig_84; added 12 ETE taxonomy downstream cols in mig_95) |
-| Columns Logan-verified (v2) | **416 / 5,502** (includes +50 verified `canonical_path_benign_events_v1` columns under mig_97) |
+| Columns Logan-verified (v2) | **417 / 5,502** (16 tables: 9 events 249 + 7 rollups 128 + path_benign 51 — synoptic_row_ix flipped failed→verified in mig_97b via specimen_master_v1 inherit) |
 | Columns at `not_started` (in v2 queue) | **4,390** |
 | Columns at `na` (legacy v1 auto-skip / source-absent placeholders) | **695** |
-| Columns at `failed` (deferred carry-forward) | 1 (`canonical_path_benign_events_v1.synoptic_row_ix`) |
+| Columns at `failed` (deferred carry-forward) | 0 (CF-PATH-BENIGN-SYNOPTIC-ROW-IX closed in mig_97b) |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
 its slot in the priority queue, its remaining `na` columns will be re-tiered

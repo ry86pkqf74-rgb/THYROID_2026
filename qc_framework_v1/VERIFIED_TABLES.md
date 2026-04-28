@@ -204,3 +204,14 @@ Order: chronological (newest at the bottom).
   - NLP flag audit summary written to `verification_csvs/canonical_path_benign_events_v1/nlp_flag_verification_summary_mig_97.csv`; no clinical text exported. All source-backed flags mechanically match structured `path_synoptics` markers at 100%; no <80% review workbook required.
   - Zero-prevalence placeholder NLP flags marked `na`: `nlp_normal_thyroid`, `nlp_nifcp`, `nlp_nifp`, `nlp_nifpt`.
   - Remaining failed carry-forward: `CF-PATH-BENIGN-SYNOPTIC-ROW-IX`. Live `path_synoptics` has no `synoptic_row_ix`; Scripts 361/396 intentionally leave `synoptic_row_ix` NULL rather than synthesizing Script-108 pandas-load-order row IDs with SQL `ROW_NUMBER()`.
+
+### 2026-04-28 — main.canonical_path_benign_events_v1 (CF closure)
+
+- **Rows:** 11,688 / 10,871 patients
+- **Columns:** 51 verified + 4 auto-skipped (na) = 55
+- **Sign-off migration:** `qc_framework_v1/migrations/97b_path_benign_synoptic_row_ix_inherit.sql` (post-mig_97 CF closure)
+- **Method:** mig_97 (Cursor agent commit `0351e2b`) repaired surgery_episode_id linkage (2,656 → 13 NULL), populated has_concomitant_malignant_event (1 → 4,331 TRUE), and verified 38 NLP flags at 100% mechanical match. mig_97b (Cowork) closed the synoptic_row_ix CF by inheriting from `specimen_master_v1` via `specimen_id` join.
+- **Notes:**
+  - **CF-PATH-BENIGN-SYNOPTIC-ROW-IX CLOSED** (mig_97b): 9,057/11,688 (77%) inherited from `specimen_master_v1.synoptic_row_ix` via `specimen_id`. 2,631 rows remain NULL because they have NULL `specimen_id` (same root cause as the 13 residual `surgery_episode_id` NULLs from mig_97). Per memory `reference_synoptic_row_ix.md`, did NOT synthesize via SQL ROW_NUMBER — inheritance from a verified upstream source (specimen_master_v1, which carries the genuine Script-108 pandas-load-order index) is the correct pattern.
+  - **NLP audit perfect**: all 38 nlp_* flags at 100% mechanical match rate vs path_synoptics free text (mig_97).
+  - **16th Protocol v2 table verified**.
