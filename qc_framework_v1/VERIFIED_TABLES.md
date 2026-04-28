@@ -51,3 +51,23 @@ Order: chronological (newest at the bottom).
   - Carry-forward CF-1: 6017 synoptic — pT4a anchored on non-airway "extrathyroidal extension into fat" rather than airway findings. Future call: should airway invasion table exclude rows whose only pT4a evidence is non-airway?
   - Carry-forward CF-2: `t4a_implication` is currently a stored LLM column; per findings-vs-staging rule, future cleanup may convert it to a deterministic post-derivation.
   - Carry-forward CF-3: 17 `pathologist_call_only` rows (all anatomic findings = `unknown`, `t4a=pT4a`); downstream views may want an evidence_grade flag.
+
+### 2026-04-28 — main.canonical_path_malignant_events_v1
+
+- **Rows:** 6,689 / 4,137 patients
+- **Columns:** 56 verified (started 60; dropped 4 deprecated staging cols in mig_84)
+- **Sign-off migration:** `qc_framework_v1/migrations/89_path_malignant_table_signoff.sql`
+- **Notes:**
+  - Verification spanned mig_84 through mig_89 (6 migrations, single session 2026-04-28).
+  - **mig_84** structural opener: dropped 4 `*_deprecated_un_versioned_20260417` staging cols + 11 dependent fingerprint views in `manuscript_workspace`. Reclassed 3 cols (`synoptic_row_ix`, `histology_source`, `resolution_rule`) from adjudicated → na_provenance.
+  - **mig_85** `surgery_date` verified mechanically against `path_synoptics.surg_date` on (research_id, surgery_date) — 6,689/6,689 MATCH.
+  - **mig_86** `tumor_ordinal` verified under two-path rule: Path A (Script 108 SLOT_MAP slot population) 6,625 rows + Path B (text-extraction via archived TEM v2) 64 rows = 6,689/6,689 MATCH.
+  - **mig_87** ARCHITECTURAL INNOVATION: 36 inherited cols batch-verified via mass-equivalence join against archived CTC pre361 (the immediate upstream). Read-only verification reference; canonical never sources from archive. 6,695/6,695 MATCH for 35 cols; gross_ete 6,689/6,695 (6 join-duplicate cosmetic artifact).
+  - **mig_88** 6 post-361-UPDATE cols verified by re-running Script 361 UPDATE rules: 4 TEM-derived (6,693/6,693 against archived TEM v2) + 2 STF-derived (6,689/6,689 against LIVE specimen_tumor_focus_v1).
+  - **mig_89** Step D batch flip of 12 auto_no_source_counterpart cols + table sign-off.
+  - **Architectural innovations** (carry forward to subsequent tables):
+    1. **CTC-equivalence verification pattern** — for canonicals built via SELECT * + filter + UPDATE chains, the archived pre-script snapshot is the value-source-of-truth; one mass-equivalence query verifies dozens of inherited cols at once.
+    2. **Script-rule re-run verification** — for post-build UPDATE-derived cols, re-execute the original UPDATE logic as a SELECT and compare against canonical's stored values.
+  - **Carry-forward CF-86-1:** 64 Path-B `tumor_ordinal` rows came via archived TEM v2 text-extraction (Script 108 SLOT_MAP misses them). Verifiable against `archive_pub_v1_0.tumor_episode_master_v2_pre361_*` if future restore-and-reverify is run. Defer.
+  - **Carry-forward CF-87-AJCC:** AJCC7/8 staging cols verified as faithful copies of CTC pre361 staging values. The findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (in CTC's build pipeline, scripts 251/266). Future round can either (a) restore CTC and validate its staging derivation against findings, or (b) re-derive staging post-canonical from verified findings and audit diff.
+  - **Carry-forward CF-87-GROSS-ETE:** 6 of 6,695 join-duplicate rows show inconsistent gross_ete between paired archive rows; each canonical row matches at least one archive row. Cosmetic. Defer.
