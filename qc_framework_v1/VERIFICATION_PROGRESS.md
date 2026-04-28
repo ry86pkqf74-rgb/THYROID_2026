@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-27 (post-mig_65 — first column signed off in pilot)
+**Last refreshed:** 2026-04-28 (post-mig_78 — PILOT TABLE SIGNED OFF)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,10 +16,10 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified | **0 / 184** (0 %) |
-| Columns in scope | 5,496 |
-| Columns Logan-verified | **1 / 5,496** |
-| Columns at `not_started` (in v2 queue) | **4,733** |
+| Tables verified | **1 / 184** (0.5 %) |
+| Columns in scope | 5,494 (was 5,496 — dropped subtype + is_index_fna; renames net-zero) |
+| Columns Logan-verified | **38 / 5,494** |
+| Columns at `not_started` (in v2 queue) | **4,694** |
 | Columns at `na` (legacy v1 auto-skip, pending re-tier) | **762** |
 
 **Note:** Under Protocol v2 the `na` status is deprecated. As each table reaches
@@ -32,7 +32,7 @@ sign-off (Step D) for `auto_no_source_counterpart` columns.
 
 | Tier | Tables | Cols | Verified | Not started | NA (v1 legacy) |
 |---|---|---|---|---|---|
-| pilot | 1 | 40 | **1** | **39** | 0 |
+| pilot | 1 | 38 | **38** | **0** | 0 |
 | tier1_anchor | 1 | 1,592 | 0 | 1,588 | 4 |
 | tier1_events | 18 | 466 | 0 | 320 | 146 |
 | tier1_source | 12 | 909 | 0 | 860 | 49 |
