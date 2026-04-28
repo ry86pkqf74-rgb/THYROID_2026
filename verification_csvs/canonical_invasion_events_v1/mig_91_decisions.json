@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "session_date": "2026-04-28",
+    "source": "Logan partial review + Cowork extrapolation per Logan's stated rules",
+    "rules_applied": [
+      "Rule #1 cancer-only: orphans on benign-only patients = correct downgrade (54 audit-only, ACCEPT default)",
+      "Rule LN ENE: lymph node extranodal extension is NOT thyroid-tumor ETE; REJECT from soft_tissue/perineural invasion_types",
+      "Rule encapsulated tumor: 'extracapsular extension' on encapsulated tumors (PTC encapsulated, FTUMP, totally encapsulated) means tumor capsule invasion; RECLASS to invasion_type='capsular' + FLIP_TO_PRESENT",
+      "Rule vocal cord: vocal cord paralysis / RLN involvement is a different column; RECLASS",
+      "Rule mass effect / incidental: deviation/displacement without invasion verb, laryngoceles = REJECT or RECLASS to mass-effect column"
+    ],
+    "structured_data_used": {
+      "table": "main.path_synoptics",
+      "key_cols": ["tumor_1_histologic_type", "tumor_1_capsule", "tumor_1_extrathyroidal_extension", "tumor_1_extranodal_extension", "tumor_1_capsular_invasion"],
+      "free_text_cols": ["synoptic_diagnosis", "path_diagnosis_summary", "microscopic_description"]
+    }
+  },
+  "FLIP_TO_PRESENT": {
+    "_action": "UPDATE main.canonical_invasion_events_v1 SET finding_status='present' WHERE invasion_event_id IN (...)",
+    "_count": 16,
+    "rows": [
+      {"invasion_event_id": "ea6c7df7daf2444c39bd44a281dd5925", "rid": 6062, "itype": "airway", "qual": "extension through the left cricothyroid membrane with loss of the fat plane", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "e84c9dbd73bf900aaea006315a6c07f8", "rid": 6062, "itype": "airway", "qual": "involvement of left cricothyroid membrane", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "7e4b09fa1581a741aafc0d783c60e655", "rid": 6869, "itype": "airway", "qual": "cartilage erosion by the mass", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "6d8dc84209b12bb97b56e3142ebe35b8", "rid": 10932, "itype": "airway", "qual": "cricoid cartilage involvement", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "95cd284f93b6da420580c8d9a3152cf1", "rid": 1908, "itype": "gross_ete", "qual": "mild extension into the tracheoesophageal groove", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "2c5863dd58b9d909395f8689169f0f97", "rid": 1908, "itype": "gross_ete", "qual": "mild extension into the tracheoesophageal groove", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "35734857ee2b5b7bb6bc9e1509262038", "rid": 5531, "itype": "gross_ete", "qual": "circumferential soft tissue within the upper mediastinum surrounding the trachea and esophagus", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "d2246a98915f09e0b5536d3933a09c27", "rid": 6062, "itype": "gross_ete", "qual": "extrathyroidal extension identified on CT: left cricothyroid membrane", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "b74f901c58192f10fa6d18453e353f0b", "rid": 6869, "itype": "gross_ete", "qual": "extrathyroidal extension into the right tracheoesophageal groove", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "efb66d32c3647c00526e6a96601f9de3", "rid": 11388, "itype": "gross_ete", "qual": "Aggressive appearing right thyroid gland mass which extends into the right brachiocephalic vein and the SVC causing near complete vascular occlusion", "rationale": "HIGH_POS Logan conf=1.0"},
+      {"invasion_event_id": "52c35754bd8be40f2e45b57f569a28b5", "rid": 9683, "itype": "soft_tissue", "qual": "strap muscle invasion", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "85b016ad24d27a2c2399ffd19fc1e840", "rid": 10258, "itype": "soft_tissue", "qual": "strap muscle invasion", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "ad0547fbd3b6f949ccc2f4787dfb0b92", "rid": 12043, "itype": "soft_tissue", "qual": "extrathyroidal extension (ETE), strap muscle invasion", "rationale": "HIGH_POS Logan"},
+      {"invasion_event_id": "201e3dfff7796079ef09c18218b88dd3", "rid": 2073, "itype": "soft_tissue", "qual": "extrathyroidal extension (ETE)", "rationale": "KEYWORD source-text confirmed: FVPTC with FOCAL EXTENSION TO ADJACENT PERITHYROIDAL TISSUES"},
+      {"invasion_event_id": "87cf1865288de7de5f81ee8714440624", "rid": 9636, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "KEYWORD source-text confirmed: microscopic carcinoma involves THYROID capsule & abuts skeletal muscle"},
+      {"invasion_event_id": "c980d475f6c6185caf795e99bacebabd", "rid": 10872, "itype": "soft_tissue", "qual": "extrathyroidal extension (ETE)", "rationale": "KEYWORD source-text confirmed: TGDC PTC, Carcinoma focally invades into hyoid bone"}
+    ]
+  },
+  "RECLASS_TO_CAPSULAR_AND_FLIP": {
+    "_action": "UPDATE main.canonical_invasion_events_v1 SET invasion_type='capsular', finding_status='present' WHERE invasion_event_id IN (...)",
+    "_count": 4,
+    "rows": [
+      {"invasion_event_id": "d26bc195cbe9981898a2e987c44a62fb", "rid": 2641, "itype_old": "soft_tissue", "qual": "extrathyroidal extension (ETE)", "rationale": "PTC tumor_1_capsule='encapsulated' -- Logan's rule: tumor capsular invasion"},
+      {"invasion_event_id": "2830660de1d0e1a60bc51c7a2bee64cb", "rid": 5048, "itype_old": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "PTC tumor_1_capsule='totally encapsulated' -- Logan's rule"},
+      {"invasion_event_id": "7fe6cac6291d3d9df863faccfc3fee77", "rid": 8825, "itype_old": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "PTC tumor_1_capsule='encapsulated' -- Logan's rule"},
+      {"invasion_event_id": "8a5da4b0be2bfec3dd78b5da481485ab", "rid": 11201, "itype_old": "soft_tissue", "qual": "focal area of pseudopodal tumor extension", "rationale": "FTUMP (encapsulated by definition); pseudopod = capsular invasion pattern"}
+    ]
+  },
+  "REJECT_LN_ENE": {
+    "_action": "DELETE FROM main.canonical_invasion_events_v1 WHERE invasion_event_id IN (...) -- LN ENE belongs to a separate domain",
+    "_count": 17,
+    "rows": [
+      {"invasion_event_id": "ceed28d4034bc37fda751bafb52e1964", "rid": 512, "itype": "perineural", "qual": "focal pericapsular invasion identified in one lymph node", "rationale": "explicit lymph node context"},
+      {"invasion_event_id": "36b0ab96bbd774569195fa618a03b25c", "rid": 495, "itype": "soft_tissue", "qual": "extranodal extension", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "013a89caf0a03e6a73382972393ed0e9", "rid": 5832, "itype": "soft_tissue", "qual": "extranodal extension present", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "1381cc455e412f1d2446d031dc930f8c", "rid": 9020, "itype": "soft_tissue", "qual": "extranodal extension is present", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "ae4cb7938ace8eccb799587811e6fe97", "rid": 10691, "itype": "soft_tissue", "qual": "extranodal extension (less than 1 mm)", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "038546936ff56090f417a8a05c3b4a0d", "rid": 10691, "itype": "soft_tissue", "qual": "extranodal extension (at least 1 mm)", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "25617526ed57c587507af4522eb7c7f6", "rid": 10691, "itype": "soft_tissue", "qual": "focal microscopic extranodal extension (less than 1 mm)", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "1bdea24e353f8419683684de36f89074", "rid": 11111, "itype": "soft_tissue", "qual": "focal extranodal tumor extension present", "rationale": "explicit extranodal"},
+      {"invasion_event_id": "028c6a07147d12a62bb09c9c9d4bd7c3", "rid": 1085, "itype": "soft_tissue", "qual": "extracapsular extension is present", "rationale": "AMBIG_EC: structured hist_type=metastatic PTC + t1_ene=present"},
+      {"invasion_event_id": "d7a4c792e32e7a5ddc43c7096605bc9a", "rid": 1266, "itype": "soft_tissue", "qual": "focal extracapsular extension", "rationale": "AMBIG_EC: structured hist_type=metastatic PTC + t1_ene=present + right neck dissection"},
+      {"invasion_event_id": "235e3f753663962aa0e7ea901a65017b", "rid": 1909, "itype": "soft_tissue", "qual": "extracapsular extension present", "rationale": "AMBIG_EC: no structured row; pattern matches metastatic-LN context (3 of 4 AMBIG_EC are metastatic)"},
+      {"invasion_event_id": "4aaa0dd52fe8ffcca0f7bd943d44bbfa", "rid": 4122, "itype": "soft_tissue", "qual": "focal extracapsular extension", "rationale": "AMBIG_EC: structured hist_type=metastatic PTC + t1_ene=present"},
+      {"invasion_event_id": "ed70f795d14ba34319b93a45cf0bcbc4", "rid": 495, "itype": "soft_tissue", "qual": "widely infiltrative", "rationale": "KEYWORD: structured hist_type=metastatic PTC follicular + t1_ene=present"},
+      {"invasion_event_id": "6255d6bc32292893faa60ede78fdfe03", "rid": 1970, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "KEYWORD: structured hist_type=metastatic/recurrent PTC + t1_ene=present"},
+      {"invasion_event_id": "2c08595f052addea46fe3659701c0fba", "rid": 2667, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "KEYWORD: structured hist_type=metastatic PTC + t1_ene=present"},
+      {"invasion_event_id": "b4ea0565c1809e4181af646629a22fc8", "rid": 4015, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "KEYWORD: structured hist_type=metastatic MTC + t1_ene=present"},
+      {"invasion_event_id": "bbd9090a44922c3d77ef39e112ca3c45", "rid": 2627, "itype": "soft_tissue", "qual": "extrathyroidal extension (ETE)", "rationale": "KEYWORD source-text: 'ONE IN SEVEN LYMPH NODES POSITIVE FOR METASTATIC SQUAMOUS CELL CARCINOMA WITH EXTRANODAL EXTENSION' -- LLM extracted ETE from LN ENE phrase"}
+    ]
+  },
+  "RECLASS_VOCAL_OR_MASS_EFFECT": {
+    "_action": "TBD: target column for vocal cord paralysis / mass effect not yet identified; may need new invasion_type or move to canonical_path_malignant_events_v1",
+    "_count": 2,
+    "rows": [
+      {"invasion_event_id": "b79ddab49f77d446c6d232e4819ee2b0", "rid": 5048, "itype_old": "airway", "qual": "medialization of the right true vocal cord and arytenoid", "rationale": "Logan: vocal cord paralysis is a different column"},
+      {"invasion_event_id": "8684d0f01e0ca1a16a90275f5314858b", "rid": 11862, "itype_old": "airway", "qual": "superior deviation towards the left", "rationale": "Logan: mass effect, not invasion"}
+    ]
+  },
+  "REJECT_INCIDENTAL": {
+    "_action": "DELETE FROM main.canonical_invasion_events_v1 WHERE invasion_event_id IN (...)",
+    "_count": 1,
+    "rows": [
+      {"invasion_event_id": "824d626fe694ff1dbf8dbc4a7f52c971", "rid": 12129, "itype": "airway", "qual": "Small laryngoceles bilaterally", "rationale": "Logan: incidental finding, not invasion"}
+    ]
+  },
+  "ACCEPT_DOWNGRADE": {
+    "_action": "no UPDATE -- current finding_status (indeterminate / suspected) is correct",
+    "_count": 4,
+    "rows": [
+      {"invasion_event_id": "a7ee1fb6ddd0c4d037486c0cacf4bbbe", "rid": 9174, "itype": "vascular_microscopic", "qual": "focus suspicious but not diagnostic", "rationale": "correct downgrade to 'suspected'"},
+      {"invasion_event_id": "7ce2803e4fb1b664a7476f8e788817ab", "rid": 9209, "itype": "soft_tissue", "qual": "N/A", "rationale": "arc=absent + qual=N/A; correct downgrade"},
+      {"invasion_event_id": "689ebbbf2c856c5ee14026429d00721d", "rid": 9224, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "CAP template echo: 'Extrathyroidal extension:' as bare field header followed by 'Regional Lymph Nodes: Not identified' (template, not finding)"},
+      {"invasion_event_id": "fc7d419392b0c74cdf31819be5bb4c57", "rid": 9829, "itype": "soft_tissue", "qual": "extrathyroidal extension", "rationale": "PTC microcarcinoma + 'no evidence of invasion' on follicular nodular disease; CAP template echo, no actual ETE"}
+    ]
+  },
+  "NEEDS_CONTEXT_CT_PENDING": {
+    "_action": "next session: pull ct_imaging note text or note_entities_llm_*_v2 parsed_json evidence_quote",
+    "_count": 3,
+    "rows": [
+      {"invasion_event_id": "870f67be336184a5359d89381f690773", "rid": 5186, "itype": "airway", "qual": "sclerosis of the left arytenoid cartilage", "rationale": "could be cancer-related laryngeal invasion or age-related; need CT report context"},
+      {"invasion_event_id": "d5750ee1b0a51b125d9f433936572cbd", "rid": 4107, "itype": "gross_ete", "qual": "extrathyroidal extension identified on PET/CT", "rationale": "bare keyword from CT modality; need report context"},
+      {"invasion_event_id": "cb07722463eb6eeeca8a280ce58dcc04", "rid": 5048, "itype": "gross_ete", "qual": "extrathyroidal extension identified on CT", "rationale": "bare keyword from CT modality; need report context"}
+    ]
+  }
+}
