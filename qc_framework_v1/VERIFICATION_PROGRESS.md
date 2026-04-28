@@ -1,6 +1,6 @@
 # Verification Progress Dashboard
 
-**Last refreshed:** 2026-04-28 (post-mig_92 — T4B INVASION SIGNED OFF — 5th table)
+**Last refreshed:** 2026-04-28 (post-mig_93 — ESOPHAGEAL INVASION SIGNED OFF — 6th table)
 **Master plan:** [`MASTER_VERIFICATION_PLAN.md`](MASTER_VERIFICATION_PLAN.md)
 **Active protocol:** v2 (full-row mechanical compare — see plan §6 and §6a)
 **Source registries:** `main.canonical_column_verification_registry_v1`, `main.canonical_table_signoff_registry_v1`
@@ -16,10 +16,10 @@ the same Cowork session that runs the `query_rw` updates, then commit + push.
 |---|---|
 | Tables in scope | **184** base tables (`main` + `manuscript_workspace`) |
 | Tables registered | 175 |
-| Tables verified under Protocol v2 | **5 / 184** (2.7 %) — FNA pilot + airway invasion + path malignant + operative events + t4b invasion |
+| Tables verified under Protocol v2 | **6 / 184** (3.3 %) — FNA pilot + airway invasion + path malignant + operative events + t4b invasion + esophageal invasion |
 | Tables `verified` in registry (pre-v2 legacy + v2) | 14 (10 are pre-v2 placeholders with NULL signed_off_ts) |
 | Columns in scope | 5,490 (started 5,494; dropped 4 in mig_84) |
-| Columns Logan-verified (v2) | **190 / 5,490** (38 FNA + 23 airway invasion + 56 path malignant + 54 operative events + 19 t4b invasion) |
+| Columns Logan-verified (v2) | **205 / 5,490** (38 FNA + 23 airway invasion + 56 path malignant + 54 operative events + 19 t4b invasion + 15 esophageal invasion) |
 | Columns at `not_started` (in v2 queue) | **4,583** |
 | Columns at `na` (legacy v1 auto-skip, pending re-tier) | **731** |
 | Columns at `failed` (deferred carry-forward) | 1 (`canonical_fna_events_v1.days_to_surgery`) |

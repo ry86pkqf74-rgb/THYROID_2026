@@ -72,6 +72,18 @@ Order: chronological (newest at the bottom).
   - **Carry-forward CF-87-AJCC:** AJCC7/8 staging cols verified as faithful copies of CTC pre361 staging values. The findings-vs-staging derivation correctness (Logan airway-invasion rule extended to ETE/multifocality/nodal) is upstream of canonical (in CTC's build pipeline, scripts 251/266). Future round can either (a) restore CTC and validate its staging derivation against findings, or (b) re-derive staging post-canonical from verified findings and audit diff.
   - **Carry-forward CF-87-GROSS-ETE:** 6 of 6,695 join-duplicate rows show inconsistent gross_ete between paired archive rows; each canonical row matches at least one archive row. Cosmetic. Defer.
 
+### 2026-04-28 — main.canonical_esophageal_invasion_events_v1
+
+- **Rows:** 188
+- **Columns:** 15 verified
+- **Sign-off migration:** `qc_framework_v1/migrations/93_esophageal_invasion_table_signoff.sql`
+- **Notes:**
+  - Single-migration arc, second sibling LLM-output invasion canonical closed (after t4b mig_92).
+  - Logan-reviewed via 7 row-write passes (32 rule-based + 15 multi-structure + 47 per-row + 10 final pattern-detected). **104 rows flipped `present` → `negated`**.
+  - **Final distribution: 52 present / 136 negated = 188.**
+  - Established **10 reusable esophageal/invasion clinical rules** (carry forward to vascular sibling): cancer-only, compression≠invasion, adjacency-only, adherent-only, explicit-negative, procedural-only (Maloney/Dobhoff/surgicel/NG), closure-text, iatrogenic-injury, multi-structure-staging-summary, subtype-mismatch (mucosa-intact-when-muscularis-only).
+  - Verification methods: 4 cols (`present_or_negated, entity_type, entity_value, evidence_text`) via `manual_source_review`; 4 LLM-internal metadata cols via `auto_no_source_counterpart`; 7 provenance/pipeline cols via `auto_no_source_counterpart` (Step D batch).
+
 ### 2026-04-28 — main.canonical_t4b_invasion_events_v1
 
 - **Rows:** 944
