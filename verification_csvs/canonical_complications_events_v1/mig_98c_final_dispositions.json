@@ -1,0 +1,857 @@
+{
+  "10047": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True + operative",
+    "source": "LOGAN_MAPPED"
+  },
+  "10145": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "1015": {
+    "raw_decision": "? no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4430; tiers=laryngoscopy_confirmed; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "10237": {
+    "raw_decision": "True",
+    "raw_note": "2/6/2024 date; not operative related",
+    "mapped_decision": "NOT_OPERATIVE",
+    "rationale": "Logan: True + not operative-related",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "Logan: True + not operative-related",
+    "source": "LOGAN_MAPPED"
+  },
+  "1054": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=3458; tiers=laryngoscopy_confirmed; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "10563": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "10615": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True + operative",
+    "source": "LOGAN_MAPPED"
+  },
+  "10622": {
+    "raw_decision": "True",
+    "raw_note": "prior op related",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op",
+    "final_decision": "PRIOR_OP",
+    "final_rationale": "Logan: True + prior op",
+    "source": "LOGAN_MAPPED"
+  },
+  "1063": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4577; tiers=laryngoscopy_confirmed; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "10685": {
+    "raw_decision": "Intentional sacrifice (TRUE)",
+    "raw_note": "",
+    "mapped_decision": "INTENTIONAL_SACRIFICE",
+    "rationale": "Logan: explicit intentional sacrifice",
+    "final_decision": "INTENTIONAL_SACRIFICE",
+    "final_rationale": "Logan: explicit intentional sacrifice",
+    "source": "LOGAN_MAPPED"
+  },
+  "10887": {
+    "raw_decision": "True",
+    "raw_note": "prrior op",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op",
+    "final_decision": "PRIOR_OP",
+    "final_rationale": "Logan: True + prior op",
+    "source": "LOGAN_MAPPED"
+  },
+  "10932": {
+    "raw_decision": "True",
+    "raw_note": "prior",
+    "mapped_decision": "PRIOR_OP",
+    "rationale": "Logan: True + prior op",
+    "final_decision": "PRIOR_OP",
+    "final_rationale": "Logan: True + prior op",
+    "source": "LOGAN_MAPPED"
+  },
+  "11101": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11142": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11226": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11231": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11245": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11345": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11348": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "11388": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "11533": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True + operative",
+    "source": "LOGAN_MAPPED"
+  },
+  "11609": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "1167": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6415; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "11739": {
+    "raw_decision": "True",
+    "raw_note": "operative",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True + operative",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True + operative",
+    "source": "LOGAN_MAPPED"
+  },
+  "11898": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "11915": {
+    "raw_decision": "True",
+    "raw_note": "non-op/preop",
+    "mapped_decision": "NOT_OPERATIVE",
+    "rationale": "Logan: True + not operative-related",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "Logan: True + not operative-related",
+    "source": "LOGAN_MAPPED"
+  },
+  "1208": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=3660; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "121": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "12195": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "1341": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=3487; tiers=laryngoscopy_confirmed; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "1378": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4465; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "148": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6775; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "251": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=8207; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "334": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=7097; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "3587": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "3891": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=1900; tiers=clinical_confirmed_only,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "394": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6117; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "4287": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=nlp_refined,nlp_single_mention; phen_confirmed=False",
+    "source": "TIMING_RESOLVED"
+  },
+  "4430": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=3727; tiers=nlp_refined; phen_confirmed=False",
+    "source": "TIMING_RESOLVED"
+  },
+  "469": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6831; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "541": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4706; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "545": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6481; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "578": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=7748; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "625": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4754; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "6320": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=2387; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "6662": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=2142; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "6732": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "POSSIBLY_PRIOR_OP",
+    "final_rationale": "timing_days=1529; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7175": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=2288; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7276": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "POSTOP_LATE",
+    "final_rationale": "timing_days=146; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7346": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear",
+    "final_decision": "POSTOP_LATE",
+    "final_rationale": "timing_days=134; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7428": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "744": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "POSTOP_LATE",
+    "final_rationale": "timing_days=301; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7462": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "POSTOP_LATE",
+    "final_rationale": "timing_days=176; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "755": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=2309; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7580": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related",
+    "final_decision": "CANCER_RELATED",
+    "final_rationale": "Logan: True + cancer related",
+    "source": "LOGAN_MAPPED"
+  },
+  "7690": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=clinical_confirmed_plus_nlp,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "7901": {
+    "raw_decision": "True",
+    "raw_note": "timing?",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: True + timing unclear",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=clinical_confirmed_only,nlp_refined; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "794": {
+    "raw_decision": "?no evidence?",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: ?no evidence? \u2014 re-show with phen tier evidence",
+    "final_decision": "POSSIBLY_PRIOR_OP",
+    "final_rationale": "timing_days=1752; tiers=chart_documented; phen_confirmed=True",
+    "source": "TIMING_RESOLVED"
+  },
+  "8033": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8088": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "8105": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8188": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "8252": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8333": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related",
+    "final_decision": "CANCER_RELATED",
+    "final_rationale": "Logan: True + cancer related",
+    "source": "LOGAN_MAPPED"
+  },
+  "8425": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8460": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8503": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8564": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "8616": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8618": {
+    "raw_decision": "True",
+    "raw_note": "cancer related",
+    "mapped_decision": "CANCER_RELATED",
+    "rationale": "Logan: True + cancer related",
+    "final_decision": "CANCER_RELATED",
+    "final_rationale": "Logan: True + cancer related",
+    "source": "LOGAN_MAPPED"
+  },
+  "8636": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8772": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "8815": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "8885": {
+    "raw_decision": "True",
+    "raw_note": "preop",
+    "mapped_decision": "PREEXISTING",
+    "rationale": "Logan: True + preop / pre-existing",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "Logan: True + preop / pre-existing",
+    "source": "LOGAN_MAPPED"
+  },
+  "8917": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "9012": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "9026": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "9132": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9229": {
+    "raw_decision": "True",
+    "raw_note": "intentional operative",
+    "mapped_decision": "INTENTIONAL_SACRIFICE",
+    "rationale": "Logan: True + intentional operative (treat as sacrifice)",
+    "final_decision": "INTENTIONAL_SACRIFICE",
+    "final_rationale": "op-note: 'right RLN was sacrificed because of cancer invasion'",
+    "source": "OVERRIDE"
+  },
+  "9292": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9337": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9397": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9398": {
+    "raw_decision": "indeterminate",
+    "raw_note": "",
+    "mapped_decision": "NEEDS_CONTEXT",
+    "rationale": "Logan: indeterminate \u2014 needs explicit call",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; tiers=nlp_refined; phen_confirmed=False",
+    "source": "TIMING_RESOLVED"
+  },
+  "9502": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9703": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "9809": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9850": {
+    "raw_decision": "False",
+    "raw_note": "",
+    "mapped_decision": "NO",
+    "rationale": "Logan: False \u2014 template FP / not real",
+    "final_decision": "NO",
+    "final_rationale": "Logan: False \u2014 template FP / not real",
+    "source": "LOGAN_MAPPED"
+  },
+  "9910": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "9921": {
+    "raw_decision": "True",
+    "raw_note": "",
+    "mapped_decision": "OPERATIVE",
+    "rationale": "Logan: True without sub-note (default operative)",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "Logan: True without sub-note (default operative)",
+    "source": "LOGAN_MAPPED"
+  },
+  "795": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "POSSIBLY_PRIOR_OP",
+    "final_rationale": "timing_days=1,344 (3.7y); laryngoscopy_confirmed \u2014 likely prior op",
+    "source": "OVERRIDE"
+  },
+  "807": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "timing_days=-4 (pre-surgery); chart_documented",
+    "source": "OVERRIDE"
+  },
+  "809": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "PREEXISTING",
+    "final_rationale": "timing_days=-96 (pre-surgery); chart_documented",
+    "source": "OVERRIDE"
+  },
+  "845": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=6,715 (18.4y); chart_documented \u2014 way past surgery",
+    "source": "OVERRIDE"
+  },
+  "8545": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "OPERATIVE",
+    "final_rationale": "timing_days=0; nlp_refined",
+    "source": "OVERRIDE"
+  },
+  "963": {
+    "raw_decision": "",
+    "raw_note": "",
+    "mapped_decision": "",
+    "rationale": "still unreviewed",
+    "final_decision": "NOT_OPERATIVE",
+    "final_rationale": "timing_days=4,136 (11.3y); laryngoscopy_confirmed \u2014 way past surgery",
+    "source": "OVERRIDE"
+  }
+}
