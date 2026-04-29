@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [Path rollup pair mig_120 close-out](project_path_rollup_pair_mig_120_closeout.md) — 2026-04-29: 5th–6th patient rollup (malig+benign path); Protocol v2 derivation signoff
 - [Frozen-section rollup mig_119 close-out](project_frozen_section_rollup_mig_119_closeout.md) — 2026-04-29: frozen-section patient rollup rebuilt + verified; 187 cols closed
 - [US v2 imaging family mig_117 close-out](project_us_v2_family_mig_117_closeout.md) — 2026-04-29: 3 US v2 canonicals verified; exam-id portability CF documented
 - [Molecular genetics v2 mig_116 close-out](project_molecular_genetics_v2_mig_116_closeout.md) — 2026-04-29: canonical_molecular_genetics_v2 verified; 69 cols closed, 5 na
