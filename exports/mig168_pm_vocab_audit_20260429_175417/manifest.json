@@ -1,0 +1,23 @@
+{
+  "migration": "mig_168",
+  "run_timestamp_utc": "20260429_175826",
+  "posture": "read_only_motherduck_audit_no_db_writes",
+  "target_table": "main.canonical_patient_master",
+  "verified_varchar_columns_audited": 461,
+  "enum_candidate_columns": 367,
+  "drift_columns": 123,
+  "drift_findings": 702,
+  "enum_dictionary_rows": 2128,
+  "thresholds": {
+    "enum_max_distinct": 40,
+    "large_enum_max_distinct": 100,
+    "rare_min_count": 2,
+    "rare_pct_threshold": "0.1% of non-null rows, minimum rare_min_count"
+  },
+  "artifacts": [
+    "pm_verified_varchar_column_catalog.csv",
+    "pm_vocab_value_catalog.csv",
+    "pm_vocab_drift_findings.csv",
+    "pm_ssot_enum_dictionary_draft.csv"
+  ]
+}

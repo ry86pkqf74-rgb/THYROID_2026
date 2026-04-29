@@ -1,0 +1,2157 @@
+column_name,norm_value,n_rows,raw_variant_count,leading_trailing_rows,repeated_ws_rows,top_raw_variants
+ajcc8_m_stage,m0,9053,1,0,0,M0
+ajcc8_m_stage,m1,1818,1,0,0,M1
+ajcc8_missing_components,size,6789,1,0,0,size
+ajcc8_n_stage,n0,2640,1,0,0,N0
+ajcc8_n_stage,n1a,2562,1,0,0,N1a
+ajcc8_n_stage,nx,205,1,0,0,Nx
+ajcc8_n_stage,n1b,83,1,0,0,N1b
+ajcc8_stage_group,ii,1728,1,0,0,II
+ajcc8_stage_group,i,1635,1,0,0,I
+ajcc8_stage_group,ivb,759,1,0,0,IVB
+ajcc8_stage_group,iii,9,1,0,0,III
+ajcc8_t_stage_with_microete_t3b_DEPRECATED,t3b,1318,1,0,0,T3b
+ajcc8_t_stage_with_microete_t3b_DEPRECATED,t1a,1027,1,0,0,T1a
+ajcc8_t_stage_with_microete_t3b_DEPRECATED,t1b,764,1,0,0,T1b
+ajcc8_t_stage_with_microete_t3b_DEPRECATED,t2,707,1,0,0,T2
+ajcc8_t_stage_with_microete_t3b_DEPRECATED,t3a,322,1,0,0,T3a
+ames_risk,high,7484,1,0,0,high
+ames_risk,low,3387,1,0,0,low
+ames_risk_group,high,7484,1,0,0,high
+ames_risk_group,low,3387,1,0,0,low
+ata_initial_risk,high,1835,1,0,0,high
+ata_initial_risk,intermediate,1202,1,0,0,intermediate
+ata_initial_risk,low,107,1,0,0,low
+ata_response_category,structural_incomplete,23,1,0,0,structural_incomplete
+ata_response_category,biochemical_incomplete,6,1,0,0,biochemical_incomplete
+ata_response_category,indeterminate,4,1,0,0,indeterminate
+ata_response_category,excellent,1,1,0,0,excellent
+ata_response_category,insufficient_data,1,1,0,0,insufficient_data
+ata_risk_category,high,1835,1,0,0,high
+ata_risk_category,intermediate,1202,1,0,0,intermediate
+ata_risk_category,low,107,1,0,0,low
+best_ene_grade,present_ungraded,1238,1,0,0,present_ungraded
+best_ene_grade,suspicious_moderate,92,1,0,0,suspicious_moderate
+best_ene_grade,indeterminate,76,1,0,0,indeterminate
+best_ene_grade,suspicious,69,1,0,0,suspicious
+best_ene_grade,negative,57,1,0,0,negative
+best_ene_grade,uptake_positive,27,1,0,0,uptake_positive
+best_ene_grade,absent,9,1,0,0,absent
+best_ene_grade,avid_suspicious,9,1,0,0,avid_suspicious
+best_ene_grade,focal,7,1,0,0,focal
+best_ene_grade,suspicious_high,6,1,0,0,suspicious_high
+best_ene_grade,extensive,4,1,0,0,extensive
+best_ene_grade,microscopic,2,1,0,0,microscopic
+bethesda_category,benign,2033,1,0,0,Benign
+bethesda_category,malignant,1221,1,0,0,Malignant
+bethesda_category,aus/flus,642,1,0,0,AUS/FLUS
+bethesda_category,follicular neoplasm,624,1,0,0,Follicular Neoplasm
+bethesda_category,suspicious for malignancy,273,1,0,0,Suspicious for Malignancy
+bethesda_category,nondiagnostic,233,1,0,0,Nondiagnostic
+bethesda_final_name,benign,2033,1,0,0,Benign
+bethesda_final_name,malignant,1221,1,0,0,Malignant
+bethesda_final_name,aus/flus,642,1,0,0,AUS/FLUS
+bethesda_final_name,follicular neoplasm,624,1,0,0,Follicular Neoplasm
+bethesda_final_name,suspicious for malignancy,273,1,0,0,Suspicious for Malignancy
+bethesda_final_name,nondiagnostic,233,1,0,0,Nondiagnostic
+bethesda_source,canonical_fna_patient_rollup_v1,5266,1,0,0,canonical_fna_patient_rollup_v1
+bmi_note_source,h_p_1,632,1,0,0,h_p_1
+bmi_note_source,h_p_2,14,1,0,0,h_p_2
+bmi_source,nsqip,1409,1,0,0,nsqip
+bmi_source,clinical_note_llm,646,1,0,0,clinical_note_llm
+bmi_source,op_sheet,30,1,0,0,op_sheet
+braf_detection_method,ngs,289,1,0,0,NGS
+braf_detection_method,nlp_entity_confirmed,64,1,0,0,NLP_entity_confirmed
+braf_detection_method,ngs_or_unknown,23,1,0,0,NGS_or_unknown
+braf_detection_method_v11,ngs,268,1,0,0,NGS
+braf_detection_method_v11,nlp_entity_confirmed,103,1,0,0,NLP_entity_confirmed
+braf_detection_method_v11,ngs_or_unknown,5,1,0,0,NGS_or_unknown
+braf_recovered_status_v11,positive,376,1,0,0,positive
+braf_recovered_variant_v11,v600e,156,1,0,0,V600E
+braf_recovered_variant_v11,v600e_presumed,93,1,0,0,V600E_presumed
+braf_recovered_variant_v11,v600,22,1,0,0,V600
+braf_source,molecular_test_episode_v2,9651,1,0,0,molecular_test_episode_v2
+braf_source,patient_refined_master_clinical_v12,376,1,0,0,patient_refined_master_clinical_v12
+braf_status_v7,negative,9758,1,0,0,negative
+braf_status_v7,positive,266,1,0,0,positive
+braf_variant,v600e,151,1,0,0,V600E
+braf_variant,v600,22,1,0,0,V600
+capsular_invasion_refined,present,1126,1,0,0,present
+capsular_invasion_refined,absent,65,1,0,0,absent
+capsular_invasion_v6,present,1135,1,0,0,present
+capsular_invasion_v6,absent,64,1,0,0,absent
+capsular_invasion_v6,indeterminate,28,1,0,0,indeterminate
+chyle_leak_status,absent,9283,1,0,0,absent
+chyle_leak_status,absent_or_unconfirmed,1568,1,0,0,absent_or_unconfirmed
+chyle_leak_status,confirmed_duration_unknown,20,1,0,0,confirmed_duration_unknown
+comp_chyle_leak_timing_window,0_30d,1429,1,0,0,0_30d
+comp_chyle_leak_timing_window,pre_surgery,80,1,0,0,pre_surgery
+comp_chyle_leak_timing_window,unknown,40,1,0,0,unknown
+comp_chyle_leak_timing_window,gt_365d,26,1,0,0,gt_365d
+comp_chyle_leak_timing_window,31_180d,7,1,0,0,31_180d
+comp_chyle_leak_timing_window,181_365d,6,1,0,0,181_365d
+comp_hematoma_timing_window,unknown,196,1,0,0,unknown
+comp_hematoma_timing_window,0_30d,47,1,0,0,0_30d
+comp_hematoma_timing_window,gt_365d,5,1,0,0,gt_365d
+comp_hematoma_timing_window,31_180d,4,1,0,0,31_180d
+comp_hematoma_timing_window,pre_surgery,1,1,0,0,pre_surgery
+comp_hypocalcemia_timing_window,unknown,1200,1,0,0,unknown
+comp_hypocalcemia_timing_window,0_30d,580,1,0,0,0_30d
+comp_hypocalcemia_timing_window,pre_surgery,53,1,0,0,pre_surgery
+comp_hypocalcemia_timing_window,gt_365d,35,1,0,0,gt_365d
+comp_hypocalcemia_timing_window,31_180d,6,1,0,0,31_180d
+comp_hypocalcemia_timing_window,181_365d,3,1,0,0,181_365d
+comp_hypoparathyroidism_timing_window,unknown,365,1,0,0,unknown
+comp_hypoparathyroidism_timing_window,gt_365d,41,1,0,0,gt_365d
+comp_hypoparathyroidism_timing_window,0_30d,20,1,0,0,0_30d
+comp_hypoparathyroidism_timing_window,31_180d,2,1,0,0,31_180d
+comp_hypoparathyroidism_timing_window,181_365d,1,1,0,0,181_365d
+comp_hypoparathyroidism_timing_window,pre_surgery,1,1,0,0,pre_surgery
+comp_rln_injury_timing_window,unknown,631,1,0,0,unknown
+comp_rln_injury_timing_window,0_30d,64,1,0,0,0_30d
+comp_rln_injury_timing_window,gt_365d,29,1,0,0,gt_365d
+comp_rln_injury_timing_window,31_180d,4,1,0,0,31_180d
+comp_rln_injury_timing_window,pre_surgery,2,1,0,0,pre_surgery
+comp_rln_injury_timing_window,181_365d,1,1,0,0,181_365d
+comp_seroma_timing_window,0_30d,541,1,0,0,0_30d
+comp_seroma_timing_window,unknown,274,1,0,0,unknown
+comp_seroma_timing_window,pre_surgery,49,1,0,0,pre_surgery
+comp_seroma_timing_window,gt_365d,5,1,0,0,gt_365d
+comp_seroma_timing_window,31_180d,4,1,0,0,31_180d
+comp_seroma_timing_window,181_365d,1,1,0,0,181_365d
+comp_vc_paralysis_timing_window,unknown,63,1,0,0,unknown
+comp_vc_paralysis_timing_window,0_30d,18,1,0,0,0_30d
+comp_vc_paralysis_timing_window,gt_365d,4,1,0,0,gt_365d
+comp_vc_paralysis_timing_window,31_180d,2,1,0,0,31_180d
+comp_vc_paralysis_timing_window,pre_surgery,1,1,0,0,pre_surgery
+comp_vc_paresis_timing_window,unknown,51,1,0,0,unknown
+comp_vc_paresis_timing_window,0_30d,14,1,0,0,0_30d
+comp_vc_paresis_timing_window,31_180d,3,1,0,0,31_180d
+comp_vc_paresis_timing_window,gt_365d,3,1,0,0,gt_365d
+comp_wound_infection_timing_window,unknown,7,1,0,0,unknown
+comp_wound_infection_timing_window,0_30d,5,1,0,0,0_30d
+comp_wound_infection_timing_window,gt_365d,2,1,0,0,gt_365d
+comp_wound_infection_timing_window,181_365d,1,1,0,0,181_365d
+comp_wound_infection_timing_window,pre_surgery,1,1,0,0,pre_surgery
+completion_histology_type,ptc,153,2,6,0,PTC || PTC 
+completion_histology_type,metastatic ptc,11,1,0,0,metastatic PTC
+completion_histology_type,follicular carcinoma,10,2,0,0,follicular carcinoma || Follicular carcinoma
+completion_histology_type,mtc,7,1,0,0,MTC
+completion_histology_type,niftp,3,1,0,0,NIFTP
+completion_histology_type,metastatic mtc,2,2,0,0,Metastatic MTC || metastatic MTC
+completion_histology_type,ftump,1,1,0,0,FTUMP
+completion_histology_type,metastatic/recurrent ptc,1,1,0,0,metastatic/recurrent PTC
+completion_prior_histology,ptc,235,2,6,0,PTC || PTC 
+completion_prior_histology,follicular carcinoma,119,2,0,0,follicular carcinoma || Follicular carcinoma
+completion_prior_histology,mtc,10,1,0,0,MTC
+completion_prior_histology,poorly differentiated thyroid carcinoma,8,2,0,0,poorly differentiated thyroid carcinoma || Poorly differentiated thyroid carcinoma
+completion_prior_histology,niftp,3,1,0,0,NIFTP
+completion_prior_histology,differentiated high grade thyroid carcinoma,2,1,0,0,differentiated high grade thyroid carcinoma
+completion_prior_histology,ftump,2,1,0,0,FTUMP
+completion_prior_histology,metastatic ptc,2,1,0,0,metastatic PTC
+completion_prior_histology,atypical hurthle cell neoplasm,1,1,0,0,Atypical hurthle cell neoplasm
+completion_prior_histology,metastatic follicular carcinoma,1,1,0,0,metastatic follicular carcinoma
+completion_prior_histology,metastatic thyroid carcinoma,1,1,0,0,metastatic thyroid carcinoma
+completion_prior_histology,mtc ptc mixed composit,1,1,0,0,"MTC
+PTC mixed composit"
+completion_t_stage,1a,43,1,0,0,1a
+completion_t_stage,1,19,1,0,0,1
+completion_t_stage,1b,18,1,0,0,1b
+completion_t_stage,2,15,1,0,0,2
+completion_t_stage,3,9,1,0,0,3
+completion_t_stage,4a,3,1,0,0,4a
+completion_t_stage,3a,2,1,0,0,3a
+completion_t_stage,x,1,1,0,0,x
+cross_fna_concordance,single,3390,1,0,0,single
+cross_fna_concordance,discordant,973,1,0,0,discordant
+cross_fna_concordance,concordant,849,1,0,0,concordant
+demo_source,demographics_harmonized_v3,10862,1,0,0,demographics_harmonized_v3
+demo_source,demographics_harmonized_v3_partial,9,1,0,0,demographics_harmonized_v3_partial
+diagnosis_confidence,high,10720,1,0,0,HIGH
+diagnosis_confidence,medium,151,1,0,0,MEDIUM
+diagnosis_full,multinodular_goiter,3982,1,0,0,multinodular_goiter
+diagnosis_full,ptc,2122,1,0,0,PTC
+diagnosis_full,"ptc, follicular variant",778,1,0,0,"PTC, follicular variant"
+diagnosis_full,follicular_adenoma,706,1,0,0,follicular_adenoma
+diagnosis_full,graves_disease,449,1,0,0,graves_disease
+diagnosis_full,other_benign,369,1,0,0,other_benign
+diagnosis_full,hashimotos_thyroiditis,283,1,0,0,hashimotos_thyroiditis
+diagnosis_full,substernal_multinodular_goiter,233,1,0,0,substernal_multinodular_goiter
+diagnosis_full,"ftc, oncocytic warthin",204,1,0,0,"FTC, oncocytic warthin"
+diagnosis_full,adenomatoid_nodules,184,1,0,0,adenomatoid_nodules
+diagnosis_full,"ptc, tall cell",171,1,0,0,"PTC, tall cell"
+diagnosis_full,"ftc, minimally invasive",168,1,0,0,"FTC, minimally invasive"
+diagnosis_full,mtc,160,1,0,0,MTC
+diagnosis_full,nodular_hyperplasia,157,1,0,0,nodular_hyperplasia
+diagnosis_full,"ptc, oncocytic warthin",144,1,0,0,"PTC, oncocytic warthin"
+diagnosis_full,hurthle_cell_adenoma,142,1,0,0,hurthle_cell_adenoma
+diagnosis_full,niftp,116,1,0,0,NIFTP
+diagnosis_full,ftc,103,1,0,0,FTC
+diagnosis_full,colloid_nodule,100,1,0,0,colloid_nodule
+diagnosis_full,intrathyroidal_parathyroid,84,1,0,0,intrathyroidal_parathyroid
+diagnosis_full,other_malignant,43,1,0,0,other_malignant
+diagnosis_full,ftump,34,1,0,0,FTUMP
+diagnosis_full,atypical_follicular_adenoma,32,1,0,0,atypical_follicular_adenoma
+diagnosis_full,atc,23,1,0,0,ATC
+diagnosis_full,"ptc, diffuse sclerosing",16,1,0,0,"PTC, diffuse sclerosing"
+diagnosis_full,adenomatous_hyperplasia,15,1,0,0,adenomatous_hyperplasia
+diagnosis_full,"ftc, widely invasive",12,1,0,0,"FTC, widely invasive"
+diagnosis_full,"ptc, solid",12,1,0,0,"PTC, solid"
+diagnosis_full,dhgtc,10,1,0,0,DHGTC
+diagnosis_full,"ptc, cribriform morular",6,1,0,0,"PTC, cribriform morular"
+diagnosis_full,"ptc, columnar cell",5,1,0,0,"PTC, columnar cell"
+diagnosis_full,hyalinizing_trabecular_tumor,4,1,0,0,hyalinizing_trabecular_tumor
+diagnosis_full,angiosarcoma of the thyroid,1,1,0,0,angiosarcoma of the thyroid
+diagnosis_full,dtc_nos,1,1,0,0,DTC_NOS
+diagnosis_full,hcc,1,1,0,0,HCC
+diagnosis_full,pdtc,1,1,0,0,PDTC
+diagnosis_primary,multinodular_goiter,3982,1,0,0,multinodular_goiter
+diagnosis_primary,ptc,3254,1,0,0,PTC
+diagnosis_primary,follicular_adenoma,706,1,0,0,follicular_adenoma
+diagnosis_primary,ftc,487,1,0,0,FTC
+diagnosis_primary,graves_disease,449,1,0,0,graves_disease
+diagnosis_primary,other_benign,369,1,0,0,other_benign
+diagnosis_primary,hashimotos_thyroiditis,283,1,0,0,hashimotos_thyroiditis
+diagnosis_primary,substernal_multinodular_goiter,233,1,0,0,substernal_multinodular_goiter
+diagnosis_primary,adenomatoid_nodules,184,1,0,0,adenomatoid_nodules
+diagnosis_primary,mtc,160,1,0,0,MTC
+diagnosis_primary,nodular_hyperplasia,157,1,0,0,nodular_hyperplasia
+diagnosis_primary,hurthle_cell_adenoma,142,1,0,0,hurthle_cell_adenoma
+diagnosis_primary,niftp,116,1,0,0,NIFTP
+diagnosis_primary,colloid_nodule,100,1,0,0,colloid_nodule
+diagnosis_primary,intrathyroidal_parathyroid,84,1,0,0,intrathyroidal_parathyroid
+diagnosis_primary,other_malignant,44,1,0,0,other_malignant
+diagnosis_primary,ftump,34,1,0,0,FTUMP
+diagnosis_primary,atypical_follicular_adenoma,32,1,0,0,atypical_follicular_adenoma
+diagnosis_primary,atc,23,1,0,0,ATC
+diagnosis_primary,adenomatous_hyperplasia,15,1,0,0,adenomatous_hyperplasia
+diagnosis_primary,dhgtc,10,1,0,0,DHGTC
+diagnosis_primary,hyalinizing_trabecular_tumor,4,1,0,0,hyalinizing_trabecular_tumor
+diagnosis_primary,dtc_nos,1,1,0,0,DTC_NOS
+diagnosis_primary,hcc,1,1,0,0,HCC
+diagnosis_primary,pdtc,1,1,0,0,PDTC
+diagnosis_variant,follicular_variant,778,1,0,0,follicular_variant
+diagnosis_variant,oncocytic_warthin,348,1,0,0,oncocytic_warthin
+diagnosis_variant,tall_cell,171,1,0,0,tall_cell
+diagnosis_variant,minimally_invasive,168,1,0,0,minimally_invasive
+diagnosis_variant,diffuse_sclerosing,16,1,0,0,diffuse_sclerosing
+diagnosis_variant,solid,12,1,0,0,solid
+diagnosis_variant,widely_invasive,12,1,0,0,widely_invasive
+diagnosis_variant,cribriform_morular,6,1,0,0,cribriform_morular
+diagnosis_variant,columnar_cell,5,1,0,0,columnar_cell
+ene_ct,suspicious_moderate,224,1,0,0,suspicious_moderate
+ene_ct,indeterminate,69,1,0,0,indeterminate
+ene_ct,suspicious_high,57,1,0,0,suspicious_high
+ene_ct,negative,19,1,0,0,negative
+ene_grade_v9,present_ungraded,1250,1,0,0,present_ungraded
+ene_grade_v9,indeterminate,7,1,0,0,indeterminate
+ene_grade_v9,focal,5,1,0,0,focal
+ene_grade_v9,extensive,4,1,0,0,extensive
+ene_levels_v9,level 3,12,2,0,0,level 3 || Level 3
+ene_levels_v9,level 4,11,2,0,0,level 4 || Level 4
+ene_levels_v9,level 6,6,1,0,0,level 6
+ene_levels_v9,central,3,1,0,0,central
+ene_levels_v9,level 2,3,2,0,0,Level 2 || level 2
+ene_levels_v9,paratracheal,3,1,0,0,paratracheal
+ene_levels_v9,ij,1,1,0,0,IJ
+ene_levels_v9,level 2-5,1,1,0,0,level 2-5
+ene_levels_v9,level 2a,1,1,0,0,level 2A
+ene_levels_v9,level ii,1,1,0,0,LEVEL II
+ene_levels_v9,pretracheal,1,1,0,0,pretracheal
+ene_levels_v9,supraclavicular,1,1,0,0,SUPRACLAVICULAR
+ene_op_intraop,absent_intraop,6,1,0,0,absent_intraop
+ene_op_intraop,gross_intraop,4,1,0,0,gross_intraop
+ene_op_intraop,present_intraop,2,1,0,0,present_intraop
+ene_path_ct_concordance,insufficient_data,1412,1,0,0,insufficient_data
+ene_path_ct_concordance,concordant,182,1,0,0,concordant
+ene_path_ct_concordance,discordant,2,1,0,0,discordant
+ene_path_levels,level vi,3,2,0,0,level VI || Level VI
+ene_path_levels,level 2,2,2,0,0,Level 2 || level 2
+ene_path_levels,level 3,2,1,0,0,level 3
+ene_path_levels,level 4,2,2,0,0,Level 4 || level 4
+ene_path_levels,level iia,2,1,0,0,level IIA
+ene_path_levels,level iv,2,1,0,0,level IV
+ene_path_levels,"level 4, 3",1,1,0,0,"level 4, 3"
+ene_path_levels,level 6,1,1,0,0,level 6
+ene_path_levels,level ii,1,1,0,0,level II
+ene_path_levels,"level ii, iii",1,1,0,0,"level II, III"
+ene_path_levels,level iii,1,1,0,0,LEVEL III
+ene_path_nlp,absent,9,1,0,0,absent
+ene_path_nlp,present_ungraded,9,1,0,0,present_ungraded
+ene_path_nlp,microscopic,2,1,0,0,microscopic
+ene_path_nlp,focal,1,1,0,0,focal
+ene_path_synoptic,present_ungraded,1248,1,0,0,present_ungraded
+ene_path_synoptic,focal,7,1,0,0,focal
+ene_path_synoptic,indeterminate,7,1,0,0,indeterminate
+ene_path_synoptic,extensive,4,1,0,0,extensive
+ene_pet,avid_suspicious,60,1,0,0,avid_suspicious
+ene_pet,negative,3,1,0,0,negative
+ene_rai_scan,uptake_positive,161,1,0,0,uptake_positive
+ene_rai_scan,negative,39,1,0,0,negative
+ene_us,suspicious,351,1,0,0,suspicious
+ene_us,indeterminate,87,1,0,0,indeterminate
+ene_us,negative,27,1,0,0,negative
+ete_grade,microscopic,2580,1,0,0,microscopic
+ete_grade,gross,1313,1,0,0,gross
+ete_grade,none,179,1,0,0,none
+ete_grade,present_ungraded,29,1,0,0,present_ungraded
+ete_grade,absent,16,1,0,0,absent
+ete_grade,true,2,1,0,0,true
+ete_grade_source,tumor_episode_master_v2,6937,1,0,0,tumor_episode_master_v2
+ete_grade_source,extraction_audit_engine_v7,2809,1,0,0,extraction_audit_engine_v7
+ete_grade_source,script_390_rule_a_20260422,1125,1,0,0,script_390_rule_a_20260422
+ete_op_note_confidence,0.85,155,1,0,0,0.85
+ete_op_note_confidence,0.9,15,1,0,0,0.9
+ete_op_note_confidence,0.0,8,1,0,0,0.0
+ete_op_note_confidence,0.88,5,1,0,0,0.88
+ete_op_note_grade,op_note_none,161,1,0,0,op_note_none
+ete_op_note_grade,gross,21,1,0,0,gross
+ete_op_note_grade,microscopic,1,1,0,0,microscopic
+ete_original_grade,present_ungraded,3558,1,0,0,present_ungraded
+ete_original_source,path_report,3558,1,0,0,path_report
+ete_refined_grade,present_ungraded,3375,1,0,0,present_ungraded
+ete_refined_grade,op_note_none_path_positive,161,1,0,0,op_note_none_path_positive
+ete_refined_grade,gross,21,1,0,0,gross
+ete_refined_grade,microscopic,1,1,0,0,microscopic
+ete_subgrade_method,no_subgrade_evidence,3375,1,0,0,no_subgrade_evidence
+ete_subgrade_method,op_note_subgraded,183,1,0,0,op_note_subgraded
+ete_subgrade_note,op_note,154,1,0,0,op_note
+ete_subgrade_note,endocrine_note,28,1,0,0,endocrine_note
+ete_subgrade_note,dc_sum,1,1,0,0,dc_sum
+fna_bethesda_source,canonical_fna_patient_rollup_v1,5266,1,0,0,canonical_fna_patient_rollup_v1
+fna_path_concordance_category,unclassifiable,3081,1,0,0,unclassifiable
+fna_path_concordance_category,true_positive,1167,1,0,0,true_positive
+fna_path_concordance_category,indeterminate_malignant,608,1,0,0,indeterminate_malignant
+fna_path_concordance_category,false_negative,393,1,0,0,false_negative
+fna_path_outcome,benign,6562,1,0,0,benign
+fna_path_outcome,malignant,4151,1,0,0,malignant
+fna_path_outcome,borderline_indeterminate,140,1,0,0,borderline_indeterminate
+fna_path_outcome,other,18,1,0,0,other
+followup_category,short_followup,7719,1,0,0,short_followup
+followup_category,medium_followup,1265,1,0,0,medium_followup
+followup_category,long_followup,1024,1,0,0,long_followup
+followup_category,long_term,371,1,0,0,long_term
+followup_category,medium_term,268,1,0,0,medium_term
+followup_category,short_term,224,1,0,0,short_term
+gland_weight_source,thyroid_weight_data,9413,1,0,0,thyroid_weight_data
+gm_path_ete_raw,x,3234,2,0,0,x || X
+gm_path_ete_raw,false,252,1,0,0,false
+gm_path_ete_raw,present,234,1,0,0,present
+gm_path_ete_raw,minimal,165,1,0,0,minimal
+gm_path_ete_raw,microscopic,59,1,0,0,microscopic
+gm_path_ete_raw,c/a,29,1,0,0,c/a
+gm_path_ete_raw,extensive,23,2,0,0,extensive || Extensive
+gm_path_ete_raw,yes,19,2,0,0,yes || Yes
+gm_path_ete_raw,true,14,1,0,0,true
+gm_path_ete_raw,focal,12,1,0,0,focal
+gm_path_ete_raw,indeterminate,9,1,0,0,indeterminate
+gm_path_ete_raw,yes;,7,1,0,0,Yes;
+gm_path_ete_raw,extesive,2,1,0,0,extesive
+gm_path_ete_raw,yes (minimal),2,1,0,0,yes (minimal)
+gm_path_ete_raw,* (see margin comment),1,1,0,0,* (see margin comment)
+gm_path_ete_raw,`x,1,1,0,0,`x
+gm_path_ete_raw,focal early extension into perithyroidal fat,1,1,0,0,Focal early extension into perithyroidal fat
+gm_path_ete_raw,focal right side,1,1,0,0,focal right side
+gm_path_ete_raw,microscopic extension,1,1,0,0,microscopic extension
+gm_path_ete_raw,minimal into fat,1,1,0,0,minimal into fat
+gm_path_ete_raw,minimal microscopic,1,1,0,0,minimal microscopic
+gm_path_ete_raw,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),1,1,0,0,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion)
+gm_path_ete_raw,present (perithyroidal fibroadipose tissue involved),1,1,0,0,present (perithyroidal fibroadipose tissue involved)
+gm_path_ete_raw,x (single microscopic focus of extension),1,1,0,0,"x
+(single microscopic focus of extension)"
+gm_path_ete_raw,yes (focal),1,1,0,0,yes (focal)
+gm_path_ete_raw,"yes, extensive",1,1,0,0,"yes, extensive"
+gm_path_ete_raw,"yes, minimal",1,1,0,0,"yes, minimal"
+gm_path_ete_raw,yes;minimal;,1,1,0,0,Yes;minimal;
+gm_path_lvi_raw,x,2575,1,0,0,x
+gm_path_lvi_raw,present,665,1,0,0,present
+gm_path_lvi_raw,extensive,52,1,0,0,extensive
+gm_path_lvi_raw,indeterminate,46,1,0,0,indeterminate
+gm_path_lvi_raw,c/a,9,1,0,0,c/a
+gm_path_lvi_raw,focal,6,1,0,0,focal
+gm_path_lvi_raw,preesent,3,1,0,0,preesent
+gm_path_lvi_raw,extensivre,2,1,0,0,extensivre
+gm_path_lvi_raw,cannot be determined: focal interstitial psammomatoid calcification present,1,1,0,0,Cannot be determined: Focal interstitial psammomatoid calcification present
+gm_path_lvi_raw,extensiver,1,1,0,0,extensiver
+gm_path_lvi_raw,indeeterminate,1,1,0,0,indeeterminate
+gm_path_lvi_raw,indetermiante,1,1,0,0,indetermiante
+gm_path_lvi_raw,indeterminent,1,1,0,0,indeterminent
+gm_path_lvi_raw,n/s,1,1,0,0,n/s
+gm_path_lvi_raw,no,1,1,0,0,no
+gm_path_lvi_raw,suspicious,1,1,0,0,suspicious
+gm_path_m_stage_raw,x,2577,2,0,0,x || X
+gm_path_m_stage_raw,m0,1395,1,0,0,M0
+gm_path_m_stage_raw,1,24,1,0,0,1
+gm_path_m_stage_raw,m1,7,2,0,0,M1 || m1
+gm_path_m_stage_raw,0,1,1,0,0,0
+gm_path_m_stage_raw,m,1,1,0,0,m
+gm_path_pni_raw,x,1340,2,0,0,x || X
+gm_path_pni_raw,present,91,1,0,0,present
+gm_path_pni_raw,focal,4,1,0,0,focal
+gm_path_pni_raw,indeterminate,2,1,0,0,indeterminate
+gm_path_pni_raw,c/a,1,1,0,0,c/a
+gm_path_stage_raw,i,1881,1,0,0,I
+gm_path_stage_raw,ii,1371,1,0,0,II
+gm_path_stage_raw,ivb,738,1,0,0,IVB
+gm_path_stage_raw,iii,78,1,0,0,III
+gm_path_stage_raw,ivc,29,1,0,0,IVC
+gm_path_stage_raw,iva,25,1,0,0,IVA
+gm_path_stage_raw,t2,4,1,0,0,T2
+gm_path_stage_raw,t1a,3,1,0,0,T1a
+gm_path_stage_raw,t1a | t1a,2,1,0,0,T1a | T1a
+gm_path_stage_raw,t1b,2,1,0,0,T1b
+gm_path_stage_raw,t1b | t1a,1,1,0,0,T1b | T1a
+gm_path_vascular_inv_raw,x,2993,2,0,0,x || X
+gm_path_vascular_inv_raw,present,248,1,0,0,present
+gm_path_vascular_inv_raw,focal,215,2,0,0,focal || Focal
+gm_path_vascular_inv_raw,extensive,158,1,0,0,extensive
+gm_path_vascular_inv_raw,indeterminate,45,1,0,0,indeterminate
+gm_path_vascular_inv_raw,c/a,10,1,0,0,c/a
+gm_path_vascular_inv_raw,minimal,2,1,0,0,minimal
+gm_path_vascular_inv_raw,multifocal,2,1,0,0,multifocal
+gm_path_vascular_inv_raw,estensive,1,1,0,0,estensive
+gm_path_vascular_inv_raw,extrensive,1,1,0,0,extrensive
+gm_path_vascular_inv_raw,foacl,1,1,0,0,foacl
+gm_path_vascular_inv_raw,identified,1,1,0,0,identified
+gm_path_vascular_inv_raw,limited,1,1,0,0,limited
+gm_path_vascular_inv_raw,presnt,1,1,0,0,presnt
+gm_path_vascular_inv_raw,prominent,1,1,0,0,prominent
+gm_path_vascular_inv_raw,s,1,1,0,0,s
+gm_path_vascular_inv_raw,suspicious,1,1,0,0,suspicious
+gm_recurrence_source,extracted_recurrence_refined_v1,1818,1,0,0,extracted_recurrence_refined_v1
+gm_recurrence_source,longitudinal_lab_clean_v1,128,1,0,0,longitudinal_lab_clean_v1
+gm_recurrence_type_primary,structural,1818,1,0,0,structural
+gm_recurrence_type_primary,biochemical,128,1,0,0,biochemical
+hematoma_status,absent,10618,1,0,0,absent
+hematoma_status,absent_or_unconfirmed,200,1,0,0,absent_or_unconfirmed
+hematoma_status,confirmed_duration_unknown,38,1,0,0,confirmed_duration_unknown
+hematoma_status,probable,15,1,0,0,probable
+histology_final,ptc,3075,1,0,0,PTC
+histology_final,follicular carcinoma,486,1,0,0,follicular carcinoma
+histology_final,mtc,149,1,0,0,MTC
+histology_final,metastatic ptc,144,1,0,0,metastatic PTC
+histology_final,niftp,117,1,0,0,NIFTP
+histology_final,poorly differentiated thyroid carcinoma,37,1,0,0,poorly differentiated thyroid carcinoma
+histology_final,ftump,34,1,0,0,FTUMP
+histology_final,anaplastic carcinoma,22,1,0,0,anaplastic carcinoma
+histology_final,differentiated high grade thyroid carcinoma,10,1,0,0,differentiated high grade thyroid carcinoma
+histology_final,metastatic mtc,10,1,0,0,metastatic MTC
+histology_final,follicular adenoma,5,1,0,0,follicular adenoma
+histology_final,metastatic ptc tall cell variant,5,1,0,0,metastatic PTC tall cell variant
+histology_final,recurrent/metastatic ptc,5,1,0,0,recurrent/metastatic PTC
+histology_final,metastatic ptc classical,4,1,0,0,metastatic PTC classical
+histology_final,metastatic ptc with tall cell features,4,1,0,0,metastatic PTC with tall cell features
+histology_final,metastatic thyroid carcinoma,4,1,0,0,metastatic thyroid carcinoma
+histology_final,metastatic follicular carcinoma,3,1,0,0,metastatic follicular carcinoma
+histology_final,metastatic ptc follicular,2,1,0,0,metastatic PTC follicular
+histology_final,recurrent/metastatic follicular carcinoma,2,1,0,0,recurrent/metastatic follicular carcinoma
+histology_final,adenoid cystic carcinoma,1,1,0,0,adenoid cystic carcinoma
+histology_final,angiosarcoma of the thyroid,1,1,0,0,angiosarcoma of the thyroid
+histology_final,atypical follicular adenoma,1,1,0,0,atypical follicular adenoma
+histology_final,atypical hurthle cell neoplasm,1,1,0,0,Atypical hurthle cell neoplasm
+histology_final,differentiated thyroid carcinoma,1,1,0,0,differentiated thyroid carcinoma
+histology_final,high grade carcinoma with focal squamous features,1,1,0,0,high grade carcinoma with focal squamous features
+histology_final,high-grade ptc with thymic-like features,1,1,0,0,high-grade PTC with thymic-like features
+histology_final,infiltrating carcinoma with thymus-like differentiation,1,1,0,0,infiltrating carcinoma with thymus-like differentiation
+histology_final,metastatic anaplastic carcinoma,1,1,0,0,metastatic anaplastic carcinoma
+histology_final,metastatic ptc classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%,1,1,0,0,metastatic PTC classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%
+histology_final,metastatic ptc classical with focal tall cell features,1,1,0,0,metastatic PTC classical with focal tall cell features
+histology_final,metastatic ptc with focal tall cell features,1,1,0,0,metastatic PTC with focal tall cell features
+histology_final,metastatic ptc/anaplastic carcinoma,1,1,0,0,metastatic PTC/anaplastic carcinoma
+histology_final,metastatic thyroid carcinoma with hurthle cell and paillary features,1,1,0,0,metastatic thyroid carcinoma with hurthle cell and paillary features
+histology_final,mtc/ptc mixed composite,1,1,0,0,MTC/PTC mixed composite
+histology_final,nut carcinoma,1,1,0,0,NUT carcinoma
+histology_final,poorly differentiated carcinoma with neuroendocrine differntiation,1,1,0,0,poorly differentiated carcinoma with neuroendocrine differntiation
+histology_final,poorly differentiated ptc,1,1,0,0,poorly differentiated PTC
+histology_final,recurrent mtc,1,1,0,0,recurrent MTC
+histology_source,patient_refined_master_clinical_v12,10871,1,0,0,patient_refined_master_clinical_v12
+hypocalcemia_status,unknown,7979,1,0,0,unknown
+hypocalcemia_status,absent_or_unconfirmed,1812,1,0,0,absent_or_unconfirmed
+hypocalcemia_status,absent,1015,1,0,0,absent
+hypocalcemia_status,probable,43,1,0,0,probable
+hypocalcemia_status,confirmed_duration_unknown,13,1,0,0,confirmed_duration_unknown
+hypocalcemia_status,confirmed_transient,9,1,0,0,confirmed_transient
+hypoparathyroidism_status,unknown,7979,1,0,0,unknown
+hypoparathyroidism_status,absent,2462,1,0,0,absent
+hypoparathyroidism_status,absent_or_unconfirmed,375,1,0,0,absent_or_unconfirmed
+hypoparathyroidism_status,confirmed_duration_unknown,29,1,0,0,confirmed_duration_unknown
+hypoparathyroidism_status,probable,16,1,0,0,probable
+hypoparathyroidism_status,confirmed_transient,10,1,0,0,confirmed_transient
+ihc_braf_note_type_v13,h_p,1,1,0,0,h_p
+ihc_braf_note_type_v13,op_note,1,1,0,0,op_note
+ihc_braf_result_v13,negative,1,1,0,0,negative
+ihc_braf_result_v13,positive,1,1,0,0,positive
+lateral_detection_method,level_or_text_match,41,1,0,0,level_or_text_match
+lateral_detection_method,jugular,23,1,0,0,jugular
+lateral_detection_method,level_mention,19,1,0,0,level_mention
+lateral_detection_method,lateral_neck_dissection,14,1,0,0,lateral_neck_dissection
+lateral_detection_method,selective_neck,14,1,0,0,selective_neck
+lateral_detection_method,radical_neck,4,1,0,0,radical_neck
+lateral_detection_method,modified_radical,3,1,0,0,modified_radical
+lateral_detection_method,lateral_compartment,1,1,0,0,lateral_compartment
+lateral_levels_v10,level v,16,2,0,0,level V || Level V
+lateral_levels_v10,ii,10,1,0,0,II
+lateral_levels_v10,levels ii,6,2,0,0,levels II || Levels II
+lateral_levels_v10,level ii,5,1,0,0,level II
+lateral_levels_v10,level iv,5,2,0,0,level IV || Level IV
+lateral_levels_v10,level 2,4,2,0,0,level 2 || Level 2
+lateral_levels_v10,level 3,4,1,0,0,level 3
+lateral_levels_v10,"levels 2, 3, 4",4,1,0,0,"levels 2, 3, 4"
+lateral_levels_v10,"level 2,3, 4, 5",2,1,0,0,"level 2,3, 4, 5"
+lateral_levels_v10,level 4,2,1,0,0,level 4
+lateral_levels_v10,levels 2,2,1,0,0,levels 2
+lateral_levels_v10,levels ii-v,2,1,0,0,levels II-V
+lateral_levels_v10,level ii-iv,1,1,0,0,Level II-IV
+lateral_levels_v10,levels 2 - 4,1,1,0,0,levels 2 - 4
+lateral_levels_v10,levels 2-4,1,1,0,0,levels 2-4
+lateral_levels_v10,"levels iv, v",1,1,0,0,"levels IV, V"
+lateral_levels_v10,levels v,1,1,0,0,levels V
+lateral_side_v10,right,74,1,0,0,right
+lateral_side_v10,left,20,1,0,0,left
+lateral_source_v10,nlp_op_note,78,1,0,0,nlp_op_note
+lateral_source_v10,structured_levels,41,1,0,0,structured_levels
+ln_burden_band,n0,2630,1,0,0,N0
+ln_burden_band,high,447,1,0,0,high
+ln_burden_band,intermediate,434,1,0,0,intermediate
+ln_burden_band,low,300,1,0,0,low
+ln_rollup_crossval_status,agree,3748,1,0,0,agree
+ln_rollup_crossval_status,discordant,109,1,0,0,discordant
+ln_rollup_crossval_status,single_source_only,76,1,0,0,single_source_only
+ln_rollup_crossval_status,no_data,52,1,0,0,no_data
+ln_rollup_crossval_status,confirmed_data_entry_error,1,1,0,0,confirmed_data_entry_error
+ln_rollup_internal_consistency,ok,3846,1,0,0,ok
+ln_rollup_internal_consistency,mismatch,88,1,0,0,mismatch
+ln_rollup_internal_consistency,location_only,52,1,0,0,location_only
+ln_rollup_mets_ptc_variant,unspecified,27,1,0,0,unspecified
+ln_rollup_mets_ptc_variant,tall_cell,8,1,0,0,tall_cell
+ln_rollup_mets_ptc_variant,classic,5,1,0,0,classic
+ln_rollup_mets_ptc_variant,follicular_variant,1,1,0,0,follicular_variant
+ln_rollup_source,tumor_pathology,3934,1,0,0,tumor_pathology
+ln_rollup_source,no_data,39,1,0,0,no_data
+ln_rollup_source,path_synoptics_fallback,13,1,0,0,path_synoptics_fallback
+lvi_grade,x,2575,1,0,0,x
+lvi_grade,present,665,1,0,0,present
+lvi_grade,extensive,52,1,0,0,extensive
+lvi_grade,indeterminate,46,1,0,0,indeterminate
+lvi_grade,c/a,9,1,0,0,c/a
+lvi_grade,focal,6,1,0,0,focal
+lvi_grade,preesent,3,1,0,0,preesent
+lvi_grade,extensivre,2,1,0,0,extensivre
+lvi_grade,cannot be determined: focal interstitial psammomatoid calcification present,1,1,0,0,Cannot be determined: Focal interstitial psammomatoid calcification present
+lvi_grade,extensiver,1,1,0,0,extensiver
+lvi_grade,indeeterminate,1,1,0,0,indeeterminate
+lvi_grade,indetermiante,1,1,0,0,indetermiante
+lvi_grade,indeterminent,1,1,0,0,indeterminent
+lvi_grade,n/s,1,1,0,0,n/s
+lvi_grade,no,1,1,0,0,no
+lvi_grade,suspicious,1,1,0,0,suspicious
+macis_missing_components,size,6789,1,0,0,size
+macis_risk_group,very_high,3987,1,0,0,very_high
+macis_risk_group,high,60,1,0,0,high
+macis_risk_group,intermediate,23,1,0,0,intermediate
+macis_risk_group,low,12,1,0,0,low
+margin_r_class_v10,r1,3899,1,0,0,R1
+margin_r_class_v10,rx,35,1,0,0,Rx
+margin_r_class_v10,r2,25,1,0,0,R2
+margin_r_class_v10,r0,4,1,0,0,R0
+margin_r_classification,r1,3896,1,0,0,R1
+margin_r_classification,rx,35,1,0,0,Rx
+margin_r_classification,r2,25,1,0,0,R2
+margin_r_classification,r0,1,1,0,0,R0
+margin_status,r1,3896,1,0,0,R1
+margin_status,rx,35,1,0,0,Rx
+margin_status,r2,25,1,0,0,R2
+margin_status,r0,1,1,0,0,R0
+med_nlp_extraction_method,regex_medication_v2,2014,1,0,0,regex_medication_v2
+mol_genes_list,nras,83,1,0,0,NRAS
+mol_genes_list,braf,78,1,0,0,BRAF
+mol_genes_list,hras,51,1,0,0,HRAS
+mol_genes_list,kras,19,1,0,0,KRAS
+mol_genes_list,tert,12,1,0,0,TERT
+mol_genes_list,eif1ax,9,1,0,0,EIF1AX
+mol_genes_list,dicer1,8,1,0,0,DICER1
+mol_genes_list,tshr,8,1,0,0,TSHR
+mol_genes_list,tp53,7,1,0,0,TP53
+mol_genes_list,"braf, tert",6,1,0,0,"BRAF, TERT"
+mol_genes_list,"hras, tert",5,1,0,0,"HRAS, TERT"
+mol_genes_list,"nras, tert",4,1,0,0,"NRAS, TERT"
+mol_genes_list,double,3,1,0,0,DOUBLE
+mol_genes_list,"eif1ax, tert",3,1,0,0,"EIF1AX, TERT"
+mol_genes_list,ret,3,1,0,0,RET
+mol_genes_list,"braf, pax8",2,1,0,0,"BRAF, PAX8"
+mol_genes_list,"hras, nras",2,1,0,0,"HRAS, NRAS"
+mol_genes_list,"nras, tshr",2,1,0,0,"NRAS, TSHR"
+mol_genes_list,"braf, dicer1",1,1,0,0,"BRAF, DICER1"
+mol_genes_list,"braf, hras, tert",1,1,0,0,"BRAF, HRAS, TERT"
+mol_genes_list,"braf, nras",1,1,0,0,"BRAF, NRAS"
+mol_genes_list,"braf, ret",1,1,0,0,"BRAF, RET"
+mol_genes_list,"dicer1, nras",1,1,0,0,"DICER1, NRAS"
+mol_genes_list,"eif1ax, nras, tert",1,1,0,0,"EIF1AX, NRAS, TERT"
+mol_genes_list,"eif1ax, pik3ca, tert, tp53",1,1,0,0,"EIF1AX, PIK3CA, TERT, TP53"
+mol_genes_list,"kras, tert",1,1,0,0,"KRAS, TERT"
+mol_genes_list,"nras, tp53",1,1,0,0,"NRAS, TP53"
+mol_genes_list,pik3ca,1,1,0,0,PIK3CA
+mol_genes_list,"tert, tp53",1,1,0,0,"TERT, TP53"
+mol_platform,thyroseq,618,1,0,0,ThyroSeq
+mol_platform,unknown,316,1,0,0,unknown
+mol_platform,afirma,188,1,0,0,Afirma
+mol_platform,thyroseq+afirma,163,1,0,0,ThyroSeq+Afirma
+mol_platform,quest,1,1,0,0,Quest
+mol_variant_classes,fusion,277,1,0,0,FUSION
+mol_variant_classes,"fusion, snv",225,1,0,0,"FUSION, SNV"
+mol_variant_classes,snv,85,1,0,0,SNV
+mol_variant_classes,"fusion, other",78,1,0,0,"FUSION, OTHER"
+mol_variant_classes,other,38,1,0,0,OTHER
+molecular_data_confidence,not_tested,9585,1,0,0,NOT_TESTED
+molecular_data_confidence,high,1286,1,0,0,HIGH
+molecular_risk_tier,wild_type,3634,1,0,0,wild_type
+molecular_risk_tier,intermediate,326,1,0,0,intermediate
+molecular_risk_tier,low_intermediate,233,1,0,0,low_intermediate
+molecular_risk_tier,high,76,1,0,0,high
+mri_thyroid_assessment_worst,mass_present,125,1,0,0,mass_present
+mri_thyroid_assessment_worst,abnormal,124,1,0,0,abnormal
+mri_thyroid_assessment_worst,not_visualized,118,1,0,0,not_visualized
+mri_thyroid_assessment_worst,post_surgical,47,1,0,0,post_surgical
+mri_thyroid_assessment_worst,normal,13,1,0,0,normal
+nsqip_asa_class,asa ii - mild systemic disease,663,1,0,0,ASA II - Mild systemic disease
+nsqip_asa_class,asa iii - severe systemic disease,617,1,0,0,ASA III - Severe systemic disease
+nsqip_asa_class,asa i - normal/healthy,90,1,0,90,ASA  I - Normal/Healthy
+nsqip_asa_class,asa iv - severe systemic disease threat to life,40,1,0,0,ASA IV - Severe systemic disease threat to life
+nsqip_diabetes,no,1193,1,0,0,No
+nsqip_diabetes,non-insulin,124,1,0,0,Non-insulin
+nsqip_diabetes,insulin,93,1,0,0,Insulin
+nsqip_functional_status,independent,1388,1,0,0,Independent
+nsqip_functional_status,partially dependent,21,1,0,0,Partially dependent
+nsqip_functional_status,totally dependent,1,1,0,0,Totally dependent
+nsqip_hypertension,no,759,1,0,0,No
+nsqip_hypertension,yes,651,1,0,0,Yes
+nsqip_sex,female,1121,1,0,0,Female
+nsqip_sex,male,289,1,0,0,Male
+nsqip_smoker,no,1239,1,0,0,No
+nsqip_smoker,yes,171,1,0,0,Yes
+nsqip_source,thyroid nsqip dataset 2010-2023.xlsx,1410,1,0,0,Thyroid NSQIP dataset 2010-2023.xlsx
+op_nlp_extraction_method,regex_operative_v2,4028,1,0,0,regex_operative_v2
+op_nlp_nerve_monitoring_type,nerve_monitoring_used,3389,1,0,0,nerve_monitoring_used
+op_nlp_nerve_monitoring_type,nim,67,1,0,0,nim
+op_nlp_nerve_monitoring_type,nim_device,28,1,0,0,nim_device
+op_nlp_nerve_monitoring_type,nerve_stimulator_used,8,1,0,0,nerve_stimulator_used
+op_nlp_nerve_monitoring_type,ionm,1,1,0,0,ionm
+op_nlp_note_types,op_note,4028,1,0,0,op_note
+ops_anticoagulation_meds,yes (unsspecified),8,1,0,0,Yes (unsspecified)
+ops_cervical_ln_us_performed,no,79,1,0,0,No
+ops_cervical_ln_us_performed,yes,42,1,0,0,Yes
+ops_difficult_airway,no,92,1,0,0,No
+ops_difficult_airway,yes,31,1,0,0,Yes
+ops_difficult_airway,no;,16,1,0,0,No;
+ops_difficult_airway,yes;glide scope at initial intubation w. both cord movement w. some left deviation d/t tumor edema;,1,1,0,0,Yes;glide scope at initial intubation w. both cord movement w. some Left deviation d/t tumor edema;
+ops_difficult_airway,"yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;",1,1,0,0,"Yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;"
+ops_difficult_airway,"yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter",1,1,0,0,"Yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter"
+ops_dominant_nodule_bethesda,2,2113,1,0,0,2
+ops_dominant_nodule_bethesda,6,1183,1,0,0,6
+ops_dominant_nodule_bethesda,3,611,1,0,0,3
+ops_dominant_nodule_bethesda,4,601,1,0,0,4
+ops_dominant_nodule_bethesda,1,280,1,0,0,1
+ops_dominant_nodule_bethesda,5,275,1,0,0,5
+ops_dominant_nodule_bethesda,1 or 2?,1,1,0,0,1 or 2?
+ops_dominant_nodule_bethesda,2 or 3?,1,1,0,0,2 or 3?
+ops_dominant_nodule_bethesda,2 or 6?,1,1,0,0,2 or 6?
+ops_dominant_nodule_bethesda,4 or 3?,1,1,0,0,4 or 3?
+ops_dominant_nodule_bethesda,6 or 2?,1,1,0,0,6 or 2?
+ops_dominant_nodule_location,b/l,1,1,0,0,b/l
+ops_dominant_nodule_size_us,1 cm,1,1,0,0,1 cm
+ops_dominant_nodule_size_us,1.5 cm round nodule,1,1,0,0,1.5 cm round nodule
+ops_dominant_nodule_size_us,3.7 x 2.3 x 1.9 cm solitary mass,1,1,0,0,3.7 x 2.3 x 1.9 cm solitary mass
+ops_dominant_nodule_size_us,8 cm,1,1,0,0,8 cm
+ops_dominant_nodule_size_us,preop fna of rl + for ptc,1,1,0,0,preop FNA of RL + for PTC
+ops_ebl_ml,0,80,1,0,0,0
+ops_ebl_ml,4,21,1,0,0,4
+ops_ebl_ml,20,6,1,0,0,20
+ops_ebl_ml,50,5,1,0,0,50
+ops_ebl_ml,30,2,1,0,0,30
+ops_ebl_ml,500,2,1,0,0,500
+ops_ebl_ml,10,1,1,0,0,10
+ops_ebl_ml,100,1,1,0,0,100
+ops_ebl_ml,15,1,1,0,0,15
+ops_ebl_ml,x,1,1,0,0,x
+ops_head_neck_us_findings,1x1 cm right thyroid nodule,1,1,0,0,1x1 cm right thyroid nodule
+ops_head_neck_us_findings,2/24/2000 right thyroid nodule mid gland (1.4 x 0.7 cm),1,1,0,0,"2/24/2000
+Right thyroid nodule mid gland (1.4 x 0.7 cm)"
+ops_intraop_nodule_count,1,384,1,0,0,1
+ops_intraop_nodule_count,2,115,1,0,0,2
+ops_intraop_nodule_count,0,91,1,0,0,0
+ops_intraop_nodule_count,3,33,1,0,0,3
+ops_intraop_nodule_count,4,7,1,0,0,4
+ops_intraop_nodule_count,1 cm left lower pole nodule deemed subclinical and not resected,1,1,0,0,1 cm Left lower pole nodule deemed subclinical and not resected
+ops_intraop_nodule_count,1 para adenoma; 1 lt inferior pole colloid nodule,1,1,0,0,1 para adenoma; 1 Lt inferior pole colloid nodule
+ops_intraop_nodule_count,"2 nodules on left, small nodule on right",1,1,0,0,"2 nodules on left, small nodule on right"
+ops_intraop_nodule_count,2 rl small cysts,1,1,0,0,2 RL small cysts
+ops_intraop_nodule_count,"2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it",1,1,0,0,"2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it"
+ops_intraop_nodule_count,"2; 1.1 cm right, 0.8 cm left (bethesda 6)",1,1,0,0,"2; 1.1 cm right, 0.8 cm left (Bethesda 6)"
+ops_intraop_nodule_count,"2; 1.9 cm, 1.7 cm",1,1,0,0,"2; 1.9 cm, 1.7 cm"
+ops_intraop_nodule_count,"2; 2.2 right, 1.8 left",1,1,0,0,"2; 2.2 right, 1.8 left"
+ops_intraop_nodule_count,"2; 2.6 cm, 1.7 cm",1,1,0,0,"2; 2.6 cm, 1.7 cm"
+ops_intraop_nodule_count,"2; 2.7, 2.3 cm",1,1,0,0,"2; 2.7, 2.3 cm"
+ops_intraop_nodule_count,"2; 2.8, 1.9 cm",1,1,0,0,"2; 2.8, 1.9 cm"
+ops_intraop_nodule_count,2; 3.5 cm and 2.6 cm,1,1,0,0,2; 3.5 cm and 2.6 cm
+ops_intraop_nodule_count,"2; 4.3, 2.7 cm",1,1,0,0,"2; 4.3, 2.7 cm"
+ops_intraop_nodule_count,"2; 7 cm rt., 1.8 cm lt",1,1,0,0,"2; 7 cm Rt., 1.8 cm Lt"
+ops_intraop_nodule_count,"2; 7. 5 cm, 3.2 cm (sq)",1,1,0,0,"2; 7. 5 cm, 3.2 cm (SQ)"
+ops_intraop_nodule_count,2?,1,1,0,0,2?
+ops_intraop_nodule_count,3 x 1.5 cm nodules,1,1,0,0,3 x 1.5 cm nodules
+ops_intraop_nodule_count,"3; 4, 2.8, 2.8 cm",1,1,0,0,"3; 4, 2.8, 2.8 cm"
+ops_intraop_nodule_count,5,1,1,0,0,5
+ops_intraop_nodule_count,tumor adherent to trachea rings 1-2,1,1,0,0,TUmor adherent to trachea rings 1-2
+ops_ll_para_visualized,1,831,1,0,0,1
+ops_ll_para_visualized,0,634,1,0,0,0
+ops_ll_para_visualized,out prior,1,1,0,0,out prior
+ops_lu_para_visualized,1,1176,2,1,0,1 || 1 
+ops_lu_para_visualized,0,286,1,0,0,0
+ops_nerve_stim_final,right;left,54,1,0,0,Right;Left
+ops_nerve_stim_final,left,37,1,0,0,Left
+ops_nerve_stim_final,right,22,1,0,0,Right
+ops_nerve_stim_final,right;,1,1,0,0,Right;
+ops_other_ag,rm parathyroid ag,2,1,0,0,RM parathyroid AG
+ops_other_ag,lm para ag,1,1,0,0,LM para AG
+ops_palpable_lesion,yes,4,1,0,0,Yes
+ops_palpable_lesion,no,1,1,0,0,No
+ops_para_ag_performed,0;,945,1,0,0,0;
+ops_para_ag_performed,1,603,1,0,0,1
+ops_para_ag_performed,0,511,1,0,0,0
+ops_para_ag_performed,partial parathyroidectomy ;rl parathyroidectomy;,2,1,0,0,Partial Parathyroidectomy ;RL parathyroidectomy;
+ops_para_ag_performed,0;1,1,1,0,0,0;1
+ops_para_ag_performed,0;incidental ll resection,1,1,0,0,0;Incidental LL resection
+ops_para_ag_performed,0;lm parathyroid (3 left total);,1,1,0,0,0;LM parathyroid (3 Left total);
+ops_para_ag_performed,1 x para gland included in ll specimen,1,1,0,0,1 x para gland included in LL specimen
+ops_para_ag_performed,1partial parathyroidectomy ;ru and lu resected,1,1,0,0,1Partial Parathyroidectomy ;RU and LU resected
+ops_para_ag_performed,1partial parathyroidectomy ;ru para resection;,1,1,0,0,1Partial Parathyroidectomy ;RU para resection;
+ops_para_ag_performed,1ru and rm autograft,1,1,0,0,1RU and RM autograft
+ops_para_ag_performed,3 x left para glands; lm ob;,1,1,0,0,3 x left para glands; LM OB;
+ops_para_ag_performed,excision of ru para gland,1,1,0,0,excision of RU para gland
+ops_para_ag_performed,n/s,1,1,0,0,n/s
+ops_para_ag_performed,partial parathyroidectomy ;,1,1,0,0,Partial Parathyroidectomy ;
+ops_para_ag_performed,partial parathyroidectomy ;1ll para resection;,1,1,0,0,Partial Parathyroidectomy ;1LL para resection;
+ops_para_ag_performed,partial parathyroidectomy ;1lu para excision,1,1,0,0,Partial Parathyroidectomy ;1LU para excision
+ops_para_ag_performed,partial parathyroidectomy ;1rl para adenoma resection;,1,1,0,0,Partial Parathyroidectomy ;1RL para adenoma resection;
+ops_para_ag_performed,partial parathyroidectomy ;1rl para ag; ru parathyroidectomy,1,1,0,0,Partial Parathyroidectomy ;1RL para AG; RU parathyroidectomy
+ops_para_ag_performed,partial parathyroidectomy ;lu para adenoma excision;,1,1,0,0,Partial Parathyroidectomy ;LU para adenoma excision;
+ops_para_ag_performed,partial parathyroidectomy ;lu parathyroid excision;,1,1,0,0,Partial Parathyroidectomy ;LU parathyroid excision;
+ops_para_ag_performed,partial parathyroidectomy ;resection of ll para adenoma,1,1,0,0,Partial Parathyroidectomy ;Resection of LL para adenoma
+ops_para_ag_performed,partial parathyroidectomy ;rl para adenoma resection;,1,1,0,0,Partial Parathyroidectomy ;RL para adenoma resection;
+ops_para_ag_performed,partial parathyroidectomy ;ru parathyroid adenoma excision,1,1,0,0,Partial Parathyroidectomy ;RU parathyroid adenoma excision
+ops_para_ag_performed,rl para resection;1,1,1,0,0,RL para resection;1
+ops_preop_imaging_performed,us,62,1,0,0,US
+ops_preop_imaging_performed,us;ct,34,1,0,0,US;CT
+ops_preop_imaging_performed,ct,20,1,0,0,CT
+ops_preop_imaging_performed,"us;i-123 (thyroid scintigraphy, mibg)",2,1,0,0,"US;I-123 (Thyroid scintigraphy, MIBG)"
+ops_preop_imaging_performed,us;pet,2,1,0,0,US;PET
+ops_preop_imaging_performed,"11/12/2019 us neck right: within the right thyroid fossa, there is a subcentimeter hypoechoic nodule, not definitely seen on prior study although this may be due to differences in technique. anterior/superior to the fossa, there is a similar appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. right level 3 heterogeneous-appearing subcentimeter node is similar in morphology from prior study although slightly increased in size. additional benign-appearing lymph nodes are present. left: no soft tissue. benign-appearing left sided lymph nodes. impression: 1. hypoechoic/heterogeneous nodules within the right thyroid fossa and anterior/superior to the fossa measuring less than 1 cm, nonspecific. these were not definitely seen on prior study although this may due to differences in technique. attention on follow-up. 2. bilateral benign-appearing lymph nodes. 3. post thyroidectomy. 4/3/19 us neck: right: no soft tissue. benign-appearing level 2, 3 and 4 nodes are present. these measure less than 1 cm in short axis diameter. left: no soft tissue. left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. impression: 1. bilateral benign-appearing lymph nodes. patient is status post thyroidectomy.",1,1,1,1,"  11/12/2019 US neck 
+          Right: Within the right thyroid fossa, there is a subcentimeter hypoechoic 
+     nodule, not definitely seen on prior study although this may be due to 
+     differences in technique. Anterior/superior to the fossa, there is a similar 
+     appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. Right level 
+     3 heterogeneous-appearing subcentimeter node is similar in morphology from prior 
+     study although slightly increased in size. Additional benign-appearing lymph 
+     nodes are present. 
+       
+     Left: No soft tissue. Benign-appearing left sided lymph nodes. 
+       
+     IMPRESSION:  
+     1. Hypoechoic/heterogeneous nodules within the right thyroid fossa and 
+     anterior/superior to the fossa measuring less than 1 cm, nonspecific. These were 
+     not definitely seen on prior study although this may due to differences in 
+     technique. Attention on follow-up. 
+     2. Bilateral benign-appearing lymph nodes. 
+     3. Post thyroidectomy. 
+           
+          4/3/19 US Neck:       
+      Right: No soft tissue. Benign-appearing level 2, 3 and 4 nodes are present.  These measure less than 1 cm in short axis diameter. 
+     Left: No soft tissue. Left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. 
+     IMPRESSION: 1. Bilateral benign-appearing lymph nodes. Patient is status post thyroidectomy. "
+ops_preop_imaging_performed,ct and us preop revealed lesion at least 5.5 cm in size extended substernal. fna preop dx hurthle cell tumor. ;,1,1,0,0,CT and US preop revealed lesion at least 5.5 cm in size extended substernal. FNA preop dx hurthle cell tumor. ;
+ops_preop_imaging_performed,ct preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;,1,1,0,0,CT preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;
+ops_preop_imaging_performed,ct showed left neck mass preop 4/02/2002. note: 3 weeks ago rt x 9 6/26/2002;,1,1,0,0,CT showed left neck mass preop 4/02/2002. note: 3 weeks ago RT x 9 6/26/2002;
+ops_preop_imaging_performed,ct;mibi + ru; ct negative,1,1,0,0,CT;Mibi + RU; CT negative
+ops_preop_imaging_performed,ct;mri,1,1,0,0,CT;MRI
+ops_preop_imaging_performed,ct;preop ct w/o substernal extension;,1,1,0,0,CT;preop CT w/o substernal extension;
+ops_preop_imaging_performed,"ct;preop ct without substernal extension, ;",1,1,0,0,"CT;preop CT without substernal extension, ;"
+ops_preop_imaging_performed,mri,1,1,0,0,MRI
+ops_preop_imaging_performed,"mri;preop mri and iodine scan confirmed no right neck thyroid tissue;i-123 (thyroid scintigraphy, mibg);",1,1,0,0,"MRI;preop MRI and iodine scan confirmed no right neck thyroid tissue;I-123 (Thyroid scintigraphy, MIBG);"
+ops_preop_imaging_performed,mri;preop mri confirmed no thyroid tissue in the left neck;,1,1,0,0,MRI;preop MRI confirmed no thyroid tissue in the left neck;
+ops_preop_imaging_performed,mri;preop mri identified 2 tumor nodules within left thyroidal bed;,1,1,0,0,MRI;preop MRI identified 2 tumor nodules within left thyroidal bed;
+ops_preop_imaging_performed,mri;preop mri lateral views show evidence of substernal extension in the right paratracheal space;,1,1,0,0,MRI;preop MRI lateral views show evidence of substernal extension in the right paratracheal space;
+ops_preop_imaging_performed,mri;preop mri showed intact ll and presence of right upper thyroid pole;,1,1,0,0,MRI;preop MRI showed intact LL and presence of right upper thyroid pole;
+ops_preop_imaging_performed,mri;preop mri showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery,1,1,0,0,MRI;preop MRI showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery
+ops_preop_imaging_performed,"preop fna = ""indeterminant""",1,1,0,0,"preop FNA = ""indeterminant"""
+ops_preop_imaging_performed,preop fna = aytpical cells;,1,1,0,0,Preop FNA = aytpical cells;
+ops_preop_imaging_performed,preop fna = indeterminant,1,1,0,0,preop FNA = indeterminant
+ops_preop_imaging_performed,"preop: us with solid mass, cold nodule in right lobe of the thyroid.",1,1,1,0,"Preop: US with solid mass, cold nodule in right lobe of the thyroid. "
+ops_preop_imaging_performed,us;ct;mri,1,1,0,0,US;CT;MRI
+ops_preop_imaging_performed,us;mri,1,1,0,0,US;MRI
+ops_preop_imaging_performed,"us;mri;tgb 17, tgab 947",1,1,0,0,"US;MRI;Tgb 17, TgAb 947"
+ops_preop_imaging_performed,us;nm +lu pth,1,1,0,0,US;NM +LU PTH
+ops_preop_laryngoscopy,no,110,1,0,0,No
+ops_preop_laryngoscopy,yes,5,1,0,0,Yes
+ops_preop_laryngoscopy,no;,1,1,0,0,No;
+ops_preop_laryngoscopy,yes;l vc palsy,1,1,0,0,Yes;L VC palsy
+ops_preop_laryngoscopy,yes;left vocal cord dysfunction;,1,1,0,0,Yes;left vocal cord dysfunction;
+ops_preop_laryngoscopy,yes;rt. vc palsy,1,1,0,0,Yes;Rt. VC palsy
+ops_preop_nodules_count_size,1,25,1,0,0,1
+ops_preop_nodules_count_size,2,3,1,0,0,2
+ops_preop_nodules_count_size,0,2,1,0,0,0
+ops_preop_nodules_count_size,"2 (1.2 cm l, 0.6 cm rt.)",1,1,0,0,"2 (1.2 cm L, 0.6 cm Rt.)"
+ops_preop_nodules_count_size,2 (3.5; 1.5 cm upper left,1,1,0,0,2 (3.5; 1.5 cm Upper left
+ops_preop_nodules_count_size,2 nodules; rl 0.7 cm ptc; ll 4 cm adenoma,1,1,0,0,2 nodules; RL 0.7 cm PTC; LL 4 cm Adenoma
+ops_preop_nodules_count_size,"2: 5 cm rl, 1.5 cm isthmus",1,1,0,0,"2: 5 cm RL, 1.5 cm isthmus"
+ops_preop_nodules_count_size,2; 1 rl; 1 ll follicular lesion,1,1,0,0,2; 1 RL; 1 LL follicular lesion
+ops_preop_nodules_count_size,"2; 2 cm rl, 1 cm ll",1,1,0,0,"2; 2 cm RL, 1 cm LL"
+ops_preop_nodules_count_size,"2; 3 cm, 2 cm adjacent",1,1,0,0,"2; 3 cm, 2 cm adjacent"
+ops_preop_nodules_count_size,2; 4 cm ll; 1 cm rl,1,1,0,0,2; 4 cm LL; 1 cm RL
+ops_preop_nodules_count_size,3 identified intraop,1,1,0,0,3 identified intraop
+ops_preop_nodules_count_size,3.8 isthmus nodule on preop us,1,1,0,0,3.8 isthmus nodule on preop US
+ops_preop_nodules_count_size,4,1,1,0,0,4
+ops_preop_nodules_count_size,cold right lobe thyroid nodule,1,1,0,0,cold right lobe thyroid nodule
+ops_preop_nodules_count_size,left ptc on fna,1,1,0,0,Left PTC on FNA
+ops_preop_nodules_count_size,preop fna with ptc,1,1,0,0,preop FNA with PTC
+ops_preop_nodules_count_size,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in left upper pole and bilateral adenopathy including subclavicular nodes.,1,1,1,0,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in Left upper pole and bilateral adenopathy including subclavicular nodes. 
+ops_preop_nodules_count_size,preop nodules in b/l lobes,1,1,0,0,preop nodules in b/l lobes
+ops_preop_nodules_count_size,preop rl nodule fna on 01/05/2006 : malignant cells present - ptc nos,1,1,0,0,Preop RL nodule FNA on 01/05/2006 : malignant cells present - PTC NOS
+ops_preop_symptoms,graves optho,56,3,0,0,graves optho || Graves optho || Graves Optho
+ops_preop_symptoms,sob;dysphagia,30,1,0,0,SOB;Dysphagia
+ops_preop_symptoms,dysphagia,24,1,0,0,Dysphagia
+ops_preop_symptoms,dysphagia;sob,4,1,0,0,Dysphagia;SOB
+ops_preop_symptoms,dysphagia;voice abnormality,4,1,0,0,Dysphagia;Voice abnormality
+ops_preop_symptoms,graves opthalmic involvement;,4,1,0,0,Graves opthalmic involvement;
+ops_preop_symptoms,sob,4,1,0,0,SOB
+ops_preop_symptoms,graves w. opthalmic involvement;,3,2,0,0,Graves w. opthalmic involvement; || Graves w. Opthalmic involvement;
+ops_preop_symptoms,men-2,3,1,0,0,MEN-2
+ops_preop_symptoms,graves with opthalmic involvement;,2,1,0,0,Graves with opthalmic involvement;
+ops_preop_symptoms,voice abnormality,2,1,0,0,Voice abnormality
+ops_preop_symptoms,"""some airway symptoms""",1,1,0,0,"""some airway symptoms"""
+ops_preop_symptoms,3 cm tracheal deviation to the right;,1,1,0,0,3 cm tracheal deviation to the right;
+ops_preop_symptoms,diarrhea,1,1,0,0,diarrhea
+ops_preop_symptoms,"dysphagia, hoarseness",1,1,0,0,"Dysphagia, Hoarseness"
+ops_preop_symptoms,dysphagia;compressive sx,1,1,0,0,Dysphagia;compressive sx
+ops_preop_symptoms,graves opthalmic sx;,1,1,0,0,Graves opthalmic sx;
+ops_preop_symptoms,graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep,1,1,0,0,Graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep
+ops_preop_symptoms,graves with ophthalmic involvement;,1,1,0,0,Graves with ophthalmic involvement;
+ops_preop_symptoms,hoarseness,1,1,0,0,hoarseness
+ops_preop_symptoms,hx of osteoporosis @ age 18;,1,1,0,0,hx of osteoporosis @ age 18;
+ops_preop_symptoms,"hyperthyroid, eye disease",1,1,0,0,"Hyperthyroid, eye disease"
+ops_preop_symptoms,optho involvement;,1,1,0,0,Optho involvement;
+ops_preop_symptoms,original operative date reschedule due to bronchitis treated with course of antibiotics,1,1,0,0,original operative date reschedule due to bronchitis treated with course of antibiotics
+ops_preop_symptoms,preop fna w. ptc,1,1,0,0,preop FNA w. PTC
+ops_preop_symptoms,recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy,1,1,0,0,Recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy
+ops_preop_symptoms,rightward tracheal deviation;,1,1,0,0,Rightward tracheal deviation;
+ops_preop_symptoms,sob;chest tightness,1,1,0,0,SOB;Chest tightness
+ops_preop_symptoms,sob;dysphagia;pemberton's sign,1,1,0,0,SOB;Dysphagia;Pemberton's Sign
+ops_preop_symptoms,sob;dysphagia;voice abnormality,1,1,0,0,SOB;Dysphagia;Voice abnormality
+ops_preop_symptoms,stridor,1,1,0,0,Stridor
+ops_preop_symptoms,tachycardia,1,1,0,0,tachycardia
+ops_preop_symptoms,tracheal compression,1,1,0,0,Tracheal compression
+ops_preop_symptoms,voice abnormality;vocal cord paresis,1,1,0,0,Voice abnormality;Vocal cord paresis
+ops_prior_neck_irradiation,no,118,1,0,0,No
+ops_prior_neck_irradiation,yes;,6,1,0,0,Yes;
+ops_prior_neck_irradiation,yes,4,1,0,0,Yes
+ops_prior_neck_irradiation,no;,3,1,0,0,No;
+ops_prior_neck_irradiation,s/p rai;,2,1,0,0,s/p RAI;
+ops_prior_neck_irradiation,prior radiation expsoure;,1,1,0,0,prior radiation expsoure;
+ops_prior_neck_irradiation,s/p iodo 131 rx;,1,1,0,0,s/p iodo 131 Rx;
+ops_prior_neck_irradiation,s/p rai ablation;,1,1,0,0,s/p RAI ablation;
+ops_prior_neck_irradiation,yes;chemo?,1,1,0,0,Yes;Chemo?
+ops_prior_neck_irradiation,yes;for hodgkin lymphoma 1989;,1,1,0,0,Yes;for hodgkin lymphoma 1989;
+ops_prior_neck_irradiation,yes;history of radiation to the neck in distant past,1,1,0,0,Yes;history of radiation to the neck in distant past
+ops_prior_neck_irradiation,yes;hx of neck irradiation;,1,1,0,0,Yes;Hx of neck irradiation;
+ops_prior_neck_irradiation,yes;hx of neck radiation for lynphoma;,1,1,0,0,Yes;hx of neck radiation for lynphoma;
+ops_prior_neck_irradiation,yes;hx of rt for lymphoma;,1,1,0,0,Yes;hx of RT for lymphoma;
+ops_prior_neck_irradiation,yes;prior llx,1,1,0,0,Yes;Prior LLx
+ops_prior_neck_irradiation,yes;prior rai ablation;,1,1,0,0,Yes;prior RAI ablation;
+ops_prior_neck_irradiation,yes;prior rt for hodgkins;,1,1,0,0,Yes;prior RT for Hodgkins;
+ops_prior_neck_irradiation,yes;rai for graves in 1993;,1,1,0,0,Yes;RAI for graves in 1993;
+ops_prior_neck_irradiation,yes;rt exposure as a child;,1,1,0,0,Yes;RT exposure as a child;
+ops_rl_ag,1,257,1,0,0,1
+ops_rl_ag,rl parathyroid ag,1,1,0,0,RL parathyroid AG
+ops_ru_para_visualized,1,1075,1,0,0,1
+ops_ru_para_visualized,0,344,1,0,0,0
+ops_ru_para_visualized,aa,1,1,0,0,Aa
+ops_supranumerary_para,( 3 x left para glands),1,1,0,0,( 3 x left para glands)
+ops_supranumerary_para,3 left para glands (lu/lm/ll all visualized),1,1,0,0,3 left para glands (LU/LM/LL all visualized)
+ops_supranumerary_para,3 left paras; lu/lm/ll,1,1,1,0,3 left paras; LU/LM/LL 
+ops_supranumerary_para,"3 right para gland visualized (ru, rm, rl)",1,1,0,0,"3 Right para gland visualized (RU, RM, RL)"
+ops_supranumerary_para,3 x left para gland (lu/lm/ll all visualized),1,1,0,0,3 x left para gland (LU/LM/LL all visualized)
+ops_supranumerary_para,3 x right para glands,1,1,0,0,3 x right para glands
+ops_supranumerary_para,3 x right parathyroid glands noted (rm);,1,1,0,0,3 x right parathyroid glands noted (RM);
+ops_supranumerary_para,3 x right parathyroids;,1,1,0,0,3 x Right Parathyroids;
+ops_supranumerary_para,3x right parathyroids,1,1,0,0,3x right Parathyroids
+ops_supranumerary_para,?lu and lm seen; ll not visualized,1,1,0,0,?LU and LM seen; LL not visualized
+ops_supranumerary_para,lu not found; reported lm present,1,1,0,0,LU not found; reported LM present
+ops_supranumerary_para,"lu, lm and ll visualized",1,1,0,0,"LU, LM and LL visualized"
+ops_supranumerary_para,"lu, lm and ll visualized (3 x left paras)",1,1,0,0,"LU, LM and LL visualized (3 x left paras)"
+ops_thyroid_scintigraphy,8/9/1999 cold nodule preop,1,1,0,0,"8/9/1999
+Cold nodule preop"
+path_margin_raw,x,3296,2,0,0,x || X
+path_margin_raw,involved,542,2,0,0,involved || Involved
+path_margin_raw,c/a,26,1,0,0,c/a
+path_margin_raw,indeterminate,9,1,0,0,indeterminate
+path_margin_raw,present,6,1,0,0,present
+path_margin_raw,0.1,1,1,0,0,0.1
+path_margin_raw,<1,1,1,0,0,<1
+path_margin_raw,involvd,1,1,0,0,involvd
+path_margin_raw,n/s,1,1,0,0,n/s
+path_margin_raw,negative,1,1,0,0,negative
+path_n_stage_raw,x,1610,2,0,0,x || X
+path_n_stage_raw,0,670,1,0,0,0
+path_n_stage_raw,1a,471,1,0,0,1a
+path_n_stage_raw,1b,444,1,0,0,1b
+path_n_stage_raw,0a,377,1,0,0,0a
+path_n_stage_raw,n1b,121,2,0,0,N1b || n1b
+path_n_stage_raw,nx,113,2,0,0,NX || nx
+path_n_stage_raw,n1,70,1,0,0,N1
+path_n_stage_raw,n0,51,1,0,0,N0
+path_n_stage_raw,1,49,1,0,0,1
+path_n_stage_raw,n1a,36,1,0,0,N1a
+path_n_stage_raw,n,1,1,0,0,n
+path_n_stage_raw,n0a,1,1,0,0,n0a
+path_n_stage_raw,oa,1,1,0,0,oa
+path_t_stage_raw,1a,902,1,0,0,1a
+path_t_stage_raw,2,815,1,0,0,2
+path_t_stage_raw,1b,728,1,0,0,1b
+path_t_stage_raw,3,389,1,0,0,3
+path_t_stage_raw,1,339,1,0,0,1
+path_t_stage_raw,3a,254,1,0,0,3a
+path_t_stage_raw,t3a,154,1,0,0,T3a
+path_t_stage_raw,t2,104,1,0,0,T2
+path_t_stage_raw,3b,82,1,0,0,3b
+path_t_stage_raw,4a,69,1,0,0,4a
+path_t_stage_raw,t1b,66,1,0,0,T1b
+path_t_stage_raw,t1a,52,1,0,0,T1a
+path_t_stage_raw,4,25,1,0,0,4
+path_t_stage_raw,4b,10,1,0,0,4b
+path_t_stage_raw,x,10,1,0,0,x
+path_t_stage_raw,t3,3,1,0,0,T3
+path_t_stage_raw,t3b,3,1,0,0,T3b
+path_t_stage_raw,0,2,1,0,0,0
+path_t_stage_raw,r(recurrent)t4b,1,1,0,0,r(recurrent)T4b
+path_t_stage_raw,t1,1,1,0,0,T1
+perineural_invasion,x,1340,2,0,0,x || X
+perineural_invasion,present,91,1,0,0,present
+perineural_invasion,focal,4,1,0,0,focal
+perineural_invasion,indeterminate,2,1,0,0,indeterminate
+perineural_invasion,c/a,1,1,0,0,c/a
+pet_distant_met_sites,lung,22,1,0,0,lung
+pet_distant_met_sites,mediastinal_ln,17,1,0,0,mediastinal_ln
+pet_distant_met_sites,"lung,mediastinal_ln",11,1,0,0,"lung,mediastinal_ln"
+pet_distant_met_sites,"mediastinal_ln,other",11,1,0,0,"mediastinal_ln,other"
+pet_distant_met_sites,"lung,other",9,1,0,0,"lung,other"
+pet_distant_met_sites,other,8,1,0,0,other
+pet_distant_met_sites,bone,6,1,0,0,bone
+pet_distant_met_sites,"liver,lung,mediastinal_ln",5,1,0,0,"liver,lung,mediastinal_ln"
+pet_distant_met_sites,"liver,lung",4,1,0,0,"liver,lung"
+pet_distant_met_sites,"bone,lung",3,1,0,0,"bone,lung"
+pet_distant_met_sites,"bone,lung,other",3,1,0,0,"bone,lung,other"
+pet_distant_met_sites,liver,3,1,0,0,liver
+pet_distant_met_sites,"lung,mediastinal_ln,other",3,1,0,0,"lung,mediastinal_ln,other"
+pet_distant_met_sites,"bone,brain",2,1,0,0,"bone,brain"
+pet_distant_met_sites,"bone,liver",2,1,0,0,"bone,liver"
+pet_distant_met_sites,"bone,liver,lung,mediastinal_ln,other",2,1,0,0,"bone,liver,lung,mediastinal_ln,other"
+pet_distant_met_sites,"bone,liver,mediastinal_ln,other",2,1,0,0,"bone,liver,mediastinal_ln,other"
+pet_distant_met_sites,"bone,lung,mediastinal_ln",2,1,0,0,"bone,lung,mediastinal_ln"
+pet_distant_met_sites,"bone,mediastinal_ln",2,1,0,0,"bone,mediastinal_ln"
+pet_distant_met_sites,"liver,lung,mediastinal_ln,other",2,1,0,0,"liver,lung,mediastinal_ln,other"
+pet_distant_met_sites,"liver,mediastinal_ln,other",2,1,0,0,"liver,mediastinal_ln,other"
+pet_distant_met_sites,"axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate",1,1,0,0,"axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate"
+pet_distant_met_sites,"bone,liver,lung",1,1,0,0,"bone,liver,lung"
+pet_distant_met_sites,"bone,liver,lung,mediastinal_ln",1,1,0,0,"bone,liver,lung,mediastinal_ln"
+pet_distant_met_sites,"bone,liver,lung,other",1,1,0,0,"bone,liver,lung,other"
+pet_distant_met_sites,"bone,liver,other",1,1,0,0,"bone,liver,other"
+pet_distant_met_sites,"bone,mediastinal_ln,other",1,1,0,0,"bone,mediastinal_ln,other"
+pet_distant_met_sites,"bone,other",1,1,0,0,"bone,other"
+pet_distant_met_sites,"brain,lung,other",1,1,0,0,"brain,lung,other"
+pet_distant_met_sites,"inguinal_ln,pancreatic_head",1,1,0,0,"inguinal_ln,pancreatic_head"
+pet_overall_worst,not_thyroid_related,77,1,0,0,not_thyroid_related
+pet_overall_worst,distant_metastasis,59,1,0,0,distant_metastasis
+pet_overall_worst,local_recurrence,47,1,0,0,local_recurrence
+pet_overall_worst,regional_metastasis,42,1,0,0,regional_metastasis
+pet_overall_worst,no_evidence_of_disease,34,1,0,0,no_evidence_of_disease
+pet_overall_worst,mixed,21,1,0,0,mixed
+pet_overall_worst,indeterminate,11,1,0,0,indeterminate
+pet_radiotracer_primary,fdg,267,1,0,0,FDG
+pet_radiotracer_primary,ga68,8,1,0,0,GA68
+pet_radiotracer_primary,other,7,1,0,0,other
+pet_radiotracer_primary,dotatate,1,1,0,0,DOTATATE
+pet_radiotracer_primary,rb-82,1,1,0,0,Rb-82
+pmhx_llm_extraction_method,qwen3_32b,290,1,0,0,qwen3_32b
+pmhx_llm_note_types,history_summary,119,1,0,0,history_summary
+pmhx_llm_note_types,other_history,86,1,0,0,other_history
+pmhx_llm_note_types,endocrine_note,25,1,0,0,endocrine_note
+pmhx_llm_note_types,h_p,20,1,0,0,h_p
+pmhx_llm_note_types,ed_note,13,1,0,0,ed_note
+pmhx_llm_note_types,op_note,13,1,0,0,op_note
+pmhx_llm_note_types,dc_sum,8,1,0,0,dc_sum
+pmhx_llm_note_types,other_notes,3,1,0,0,other_notes
+pmhx_llm_note_types,"h_p,endocrine_note",1,1,0,0,"h_p,endocrine_note"
+pmhx_llm_note_types,"op_note,h_p",1,1,0,0,"op_note,h_p"
+pmhx_llm_note_types,"other_notes,endocrine_note",1,1,0,0,"other_notes,endocrine_note"
+pmhx_nlp_extraction_method,regex_problem_list_v2,3895,1,0,0,regex_problem_list_v2
+pmhx_nlp_note_types,h_p,2557,1,0,0,h_p
+pmhx_nlp_note_types,other_history,373,1,0,0,other_history
+pmhx_nlp_note_types,"h_p,op_note",196,1,0,0,"h_p,op_note"
+pmhx_nlp_note_types,"op_note,h_p",172,1,0,0,"op_note,h_p"
+pmhx_nlp_note_types,endocrine_note,134,1,0,0,endocrine_note
+pmhx_nlp_note_types,history_summary,97,1,0,0,history_summary
+pmhx_nlp_note_types,"h_p,endocrine_note",76,1,0,0,"h_p,endocrine_note"
+pmhx_nlp_note_types,op_note,70,1,0,0,op_note
+pmhx_nlp_note_types,"endocrine_note,h_p",63,1,0,0,"endocrine_note,h_p"
+pmhx_nlp_note_types,"dc_sum,h_p",23,1,0,0,"dc_sum,h_p"
+pmhx_nlp_note_types,"h_p,dc_sum",17,1,0,0,"h_p,dc_sum"
+pmhx_nlp_note_types,other_notes,16,1,0,0,other_notes
+pmhx_nlp_note_types,dc_sum,14,1,0,0,dc_sum
+pmhx_nlp_note_types,"ed_note,h_p",9,1,0,0,"ed_note,h_p"
+pmhx_nlp_note_types,ed_note,8,1,0,0,ed_note
+pmhx_nlp_note_types,"h_p,ed_note",7,1,0,0,"h_p,ed_note"
+pmhx_nlp_note_types,"dc_sum,endocrine_note,h_p",6,1,0,0,"dc_sum,endocrine_note,h_p"
+pmhx_nlp_note_types,"h_p,other_notes",5,1,0,0,"h_p,other_notes"
+pmhx_nlp_note_types,"dc_sum,endocrine_note",3,1,0,0,"dc_sum,endocrine_note"
+pmhx_nlp_note_types,"ed_note,h_p,op_note",3,1,0,0,"ed_note,h_p,op_note"
+pmhx_nlp_note_types,"h_p,endocrine_note,dc_sum",3,1,0,0,"h_p,endocrine_note,dc_sum"
+pmhx_nlp_note_types,"h_p,endocrine_note,op_note",3,1,0,0,"h_p,endocrine_note,op_note"
+pmhx_nlp_note_types,"op_note,h_p,endocrine_note",3,1,0,0,"op_note,h_p,endocrine_note"
+pmhx_nlp_note_types,"dc_sum,h_p,op_note",2,1,0,0,"dc_sum,h_p,op_note"
+pmhx_nlp_note_types,"dc_sum,op_note",2,1,0,0,"dc_sum,op_note"
+pmhx_nlp_note_types,"endocrine_note,h_p,dc_sum",2,1,0,0,"endocrine_note,h_p,dc_sum"
+pmhx_nlp_note_types,"h_p,dc_sum,op_note",2,1,0,0,"h_p,dc_sum,op_note"
+pmhx_nlp_note_types,"op_note,dc_sum,endocrine_note",2,1,0,0,"op_note,dc_sum,endocrine_note"
+pmhx_nlp_note_types,"op_note,dc_sum,h_p",2,1,0,0,"op_note,dc_sum,h_p"
+pmhx_nlp_note_types,"other_notes,endocrine_note",2,1,0,0,"other_notes,endocrine_note"
+pmhx_nlp_note_types,"other_notes,h_p",2,1,0,0,"other_notes,h_p"
+pmhx_nlp_note_types,"other_notes,h_p,endocrine_note",2,1,0,0,"other_notes,h_p,endocrine_note"
+pmhx_nlp_note_types,"dc_sum,h_p,endocrine_note",1,1,0,0,"dc_sum,h_p,endocrine_note"
+pmhx_nlp_note_types,"dc_sum,other_notes,h_p",1,1,0,0,"dc_sum,other_notes,h_p"
+pmhx_nlp_note_types,"ed_note,dc_sum",1,1,0,0,"ed_note,dc_sum"
+pmhx_nlp_note_types,"ed_note,endocrine_note",1,1,0,0,"ed_note,endocrine_note"
+pmhx_nlp_note_types,"ed_note,endocrine_note,h_p",1,1,0,0,"ed_note,endocrine_note,h_p"
+pmhx_nlp_note_types,"endocrine_note,h_p,op_note",1,1,0,0,"endocrine_note,h_p,op_note"
+pmhx_nlp_note_types,"endocrine_note,history_summary",1,1,0,0,"endocrine_note,history_summary"
+pmhx_nlp_note_types,"endocrine_note,other_notes",1,1,0,0,"endocrine_note,other_notes"
+pmhx_nlp_note_types,"h_p,ed_note,dc_sum",1,1,0,0,"h_p,ed_note,dc_sum"
+pmhx_nlp_note_types,"h_p,history_summary",1,1,0,0,"h_p,history_summary"
+pmhx_nlp_note_types,"h_p,op_note,dc_sum",1,1,0,0,"h_p,op_note,dc_sum"
+pmhx_nlp_note_types,"h_p,other_history",1,1,0,0,"h_p,other_history"
+pmhx_nlp_note_types,"op_note,dc_sum",1,1,0,0,"op_note,dc_sum"
+pmhx_nlp_note_types,"op_note,ed_note,h_p",1,1,0,0,"op_note,ed_note,h_p"
+pmhx_nlp_note_types,"op_note,endocrine_note",1,1,0,0,"op_note,endocrine_note"
+pmhx_nlp_note_types,"op_note,endocrine_note,h_p",1,1,0,0,"op_note,endocrine_note,h_p"
+pmhx_nlp_note_types,"op_note,h_p,dc_sum",1,1,0,0,"op_note,h_p,dc_sum"
+pmhx_nlp_note_types,"op_note,h_p,dc_sum,ed_note",1,1,0,0,"op_note,h_p,dc_sum,ed_note"
+pmhx_nlp_note_types,"op_note,h_p,ed_note",1,1,0,0,"op_note,h_p,ed_note"
+pmhx_nlp_smoking_status,never smoker,7,2,0,0,never smoker || Never smoker
+pmhx_nlp_smoking_status,former smoker,4,2,0,0,former smoker || Former smoker
+pmhx_nlp_smoking_status,nonsmoker,2,1,0,0,nonsmoker
+pmhx_nlp_smoking_status,current smoker,1,1,0,0,current smoker
+pmhx_nlp_smoking_status,every day,1,1,0,0,Every Day
+pmhx_nlp_smoking_status,history of tobacco smoking. now 3 cigarettes.,1,1,0,0,History of tobacco smoking. Now 3 cigarettes.
+pmhx_nlp_smoking_status,never,1,1,0,0,Never
+pmhx_nlp_smoking_status,quit smoking,1,1,0,0,quit smoking
+pmhx_nlp_smoking_status,smoked in last 12 months: yes,1,1,0,0,Smoked in Last 12 Months: Yes
+pmhx_nlp_smoking_status,tobacco smoking,1,1,0,0,tobacco smoking
+pni_refined_v6,present_ungraded,1480,1,0,0,present_ungraded
+pni_refined_v6,focal,4,1,0,0,focal
+pni_refined_v6,indeterminate,3,1,0,0,indeterminate
+postop_calcium_source_reliability,0.92,500,1,0,0,0.92
+postop_calcium_source_reliability,0.85,23,1,0,0,0.85
+postop_calcium_source_reliability,0.55,14,1,0,0,0.55
+postop_calcium_source_reliability,0.9,12,1,0,0,0.9
+postop_calcium_source_reliability,0.7,8,1,0,0,0.7
+postop_calcium_source_reliability,0.65,1,1,0,0,0.65
+postop_calcium_source_reliability,0.8,1,1,0,0,0.8
+postop_pth_source_reliability,0.92,655,1,0,0,0.92
+postop_pth_source_reliability,0.85,11,1,0,0,0.85
+postop_pth_source_reliability,0.8,3,1,0,0,0.8
+postop_pth_source_reliability,0.9,2,1,0,0,0.9
+postop_pth_source_reliability,0.55,1,1,0,0,0.55
+postop_pth_source_reliability,0.65,1,1,0,0,0.65
+prm_ete_imaging_path_concordance,insufficient_data,4030,1,0,0,insufficient_data
+prm_ete_rule_applied,x_to_microscopic,3289,1,0,0,x_to_microscopic
+prm_ete_rule_applied,present_to_microscopic,259,1,0,0,present_to_microscopic
+prm_fna_source_tables,canonical_fna_patient_rollup_v1,5266,1,0,0,canonical_fna_patient_rollup_v1
+prm_imaging_data_completeness,path_only,4030,1,0,0,path_only
+prm_margin_confidence,0.9,2392,1,0,0,0.9
+prm_margin_confidence,0.95,1530,1,0,0,0.95
+prm_margin_confidence,0.5,35,1,0,0,0.5
+prm_margin_source,path_synoptic,3957,1,0,0,path_synoptic
+prm_margin_with_gross_ete,false,3931,1,0,0,false
+prm_margin_with_gross_ete,true,26,1,0,0,true
+prm_molecular_risk_category,tested_negative,9725,1,0,0,tested_negative
+prm_molecular_risk_category,high_risk_molecular,292,1,0,0,high_risk_molecular
+prm_molecular_risk_category,fusion_positive,7,1,0,0,fusion_positive
+prm_recurrence_detection_category,no_recurrence,8885,1,0,0,no_recurrence
+prm_recurrence_detection_category,structural_date_unknown,1764,1,0,0,structural_date_unknown
+prm_recurrence_detection_category,biochemical_only,168,1,0,0,biochemical_only
+prm_recurrence_detection_category,structural_confirmed,54,1,0,0,structural_confirmed
+prm_rln_worst_grade,no_injury,10846,1,0,0,no_injury
+prm_rln_worst_grade,unknown,17,1,0,0,unknown
+prm_rln_worst_grade,paralysis,7,1,0,0,paralysis
+prm_rln_worst_grade,paresis,1,1,0,0,paresis
+prm_size_concordance,insufficient_data,4030,1,0,0,insufficient_data
+proc_nlp_extraction_method,regex_procedure_v2,4711,1,0,0,regex_procedure_v2
+proc_nlp_note_types,"op_note,h_p",1402,1,0,0,"op_note,h_p"
+proc_nlp_note_types,"h_p,op_note",1369,1,0,0,"h_p,op_note"
+proc_nlp_note_types,op_note,665,1,0,0,op_note
+proc_nlp_note_types,h_p,383,1,0,0,h_p
+proc_nlp_note_types,other_history,364,1,0,0,other_history
+proc_nlp_note_types,history_summary,132,1,0,0,history_summary
+proc_nlp_note_types,endocrine_note,84,1,0,0,endocrine_note
+proc_nlp_note_types,"h_p,endocrine_note",59,1,0,0,"h_p,endocrine_note"
+proc_nlp_note_types,"endocrine_note,h_p",54,1,0,0,"endocrine_note,h_p"
+proc_nlp_note_types,"dc_sum,h_p,op_note",26,1,0,0,"dc_sum,h_p,op_note"
+proc_nlp_note_types,"h_p,dc_sum,op_note",19,1,0,0,"h_p,dc_sum,op_note"
+proc_nlp_note_types,"op_note,dc_sum,h_p",18,1,0,0,"op_note,dc_sum,h_p"
+proc_nlp_note_types,"op_note,dc_sum",11,1,0,0,"op_note,dc_sum"
+proc_nlp_note_types,"op_note,h_p,dc_sum",10,1,0,0,"op_note,h_p,dc_sum"
+proc_nlp_note_types,"dc_sum,op_note",8,1,0,0,"dc_sum,op_note"
+proc_nlp_note_types,"h_p,endocrine_note,op_note",8,1,0,0,"h_p,endocrine_note,op_note"
+proc_nlp_note_types,"other_notes,h_p,op_note",6,1,0,0,"other_notes,h_p,op_note"
+proc_nlp_note_types,"endocrine_note,h_p,op_note",5,1,0,0,"endocrine_note,h_p,op_note"
+proc_nlp_note_types,"op_note,dc_sum,endocrine_note,h_p",5,1,0,0,"op_note,dc_sum,endocrine_note,h_p"
+proc_nlp_note_types,"op_note,h_p,ed_note",5,1,0,0,"op_note,h_p,ed_note"
+proc_nlp_note_types,"op_note,h_p,endocrine_note",5,1,0,0,"op_note,h_p,endocrine_note"
+proc_nlp_note_types,"dc_sum,h_p",4,1,0,0,"dc_sum,h_p"
+proc_nlp_note_types,"endocrine_note,op_note",4,1,0,0,"endocrine_note,op_note"
+proc_nlp_note_types,"op_note,endocrine_note",4,1,0,0,"op_note,endocrine_note"
+proc_nlp_note_types,"op_note,other_notes,h_p",4,1,0,0,"op_note,other_notes,h_p"
+proc_nlp_note_types,"other_notes,op_note",4,1,0,0,"other_notes,op_note"
+proc_nlp_note_types,"h_p,other_notes,op_note",3,1,0,0,"h_p,other_notes,op_note"
+proc_nlp_note_types,"op_note,dc_sum,endocrine_note",3,1,0,0,"op_note,dc_sum,endocrine_note"
+proc_nlp_note_types,"op_note,endocrine_note,h_p",3,1,0,0,"op_note,endocrine_note,h_p"
+proc_nlp_note_types,"other_notes,endocrine_note,op_note",3,1,0,0,"other_notes,endocrine_note,op_note"
+proc_nlp_note_types,"dc_sum,endocrine_note,h_p,op_note",2,1,0,0,"dc_sum,endocrine_note,h_p,op_note"
+proc_nlp_note_types,"h_p,dc_sum",2,1,0,0,"h_p,dc_sum"
+proc_nlp_note_types,"h_p,ed_note,op_note",2,1,0,0,"h_p,ed_note,op_note"
+proc_nlp_note_types,"h_p,endocrine_note,dc_sum,op_note",2,1,0,0,"h_p,endocrine_note,dc_sum,op_note"
+proc_nlp_note_types,"op_note,endocrine_note,dc_sum",2,1,0,0,"op_note,endocrine_note,dc_sum"
+proc_nlp_note_types,"op_note,endocrine_note,dc_sum,h_p",2,1,0,0,"op_note,endocrine_note,dc_sum,h_p"
+proc_nlp_note_types,"op_note,other_notes",2,1,0,0,"op_note,other_notes"
+proc_nlp_note_types,other_notes,2,1,0,0,other_notes
+proc_nlp_note_types,"other_notes,h_p",2,1,0,0,"other_notes,h_p"
+proc_nlp_note_types,dc_sum,1,1,0,0,dc_sum
+proc_nlp_note_types,"dc_sum,endocrine_note,op_note",1,1,0,0,"dc_sum,endocrine_note,op_note"
+proc_nlp_note_types,"dc_sum,h_p,ed_note,op_note",1,1,0,0,"dc_sum,h_p,ed_note,op_note"
+proc_nlp_note_types,"dc_sum,other_notes,h_p,op_note",1,1,0,0,"dc_sum,other_notes,h_p,op_note"
+proc_nlp_note_types,"dc_sum,other_notes,op_note",1,1,0,0,"dc_sum,other_notes,op_note"
+proc_nlp_note_types,ed_note,1,1,0,0,ed_note
+proc_nlp_note_types,"ed_note,dc_sum,op_note",1,1,0,0,"ed_note,dc_sum,op_note"
+proc_nlp_note_types,"endocrine_note,dc_sum,h_p,op_note",1,1,0,0,"endocrine_note,dc_sum,h_p,op_note"
+proc_nlp_note_types,"endocrine_note,dc_sum,op_note",1,1,0,0,"endocrine_note,dc_sum,op_note"
+proc_nlp_note_types,"endocrine_note,other_notes",1,1,0,0,"endocrine_note,other_notes"
+proc_nlp_note_types,"endocrine_note,other_notes,h_p,op_note",1,1,0,0,"endocrine_note,other_notes,h_p,op_note"
+proc_nlp_note_types,"h_p,dc_sum,endocrine_note,op_note",1,1,0,0,"h_p,dc_sum,endocrine_note,op_note"
+proc_nlp_note_types,"h_p,history_summary",1,1,0,0,"h_p,history_summary"
+proc_nlp_note_types,"h_p,history_summary,op_note",1,1,0,0,"h_p,history_summary,op_note"
+proc_nlp_note_types,"history_summary,op_note,h_p",1,1,0,0,"history_summary,op_note,h_p"
+proc_nlp_note_types,"op_note,dc_sum,other_notes",1,1,0,0,"op_note,dc_sum,other_notes"
+proc_nlp_note_types,"op_note,ed_note",1,1,0,0,"op_note,ed_note"
+proc_nlp_note_types,"op_note,h_p,dc_sum,endocrine_note",1,1,0,0,"op_note,h_p,dc_sum,endocrine_note"
+proc_nlp_note_types,"op_note,h_p,dc_sum,other_notes",1,1,0,0,"op_note,h_p,dc_sum,other_notes"
+proc_nlp_note_types,"op_note,history_summary",1,1,0,0,"op_note,history_summary"
+proc_nlp_note_types,"op_note,other_history,h_p",1,1,0,0,"op_note,other_history,h_p"
+proc_nlp_note_types,"other_notes,endocrine_note",1,1,0,0,"other_notes,endocrine_note"
+proc_nlp_note_types,"other_notes,endocrine_note,h_p",1,1,0,0,"other_notes,endocrine_note,h_p"
+pshx_llm_extraction_method,qwen3_32b,1864,1,0,0,qwen3_32b
+pshx_llm_note_types,h_p,1250,1,0,0,h_p
+pshx_llm_note_types,other_history,391,1,0,0,other_history
+pshx_llm_note_types,history_summary,175,1,0,0,history_summary
+pshx_llm_note_types,endocrine_note,16,1,0,0,endocrine_note
+pshx_llm_note_types,other_notes,5,1,0,0,other_notes
+pshx_llm_note_types,"endocrine_note,h_p",4,1,0,0,"endocrine_note,h_p"
+pshx_llm_note_types,"h_p,endocrine_note",4,1,0,0,"h_p,endocrine_note"
+pshx_llm_note_types,dc_sum,3,1,0,0,dc_sum
+pshx_llm_note_types,"dc_sum,h_p",3,1,0,0,"dc_sum,h_p"
+pshx_llm_note_types,ed_note,3,1,0,0,ed_note
+pshx_llm_note_types,"h_p,dc_sum",2,1,0,0,"h_p,dc_sum"
+pshx_llm_note_types,op_note,2,1,0,0,op_note
+pshx_llm_note_types,"endocrine_note,history_summary",1,1,0,0,"endocrine_note,history_summary"
+pshx_llm_note_types,"h_p,ed_note",1,1,0,0,"h_p,ed_note"
+pshx_llm_note_types,"h_p,history_summary",1,1,0,0,"h_p,history_summary"
+pshx_llm_note_types,"h_p,other_notes",1,1,0,0,"h_p,other_notes"
+pshx_llm_note_types,"history_summary,h_p",1,1,0,0,"history_summary,h_p"
+pshx_llm_note_types,"other_notes,h_p",1,1,0,0,"other_notes,h_p"
+race,white,5266,1,0,0,White
+race,black or african american,4168,1,0,0,Black or African American
+race,unknown or not reported,721,1,0,0,Unknown or Not Reported
+race,asian,476,1,0,0,Asian
+race,other,143,1,0,0,Other
+race,american indian or alaska native,39,1,0,0,American Indian or Alaska Native
+race,native hawaiian or other pacific islander,27,1,0,0,Native Hawaiian or Other Pacific Islander
+race,hispanic or latino,22,1,0,0,Hispanic or Latino
+radtx_llm_extraction_method,qwen3_32b,210,1,0,0,qwen3_32b
+rai_dose_confidence_worst,0.85,138,1,0,0,0.85
+rai_dose_confidence_worst,0.55,61,1,0,0,0.55
+rai_dose_confidence_worst,0.6,33,1,0,0,0.6
+rai_dose_confidence_worst,0.9,10,1,0,0,0.9
+rai_dose_confidence_worst,0.65,5,1,0,0,0.65
+rai_dose_confidence_worst,0.4,1,1,0,0,0.4
+rai_dose_confidence_worst,0.7,1,1,0,0,0.7
+rai_dose_linkage,nlp_linked_to_episode,133,1,0,0,nlp_linked_to_episode
+rai_dose_linkage,nlp_standalone,102,1,0,0,nlp_standalone
+rai_dose_linkage,structured,41,1,0,0,structured
+rai_dose_source,other_history,100,1,0,0,other_history
+rai_dose_source,history_summary,81,1,0,0,history_summary
+rai_dose_source,endocrine_note,43,1,0,0,endocrine_note
+rai_dose_source,rai_treatment_episode_v2,41,1,0,0,rai_treatment_episode_v2
+rai_dose_source,op_note,7,1,0,0,op_note
+rai_dose_source,other_notes,2,1,0,0,other_notes
+rai_dose_source,dc_sum,1,1,0,0,dc_sum
+rai_dose_source,ed_note,1,1,0,0,ed_note
+rai_intent_list,unknown,862,1,0,0,unknown
+rai_intent_v9,unknown,165,1,0,0,unknown
+rai_intent_v9,ablation,92,1,0,0,ablation
+rai_intent_v9,remnant_ablation,11,1,0,0,remnant_ablation
+rai_intent_v9,adjuvant,4,1,0,0,adjuvant
+rai_intent_v9,therapeutic,4,1,0,0,therapeutic
+rai_validation_tier,unconfirmed_no_dose,821,1,0,0,unconfirmed_no_dose
+rai_validation_tier,confirmed_with_dose,35,1,0,0,confirmed_with_dose
+rai_validation_tier,unconfirmed_with_dose,6,1,0,0,unconfirmed_with_dose
+ras_primary_subtype_v11,nras,196,1,0,0,NRAS
+ras_primary_subtype_v11,hras,87,1,0,0,HRAS
+ras_primary_subtype_v11,kras,33,1,0,0,KRAS
+ras_protein_change_v11,q61r,39,1,0,0,Q61R
+ras_protein_change_v11,q61k,7,1,0,0,Q61K
+ras_protein_change_v11,g13r,3,2,0,0,G13R || g13R
+ras_protein_change_v11,g12r,2,1,0,0,G12R
+ras_protein_change_v11,o61r,2,1,0,0,O61R
+ras_protein_change_v11,g12v,1,1,0,0,G12V
+ras_protein_change_v11,o61k,1,1,0,0,O61K
+ras_resolved_gene_v13,nras,19,1,0,0,NRAS
+ras_resolved_gene_v13,hras,9,1,0,0,HRAS
+ras_resolved_gene_v13,kras,6,1,0,0,KRAS
+ras_resolved_variant_v13,q61r,14,1,0,0,Q61R
+ras_resolved_variant_v13,q61k,2,1,0,0,Q61K
+ras_resolved_variant_v13,g13r,1,1,0,0,G13R
+ras_subtype,nras,99,1,0,0,NRAS
+ras_subtype,hras,55,1,0,0,HRAS
+ras_subtype,kras,20,1,0,0,KRAS
+rec_source_table,extracted_recurrence_refined_v1,1818,1,0,0,extracted_recurrence_refined_v1
+rec_source_table,longitudinal_lab_clean_v1,128,1,0,0,longitudinal_lab_clean_v1
+recurrence_data_confidence,high,10126,1,0,0,HIGH
+recurrence_data_confidence,medium,666,1,0,0,MEDIUM
+recurrence_data_confidence,low,79,1,0,0,LOW
+recurrence_definition,no_recurrence_evidence,9583,1,0,0,no_recurrence_evidence
+recurrence_definition,persistent_tg_never_undetectable,649,1,0,0,persistent_tg_never_undetectable
+recurrence_definition,surgical_pathology,440,1,0,0,surgical_pathology
+recurrence_definition,rising_tg_after_undetectable,80,1,0,0,rising_tg_after_undetectable
+recurrence_definition,fna_bethesda_vi_malignant,53,1,0,0,fna_bethesda_vi_malignant
+recurrence_definition,llm_extracted_unconfirmed,45,1,0,0,llm_extracted_unconfirmed
+recurrence_definition,legacy_structural_confirmed,16,1,0,0,legacy_structural_confirmed
+recurrence_definition,fna_bethesda_v_suspicious,5,1,0,0,fna_bethesda_v_suspicious
+recurrence_evidence_source,tg_time_series,729,1,0,0,tg_time_series
+recurrence_evidence_source,reoperation_pathology,440,1,0,0,reoperation_pathology
+recurrence_evidence_source,fna_cytology,58,1,0,0,fna_cytology
+recurrence_evidence_source,imaging_or_clinical_note,45,1,0,0,imaging_or_clinical_note
+recurrence_evidence_source,recurrence_event_clean_v1_legacy,16,1,0,0,recurrence_event_clean_v1_legacy
+recurrence_histology,ptc,234,2,7,0,PTC || PTC 
+recurrence_histology,metastatic ptc,82,3,0,0,metastatic PTC || Metastatic PTC || metastatic pTC
+recurrence_histology,follicular carcinoma,54,2,0,0,follicular carcinoma || Follicular carcinoma
+recurrence_histology,metastatic mtc,9,2,0,0,metastatic MTC || Metastatic MTC
+recurrence_histology,niftp,9,1,0,0,NIFTP
+recurrence_histology,mtc,8,1,0,0,MTC
+recurrence_histology,metastatic ptc classical,6,1,0,0,metastatic PTC classical
+recurrence_histology,metastatic follicular carcinoma,5,1,0,0,metastatic follicular carcinoma
+recurrence_histology,metastatic ptc tall cell variant,4,2,0,0,metastatic PTC tall cell variant || Metastatic PTC tall cell variant
+recurrence_histology,poorly differentiated thyroid carcinoma,3,2,0,0,Poorly differentiated thyroid carcinoma || poorly differentiated thyroid carcinoma
+recurrence_histology,metastatic carcinoma,2,2,0,0,Metastatic Carcinoma || metastatic carcinoma
+recurrence_histology,recurrent/metastatic follicular carcinoma,2,2,0,0,Recurrent/metastatic follicular carcinoma || recurrent/metastatic follicular Carcinoma
+recurrence_histology,recurrent/metastatic ptc,2,1,0,0,recurrent/metastatic PTC
+recurrence_histology,angiosarcoma of the thyroid,1,1,0,0,angiosarcoma of the thyroid
+recurrence_histology,differentiated high grade thyroid carcinoma,1,1,0,0,differentiated high grade thyroid carcinoma
+recurrence_histology,differentiated thyroid carcinoma,1,1,0,0,differentiated thyroid carcinoma
+recurrence_histology,ftump,1,1,0,0,FTUMP
+recurrence_histology,metastatic high grade neuroendocrine tumor,1,1,0,0,metastatic high grade neuroendocrine tumor
+recurrence_histology,metastatic poorly differentiated thyroid carcinoma,1,1,0,0,metastatic poorly differentiated thyroid carcinoma
+recurrence_histology,metastatic ptc calssical with focal tall cell features (<5%),1,1,0,0,metastatic PTC calssical with focal tall cell features (<5%)
+recurrence_histology,metastatic ptc classic,1,1,0,0,metastatic PTC classic
+recurrence_histology,metastatic ptc classic subtype with tall cell component ~25%,1,1,0,0,"metastatic PTC
+classic subtype with tall cell component ~25%"
+recurrence_histology,metastatic ptc follicular,1,1,0,0,metastatic PTC follicular
+recurrence_histology,metastatic ptc high grade,1,1,0,0,metastatic PTC high grade
+recurrence_histology,metastatic ptc onocytic classical,1,1,0,0,metastatic PTC onocytic classical
+recurrence_histology,metastatic ptc with focal tall cell features,1,1,0,0,metastatic PTC with focal tall cell features
+recurrence_histology,metastatic ptc with tall cell features,1,1,0,0,metastatic PTC with tall cell features
+recurrence_histology,metastatic ptc?,1,1,0,0,metastatic PTC?
+recurrence_histology,metastatic thyroid carcinoma,1,1,0,0,metastatic thyroid carcinoma
+recurrence_histology,metastatic/recurrent ptc,1,1,0,0,metastatic/recurrent PTC
+recurrence_histology,metastatic/recurrent ptc classical,1,1,0,0,metastatic/recurrent PTC classical
+recurrence_histology,recurrent anaplastic carcinoma,1,1,0,0,recurrent anaplastic carcinoma
+recurrence_histology,recurrent differentiated high grade thyroid carcinoma metastatic,1,1,0,0,recurrent differentiated high grade thyroid carcinoma metastatic
+recurrence_type,none,9583,1,0,0,none
+recurrence_type,persistent_biochemical_disease,649,1,0,0,persistent_biochemical_disease
+recurrence_type,structural_confirmed,440,1,0,0,structural_confirmed
+recurrence_type,biochemical_tg_rise,80,1,0,0,biochemical_tg_rise
+recurrence_type,fna_confirmed,58,1,0,0,fna_confirmed
+recurrence_type,imaging_suspicious_unconfirmed,45,1,0,0,imaging_suspicious_unconfirmed
+recurrence_type,structural_confirmed_legacy,16,1,0,0,structural_confirmed_legacy
+rln_classification,nlp_confirmed,34,1,0,0,nlp_confirmed
+rln_classification,nlp_suspected,33,1,0,0,nlp_suspected
+rln_classification,chart_documented,19,1,0,0,chart_documented
+rln_classification,laryngoscopy_confirmed,6,1,0,0,laryngoscopy_confirmed
+rln_injury_evidence,medium,53,1,0,0,medium
+rln_injury_evidence,weak,33,1,0,0,weak
+rln_injury_evidence,strong,6,1,0,0,strong
+rln_injury_type,paralysis,42,1,0,0,paralysis
+rln_injury_type,paresis,23,1,0,0,paresis
+rln_injury_type,unknown,17,1,0,0,unknown
+rln_injury_type,rln_injury,10,1,0,0,rln_injury
+rln_laterality,left,7,1,0,0,left
+rln_laterality,right,4,1,0,0,right
+rln_laterality,bilateral,1,1,0,0,bilateral
+rln_status,unknown,7979,1,0,0,unknown
+rln_status,absent,2075,1,0,0,absent
+rln_status,absent_or_unconfirmed,758,1,0,0,absent_or_unconfirmed
+rln_status,confirmed_duration_unknown,59,1,0,0,confirmed_duration_unknown
+rln_temporality,unknown,86,1,0,0,unknown
+rln_temporality,permanent,6,1,0,0,permanent
+seroma_status,absent,9997,1,0,0,absent
+seroma_status,absent_or_unconfirmed,842,1,0,0,absent_or_unconfirmed
+seroma_status,confirmed_duration_unknown,28,1,0,0,confirmed_duration_unknown
+seroma_status,probable,4,1,0,0,probable
+sex,female,8459,1,0,0,female
+sex,male,2412,1,0,0,male
+surg_procedure_type,total_thyroidectomy,4561,1,0,0,total_thyroidectomy
+surg_procedure_type,hemithyroidectomy,3809,1,0,0,hemithyroidectomy
+surg_procedure_type,other,354,1,0,0,other
+surg_procedure_type,unknown,9,1,0,0,unknown
+surv_recurrence_risk_band,low,1552,1,0,0,low
+surv_recurrence_risk_band,high,1312,1,0,0,high
+surv_recurrence_risk_band,intermediate,900,1,0,0,intermediate
+sx_llm_extraction_method,qwen3_32b,116,1,0,0,qwen3_32b
+syn_capsular_invasion_clean,present,590,1,0,0,present
+syn_capsular_invasion_clean,minimally_invasive,398,1,0,0,minimally_invasive
+syn_capsular_invasion_clean,absent,80,1,0,0,absent
+syn_capsular_invasion_clean,widely_invasive,58,1,0,0,widely_invasive
+syn_ki67_index,1,3,1,0,0,1
+syn_ki67_index,1.1,2,1,0,0,1.1
+syn_ki67_index,3,2,1,0,0,3
+syn_ki67_index,pending,2,1,0,0,pending
+syn_ki67_index,0.9,1,1,0,0,0.9
+syn_ki67_index,1.3,1,1,0,0,1.3
+syn_ki67_index,1.4,1,1,0,0,1.4
+syn_ki67_index,2.67,1,1,0,0,2.67
+syn_ki67_index,20,1,1,0,0,20
+syn_ki67_index,4,1,1,0,0,4
+syn_ki67_index,7,1,1,0,0,7
+syn_ki67_index,<1,1,1,0,0,<1
+syn_ki67_index,<2,1,1,0,0,<2
+syn_lymphatic_invasion_clean,present,3307,1,0,0,present
+syn_lymphatic_invasion_clean,indeterminate,63,1,0,0,indeterminate
+syn_lymphatic_invasion_clean,extensive,54,1,0,0,extensive
+syn_lymphatic_invasion_clean,focal,7,1,0,0,focal
+syn_lymphatic_invasion_clean,absent,1,1,0,0,absent
+syn_margin_status_synoptic,x,3358,2,0,0,x || X
+syn_margin_status_synoptic,involved,553,2,0,0,involved || Involved
+syn_margin_status_synoptic,c/a,27,1,0,0,c/a
+syn_margin_status_synoptic,indeterminate,8,1,0,0,indeterminate
+syn_margin_status_synoptic,present,6,1,0,0,present
+syn_margin_status_synoptic,0.1,1,1,0,0,0.1
+syn_margin_status_synoptic,<1,1,1,0,0,<1
+syn_margin_status_synoptic,involvd,1,1,0,0,involvd
+syn_margin_status_synoptic,n/s,1,1,0,0,n/s
+syn_margin_status_synoptic,negative,1,1,0,0,negative
+syn_mitotic_rate_qualifier,less_than,394,1,0,0,less_than
+syn_mitotic_rate_qualifier,greater_than,6,1,0,0,greater_than
+syn_mitotic_rate_qualifier,elevated,5,1,0,0,elevated
+syn_mitotic_rate_qualifier,extracted,2,1,0,0,extracted
+syn_necrosis_clean,present,715,1,0,0,present
+syn_necrosis_clean,extensive,6,1,0,0,extensive
+syn_necrosis_clean,focal,5,1,0,0,focal
+syn_tumor2_histologic_type,ptc,1162,3,5,0,PTC || PTC  || pTC
+syn_tumor2_histologic_type,niftp,53,1,0,0,NIFTP
+syn_tumor2_histologic_type,mtc,48,1,0,0,MTC
+syn_tumor2_histologic_type,follicular carcinoma,40,2,0,0,follicular carcinoma || Follicular carcinoma
+syn_tumor2_histologic_type,ftump,10,1,0,0,FTUMP
+syn_tumor2_histologic_type,ptc classical,4,1,0,0,PTC classical
+syn_tumor2_histologic_type,poorly differentiated thyroid carcinoma,3,1,0,0,poorly differentiated thyroid carcinoma
+syn_tumor2_histologic_type,ptc microcarcinoma,3,1,0,0,PTC microcarcinoma
+syn_tumor2_histologic_type,metastatic ptc,2,1,0,0,metastatic PTC
+syn_tumor2_histologic_type,ptc follicular variant,2,1,0,0,PTC follicular variant
+syn_tumor2_histologic_type,(niftp),1,1,1,0, (NIFTP)
+syn_tumor2_histologic_type,*ptc,1,1,0,0,*PTC
+syn_tumor2_histologic_type,anaplastic carcinoma,1,1,0,0,anaplastic carcinoma
+syn_tumor2_histologic_type,angiosarcoma of the thyroid,1,1,0,0,angiosarcoma of the thyroid
+syn_tumor2_histologic_type,follicular caricinoma,1,1,0,0,Follicular caricinoma
+syn_tumor2_histologic_type,follicular tumor of uncertain malignant potential with focal high-grade features,1,1,1,1,Follicular tumor of uncertain malignant potential  with focal high-grade features 
+syn_tumor2_histologic_type,hürthle cell neoplasm of uncertain malignant potential,1,1,0,0,HÜRTHLE cell neoplasm of uncertain malignant potential
+syn_tumor2_histologic_type,insular carcinoma,1,1,0,0,insular carcinoma
+syn_tumor2_histologic_type,"low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, ft-ump)",1,1,0,0,"Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP)"
+syn_tumor2_histologic_type,medullary,1,1,0,0,medullary
+syn_tumor2_histologic_type,medullary carcinoma,1,1,0,0,medullary carcinoma
+syn_tumor2_histologic_type,metastatic insular carcinoma,1,1,0,0,metastatic insular carcinoma
+syn_tumor2_histologic_type,metastatic mtc,1,1,0,0,metastatic MTC
+syn_tumor2_histologic_type,metastatic ptc classical,1,1,0,0,metastatic PTC classical
+syn_tumor2_histologic_type,metastatic ptc classical?,1,1,0,0,metastatic PTC classical?
+syn_tumor2_histologic_type,oncocytic follicular tumor of uncertain malignant potential,1,1,1,0,Oncocytic follicular tumor of uncertain malignant potential 
+syn_tumor2_histologic_type,ptc follicular variant microcarcinoma,1,1,0,0,PTC follicular variant microcarcinoma
+syn_tumor2_histologic_type,ptc nos,1,1,0,0,PTC NOS
+syn_tumor2_histologic_type,sarcomatoid anaplastic carcinoma,1,1,0,0,sarcomatoid anaplastic carcinoma
+tert_platforms_v9,afirma,33,1,0,0,Afirma
+tert_platforms_v9,other,25,1,0,0,Other
+tert_platforms_v9,thyroseq,18,1,0,0,ThyroSeq
+tert_status_v7,negative,9948,1,0,0,negative
+tert_status_v7,positive,76,1,0,0,positive
+tert_variant_v9,c228t,50,1,0,0,C228T
+tert_variant_v9,promoter_unspecified,23,1,0,0,promoter_unspecified
+tert_variant_v9,c250t,3,1,0,0,C250T
+tg_trajectory_class,suppressed,1160,1,0,0,suppressed
+tg_trajectory_class,detectable_stable,682,1,0,0,detectable_stable
+tg_trajectory_class,low_stable,445,1,0,0,low_stable
+tg_trajectory_class,rising,236,1,0,0,rising
+tg_trajectory_class,insufficient_data,198,1,0,0,insufficient_data
+vasc_grade,present_ungraded,3281,1,0,0,present_ungraded
+vasc_grade,focal,243,1,0,0,focal
+vasc_grade,extensive,171,1,0,0,extensive
+vasc_grade,indeterminate,56,1,0,0,indeterminate
+vasc_grade_final_v13,present_ungraded,3281,1,0,0,present_ungraded
+vasc_grade_final_v13,focal,243,1,0,0,focal
+vasc_grade_final_v13,extensive,171,1,0,0,extensive
+vasc_grade_final_v13,indeterminate,56,1,0,0,indeterminate
+vasc_source_final_v13,path_synoptic_text,3691,1,0,0,path_synoptic_text
+vasc_source_final_v13,path_synoptic_quantify,45,1,0,0,path_synoptic_quantify
+vasc_source_final_v13,multi_tumor_aggregate,15,1,0,0,multi_tumor_aggregate
+vascular_invasion_grade,present_ungraded,3281,1,0,0,present_ungraded
+vascular_invasion_grade,focal,243,1,0,0,focal
+vascular_invasion_grade,extensive,171,1,0,0,extensive
+vascular_invasion_grade,indeterminate,56,1,0,0,indeterminate
+vascular_who_2022_grade,focal (<4 vessels),231,1,0,0,focal (<4 vessels)
+vascular_who_2022_grade,extensive (>=4 vessels),169,1,0,0,extensive (>=4 vessels)
+voice_followup_completeness,no_injury,10846,1,0,0,no_injury
+voice_followup_completeness,partial_followup,25,1,0,0,partial_followup
+voice_outcome_category,no_injury,10846,1,0,0,no_injury
+voice_outcome_category,single_assessment_only,19,1,0,0,single_assessment_only
+voice_outcome_category,permanent_paralysis,5,1,0,0,permanent_paralysis
+voice_outcome_category,prolonged_paresis,1,1,0,0,prolonged_paresis
+worst_ete_v10,present_ungraded,1089,1,0,0,present_ungraded
+worst_ete_v10,microscopic,96,1,0,0,microscopic
+worst_ete_v10,gross,6,1,0,0,gross
+wound_infection_status,absent,10855,1,0,0,absent
+wound_infection_status,absent_or_unconfirmed,12,1,0,0,absent_or_unconfirmed
+wound_infection_status,confirmed_duration_unknown,2,1,0,0,confirmed_duration_unknown
+wound_infection_status,probable,2,1,0,0,probable
+lab_tsh_unit,miu/l,10806,1,0,0,mIU/L
+lab_tsh_unit,mciu/ml,48,1,0,0,mcIU/mL
+lab_tsh_unit,ng/ml,8,1,0,0,ng/mL
+lab_tsh_unit,uiu/ml,5,2,0,0,uIU/ml || uIU/mL
+lab_tsh_unit,mg/dl,2,2,0,0,mg/dL || mg/dl
+lab_tsh_unit,mci,1,1,0,0,mcI
+lab_tsh_unit,ng/dl,1,1,0,0,ng/dL
+lab_vitd_unit,ng/ml,10869,1,0,0,ng/mL
+lab_vitd_unit,iu/l,1,1,0,0,IU/L
+lab_vitd_unit,units,1,1,0,0,units
+lab_pth_unit,pg/ml,10870,1,0,0,pg/mL
+lab_pth_unit,ng/ml,1,1,0,0,ng/mL
+lab_calcium_unit,mg/dl,10867,1,0,0,mg/dL
+lab_calcium_unit,l,1,1,0,0,L
+lab_calcium_unit,mcg,1,1,0,0,mcg
+lab_calcium_unit,mg,1,1,0,0,mg
+lab_calcium_unit,ug/day,1,1,0,0,ug/day
+cnln_modalities_present,surgical_path,919,1,0,0,surgical_path
+cnln_modalities_present,imaging; surgical_path,88,1,0,0,imaging; surgical_path
+cnln_modalities_present,imaging,85,1,0,0,imaging
+cnln_modalities_present,surgical_path; imaging,81,1,0,0,surgical_path; imaging
+cnln_modalities_present,clinical,65,1,0,0,clinical
+cnln_modalities_present,pathology; surgical_path,34,1,0,0,pathology; surgical_path
+cnln_modalities_present,surgical_path; pathology,28,1,0,0,surgical_path; pathology
+cnln_modalities_present,surgical_path; clinical,22,1,0,0,surgical_path; clinical
+cnln_modalities_present,pathology,14,1,0,0,pathology
+cnln_modalities_present,clinical; surgical_path,12,1,0,0,clinical; surgical_path
+cnln_modalities_present,imaging; surgical_path; pathology,10,1,0,0,imaging; surgical_path; pathology
+cnln_modalities_present,surgical_path; pathology; imaging,10,1,0,0,surgical_path; pathology; imaging
+cnln_modalities_present,clinical; pathology,9,1,0,0,clinical; pathology
+cnln_modalities_present,imaging; pathology; surgical_path,8,1,0,0,imaging; pathology; surgical_path
+cnln_modalities_present,pathology; surgical_path; imaging,8,1,0,0,pathology; surgical_path; imaging
+cnln_modalities_present,clinical; imaging,7,1,0,0,clinical; imaging
+cnln_modalities_present,surgical_path; imaging; pathology,6,1,0,0,surgical_path; imaging; pathology
+cnln_modalities_present,imaging; clinical; surgical_path,3,1,0,0,imaging; clinical; surgical_path
+cnln_modalities_present,pathology; imaging,3,1,0,0,pathology; imaging
+cnln_modalities_present,surgical_path; imaging; clinical,3,1,0,0,surgical_path; imaging; clinical
+cnln_modalities_present,clinical; imaging; pathology,2,1,0,0,clinical; imaging; pathology
+cnln_modalities_present,clinical; pathology; surgical_path,2,1,0,0,clinical; pathology; surgical_path
+cnln_modalities_present,clinical; surgical_path; pathology,2,1,0,0,clinical; surgical_path; pathology
+cnln_modalities_present,imaging; clinical,2,1,0,0,imaging; clinical
+cnln_modalities_present,surgical_path; clinical; imaging,2,1,0,0,surgical_path; clinical; imaging
+cnln_modalities_present,ambiguous,1,1,0,0,ambiguous
+cnln_modalities_present,ambiguous; pathology; imaging,1,1,0,0,ambiguous; pathology; imaging
+cnln_modalities_present,imaging; ambiguous,1,1,0,0,imaging; ambiguous
+cnln_modalities_present,imaging; clinical; pathology,1,1,0,0,imaging; clinical; pathology
+cnln_modalities_present,imaging; pathology,1,1,0,0,imaging; pathology
+cnln_modalities_present,pathology; clinical,1,1,0,0,pathology; clinical
+cnln_modalities_present,pathology; clinical; imaging,1,1,0,0,pathology; clinical; imaging
+cnln_modalities_present,pathology; imaging; clinical,1,1,0,0,pathology; imaging; clinical
+cnln_modalities_present,pathology; imaging; clinical; surgical_path,1,1,0,0,pathology; imaging; clinical; surgical_path
+cnln_modalities_present,pathology; imaging; surgical_path,1,1,0,0,pathology; imaging; surgical_path
+cnln_modalities_present,pathology; surgical_path; clinical,1,1,0,0,pathology; surgical_path; clinical
+cnln_img_laterality,bilateral,94,1,0,0,bilateral
+cnln_img_laterality,right,49,1,0,0,right
+cnln_img_laterality,left,48,1,0,0,left
+cnln_img_laterality,central,14,1,0,0,central
+cnln_img_laterality,left; right,14,1,0,0,left; right
+cnln_img_laterality,null,8,1,0,0,null
+cnln_img_laterality,right; left,8,1,0,0,right; left
+cnln_img_laterality,right; central,4,1,0,0,right; central
+cnln_img_laterality,central; bilateral,3,1,0,0,central; bilateral
+cnln_img_laterality,left; central,3,1,0,0,left; central
+cnln_img_laterality,right; bilateral,3,1,0,0,right; bilateral
+cnln_img_laterality,lateral,2,1,0,0,lateral
+cnln_img_laterality,left; bilateral,2,1,0,0,left; bilateral
+cnln_img_laterality,left; right; bilateral,2,1,0,0,left; right; bilateral
+cnln_img_laterality,null; bilateral,2,1,0,0,null; bilateral
+cnln_img_laterality,bilateral; central,1,1,0,0,bilateral; central
+cnln_img_laterality,bilateral; lateral neck,1,1,0,0,bilateral; lateral neck
+cnln_img_laterality,bilateral; left,1,1,0,0,bilateral; left
+cnln_img_laterality,bilateral; right,1,1,0,0,bilateral; right
+cnln_img_laterality,central; left,1,1,0,0,central; left
+cnln_img_laterality,central; left; bilateral,1,1,0,0,central; left; bilateral
+cnln_img_laterality,central; right; left,1,1,0,0,central; right; left
+cnln_img_laterality,lateral neck; bilateral,1,1,0,0,lateral neck; bilateral
+cnln_img_laterality,lateral; central,1,1,0,0,lateral; central
+cnln_img_laterality,left; central; bilateral,1,1,0,0,left; central; bilateral
+cnln_img_laterality,null; lateral; bilateral,1,1,0,0,null; lateral; bilateral
+cnln_img_laterality,null; right; bilateral,1,1,0,0,null; right; bilateral
+cnln_img_laterality,right; bilateral; left,1,1,0,0,right; bilateral; left
+cnln_img_laterality,right; central; left,1,1,0,0,right; central; left
+cnln_img_laterality,right; lateral neck,1,1,0,0,right; lateral neck
+cnln_img_laterality,right; left; central,1,1,0,0,right; left; central
+cnln_source_table,clinical_note_ln_extracted_v1,10871,1,0,0,clinical_note_ln_extracted_v1
+recurrence_laterality,right,31,1,0,0,right
+recurrence_laterality,left,25,1,0,0,left
+recurrence_laterality,midline,1,1,0,0,midline
+recurrence_site_source,fna_specimen_location,77,1,0,0,fna_specimen_location
+followup_recovery_method,op_sheet_data,4983,1,0,0,op_sheet_data
+followup_recovery_method,original,3574,1,0,0,original
+followup_recovery_method,nlp_past_surgical_hx,802,1,0,0,nlp_past_surgical_hx
+followup_recovery_method,clinical_note_ln_extracted_v1,442,1,0,0,clinical_note_ln_extracted_v1
+followup_recovery_method,nlp_tirads_granular,314,1,0,0,nlp_tirads_granular
+followup_recovery_method,nlp_cervical_ln_detail,189,1,0,0,nlp_cervical_ln_detail
+followup_recovery_method,nlp_pathology,119,1,0,0,nlp_pathology
+followup_recovery_method,nlp_past_medical_hx,112,1,0,0,nlp_past_medical_hx
+followup_recovery_method,nlp_imaging,56,1,0,0,nlp_imaging
+followup_recovery_method,nlp_recurrence,42,1,0,0,nlp_recurrence
+followup_recovery_method,nlp_labs,40,1,0,0,nlp_labs
+followup_recovery_method,nlp_survival_followup,36,1,0,0,nlp_survival_followup
+followup_recovery_method,nlp_rai_detailed,35,1,0,0,nlp_rai_detailed
+followup_recovery_method,mri_imaging,32,1,0,0,mri_imaging
+followup_recovery_method,ct_imaging,25,1,0,0,ct_imaging
+followup_recovery_method,longitudinal_lab_canonical_v1,23,1,0,0,longitudinal_lab_canonical_v1
+followup_recovery_method,fna_cytology,16,1,0,0,fna_cytology
+followup_recovery_method,ultrasound_reports,14,1,0,0,ultrasound_reports
+followup_recovery_method,rai_treatment_episode_v2,7,1,0,0,rai_treatment_episode_v2
+nucmed_lab_source,nuclear_med.lab_summary,447,1,0,0,nuclear_med.lab_summary
+ct_exam_type_first,ct neck with contrast,1492,1,0,0,CT neck with contrast
+ct_exam_type_first,ct chest with contrast,625,1,0,0,CT chest with contrast
+ct_exam_type_first,ct chest without contrast,341,1,0,0,CT chest without contrast
+ct_exam_type_first,ct neck without contrast,277,1,0,0,CT neck without contrast
+ct_exam_type_first,cta chest,151,1,0,0,CTA chest
+ct_exam_type_first,ct head and neck,61,1,0,0,CT head and neck
+ct_exam_type_first,other,34,1,0,0,Other
+ct_exam_type_first,ct lung cancer screening,14,1,0,0,CT lung cancer screening
+ct_exam_type_first,ct angio chest,4,1,0,0,CT angio chest
+ct_exam_type_first,ct orbit with contrast,4,1,0,0,CT orbit with contrast
+ct_exam_type_first,ct abdomen and pelvis with contrast,3,1,0,0,CT abdomen and pelvis with contrast
+ct_exam_type_first,ct orbit,3,1,0,0,CT orbit
+ct_exam_type_first,ct abdomen and pelvis,2,1,0,0,CT abdomen and pelvis
+ct_exam_type_first,ct orbit non-contrast,2,1,0,0,CT orbit non-contrast
+ct_exam_type_first,ct orbit without contrast,2,1,0,0,CT orbit without contrast
+ct_exam_type_first,ct sinus,2,1,0,0,CT sinus
+ct_exam_type_first,ct abdomen pelvis non-contrast,1,1,0,0,CT abdomen pelvis non-contrast
+ct_exam_type_first,ct angio head and neck,1,1,0,0,CT angio head and neck
+ct_exam_type_first,ct angio head with contrast,1,1,0,0,CT angio head with contrast
+ct_exam_type_first,ct angiogram combo head neck w wo contrast,1,1,0,0,CT angiogram combo head neck w wo contrast
+ct_exam_type_first,ct angiography head and neck,1,1,0,0,CT angiography head and neck
+ct_exam_type_first,ct chest,1,1,0,0,CT chest
+ct_exam_type_first,ct facial bones with contrast,1,1,0,0,CT facial bones with contrast
+ct_exam_type_first,ct maxillofacial non-contrast,1,1,0,0,CT maxillofacial non-contrast
+ct_exam_type_first,ct orbits and sella with and without contrast,1,1,0,0,CT orbits and sella with and without contrast
+ct_exam_type_first,ct sinus non-contrast,1,1,0,0,CT sinus non-contrast
+ct_exam_type_first,ct sinus/facial bone without contrast,1,1,0,0,CT sinus/facial bone without contrast
+ct_exam_type_first,ct sinuses,1,1,0,0,CT sinuses
+ct_exam_type_first,ct spine non-contrast,1,1,0,0,CT spine non-contrast
+ct_exam_type_first,ct thoracic lumbar spine without contrast,1,1,0,0,CT thoracic lumbar spine without contrast
+ct_exam_type_first,ct thoracic spine,1,1,0,0,CT thoracic spine
+ct_exam_type_first,ct thoracic spine non-contrast,1,1,0,0,CT thoracic spine non-contrast
+ct_exam_type_first,ct thoracic spine without contrast,1,1,0,0,CT thoracic spine without contrast
+ct_contrast_first,yes,2090,1,0,0,Yes
+ct_contrast_first,no,944,1,0,0,No
+pet_other_exam_type,pet/ct,70,1,0,0,PET/CT
+pet_other_exam_type,pet_unclassified,2,1,0,0,PET_unclassified
+pet_other_extraction_method,regex_from_other,72,1,0,0,regex_from_other
+nucmed_overall_assessment,other,742,1,0,0,other
+nucmed_overall_assessment,ned,278,1,0,0,NED
+nucmed_overall_assessment,metastasis_mentioned,122,1,0,0,metastasis_mentioned
+nucmed_overall_assessment,thyroid_bed_only,6,1,0,0,thyroid_bed_only
+lnus_source,imaging_12_1_25.xlsx / ln us,61,1,0,0,Imaging_12_1_25.xlsx / LN US
+nsqip_match_method,existing_linkage,1075,1,0,0,EXISTING_LINKAGE
+nsqip_match_method,mrn_date_exact,182,1,0,0,MRN_DATE_EXACT
+nsqip_match_method,mrn_date_disambig,2,1,0,0,MRN_DATE_DISAMBIG
+nsqip_match_method,mrn_dob_multisurgery,2,1,0,0,MRN_DOB_MULTISURGERY
+nsqip_hypocalcemia,no,857,1,0,0,No
+nsqip_hypocalcemia,yes,82,1,0,0,Yes
+nsqip_hypocalcemia,unknown,4,1,0,0,Unknown
+nsqip_hypocalcemia_predischarge,no,913,1,0,0,No
+nsqip_hypocalcemia_predischarge,yes,31,1,0,0,Yes
+nsqip_hypocalcemia_predischarge,unknown,1,1,0,0,Unknown
+nsqip_hypocalcemia_postdischarge,no,857,1,0,0,No
+nsqip_hypocalcemia_postdischarge,yes,82,1,0,0,Yes
+nsqip_hypocalcemia_postdischarge,unknown,4,1,0,0,Unknown
+nsqip_hypocalcemia_event,no,656,1,0,0,No
+nsqip_hypocalcemia_event,yes,33,1,0,0,Yes
+nsqip_hypocalcemia_event_type,emergent evaluation in clinical office/emergency dept,13,1,0,0,Emergent evaluation in clinical office/emergency dept
+nsqip_hypocalcemia_event_type,iv calcium supplementation,13,1,0,0,IV calcium supplementation
+nsqip_hypocalcemia_event_type,"iv calcium supplementation,emergent evaluation in clinical office/emergency dept,readmitted for low calcium",3,1,0,0,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept,Readmitted for low calcium"
+nsqip_hypocalcemia_event_type,readmitted for low calcium,3,1,0,0,Readmitted for low calcium
+nsqip_hypocalcemia_event_type,"iv calcium supplementation,emergent evaluation in clinical office/emergency dept",1,1,0,0,"IV calcium supplementation,Emergent evaluation in clinical office/emergency dept"
+nsqip_iv_calcium,no/unknown,243,1,0,0,No/Unknown
+nsqip_iv_calcium,yes- subsequently during patient’s course prior to 30 days,9,1,0,0,Yes- subsequently during patient’s course prior to 30 days
+nsqip_iv_calcium,yes- prior to initial discharge,5,1,0,0,Yes- prior to initial discharge
+nsqip_calcium_checked,yes,745,1,0,0,Yes
+nsqip_calcium_checked,no/unknown,200,1,0,0,No/unknown
+nsqip_pth_checked,yes,814,1,0,0,Yes
+nsqip_pth_checked,no/unknown,129,1,0,0,No/unknown
+nsqip_calcium_vitd_replacement,yes-both oral calcium and oral vitamin d pills,478,1,0,0,Yes-both oral calcium and oral vitamin D pills
+nsqip_calcium_vitd_replacement,yes-oral calcium pills,207,1,0,0,Yes-oral calcium pills
+nsqip_calcium_vitd_replacement,no-no calcium or vitamin d pills,175,1,0,0,No-no calcium or vitamin D pills
+nsqip_calcium_vitd_replacement,yes-oral vitamin d pills,85,1,0,0,Yes-oral vitamin D pills
+nsqip_calcium_vitd_last_check,no-no calcium or vitamin d pills,102,1,0,0,No-no calcium or vitamin D pills
+nsqip_calcium_vitd_last_check,yes-both oral calcium and oral vitamin d,64,1,0,0,Yes-both oral calcium and oral vitamin D
+nsqip_calcium_vitd_last_check,yes-oral vitamin d pills,61,1,0,0,Yes-oral vitamin D pills
+nsqip_calcium_vitd_last_check,yes-oral calcium pills,24,1,0,0,Yes-oral calcium pills
+nsqip_calcium_vitd_last_check,unknown,6,1,0,0,Unknown
+nsqip_hypocalcemia_last_check,no,243,1,0,0,No
+nsqip_hypocalcemia_last_check,yes,8,1,0,0,Yes
+nsqip_hypocalcemia_last_check,unknown,6,1,0,0,Unknown
+nsqip_rln_injury,no,843,1,0,0,No
+nsqip_rln_injury,yes-hoarseness/vocal cord dysfunction; no confirmatory test,77,1,0,0,Yes-hoarseness/vocal cord dysfunction; no confirmatory test
+nsqip_rln_injury,unknown,10,1,0,0,Unknown
+nsqip_rln_injury,yes-hoarseness/vocal cord dysfunction; laryngoscopy confirms,9,1,0,0,Yes-hoarseness/vocal cord dysfunction; laryngoscopy confirms
+nsqip_rln_injury,no - persisetently hoarse but laryngoscopy demonstrates normal function,5,1,0,0,No - persisetently hoarse but laryngoscopy demonstrates normal function
+nsqip_rln_injury,yes-severe hoarseness/vocal cord dysfunction; tracheostomy,2,1,0,0,Yes-severe hoarseness/vocal cord dysfunction; tracheostomy
+nsqip_neck_hematoma,no,920,1,0,0,No
+nsqip_neck_hematoma,unknown,10,1,0,0,Unknown
+nsqip_neck_hematoma,"yes-hematoma noted, additional intervention",7,1,0,0,"Yes-hematoma noted, additional intervention"
+nsqip_neck_hematoma,"yes-hematoma noted, additional observation/extended los",4,1,0,0,"Yes-hematoma noted, additional observation/extended LOS"
+nsqip_neck_hematoma,"yes-hematoma noted, no observation/other intervention",3,1,0,0,"Yes-hematoma noted, no observation/other intervention"
+nsqip_neck_hematoma,"yes-hematoma noted, tracheostomy performed",1,1,0,0,"Yes-hematoma noted, tracheostomy performed"
+nsqip_neck_hematoma,yes-other intervention not specified,1,1,0,0,Yes-other intervention not specified
+nsqip_discharge_destination,home,826,1,0,0,Home
+nsqip_discharge_destination,home/permanent residence,416,1,0,0,Home/Permanent residence
+nsqip_discharge_destination,other facility,2,1,0,0,Other facility
+nsqip_discharge_destination,rehab,2,1,0,0,Rehab
+nsqip_discharge_destination,expired,1,1,0,0,Expired
+nsqip_discharge_destination,facility which was home,1,1,0,0,Facility which was home
+nsqip_death_30d,no,1244,1,0,0,No
+nsqip_death_30d,yes,1,1,0,0,Yes
+nsqip_inpatient_outpatient,outpatient,1073,1,0,0,Outpatient
+nsqip_inpatient_outpatient,inpatient,188,1,0,0,Inpatient
+nsqip_cpt_description,"thyroidectomy, total or complete",689,1,0,0,"Thyroidectomy, total or complete"
+nsqip_cpt_description,"thyroidectomy, total or subtotal for malignancy; with limited neck dissection",222,1,0,0,"Thyroidectomy, total or subtotal for malignancy; with limited neck dissection"
+nsqip_cpt_description,"thyroidectomy, including substernal thyroid; cervical approach",168,1,0,0,"Thyroidectomy, including substernal thyroid; cervical approach"
+nsqip_cpt_description,"thyroidectomy, removal of all remaining thyroid tissue following previous removal of a portion of thyroid",141,1,0,0,"Thyroidectomy, removal of all remaining thyroid tissue following previous removal of a portion of thyroid"
+nsqip_cpt_description,"thyroidectomy, total or subtotal for malignancy; with radical neck dissection",22,1,0,0,"Thyroidectomy, total or subtotal for malignancy; with radical neck dissection"
+nsqip_cpt_description,"thyroidectomy, including substernal thyroid; sternal split or transthoracic approach",19,1,0,0,"Thyroidectomy, including substernal thyroid; sternal split or transthoracic approach"
+nsqip_primary_indication,"goiter, multinodular",294,1,0,0,"Goiter, multinodular"
+nsqip_primary_indication,known differentiated malignancy,185,1,0,0,Known differentiated malignancy
+nsqip_primary_indication,graves disease,156,1,0,0,Graves Disease
+nsqip_primary_indication,single nodule or neoplasm / single nodule goiter,84,1,0,0,Single Nodule or Neoplasm / Single Nodule Goiter
+nsqip_primary_indication,"goiter, with substernal component",79,1,0,0,"Goiter, with substernal component"
+nsqip_primary_indication,"goiter, severe",57,1,0,0,"Goiter, severe"
+nsqip_primary_indication,any goiter and graves disease,40,1,0,0,Any goiter and Graves Disease
+nsqip_primary_indication,completion for malignancy,15,1,0,0,Completion for malignancy
+nsqip_primary_indication,other specified indication,15,1,0,0,Other specified indication
+nsqip_primary_indication,known poorly or undifferentiated malignancy,13,1,0,0,Known poorly or undifferentiated malignancy
+nsqip_primary_indication,known medullary thyroid cancer (mtc),4,1,0,0,Known Medullary Thyroid Cancer (MTC)
+nsqip_primary_indication,hyperthyroidism only,2,1,0,0,Hyperthyroidism Only
+nsqip_operative_approach,open (planned),494,1,0,0,Open (planned)
+nsqip_central_neck_dissection,no,697,1,0,0,No
+nsqip_central_neck_dissection,yes,248,1,0,0,Yes
+nsqip_central_neck_dissection,unknown,1,1,0,0,Unknown
+nsqip_lateral_neck_dissection,no,218,1,0,0,No
+nsqip_lateral_neck_dissection,yes,39,1,0,0,Yes
+nsqip_vessel_sealant,yes,591,1,0,0,Yes
+nsqip_vessel_sealant,no,99,1,0,0,No
+nsqip_rln_monitoring,yes,730,1,0,0,Yes
+nsqip_rln_monitoring,no,214,1,0,0,No
+nsqip_drain_usage,no,666,1,0,0,No
+nsqip_drain_usage,yes,284,1,0,0,Yes
+nsqip_tobacco_use,no,1116,1,0,0,No
+nsqip_tobacco_use,yes,145,1,0,0,Yes
+nsqip_heart_failure,no,1234,1,0,0,No
+nsqip_heart_failure,yes,27,1,0,0,Yes
+nsqip_copd,no,1239,1,0,0,No
+nsqip_copd,yes,22,1,0,0,Yes
+nsqip_bleeding_disorder,no,1246,1,0,0,No
+nsqip_bleeding_disorder,yes,15,1,0,0,Yes
+nsqip_disseminated_cancer,no,1253,1,0,0,No
+nsqip_disseminated_cancer,yes,8,1,0,0,Yes
+nsqip_t_classification,t1a,121,1,0,0,T1a
+nsqip_t_classification,t1b,73,1,0,0,T1b
+nsqip_t_classification,t2,70,1,0,0,T2
+nsqip_t_classification,t3,44,1,0,0,T3
+nsqip_t_classification,t3a,21,1,0,0,T3a
+nsqip_t_classification,unknown,17,1,0,0,Unknown
+nsqip_t_classification,t3b,12,1,0,0,T3b
+nsqip_t_classification,t4a,4,1,0,0,T4a
+nsqip_t_classification,t1,3,1,0,0,T1
+nsqip_t_classification,t4b,2,1,0,0,T4b
+nsqip_t_classification,tx,2,1,0,0,Tx
+nsqip_multifocal,"only one spot of cancer-""unifocal""",202,1,0,0,"Only one spot of cancer-""unifocal"""
+nsqip_multifocal,"more than one spot of cancer-""multifocal"", bilateral",109,1,0,109,"More than one spot of cancer-""multifocal"",  bilateral"
+nsqip_multifocal,"more than one spot of cancer-""multifocal"", unilateral",58,1,0,58,"More than one spot of cancer-""multifocal"",  unilateral"
+nsqip_n_classification,nx,102,1,0,0,Nx
+nsqip_n_classification,n0,87,1,0,0,N0
+nsqip_n_classification,n1a,72,1,0,0,N1a
+nsqip_n_classification,n1b,45,1,0,0,N1b
+nsqip_n_classification,n0a,41,1,0,0,N0a
+nsqip_n_classification,unknown,15,1,0,0,Unknown
+nsqip_n_classification,n1,8,1,0,0,N1
+nsqip_m_classification,m0/mx,295,1,0,0,M0/Mx
+nsqip_m_classification,unknown,24,1,0,0,Unknown
+nsqip_m_classification,m1,2,1,0,0,M1
+nsqip_neoplasm,yes,442,1,0,0,Yes
+nsqip_neoplasm,no,249,1,0,0,No
+nsqip_neoplasm_type,papillary cancer,238,1,0,0,Papillary cancer
+nsqip_neoplasm_type,"other benign (ie- hyperplastic nodule, colloid nodule, hashimoto's thyroiditis, pseudonodule, trabecular adenoma)",142,1,0,0,"Other benign (ie- hyperplastic nodule, colloid nodule, hashimoto's thyroiditis, pseudonodule, trabecular adenoma)"
+nsqip_neoplasm_type,follicular adenoma,31,1,0,0,Follicular adenoma
+nsqip_neoplasm_type,follicular cancer,10,1,0,0,Follicular cancer
+nsqip_neoplasm_type,medullary cancer,10,1,0,0,Medullary cancer
+nsqip_neoplasm_type,hurthle cell adenoma,5,1,0,0,Hurthle cell adenoma
+nsqip_neoplasm_type,anaplastic cancer / poorly differentiated cancer,2,1,0,0,Anaplastic cancer / poorly differentiated cancer
+nsqip_neoplasm_type,hurthle cell cancer,2,1,0,0,Hurthle cell cancer
+nsqip_neoplasm_type,other malignant,2,1,0,0,Other malignant
+nsqip_prior_neck_surgery,no-no specific evidence of such prior surgery,788,1,0,0,No-no specific evidence of such prior surgery
+nsqip_prior_neck_surgery,"yes-on one side of the neck only, ""contralateral""",102,1,0,0,"Yes-on one side of the neck only, ""contralateral"""
+nsqip_prior_neck_surgery,"yes-on one side of the neck only, ""ipsilateral""",22,1,0,0,"Yes-on one side of the neck only, ""ipsilateral"""
+nsqip_prior_neck_surgery,"yes-other, not specifically described",12,1,0,0,"Yes-other, not specifically described"
+nsqip_prior_neck_surgery,"yes-on both sides of the neck previously, ""bilateral""",11,1,0,0,"Yes-on both sides of the neck previously, ""bilateral"""
+nsqip_prior_neck_surgery,"yes-midline in the neck only, not extending to either side",9,1,0,0,"Yes-midline in the neck only, not extending to either side"
+nsqip_preop_biopsy_result,no evidence of preoperative needle biopsy,312,1,0,0,No evidence of preoperative needle biopsy
+nsqip_preop_biopsy_result,other result not specifically described above,167,1,0,0,Other result not specifically described above
+nsqip_preop_biopsy_result,suspicious for papillary thyroid cancer,125,1,0,0,Suspicious for papillary thyroid cancer
+nsqip_preop_biopsy_result,benign (bsrtc ii),56,1,0,0,Benign (BSRTC II)
+nsqip_preop_biopsy_result,follicular neoplasm,56,1,0,0,Follicular neoplasm
+nsqip_preop_biopsy_result,indeterminate result,45,1,0,0,Indeterminate result
+nsqip_preop_biopsy_result,malignant (bsrtc vi),43,1,0,0,Malignant (BSRTC VI)
+nsqip_preop_biopsy_result,aus/flus (bsrtc iii),34,1,0,0,AUS/FLUS (BSRTC III)
+nsqip_preop_biopsy_result,suspicious for malignancy (bsrtc v),19,1,0,0,Suspicious for malignancy (BSRTC V)
+nsqip_preop_biopsy_result,hürthle cell neoplasm,7,1,0,0,Hürthle cell neoplasm
+nsqip_molecular_testing,no/unknown,195,1,0,0,No/Unknown
+nsqip_molecular_testing,yes,52,1,0,0,Yes
+nsqip_molecular_result,"""positive” or other “high risk” comment",28,1,0,0,"""Positive” or other “high risk” comment"
+nsqip_molecular_result,"unknown (report not found), uncertain, no comment, or other “indeterminate risk” comment",10,1,0,0,"Unknown (report not found), uncertain, no comment, or other “indeterminate risk” comment"
+nsqip_molecular_result,“negative” or other “low/minimal risk” comment,8,1,0,0,“Negative” or other “low/minimal risk” comment
+nsqip_molecular_result,"""moderate” or other “intermediate risk” comment",6,1,0,0,"""Moderate” or other “intermediate risk” comment"
+nsqip_calcium_vitd_category,both calcium and vitamin d,478,1,0,0,Both calcium and vitamin D
+nsqip_calcium_vitd_category,calcium only,207,1,0,0,Calcium only
+nsqip_calcium_vitd_category,none,175,1,0,0,None
+nsqip_calcium_vitd_category,vitamin d only,85,1,0,0,Vitamin D only
+para_removal_intent,unsure,3237,1,0,0,unsure
+para_removal_intent,intentional,261,1,0,0,intentional
+para_removal_intent,incidental,108,1,0,0,incidental
+para_removal_intent,mixed,52,1,0,0,mixed
+para_removal_intent,not stated,1,1,0,0,not stated
+para_removal_intent,purposeful,1,1,0,0,purposeful
+para_incidental_status_refined,unknown,2406,1,0,0,unknown
+para_incidental_status_refined,yes,864,1,0,0,yes
+para_incidental_status_refined,no,390,1,0,0,no
+para_abnormality_type,hyperplasia,941,1,0,0,hyperplasia
+para_abnormality_type,adenoma,616,1,0,0,adenoma
+para_abnormality_type,"hyperplasia, adenoma",395,1,0,0,"hyperplasia, adenoma"
+para_source_workbook,parathyroid_notes_intent.xlsx,3660,1,0,0,parathyroid_notes_intent.xlsx
+para_source_script,221_final_gap_resolution,3660,1,0,0,221_final_gap_resolution
+vital_status,alive,10679,1,0,0,alive
+vital_status,deceased,192,1,0,0,deceased
+death_source,notes_workbook_sheet2_death_col,192,1,0,0,notes_workbook_sheet2_death_col
+death_integration_script,221a_death_date_integration,10871,1,0,0,221a_death_date_integration
+nsqip_thyroidectomy_source_script,221b_final_gap_resolution,10871,1,0,0,221b_final_gap_resolution
+braf_variant_raw,v600e,151,1,0,0,V600E
+braf_variant_raw,v600,22,1,0,0,V600
+ete_grade_final,microscopic,2580,1,0,0,microscopic
+ete_grade_final,gross,1311,1,0,0,gross
+ete_grade_final,false,179,1,0,0,false
+ete_grade_final,present_ungraded,29,1,0,0,present_ungraded
+ete_grade_final,absent,16,1,0,0,absent
+ete_grade_final,true,4,1,0,0,true
+mol_test_date_source,test_date_native,809,1,0,0,test_date_native
+path_ete_raw,x,3234,2,0,0,x || X
+path_ete_raw,false,252,1,0,0,false
+path_ete_raw,present,234,1,0,0,present
+path_ete_raw,minimal,165,1,0,0,minimal
+path_ete_raw,microscopic,59,1,0,0,microscopic
+path_ete_raw,c/a,29,1,0,0,c/a
+path_ete_raw,extensive,23,2,0,0,extensive || Extensive
+path_ete_raw,yes,19,2,0,0,yes || Yes
+path_ete_raw,true,14,1,0,0,true
+path_ete_raw,focal,12,1,0,0,focal
+path_ete_raw,indeterminate,9,1,0,0,indeterminate
+path_ete_raw,yes;,7,1,0,0,Yes;
+path_ete_raw,extesive,2,1,0,0,extesive
+path_ete_raw,yes (minimal),2,1,0,0,yes (minimal)
+path_ete_raw,* (see margin comment),1,1,0,0,* (see margin comment)
+path_ete_raw,`x,1,1,0,0,`x
+path_ete_raw,focal early extension into perithyroidal fat,1,1,0,0,Focal early extension into perithyroidal fat
+path_ete_raw,focal right side,1,1,0,0,focal right side
+path_ete_raw,microscopic extension,1,1,0,0,microscopic extension
+path_ete_raw,minimal into fat,1,1,0,0,minimal into fat
+path_ete_raw,minimal microscopic,1,1,0,0,minimal microscopic
+path_ete_raw,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),1,1,0,0,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion)
+path_ete_raw,present (perithyroidal fibroadipose tissue involved),1,1,0,0,present (perithyroidal fibroadipose tissue involved)
+path_ete_raw,x (single microscopic focus of extension),1,1,0,0,"x
+(single microscopic focus of extension)"
+path_ete_raw,yes (focal),1,1,0,0,yes (focal)
+path_ete_raw,"yes, extensive",1,1,0,0,"yes, extensive"
+path_ete_raw,"yes, minimal",1,1,0,0,"yes, minimal"
+path_ete_raw,yes;minimal;,1,1,0,0,Yes;minimal;
+path_laterality,bilateral,5571,1,0,0,bilateral
+path_laterality,left,2428,1,0,0,left
+path_laterality,right,2339,1,0,0,right
+path_lvi_raw,x,2575,1,0,0,x
+path_lvi_raw,present,665,1,0,0,present
+path_lvi_raw,extensive,52,1,0,0,extensive
+path_lvi_raw,indeterminate,46,1,0,0,indeterminate
+path_lvi_raw,c/a,9,1,0,0,c/a
+path_lvi_raw,focal,6,1,0,0,focal
+path_lvi_raw,preesent,3,1,0,0,preesent
+path_lvi_raw,extensivre,2,1,0,0,extensivre
+path_lvi_raw,cannot be determined: focal interstitial psammomatoid calcification present,1,1,0,0,Cannot be determined: Focal interstitial psammomatoid calcification present
+path_lvi_raw,extensiver,1,1,0,0,extensiver
+path_lvi_raw,indeeterminate,1,1,0,0,indeeterminate
+path_lvi_raw,indetermiante,1,1,0,0,indetermiante
+path_lvi_raw,indeterminent,1,1,0,0,indeterminent
+path_lvi_raw,n/s,1,1,0,0,n/s
+path_lvi_raw,no,1,1,0,0,no
+path_lvi_raw,suspicious,1,1,0,0,suspicious
+path_m_stage_raw,x,2577,2,0,0,x || X
+path_m_stage_raw,m0,1395,1,0,0,M0
+path_m_stage_raw,1,24,1,0,0,1
+path_m_stage_raw,m1,7,2,0,0,M1 || m1
+path_m_stage_raw,0,1,1,0,0,0
+path_m_stage_raw,m,1,1,0,0,m
+path_pni_raw,x,1340,2,0,0,x || X
+path_pni_raw,present,91,1,0,0,present
+path_pni_raw,focal,4,1,0,0,focal
+path_pni_raw,indeterminate,2,1,0,0,indeterminate
+path_pni_raw,c/a,1,1,0,0,c/a
+path_stage_raw,i,1881,1,0,0,I
+path_stage_raw,ii,1371,1,0,0,II
+path_stage_raw,ivb,738,1,0,0,IVB
+path_stage_raw,iii,78,1,0,0,III
+path_stage_raw,ivc,29,1,0,0,IVC
+path_stage_raw,iva,25,1,0,0,IVA
+path_stage_raw,t2,4,1,0,0,T2
+path_stage_raw,t1a,3,1,0,0,T1a
+path_stage_raw,t1a | t1a,2,1,0,0,T1a | T1a
+path_stage_raw,t1b,2,1,0,0,T1b
+path_stage_raw,t1b | t1a,1,1,0,0,T1b | T1a
+path_vascular_invasion_raw,x,2993,2,0,0,x || X
+path_vascular_invasion_raw,present,248,1,0,0,present
+path_vascular_invasion_raw,focal,215,2,0,0,focal || Focal
+path_vascular_invasion_raw,extensive,158,1,0,0,extensive
+path_vascular_invasion_raw,indeterminate,45,1,0,0,indeterminate
+path_vascular_invasion_raw,c/a,10,1,0,0,c/a
+path_vascular_invasion_raw,minimal,2,1,0,0,minimal
+path_vascular_invasion_raw,multifocal,2,1,0,0,multifocal
+path_vascular_invasion_raw,estensive,1,1,0,0,estensive
+path_vascular_invasion_raw,extrensive,1,1,0,0,extrensive
+path_vascular_invasion_raw,foacl,1,1,0,0,foacl
+path_vascular_invasion_raw,identified,1,1,0,0,identified
+path_vascular_invasion_raw,limited,1,1,0,0,limited
+path_vascular_invasion_raw,presnt,1,1,0,0,presnt
+path_vascular_invasion_raw,prominent,1,1,0,0,prominent
+path_vascular_invasion_raw,s,1,1,0,0,s
+path_vascular_invasion_raw,suspicious,1,1,0,0,suspicious
+provenance_note,analysis-grade resolved layer; canonical v2 episodes + v3 linkage scores + scoring + complications + labs,10871,1,0,0,analysis-grade resolved layer; canonical V2 episodes + V3 linkage scores + scoring + complications + labs
+rai_assertion_statuses,likely_received,35,1,0,0,likely_received
+ras_subtype_raw,nras,99,1,0,0,NRAS
+ras_subtype_raw,hras,55,1,0,0,HRAS
+ras_subtype_raw,kras,20,1,0,0,KRAS
+recurrence_source,extracted_recurrence_refined_v1,1818,1,0,0,extracted_recurrence_refined_v1
+recurrence_source,longitudinal_lab_clean_v1,128,1,0,0,longitudinal_lab_clean_v1
+recurrence_type_primary,structural,1818,1,0,0,structural
+recurrence_type_primary,biochemical,128,1,0,0,biochemical
+resolved_layer_version,v1,10871,1,0,0,v1
+source_script,48,10871,1,0,0,48
+vascular_invasion_final,present_ungraded,3281,1,0,0,present_ungraded
+vascular_invasion_final,focal,243,1,0,0,focal
+vascular_invasion_final,extensive,171,1,0,0,extensive
+vascular_invasion_final,indeterminate,56,1,0,0,indeterminate
+recurrence_site_text,thyroid_bed,945,1,0,0,thyroid_bed
+recurrence_site_text,cervical_lymph_node,141,1,0,0,cervical_lymph_node
+recurrence_site_text,other,137,1,0,0,other
+recurrence_site_text,neck_mass,36,1,0,0,neck_mass
+recurrence_site_text,cervical,12,1,0,0,cervical
+recurrence_site_text,lung,1,1,0,0,lung
+recurrence_site_text,mediastinal,1,1,0,0,mediastinal
+margin_status_true,uninvolved,3305,1,0,0,uninvolved
+margin_status_true,involved,610,1,0,0,involved
+margin_status_true,indeterminate,41,1,0,0,indeterminate
+rollup_source_table,synoptic_tumor_long_v1,8422,1,0,0,synoptic_tumor_long_v1
+rollup_script_version,230_path_synoptic_rollup,8422,1,0,0,230_path_synoptic_rollup
+ete_grade_adjudicated,unable_to_determine,26,1,0,0,unable_to_determine
+ete_grade_adjudicated,absent,16,1,0,0,absent
+ete_grade_adjudicated,gross,2,1,0,0,gross
+ete_grade_adjudicated,microscopic,1,1,0,0,microscopic
+ete_adjudication_confidence,low,26,1,0,0,low
+ete_adjudication_confidence,high,19,1,0,0,high
+ete_adjudication_t_adjustment,no change,14,1,0,0,no change
+ete_adjudication_t_adjustment,unable_to_determine,2,1,0,0,unable_to_determine
+ete_adjudication_t_adjustment,no change (cannot adjudicate without microscopic findings),1,1,0,0,no change (cannot adjudicate without microscopic findings)
+ete_adjudication_t_adjustment,no change (cannot adjust without clear ete grading),1,1,0,0,no change (cannot adjust without clear ETE grading)
+ete_adjudication_t_adjustment,no change (remains t1a),1,1,0,0,no change (remains T1a)
+ete_adjudication_t_adjustment,no change (remains t2 based on 2.3 cm size without ete),1,1,0,0,no change (remains T2 based on 2.3 cm size without ETE)
+ete_adjudication_t_adjustment,no change (remains t2 if no ete confirmed),1,1,0,0,no change (remains T2 if no ETE confirmed)
+ete_adjudication_t_adjustment,no change (remains t2),1,1,0,0,no change (remains T2)
+ete_adjudication_t_adjustment,no change (t1a appropriate for 0.5 cm intrathyroidal tumor),1,1,0,0,no change (T1a appropriate for 0.5 cm intrathyroidal tumor)
+ete_adjudication_t_adjustment,no change (t1a appropriate given 1 cm tumor with no confirmed ete),1,1,0,0,no change (T1a appropriate given 1 cm tumor with no confirmed ETE)
+ete_adjudication_t_adjustment,no change (t1b appropriate if no ete confirmed),1,1,0,0,no change (T1b appropriate if no ETE confirmed)
+ete_adjudication_t_adjustment,t1a (no ete present),1,1,0,0,T1a (no ETE present)
+ete_adjudication_t_adjustment,t1a (no ete present; capsular invasion alone does not upstage),1,1,0,0,T1a (no ETE present; capsular invasion alone does not upstage)
+ete_adjudication_t_adjustment,t1a (no ete present; current staging appropriate),1,1,0,0,T1a (no ETE present; current staging appropriate)
+ete_adjudication_t_adjustment,t1b,1,1,0,0,T1b
+ete_adjudication_t_adjustment,t1b (based on tumor size 1.8 cm; no ete present),1,1,0,0,T1b (based on tumor size 1.8 cm; no ETE present)
+ete_adjudication_t_adjustment,t1b (no change - tumor 1.2 cm with no ete),1,1,0,0,T1b (no change - tumor 1.2 cm with no ETE)
+ete_adjudication_t_adjustment,t1b (no ete present; tumor 2.0 cm confined to thyroid),1,1,0,0,T1b (no ETE present; tumor 2.0 cm confined to thyroid)
+ete_adjudication_t_adjustment,t1b (no ete present; tumor size 1.2 cm with capsular invasion only),1,1,0,0,T1b (no ETE present; tumor size 1.2 cm with capsular invasion only)
+ete_adjudication_t_adjustment,t1b (no ete present; tumor size 1.5 cm with minimal capsular invasion only),1,1,0,0,T1b (no ETE present; tumor size 1.5 cm with minimal capsular invasion only)
+ete_adjudication_t_adjustment,t1b or t3b pending clarification,1,1,0,0,T1b or T3b pending clarification
+ete_adjudication_t_adjustment,t3b,1,1,0,0,T3b
+ete_adjudication_t_adjustment,t4a (rln involvement is gross ete),1,1,0,0,T4a (RLN involvement is gross ETE)
+ete_adjudication_t_adjustment,unable to confirm t3b without clearer pathology documentation,1,1,0,0,unable to confirm T3b without clearer pathology documentation
+ete_adjudication_t_adjustment,unable to determine - microscopic findings required,1,1,0,0,unable to determine - microscopic findings required
+ete_adjudication_t_adjustment,unable to determine - requires complete microscopic description,1,1,0,0,unable to determine - requires complete microscopic description
+ete_adjudication_t_adjustment,unable to determine - requires microscopic review,1,1,0,0,unable to determine - requires microscopic review
+ete_adjudication_t_adjustment,unable to determine; recommend t1b pending clinical/radiologic correlation,1,1,0,0,unable to determine; recommend T1b pending clinical/radiologic correlation
+ete_adjudication_t_adjustment,unable to determine; requires microscopic description,1,1,0,0,unable to determine; requires microscopic description
+ete_adjudication_t_adjustment,unable to determine—requires complete pathology report,1,1,0,0,unable to determine—requires complete pathology report
+ete_adjudication_t_adjustment,unable_to_determine - requires complete microscopic description,1,1,0,0,unable_to_determine - requires complete microscopic description
+ete_grade_final_v2,microscopic,2580,1,0,0,microscopic
+ete_grade_final_v2,gross,1313,1,0,0,gross
+ete_grade_final_v2,none,179,1,0,0,none
+ete_grade_final_v2,present_ungraded,29,1,0,0,present_ungraded
+ete_grade_final_v2,absent,16,1,0,0,absent
+ete_grade_final_v2,true,2,1,0,0,true
+ajcc8_t_stage_v2,t1a,1014,1,0,0,T1a
+ajcc8_t_stage_v2,t3b,1006,1,0,0,T3b
+ajcc8_t_stage_v2,t1b,782,1,0,0,T1b
+ajcc8_t_stage_v2,t2,718,1,0,0,T2
+ajcc8_t_stage_v2,t3a,532,1,0,0,T3a
+ajcc8_t_stage_v2,t4a,69,1,0,0,T4a
+ajcc8_t_stage_v2,t4b,10,1,0,0,T4b
+ajcc8_t_stage_v2,t1,2,1,0,0,T1
+ajcc8_n_stage_v2,nx,1756,1,0,0,Nx
+ajcc8_n_stage_v2,n0,1187,1,0,0,N0
+ajcc8_n_stage_v2,n1a,628,1,0,0,N1a
+ajcc8_n_stage_v2,n1b,566,1,0,0,N1b
+ajcc8_n_stage_note,n-stage cannot be assessed (no raw n-stage and no ln exam data),1756,1,0,0,N-stage cannot be assessed (no raw N-stage and no LN exam data)
+ajcc8_n_stage_note,pathologist n0,1098,1,0,0,pathologist N0
+ajcc8_n_stage_note,pathologist n1b,564,1,0,0,pathologist N1b
+ajcc8_n_stage_note,pathologist n1a,507,1,0,0,pathologist N1a
+ajcc8_n_stage_note,pathologist n1 (subcategory unspecified),119,1,0,0,pathologist N1 (subcategory unspecified)
+ajcc8_n_stage_note,derived from 0 positive of >=1 examined,89,1,0,0,derived from 0 positive of >=1 examined
+ajcc8_n_stage_note,derived from ln laterality (central-only),2,1,0,0,derived from LN laterality (central-only)
+ajcc8_n_stage_note,derived from ln laterality (lateral involvement),2,1,0,0,derived from LN laterality (lateral involvement)
+ajcc8_m_stage_v2,m0,10717,1,0,0,M0
+ajcc8_m_stage_v2,m1,154,1,0,0,M1
+ajcc8_stage_group_v2,i,3215,1,0,0,I
+ajcc8_stage_group_v2,ii,618,1,0,0,II
+ajcc8_stage_group_v2,iii,212,1,0,0,III
+ajcc8_stage_group_v2,ivb,81,1,0,0,IVB
+ajcc8_stage_group_v2,iva,4,1,0,0,IVA
+ajcc7_t_stage,t3,1538,1,0,0,T3
+ajcc7_t_stage,t1a,1014,1,0,0,T1a
+ajcc7_t_stage,t1b,782,1,0,0,T1b
+ajcc7_t_stage,t2,717,1,0,0,T2
+ajcc7_t_stage,t4a,69,1,0,0,T4a
+ajcc7_t_stage,t4b,10,1,0,0,T4b
+ajcc7_n_stage,nx,1756,1,0,0,Nx
+ajcc7_n_stage,n0,1187,1,0,0,N0
+ajcc7_n_stage,n1a,628,1,0,0,N1a
+ajcc7_n_stage,n1b,566,1,0,0,N1b
+ajcc7_m_stage,m0,10717,1,0,0,M0
+ajcc7_m_stage,m1,154,1,0,0,M1
+ajcc7_stage_group,i,2333,1,0,0,I
+ajcc7_stage_group,iii,866,1,0,0,III
+ajcc7_stage_group,ii,305,1,0,0,II
+ajcc7_stage_group,iva,293,1,0,0,IVA
+ajcc7_stage_group,ivc,80,1,0,0,IVC
+ajcc7_stage_group,ivb,5,1,0,0,IVB
+ajcc7_missing_components,"t,n",6731,1,0,0,"T,N"
+ajcc7_missing_components,t,10,1,0,0,T
+ajcc7_missing_components,n,3,1,0,0,N
+stage_migration_7_to_8,iii->ii,540,1,0,0,III->II
+stage_migration_7_to_8,iii->i,324,1,0,0,III->I
+stage_migration_7_to_8,ii->i,293,1,0,0,II->I
+stage_migration_7_to_8,iva->iii,190,1,0,0,IVA->III
+stage_migration_7_to_8,iva->i,95,1,0,0,IVA->I
+stage_migration_7_to_8,ivc->ivb,67,1,0,0,IVC->IVB
+stage_migration_7_to_8,ivc->ii,13,1,0,0,IVC->II
+stage_migration_7_to_8,iva->ii,8,1,0,0,IVA->II
+stage_migration_7_to_8,ivb->iva,4,1,0,0,IVB->IVA
+stage_migration_7_to_8,ivb->i,1,1,0,0,IVB->I
+n_surgeries_source,path_synoptics_distinct_dates,10871,1,0,0,path_synoptics_distinct_dates
+recurrence_evidence_type,operative_pathology,118,1,0,0,operative_pathology
+recurrence_evidence_type,biopsy_fna_bethesda_vi,58,1,0,0,biopsy_fna_bethesda_vi
+recurrence_evidence_type,biopsy_fna_bethesda_v,13,1,0,0,biopsy_fna_bethesda_v
+recurrence_pathology_source_table,path_synoptics,118,1,0,0,path_synoptics
+recurrence_pathology_source_table,fna_episode_master_v2,71,1,0,0,fna_episode_master_v2
+recurrence_histology_v2,metastatic ptc,66,3,0,0,metastatic PTC || Metastatic PTC || metastatic pTC
+recurrence_histology_v2,follicular carcinoma,15,1,0,0,follicular carcinoma
+recurrence_histology_v2,metastatic mtc,10,2,0,0,metastatic MTC || Metastatic MTC
+recurrence_histology_v2,metastatic ptc classical,4,1,0,0,metastatic PTC classical
+recurrence_histology_v2,metastatic ptc tall cell variant,4,2,0,0,metastatic PTC tall cell variant || Metastatic PTC tall cell variant
+recurrence_histology_v2,metastatic follicular carcinoma,3,1,0,0,metastatic follicular carcinoma
+recurrence_histology_v2,differentiated thyroid carcinoma,1,1,0,0,differentiated thyroid carcinoma
+recurrence_histology_v2,metastatic carcinoma,1,1,0,0,metastatic carcinoma
+recurrence_histology_v2,metastatic high grade neuroendocrine tumor,1,1,0,0,metastatic high grade neuroendocrine tumor
+recurrence_histology_v2,metastatic poorly differentiated thyroid carcinoma,1,1,0,0,metastatic poorly differentiated thyroid carcinoma
+recurrence_histology_v2,metastatic ptc calssical with focal tall cell features (<5%),1,1,0,0,metastatic PTC calssical with focal tall cell features (<5%)
+recurrence_histology_v2,metastatic ptc classic,1,1,0,0,metastatic PTC classic
+recurrence_histology_v2,metastatic ptc with focal tall cell features,1,1,0,0,metastatic PTC with focal tall cell features
+recurrence_histology_v2,metastatic ptc with tall cell features,1,1,0,0,metastatic PTC with tall cell features
+recurrence_histology_v2,metastatic ptc?,1,1,0,0,metastatic PTC?
+recurrence_histology_v2,metastatic thyroid carcinoma,1,1,0,0,metastatic thyroid carcinoma
+recurrence_histology_v2,metastatic/recurrent ptc,1,1,0,0,metastatic/recurrent PTC
+recurrence_histology_v2,metastatic/recurrent ptc classical,1,1,0,0,metastatic/recurrent PTC classical
+recurrence_histology_v2,poorly differentiated thyroid carcinoma,1,1,0,0,Poorly differentiated thyroid carcinoma
+recurrence_histology_v2,recurrent anaplastic carcinoma,1,1,0,0,recurrent anaplastic carcinoma
+recurrence_histology_v2,recurrent differentiated high grade thyroid carcinoma metastatic,1,1,0,0,recurrent differentiated high grade thyroid carcinoma metastatic
+recurrence_histology_v2,recurrent/metastatic follicular carcinoma,1,1,0,0,Recurrent/metastatic follicular carcinoma
+concern_highest_tier,pathology_proven,189,1,0,0,pathology_proven
+concern_highest_tier,imaging_suspicious,60,1,0,0,imaging_suspicious
+rec_detection_method,pathology_confirmed,189,1,0,0,pathology_confirmed
+rec_detection_method,imaging_only,60,1,0,0,imaging_only
+bmi_missingness_reason,no_bmi_source_available,8786,1,0,0,no_bmi_source_available
+bmi_missingness_reason,has_bmi,2085,1,0,0,has_bmi
+fna_pathway_status,has_bethesda,5249,1,0,0,has_bethesda
+fna_pathway_status,direct_to_surgery,4733,1,0,0,direct_to_surgery
+fna_pathway_status,no_fna_no_surgery,889,1,0,0,no_fna_no_surgery
+ret_note_alteration_types,germline_men2a,15,1,0,0,germline_men2a
+ret_note_alteration_types,somatic_fusion,11,1,0,0,somatic_fusion
+ret_note_alteration_types,somatic_mutation,3,1,0,0,somatic_mutation
+ret_note_alteration_types,germline_fmtc; germline_men2a,2,1,0,0,germline_fmtc; germline_men2a
+ret_note_alteration_types,germline_fmtc,1,1,0,0,germline_fmtc
+ret_note_alteration_types,germline_men2b; therapy_only,1,1,0,0,germline_men2b; therapy_only
+ret_note_alteration_types,somatic_fusion; somatic_mutation,1,1,0,0,somatic_fusion; somatic_mutation
+ret_note_alteration_types,somatic_fusion; therapy_only,1,1,0,0,somatic_fusion; therapy_only
+ret_note_alteration_types,somatic_mutation; germline_men2a; germline_fmtc,1,1,0,0,somatic_mutation; germline_men2a; germline_fmtc
+ret_note_alteration_types,somatic_mutation; somatic_fusion,1,1,0,0,somatic_mutation; somatic_fusion
+ret_note_alteration_types,somatic_mutation; unknown,1,1,0,0,somatic_mutation; unknown
+ret_note_variants_reported,p.g533c,2,1,0,0,p.G533C
+ret_note_variants_reported,ret fusion,2,1,0,0,RET fusion
+ret_note_variants_reported,c.1826g>a; p.cys609tyr; c.1826g>a; p.cys609tyr (codon 609),1,1,0,0,c.1826G>A; p.Cys609Tyr; c.1826G>A; p.Cys609Tyr (codon 609)
+ret_note_variants_reported,c.1998g>t (p.lys666asn),1,1,0,0,c.1998G>T (p.Lys666Asn)
+ret_note_variants_reported,c2419g>a,1,1,0,0,C2419G>A
+ret_note_variants_reported,c609y,1,1,0,0,C609Y
+ret_note_variants_reported,codon 609,1,1,0,0,codon 609
+ret_note_variants_reported,il2/ret fusion,1,1,0,0,IL2/RET fusion
+ret_note_variants_reported,m918t,1,1,0,0,M918T
+ret_note_variants_reported,p.c618y,1,1,0,0,p.C618Y
+ret_note_variants_reported,p.c634y,1,1,0,0,p.C634Y
+ret_note_variants_reported,ret 635r,1,1,0,0,RET 635R
+ret_note_variants_reported,ret fusion (novel/unknown type); novel ret fusion (uncharacterized); unknown ret fusion; ret fusion (type unknown/novel),1,1,0,0,RET fusion (novel/unknown type); novel RET fusion (uncharacterized); unknown RET fusion; RET fusion (type unknown/novel)
+ret_note_variants_reported,ret fusion exon 12,1,1,0,0,RET fusion exon 12
+ret_note_variants_reported,ret mutation (men2a),1,1,0,0,RET mutation (MEN2A)
+ret_note_variants_reported,ret/ptc,1,1,0,0,RET/PTC
+ret_note_variants_reported,ret/ptc (type unspecified),1,1,0,0,RET/PTC (type unspecified)
+ret_note_variants_reported,ret/ptc3,1,1,0,0,RET/PTC3
+ret_note_variants_reported,ret/ptc; ret/ptc (type unspecified),1,1,0,0,RET/PTC; RET/PTC (type unspecified)
+mortality_type,all_cause_non_cancer_death,96,1,0,0,all_cause_non_cancer_death
+mortality_type,cancer_cohort_death,96,1,0,0,cancer_cohort_death
+tg_limitation_note,benign diagnosis — tg monitoring not standard,6483,1,0,0,Benign diagnosis — Tg monitoring not standard
+tg_limitation_note,tg data unavailable — reason unknown,1717,1,0,0,Tg data unavailable — reason unknown
+tg_limitation_note,pre-2005 surgery — tg monitoring may not have been routine,104,1,0,0,Pre-2005 surgery — Tg monitoring may not have been routine
+ajcc8_t_stage,t3b,1319,1,0,0,T3b
+ajcc8_t_stage,t1a,1039,1,0,0,T1a
+ajcc8_t_stage,t1b,775,1,0,0,T1b
+ajcc8_t_stage,t2,712,1,0,0,T2
+ajcc8_t_stage,t3a,328,1,0,0,T3a
+ajcc8_t_stage,t1,2,1,0,0,T1
+ajcc8_stage_group_corrected,i,5283,1,0,0,I
+ajcc8_stage_group_corrected,ii,1773,1,0,0,II
+ajcc8_stage_group_corrected,ivb,760,1,0,0,IVB
+ene_ln_concordance_status,concordant,1109,1,0,0,concordant
+ene_ln_concordance_status,discordant_unresolved,122,1,0,0,discordant_unresolved
+ene_ln_concordance_status,ene_positive_ln_unknown,21,1,0,0,ene_positive_ln_unknown
+stage_discordance_note,n1b_incorrectly_upstaged_to_iii_corrected_to_ii,8,1,0,0,n1b_incorrectly_upstaged_to_III_corrected_to_II
+ln_data_quality_flag,positive_without_exam_count,20,1,0,0,positive_without_exam_count
+ln_data_quality_flag,level_ii_transposition_corrected,1,1,0,0,level_ii_transposition_corrected
+comp_hypocalcemia_evidence_source,nsqip_registry,80,1,0,0,nsqip_registry
+comp_hypopara_permanent_limitation_note,reset_20260417:confirmed_duration_unknown,14,1,0,0,reset_20260417:confirmed_duration_unknown
+comp_hypopara_permanent_limitation_note,confirmed_hypopara_no_persistent_biochem_evidence_followup_gt_6mo,10,1,0,0,confirmed_hypopara_no_persistent_biochem_evidence_followup_gt_6mo
+comp_hypopara_permanent_limitation_note,followup_too_short_for_permanence_classification,6,1,0,0,followup_too_short_for_permanence_classification
+ret_evidence_source,note_adjudicated_positive,38,1,0,0,note_adjudicated_positive
+ret_evidence_source,note_adjudicated_negative,28,1,0,0,note_adjudicated_negative
+ret_evidence_source,molecular_rollup_v227,4,1,0,0,molecular_rollup_v227
+worst_bethesda_source,canonical_fna_patient_rollup_v1,5266,1,0,0,canonical_fna_patient_rollup_v1
+rai_max_dose_source,none,609,1,0,0,none
+rai_max_dose_source,episode_v2,253,1,0,0,episode_v2
+tg_peak_source,thyroglobulin_lab_view_v1,2523,1,0,0,thyroglobulin_lab_VIEW_v1
+bethesda_derivation_methods,rules,3189,1,0,0,rules
+bethesda_derivation_methods,rules+llm,926,1,0,0,rules+llm
+bethesda_derivation_methods,rules|rules+llm,403,1,0,0,rules|rules+llm
+bethesda_derivation_methods,llm,334,1,0,0,llm
+bethesda_derivation_methods,llm|rules,265,1,0,0,llm|rules
+bethesda_derivation_methods,llm|rules+llm,63,1,0,0,llm|rules+llm
+bethesda_derivation_methods,llm|rules|rules+llm,44,1,0,0,llm|rules|rules+llm
+bethesda_derivation_methods,none,15,1,0,0,none
+bethesda_derivation_methods,none|rules,1,1,0,0,none|rules
+bethesda_index_nodule_linkage_source,surgery,5021,1,0,0,surgery
+dominant_tumor_ajcc7_t_stage,t1a,1224,1,0,0,T1a
+dominant_tumor_ajcc7_t_stage,t1b,1036,1,0,0,T1b
+dominant_tumor_ajcc7_t_stage,t2,978,1,0,0,T2
+dominant_tumor_ajcc7_t_stage,t3,754,1,0,0,T3
+dominant_tumor_ajcc7_t_stage,t4a,7,1,0,0,T4a
+dominant_tumor_ajcc7_n_stage,n0,2548,1,0,0,N0
+dominant_tumor_ajcc7_n_stage,n1,1544,1,0,0,N1
+dominant_tumor_ajcc7_n_stage,n1a,646,1,0,0,N1a
+dominant_tumor_ajcc7_n_stage,n1b,526,1,0,0,N1b
+dominant_tumor_ajcc7_n_stage,nx,232,1,0,0,NX
+dominant_tumor_ajcc7_m_stage,m0,6604,1,0,0,M0
+dominant_tumor_ajcc7_m_stage,m1,1818,1,0,0,M1
+dominant_tumor_ajcc7_stage_group,i,1504,1,0,0,I
+dominant_tumor_ajcc7_stage_group,ivc,1081,1,0,0,IVC
+dominant_tumor_ajcc7_stage_group,ii,850,1,0,0,II
+dominant_tumor_ajcc7_stage_group,iii,301,1,0,0,III
+dominant_tumor_ajcc7_stage_group,iva,127,1,0,0,IVA
+dominant_tumor_ajcc8_t_stage,t1a,1224,1,0,0,T1a
+dominant_tumor_ajcc8_t_stage,t1b,1036,1,0,0,T1b
+dominant_tumor_ajcc8_t_stage,t2,978,1,0,0,T2
+dominant_tumor_ajcc8_t_stage,t3a,566,1,0,0,T3a
+dominant_tumor_ajcc8_t_stage,t3b,188,1,0,0,T3b
+dominant_tumor_ajcc8_t_stage,t4a,7,1,0,0,T4a
+dominant_tumor_ajcc8_n_stage,n0,2548,1,0,0,N0
+dominant_tumor_ajcc8_n_stage,n1,1544,1,0,0,N1
+dominant_tumor_ajcc8_n_stage,n1a,646,1,0,0,N1a
+dominant_tumor_ajcc8_n_stage,n1b,526,1,0,0,N1b
+dominant_tumor_ajcc8_n_stage,nx,232,1,0,0,NX
+dominant_tumor_ajcc8_m_stage,m0,6604,1,0,0,M0
+dominant_tumor_ajcc8_m_stage,m1,1818,1,0,0,M1
+dominant_tumor_ajcc8_stage_group,i,1547,1,0,0,I
+dominant_tumor_ajcc8_stage_group,ii,1252,1,0,0,II
+dominant_tumor_ajcc8_stage_group,ivb,737,1,0,0,IVB
+dominant_tumor_ajcc8_stage_group,iii,74,1,0,0,III
+op_esophageal_inv_source_table,note_entities_llm_airway_invasion,342,1,0,0,note_entities_llm_airway_invasion
+op_esophageal_inv_source_table,note_entities_operative_detail,2,1,0,0,note_entities_operative_detail
+lab_calcium_source,llm_notes,32,1,0,0,llm_notes
+lab_calcium_first_source,excel_labs,165,1,0,0,excel_labs
+lab_calcium_first_source,llm_notes,32,1,0,0,llm_notes
+imaging_nodule_size_cm_source,patient_analysis_resolved_v1_backfill_347b,3439,1,0,0,patient_analysis_resolved_v1_backfill_347b
+margin_status_final,r1,3896,1,0,0,R1
+margin_status_final,rx,35,1,0,0,Rx
+margin_status_final,r2,25,1,0,0,R2
+margin_status_final,r0,1,1,0,0,R0
+margin_status_final_source,patient_analysis_resolved_v1_backfill_347b,3957,1,0,0,patient_analysis_resolved_v1_backfill_347b
+path_stage_raw_source,ajcc8_stage_group_corrected_backfill_351,64,1,0,0,ajcc8_stage_group_corrected_backfill_351
+gm_path_stage_raw_source,ajcc8_stage_group_corrected_backfill_351,64,1,0,0,ajcc8_stage_group_corrected_backfill_351
+frozen_source_hierarchy,neither,6755,1,0,0,neither
+frozen_source_hierarchy,both_agree,2546,1,0,0,both_agree
+frozen_source_hierarchy,syn_only,1261,1,0,0,syn_only
+frozen_source_hierarchy,both_disagree,279,1,0,0,both_disagree
+frozen_source_hierarchy,nlp_only,30,1,0,0,nlp_only
+ete_grade_clean,microscopic,2209,1,0,0,microscopic
+ete_grade_clean,gross,861,1,0,0,gross
+ete_grade_clean,none,158,1,0,0,none
+ete_grade_clean,indeterminate,26,1,0,0,indeterminate

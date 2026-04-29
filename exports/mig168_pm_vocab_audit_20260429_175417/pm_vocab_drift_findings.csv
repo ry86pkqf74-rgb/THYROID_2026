@@ -1,0 +1,729 @@
+table_name,column_name,semantic_family,norm_value,n_rows,pct_of_nonnull,issue_types,raw_variant_count,top_raw_variants,suggested_canonical_code,suggested_display_label
+canonical_patient_master,best_ene_grade,other,microscopic,2,0.125,rare_value_review,1,microscopic,microscopic,microscopic
+canonical_patient_master,comp_hematoma_timing_window,complication,pre_surgery,1,0.395,rare_value_review,1,pre_surgery,pre_surgery,pre_surgery
+canonical_patient_master,comp_hypoparathyroidism_timing_window,complication,31_180d,2,0.465,rare_value_review,1,31_180d,31_180d,31_180d
+canonical_patient_master,comp_hypoparathyroidism_timing_window,complication,181_365d,1,0.233,rare_value_review,1,181_365d,181_365d,181_365d
+canonical_patient_master,comp_hypoparathyroidism_timing_window,complication,pre_surgery,1,0.233,rare_value_review,1,pre_surgery,pre_surgery,pre_surgery
+canonical_patient_master,comp_rln_injury_timing_window,complication,pre_surgery,2,0.274,rare_value_review,1,pre_surgery,pre_surgery,pre_surgery
+canonical_patient_master,comp_rln_injury_timing_window,complication,181_365d,1,0.137,rare_value_review,1,181_365d,181_365d,181_365d
+canonical_patient_master,comp_seroma_timing_window,complication,181_365d,1,0.114,rare_value_review,1,181_365d,181_365d,181_365d
+canonical_patient_master,completion_histology_type,histology,ptc,153,81.383,raw_variant_drift;leading_trailing_whitespace,2,PTC || PTC ,ptc,PTC
+canonical_patient_master,completion_histology_type,histology,follicular carcinoma,10,5.319,raw_variant_drift,2,follicular carcinoma || Follicular carcinoma,follicular carcinoma,follicular carcinoma
+canonical_patient_master,completion_histology_type,histology,metastatic mtc,2,1.064,raw_variant_drift;rare_value_review,2,Metastatic MTC || metastatic MTC,metastatic mtc,Metastatic MTC
+canonical_patient_master,completion_histology_type,histology,ftump,1,0.532,rare_value_review,1,FTUMP,ftump,FTUMP
+canonical_patient_master,completion_histology_type,histology,metastatic/recurrent ptc,1,0.532,rare_value_review,1,metastatic/recurrent PTC,metastatic/recurrent ptc,metastatic/recurrent PTC
+canonical_patient_master,completion_prior_histology,histology,ptc,235,61.039,raw_variant_drift;leading_trailing_whitespace,2,PTC || PTC ,ptc,PTC
+canonical_patient_master,completion_prior_histology,histology,follicular carcinoma,119,30.909,raw_variant_drift,2,follicular carcinoma || Follicular carcinoma,follicular carcinoma,follicular carcinoma
+canonical_patient_master,completion_prior_histology,histology,poorly differentiated thyroid carcinoma,8,2.078,raw_variant_drift,2,poorly differentiated thyroid carcinoma || Poorly differentiated thyroid carcinoma,poorly differentiated thyroid carcinoma,poorly differentiated thyroid carcinoma
+canonical_patient_master,completion_prior_histology,histology,differentiated high grade thyroid carcinoma,2,0.519,rare_value_review,1,differentiated high grade thyroid carcinoma,differentiated high grade thyroid carcinoma,differentiated high grade thyroid carcinoma
+canonical_patient_master,completion_prior_histology,histology,ftump,2,0.519,rare_value_review,1,FTUMP,ftump,FTUMP
+canonical_patient_master,completion_prior_histology,histology,metastatic ptc,2,0.519,rare_value_review,1,metastatic PTC,metastatic ptc,metastatic PTC
+canonical_patient_master,completion_prior_histology,histology,atypical hurthle cell neoplasm,1,0.26,rare_value_review,1,Atypical hurthle cell neoplasm,atypical hurthle cell neoplasm,Atypical hurthle cell neoplasm
+canonical_patient_master,completion_prior_histology,histology,metastatic follicular carcinoma,1,0.26,rare_value_review,1,metastatic follicular carcinoma,metastatic follicular carcinoma,metastatic follicular carcinoma
+canonical_patient_master,completion_prior_histology,histology,metastatic thyroid carcinoma,1,0.26,rare_value_review,1,metastatic thyroid carcinoma,metastatic thyroid carcinoma,metastatic thyroid carcinoma
+canonical_patient_master,completion_prior_histology,histology,mtc ptc mixed composit,1,0.26,rare_value_review,1,"MTC
+PTC mixed composit",mtc ptc mixed composit,MTC PTC mixed composit
+canonical_patient_master,completion_t_stage,stage,3a,2,1.818,rare_value_review,1,3a,3a,3a
+canonical_patient_master,completion_t_stage,stage,x,1,0.909,rare_value_review,1,x,x,x
+canonical_patient_master,demo_source,provenance,demographics_harmonized_v3_partial,9,0.083,rare_value_review,1,demographics_harmonized_v3_partial,demographics_harmonized_v3_partial,demographics_harmonized_v3_partial
+canonical_patient_master,diagnosis_full,other,dhgtc,10,0.092,rare_value_review,1,DHGTC,dhgtc,DHGTC
+canonical_patient_master,diagnosis_full,other,"ptc, cribriform morular",6,0.055,rare_value_review,1,"PTC, cribriform morular","ptc, cribriform morular","PTC, cribriform morular"
+canonical_patient_master,diagnosis_full,other,"ptc, columnar cell",5,0.046,rare_value_review,1,"PTC, columnar cell","ptc, columnar cell","PTC, columnar cell"
+canonical_patient_master,diagnosis_full,other,hyalinizing_trabecular_tumor,4,0.037,rare_value_review,1,hyalinizing_trabecular_tumor,hyalinizing_trabecular_tumor,hyalinizing_trabecular_tumor
+canonical_patient_master,diagnosis_full,other,angiosarcoma of the thyroid,1,0.009,rare_value_review,1,angiosarcoma of the thyroid,angiosarcoma of the thyroid,angiosarcoma of the thyroid
+canonical_patient_master,diagnosis_full,other,dtc_nos,1,0.009,rare_value_review,1,DTC_NOS,dtc_nos,DTC_NOS
+canonical_patient_master,diagnosis_full,other,hcc,1,0.009,rare_value_review,1,HCC,hcc,HCC
+canonical_patient_master,diagnosis_full,other,pdtc,1,0.009,rare_value_review,1,PDTC,pdtc,PDTC
+canonical_patient_master,diagnosis_primary,other,dhgtc,10,0.092,rare_value_review,1,DHGTC,dhgtc,DHGTC
+canonical_patient_master,diagnosis_primary,other,hyalinizing_trabecular_tumor,4,0.037,rare_value_review,1,hyalinizing_trabecular_tumor,hyalinizing_trabecular_tumor,hyalinizing_trabecular_tumor
+canonical_patient_master,diagnosis_primary,other,dtc_nos,1,0.009,rare_value_review,1,DTC_NOS,dtc_nos,DTC_NOS
+canonical_patient_master,diagnosis_primary,other,hcc,1,0.009,rare_value_review,1,HCC,hcc,HCC
+canonical_patient_master,diagnosis_primary,other,pdtc,1,0.009,rare_value_review,1,PDTC,pdtc,PDTC
+canonical_patient_master,ene_levels_v9,other,level 3,12,27.273,raw_variant_drift,2,level 3 || Level 3,level 3,level 3
+canonical_patient_master,ene_levels_v9,other,level 4,11,25.0,raw_variant_drift,2,level 4 || Level 4,level 4,level 4
+canonical_patient_master,ene_levels_v9,other,level 2,3,6.818,raw_variant_drift,2,Level 2 || level 2,level 2,Level 2
+canonical_patient_master,ene_path_ct_concordance,other,discordant,2,0.125,rare_value_review,1,discordant,discordant,discordant
+canonical_patient_master,ene_path_levels,other,level vi,3,16.667,raw_variant_drift,2,level VI || Level VI,level vi,level VI
+canonical_patient_master,ene_path_levels,other,level 2,2,11.111,raw_variant_drift,2,Level 2 || level 2,level 2,Level 2
+canonical_patient_master,ene_path_levels,other,level 4,2,11.111,raw_variant_drift,2,Level 4 || level 4,level 4,Level 4
+canonical_patient_master,ete_grade,other,true,2,0.049,rare_value_review,1,true,true,true
+canonical_patient_master,ete_op_note_grade,other,microscopic,1,0.546,rare_value_review,1,microscopic,microscopic,microscopic
+canonical_patient_master,ete_refined_grade,other,microscopic,1,0.028,rare_value_review,1,microscopic,microscopic,microscopic
+canonical_patient_master,ete_subgrade_note,other,dc_sum,1,0.546,rare_value_review,1,dc_sum,dc_sum,dc_sum
+canonical_patient_master,gm_path_ete_raw,other,x,3234,79.362,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,gm_path_ete_raw,other,extensive,23,0.564,raw_variant_drift,2,extensive || Extensive,extensive,extensive
+canonical_patient_master,gm_path_ete_raw,other,yes,19,0.466,raw_variant_drift,2,yes || Yes,yes,yes
+canonical_patient_master,gm_path_ete_raw,other,extesive,2,0.049,rare_value_review,1,extesive,extesive,extesive
+canonical_patient_master,gm_path_ete_raw,other,yes (minimal),2,0.049,rare_value_review,1,yes (minimal),yes (minimal),yes (minimal)
+canonical_patient_master,gm_path_ete_raw,other,* (see margin comment),1,0.025,rare_value_review,1,* (see margin comment),* (see margin comment),* (see margin comment)
+canonical_patient_master,gm_path_ete_raw,other,`x,1,0.025,rare_value_review,1,`x,`x,`x
+canonical_patient_master,gm_path_ete_raw,other,focal early extension into perithyroidal fat,1,0.025,rare_value_review,1,Focal early extension into perithyroidal fat,focal early extension into perithyroidal fat,Focal early extension into perithyroidal fat
+canonical_patient_master,gm_path_ete_raw,other,focal right side,1,0.025,rare_value_review,1,focal right side,focal right side,focal right side
+canonical_patient_master,gm_path_ete_raw,other,microscopic extension,1,0.025,rare_value_review,1,microscopic extension,microscopic extension,microscopic extension
+canonical_patient_master,gm_path_ete_raw,other,minimal into fat,1,0.025,rare_value_review,1,minimal into fat,minimal into fat,minimal into fat
+canonical_patient_master,gm_path_ete_raw,other,minimal microscopic,1,0.025,rare_value_review,1,minimal microscopic,minimal microscopic,minimal microscopic
+canonical_patient_master,gm_path_ete_raw,other,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),1,0.025,rare_value_review,1,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion)
+canonical_patient_master,gm_path_ete_raw,other,present (perithyroidal fibroadipose tissue involved),1,0.025,rare_value_review,1,present (perithyroidal fibroadipose tissue involved),present (perithyroidal fibroadipose tissue involved),present (perithyroidal fibroadipose tissue involved)
+canonical_patient_master,gm_path_ete_raw,other,x (single microscopic focus of extension),1,0.025,rare_value_review,1,"x
+(single microscopic focus of extension)",x (single microscopic focus of extension),x (single microscopic focus of extension)
+canonical_patient_master,gm_path_ete_raw,other,yes (focal),1,0.025,rare_value_review,1,yes (focal),yes (focal),yes (focal)
+canonical_patient_master,gm_path_ete_raw,other,"yes, extensive",1,0.025,rare_value_review,1,"yes, extensive","yes, extensive","yes, extensive"
+canonical_patient_master,gm_path_ete_raw,other,"yes, minimal",1,0.025,rare_value_review,1,"yes, minimal","yes, minimal","yes, minimal"
+canonical_patient_master,gm_path_ete_raw,other,yes;minimal;,1,0.025,rare_value_review,1,Yes;minimal;,yes;minimal;,Yes;minimal;
+canonical_patient_master,gm_path_lvi_raw,other,preesent,3,0.089,rare_value_review,1,preesent,preesent,preesent
+canonical_patient_master,gm_path_lvi_raw,other,extensivre,2,0.059,rare_value_review,1,extensivre,extensivre,extensivre
+canonical_patient_master,gm_path_lvi_raw,other,cannot be determined: focal interstitial psammomatoid calcification present,1,0.03,rare_value_review,1,Cannot be determined: Focal interstitial psammomatoid calcification present,cannot be determined: focal interstitial psammomatoid calcification present,Cannot be determined: Focal interstitial psammomatoid calcification present
+canonical_patient_master,gm_path_lvi_raw,other,extensiver,1,0.03,rare_value_review,1,extensiver,extensiver,extensiver
+canonical_patient_master,gm_path_lvi_raw,other,indeeterminate,1,0.03,rare_value_review,1,indeeterminate,indeeterminate,indeeterminate
+canonical_patient_master,gm_path_lvi_raw,other,indetermiante,1,0.03,rare_value_review,1,indetermiante,indetermiante,indetermiante
+canonical_patient_master,gm_path_lvi_raw,other,indeterminent,1,0.03,rare_value_review,1,indeterminent,indeterminent,indeterminent
+canonical_patient_master,gm_path_lvi_raw,other,n/s,1,0.03,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,gm_path_lvi_raw,other,no,1,0.03,rare_value_review,1,no,no,no
+canonical_patient_master,gm_path_lvi_raw,other,suspicious,1,0.03,rare_value_review,1,suspicious,suspicious,suspicious
+canonical_patient_master,gm_path_m_stage_raw,stage,x,2577,64.345,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,gm_path_m_stage_raw,stage,m1,7,0.175,raw_variant_drift,2,M1 || m1,m1,M1
+canonical_patient_master,gm_path_m_stage_raw,stage,0,1,0.025,rare_value_review,1,0,0,0
+canonical_patient_master,gm_path_m_stage_raw,stage,m,1,0.025,rare_value_review,1,m,m,m
+canonical_patient_master,gm_path_pni_raw,other,x,1340,93.185,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,gm_path_pni_raw,other,indeterminate,2,0.139,rare_value_review,1,indeterminate,indeterminate,indeterminate
+canonical_patient_master,gm_path_pni_raw,other,c/a,1,0.07,rare_value_review,1,c/a,c/a,c/a
+canonical_patient_master,gm_path_stage_raw,stage,t2,4,0.097,rare_value_review,1,T2,t2,T2
+canonical_patient_master,gm_path_stage_raw,stage,t1a,3,0.073,rare_value_review,1,T1a,t1a,T1a
+canonical_patient_master,gm_path_stage_raw,stage,t1a | t1a,2,0.048,rare_value_review,1,T1a | T1a,t1a | t1a,T1a | T1a
+canonical_patient_master,gm_path_stage_raw,stage,t1b,2,0.048,rare_value_review,1,T1b,t1b,T1b
+canonical_patient_master,gm_path_stage_raw,stage,t1b | t1a,1,0.024,rare_value_review,1,T1b | T1a,t1b | t1a,T1b | T1a
+canonical_patient_master,gm_path_vascular_inv_raw,other,x,2993,81.287,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,gm_path_vascular_inv_raw,other,focal,215,5.839,raw_variant_drift,2,focal || Focal,focal,focal
+canonical_patient_master,gm_path_vascular_inv_raw,other,minimal,2,0.054,rare_value_review,1,minimal,minimal,minimal
+canonical_patient_master,gm_path_vascular_inv_raw,other,multifocal,2,0.054,rare_value_review,1,multifocal,multifocal,multifocal
+canonical_patient_master,gm_path_vascular_inv_raw,other,estensive,1,0.027,rare_value_review,1,estensive,estensive,estensive
+canonical_patient_master,gm_path_vascular_inv_raw,other,extrensive,1,0.027,rare_value_review,1,extrensive,extrensive,extrensive
+canonical_patient_master,gm_path_vascular_inv_raw,other,foacl,1,0.027,rare_value_review,1,foacl,foacl,foacl
+canonical_patient_master,gm_path_vascular_inv_raw,other,identified,1,0.027,rare_value_review,1,identified,identified,identified
+canonical_patient_master,gm_path_vascular_inv_raw,other,limited,1,0.027,rare_value_review,1,limited,limited,limited
+canonical_patient_master,gm_path_vascular_inv_raw,other,presnt,1,0.027,rare_value_review,1,presnt,presnt,presnt
+canonical_patient_master,gm_path_vascular_inv_raw,other,prominent,1,0.027,rare_value_review,1,prominent,prominent,prominent
+canonical_patient_master,gm_path_vascular_inv_raw,other,s,1,0.027,rare_value_review,1,s,s,s
+canonical_patient_master,gm_path_vascular_inv_raw,other,suspicious,1,0.027,rare_value_review,1,suspicious,suspicious,suspicious
+canonical_patient_master,histology_final,histology,follicular adenoma,5,0.121,rare_value_review,1,follicular adenoma,follicular adenoma,follicular adenoma
+canonical_patient_master,histology_final,histology,metastatic ptc tall cell variant,5,0.121,rare_value_review,1,metastatic PTC tall cell variant,metastatic ptc tall cell variant,metastatic PTC tall cell variant
+canonical_patient_master,histology_final,histology,recurrent/metastatic ptc,5,0.121,rare_value_review,1,recurrent/metastatic PTC,recurrent/metastatic ptc,recurrent/metastatic PTC
+canonical_patient_master,histology_final,histology,metastatic ptc classical,4,0.097,rare_value_review,1,metastatic PTC classical,metastatic ptc classical,metastatic PTC classical
+canonical_patient_master,histology_final,histology,metastatic ptc with tall cell features,4,0.097,rare_value_review,1,metastatic PTC with tall cell features,metastatic ptc with tall cell features,metastatic PTC with tall cell features
+canonical_patient_master,histology_final,histology,metastatic thyroid carcinoma,4,0.097,rare_value_review,1,metastatic thyroid carcinoma,metastatic thyroid carcinoma,metastatic thyroid carcinoma
+canonical_patient_master,histology_final,histology,metastatic follicular carcinoma,3,0.073,rare_value_review,1,metastatic follicular carcinoma,metastatic follicular carcinoma,metastatic follicular carcinoma
+canonical_patient_master,histology_final,histology,metastatic ptc follicular,2,0.048,rare_value_review,1,metastatic PTC follicular,metastatic ptc follicular,metastatic PTC follicular
+canonical_patient_master,histology_final,histology,recurrent/metastatic follicular carcinoma,2,0.048,rare_value_review,1,recurrent/metastatic follicular carcinoma,recurrent/metastatic follicular carcinoma,recurrent/metastatic follicular carcinoma
+canonical_patient_master,histology_final,histology,adenoid cystic carcinoma,1,0.024,rare_value_review,1,adenoid cystic carcinoma,adenoid cystic carcinoma,adenoid cystic carcinoma
+canonical_patient_master,histology_final,histology,angiosarcoma of the thyroid,1,0.024,rare_value_review,1,angiosarcoma of the thyroid,angiosarcoma of the thyroid,angiosarcoma of the thyroid
+canonical_patient_master,histology_final,histology,atypical follicular adenoma,1,0.024,rare_value_review,1,atypical follicular adenoma,atypical follicular adenoma,atypical follicular adenoma
+canonical_patient_master,histology_final,histology,atypical hurthle cell neoplasm,1,0.024,rare_value_review,1,Atypical hurthle cell neoplasm,atypical hurthle cell neoplasm,Atypical hurthle cell neoplasm
+canonical_patient_master,histology_final,histology,differentiated thyroid carcinoma,1,0.024,rare_value_review,1,differentiated thyroid carcinoma,differentiated thyroid carcinoma,differentiated thyroid carcinoma
+canonical_patient_master,histology_final,histology,high grade carcinoma with focal squamous features,1,0.024,rare_value_review,1,high grade carcinoma with focal squamous features,high grade carcinoma with focal squamous features,high grade carcinoma with focal squamous features
+canonical_patient_master,histology_final,histology,high-grade ptc with thymic-like features,1,0.024,rare_value_review,1,high-grade PTC with thymic-like features,high-grade ptc with thymic-like features,high-grade PTC with thymic-like features
+canonical_patient_master,histology_final,histology,infiltrating carcinoma with thymus-like differentiation,1,0.024,rare_value_review,1,infiltrating carcinoma with thymus-like differentiation,infiltrating carcinoma with thymus-like differentiation,infiltrating carcinoma with thymus-like differentiation
+canonical_patient_master,histology_final,histology,metastatic anaplastic carcinoma,1,0.024,rare_value_review,1,metastatic anaplastic carcinoma,metastatic anaplastic carcinoma,metastatic anaplastic carcinoma
+canonical_patient_master,histology_final,histology,metastatic ptc classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%,1,0.024,rare_value_review,1,metastatic PTC classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%,metastatic ptc classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%,metastatic PTC classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%
+canonical_patient_master,histology_final,histology,metastatic ptc classical with focal tall cell features,1,0.024,rare_value_review,1,metastatic PTC classical with focal tall cell features,metastatic ptc classical with focal tall cell features,metastatic PTC classical with focal tall cell features
+canonical_patient_master,histology_final,histology,metastatic ptc with focal tall cell features,1,0.024,rare_value_review,1,metastatic PTC with focal tall cell features,metastatic ptc with focal tall cell features,metastatic PTC with focal tall cell features
+canonical_patient_master,histology_final,histology,metastatic ptc/anaplastic carcinoma,1,0.024,rare_value_review,1,metastatic PTC/anaplastic carcinoma,metastatic ptc/anaplastic carcinoma,metastatic PTC/anaplastic carcinoma
+canonical_patient_master,histology_final,histology,metastatic thyroid carcinoma with hurthle cell and paillary features,1,0.024,rare_value_review,1,metastatic thyroid carcinoma with hurthle cell and paillary features,metastatic thyroid carcinoma with hurthle cell and paillary features,metastatic thyroid carcinoma with hurthle cell and paillary features
+canonical_patient_master,histology_final,histology,mtc/ptc mixed composite,1,0.024,rare_value_review,1,MTC/PTC mixed composite,mtc/ptc mixed composite,MTC/PTC mixed composite
+canonical_patient_master,histology_final,histology,nut carcinoma,1,0.024,rare_value_review,1,NUT carcinoma,nut carcinoma,NUT carcinoma
+canonical_patient_master,histology_final,histology,poorly differentiated carcinoma with neuroendocrine differntiation,1,0.024,rare_value_review,1,poorly differentiated carcinoma with neuroendocrine differntiation,poorly differentiated carcinoma with neuroendocrine differntiation,poorly differentiated carcinoma with neuroendocrine differntiation
+canonical_patient_master,histology_final,histology,poorly differentiated ptc,1,0.024,rare_value_review,1,poorly differentiated PTC,poorly differentiated ptc,poorly differentiated PTC
+canonical_patient_master,histology_final,histology,recurrent mtc,1,0.024,rare_value_review,1,recurrent MTC,recurrent mtc,recurrent MTC
+canonical_patient_master,hypocalcemia_status,other,confirmed_transient,9,0.083,rare_value_review,1,confirmed_transient,confirmed_transient,confirmed_transient
+canonical_patient_master,hypoparathyroidism_status,other,confirmed_transient,10,0.092,rare_value_review,1,confirmed_transient,confirmed_transient,confirmed_transient
+canonical_patient_master,lateral_detection_method,provenance,lateral_compartment,1,0.84,rare_value_review,1,lateral_compartment,lateral_compartment,lateral_compartment
+canonical_patient_master,lateral_levels_v10,other,level v,16,23.881,raw_variant_drift,2,level V || Level V,level v,level V
+canonical_patient_master,lateral_levels_v10,other,levels ii,6,8.955,raw_variant_drift,2,levels II || Levels II,levels ii,levels II
+canonical_patient_master,lateral_levels_v10,other,level iv,5,7.463,raw_variant_drift,2,level IV || Level IV,level iv,level IV
+canonical_patient_master,lateral_levels_v10,other,level 2,4,5.97,raw_variant_drift,2,level 2 || Level 2,level 2,level 2
+canonical_patient_master,ln_rollup_crossval_status,other,confirmed_data_entry_error,1,0.025,rare_value_review,1,confirmed_data_entry_error,confirmed_data_entry_error,confirmed_data_entry_error
+canonical_patient_master,lvi_grade,other,preesent,3,0.089,rare_value_review,1,preesent,preesent,preesent
+canonical_patient_master,lvi_grade,other,extensivre,2,0.059,rare_value_review,1,extensivre,extensivre,extensivre
+canonical_patient_master,lvi_grade,other,cannot be determined: focal interstitial psammomatoid calcification present,1,0.03,rare_value_review,1,Cannot be determined: Focal interstitial psammomatoid calcification present,cannot be determined: focal interstitial psammomatoid calcification present,Cannot be determined: Focal interstitial psammomatoid calcification present
+canonical_patient_master,lvi_grade,other,extensiver,1,0.03,rare_value_review,1,extensiver,extensiver,extensiver
+canonical_patient_master,lvi_grade,other,indeeterminate,1,0.03,rare_value_review,1,indeeterminate,indeeterminate,indeeterminate
+canonical_patient_master,lvi_grade,other,indetermiante,1,0.03,rare_value_review,1,indetermiante,indetermiante,indetermiante
+canonical_patient_master,lvi_grade,other,indeterminent,1,0.03,rare_value_review,1,indeterminent,indeterminent,indeterminent
+canonical_patient_master,lvi_grade,other,n/s,1,0.03,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,lvi_grade,other,no,1,0.03,rare_value_review,1,no,no,no
+canonical_patient_master,lvi_grade,other,suspicious,1,0.03,rare_value_review,1,suspicious,suspicious,suspicious
+canonical_patient_master,margin_r_class_v10,other,r0,4,0.101,rare_value_review,1,R0,r0,R0
+canonical_patient_master,margin_r_classification,other,r0,1,0.025,rare_value_review,1,R0,r0,R0
+canonical_patient_master,margin_status,other,r0,1,0.025,rare_value_review,1,R0,r0,R0
+canonical_patient_master,mol_genes_list,other,"braf, pax8",2,0.633,rare_value_review,1,"BRAF, PAX8","braf, pax8","BRAF, PAX8"
+canonical_patient_master,mol_genes_list,other,"hras, nras",2,0.633,rare_value_review,1,"HRAS, NRAS","hras, nras","HRAS, NRAS"
+canonical_patient_master,mol_genes_list,other,"nras, tshr",2,0.633,rare_value_review,1,"NRAS, TSHR","nras, tshr","NRAS, TSHR"
+canonical_patient_master,mol_genes_list,other,"braf, dicer1",1,0.316,rare_value_review,1,"BRAF, DICER1","braf, dicer1","BRAF, DICER1"
+canonical_patient_master,mol_genes_list,other,"braf, hras, tert",1,0.316,rare_value_review,1,"BRAF, HRAS, TERT","braf, hras, tert","BRAF, HRAS, TERT"
+canonical_patient_master,mol_genes_list,other,"braf, nras",1,0.316,rare_value_review,1,"BRAF, NRAS","braf, nras","BRAF, NRAS"
+canonical_patient_master,mol_genes_list,other,"braf, ret",1,0.316,rare_value_review,1,"BRAF, RET","braf, ret","BRAF, RET"
+canonical_patient_master,mol_genes_list,other,"dicer1, nras",1,0.316,rare_value_review,1,"DICER1, NRAS","dicer1, nras","DICER1, NRAS"
+canonical_patient_master,mol_genes_list,other,"eif1ax, nras, tert",1,0.316,rare_value_review,1,"EIF1AX, NRAS, TERT","eif1ax, nras, tert","EIF1AX, NRAS, TERT"
+canonical_patient_master,mol_genes_list,other,"eif1ax, pik3ca, tert, tp53",1,0.316,rare_value_review,1,"EIF1AX, PIK3CA, TERT, TP53","eif1ax, pik3ca, tert, tp53","EIF1AX, PIK3CA, TERT, TP53"
+canonical_patient_master,mol_genes_list,other,"kras, tert",1,0.316,rare_value_review,1,"KRAS, TERT","kras, tert","KRAS, TERT"
+canonical_patient_master,mol_genes_list,other,"nras, tp53",1,0.316,rare_value_review,1,"NRAS, TP53","nras, tp53","NRAS, TP53"
+canonical_patient_master,mol_genes_list,other,pik3ca,1,0.316,rare_value_review,1,PIK3CA,pik3ca,PIK3CA
+canonical_patient_master,mol_genes_list,other,"tert, tp53",1,0.316,rare_value_review,1,"TERT, TP53","tert, tp53","TERT, TP53"
+canonical_patient_master,mol_platform,other,quest,1,0.078,rare_value_review,1,Quest,quest,Quest
+canonical_patient_master,nsqip_asa_class,other,asa i - normal/healthy,90,6.383,repeated_internal_whitespace,1,ASA  I - Normal/Healthy,asa i - normal/healthy,ASA I - Normal/Healthy
+canonical_patient_master,nsqip_functional_status,other,totally dependent,1,0.071,rare_value_review,1,Totally dependent,totally dependent,Totally dependent
+canonical_patient_master,op_nlp_nerve_monitoring_type,other,ionm,1,0.029,rare_value_review,1,ionm,ionm,ionm
+canonical_patient_master,ops_difficult_airway,other,yes;glide scope at initial intubation w. both cord movement w. some left deviation d/t tumor edema;,1,0.704,rare_value_review,1,Yes;glide scope at initial intubation w. both cord movement w. some Left deviation d/t tumor edema;,yes;glide scope at initial intubation w. both cord movement w. some left deviation d/t tumor edema;,Yes;glide scope at initial intubation w. both cord movement w. some Left deviation d/t tumor edema;
+canonical_patient_master,ops_difficult_airway,other,"yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;",1,0.704,rare_value_review,1,"Yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;","yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;","Yes;intubation quite difficult because of soft tissue being quite prominent in hypopharynx, fiberoptic intubation required. ;"
+canonical_patient_master,ops_difficult_airway,other,"yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter",1,0.704,rare_value_review,1,"Yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter","yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter","Yes;required awake intubation, hypopharynx extremely edematous and narrowed due to goiter"
+canonical_patient_master,ops_dominant_nodule_bethesda,other,1 or 2?,1,0.02,rare_value_review,1,1 or 2?,1 or 2?,1 or 2?
+canonical_patient_master,ops_dominant_nodule_bethesda,other,2 or 3?,1,0.02,rare_value_review,1,2 or 3?,2 or 3?,2 or 3?
+canonical_patient_master,ops_dominant_nodule_bethesda,other,2 or 6?,1,0.02,rare_value_review,1,2 or 6?,2 or 6?,2 or 6?
+canonical_patient_master,ops_dominant_nodule_bethesda,other,4 or 3?,1,0.02,rare_value_review,1,4 or 3?,4 or 3?,4 or 3?
+canonical_patient_master,ops_dominant_nodule_bethesda,other,6 or 2?,1,0.02,rare_value_review,1,6 or 2?,6 or 2?,6 or 2?
+canonical_patient_master,ops_ebl_ml,other,30,2,1.667,rare_value_review,1,30,30,30
+canonical_patient_master,ops_ebl_ml,other,500,2,1.667,rare_value_review,1,500,500,500
+canonical_patient_master,ops_ebl_ml,other,10,1,0.833,rare_value_review,1,10,10,10
+canonical_patient_master,ops_ebl_ml,other,100,1,0.833,rare_value_review,1,100,100,100
+canonical_patient_master,ops_ebl_ml,other,15,1,0.833,rare_value_review,1,15,15,15
+canonical_patient_master,ops_ebl_ml,other,x,1,0.833,rare_value_review,1,x,x,x
+canonical_patient_master,ops_intraop_nodule_count,other,1 cm left lower pole nodule deemed subclinical and not resected,1,0.154,rare_value_review,1,1 cm Left lower pole nodule deemed subclinical and not resected,1 cm left lower pole nodule deemed subclinical and not resected,1 cm Left lower pole nodule deemed subclinical and not resected
+canonical_patient_master,ops_intraop_nodule_count,other,1 para adenoma; 1 lt inferior pole colloid nodule,1,0.154,rare_value_review,1,1 para adenoma; 1 Lt inferior pole colloid nodule,1 para adenoma; 1 lt inferior pole colloid nodule,1 para adenoma; 1 Lt inferior pole colloid nodule
+canonical_patient_master,ops_intraop_nodule_count,other,"2 nodules on left, small nodule on right",1,0.154,rare_value_review,1,"2 nodules on left, small nodule on right","2 nodules on left, small nodule on right","2 nodules on left, small nodule on right"
+canonical_patient_master,ops_intraop_nodule_count,other,2 rl small cysts,1,0.154,rare_value_review,1,2 RL small cysts,2 rl small cysts,2 RL small cysts
+canonical_patient_master,ops_intraop_nodule_count,other,"2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it",1,0.154,rare_value_review,1,"2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it","2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it","2 x nodules, a 3 cm occupyiing most of left lobe and equal sized separate nodule posterior to it"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 1.1 cm right, 0.8 cm left (bethesda 6)",1,0.154,rare_value_review,1,"2; 1.1 cm right, 0.8 cm left (Bethesda 6)","2; 1.1 cm right, 0.8 cm left (bethesda 6)","2; 1.1 cm right, 0.8 cm left (Bethesda 6)"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 1.9 cm, 1.7 cm",1,0.154,rare_value_review,1,"2; 1.9 cm, 1.7 cm","2; 1.9 cm, 1.7 cm","2; 1.9 cm, 1.7 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 2.2 right, 1.8 left",1,0.154,rare_value_review,1,"2; 2.2 right, 1.8 left","2; 2.2 right, 1.8 left","2; 2.2 right, 1.8 left"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 2.6 cm, 1.7 cm",1,0.154,rare_value_review,1,"2; 2.6 cm, 1.7 cm","2; 2.6 cm, 1.7 cm","2; 2.6 cm, 1.7 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 2.7, 2.3 cm",1,0.154,rare_value_review,1,"2; 2.7, 2.3 cm","2; 2.7, 2.3 cm","2; 2.7, 2.3 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 2.8, 1.9 cm",1,0.154,rare_value_review,1,"2; 2.8, 1.9 cm","2; 2.8, 1.9 cm","2; 2.8, 1.9 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,2; 3.5 cm and 2.6 cm,1,0.154,rare_value_review,1,2; 3.5 cm and 2.6 cm,2; 3.5 cm and 2.6 cm,2; 3.5 cm and 2.6 cm
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 4.3, 2.7 cm",1,0.154,rare_value_review,1,"2; 4.3, 2.7 cm","2; 4.3, 2.7 cm","2; 4.3, 2.7 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 7 cm rt., 1.8 cm lt",1,0.154,rare_value_review,1,"2; 7 cm Rt., 1.8 cm Lt","2; 7 cm rt., 1.8 cm lt","2; 7 cm Rt., 1.8 cm Lt"
+canonical_patient_master,ops_intraop_nodule_count,other,"2; 7. 5 cm, 3.2 cm (sq)",1,0.154,rare_value_review,1,"2; 7. 5 cm, 3.2 cm (SQ)","2; 7. 5 cm, 3.2 cm (sq)","2; 7. 5 cm, 3.2 cm (SQ)"
+canonical_patient_master,ops_intraop_nodule_count,other,2?,1,0.154,rare_value_review,1,2?,2?,2?
+canonical_patient_master,ops_intraop_nodule_count,other,3 x 1.5 cm nodules,1,0.154,rare_value_review,1,3 x 1.5 cm nodules,3 x 1.5 cm nodules,3 x 1.5 cm nodules
+canonical_patient_master,ops_intraop_nodule_count,other,"3; 4, 2.8, 2.8 cm",1,0.154,rare_value_review,1,"3; 4, 2.8, 2.8 cm","3; 4, 2.8, 2.8 cm","3; 4, 2.8, 2.8 cm"
+canonical_patient_master,ops_intraop_nodule_count,other,5,1,0.154,rare_value_review,1,5,5,5
+canonical_patient_master,ops_intraop_nodule_count,other,tumor adherent to trachea rings 1-2,1,0.154,rare_value_review,1,TUmor adherent to trachea rings 1-2,tumor adherent to trachea rings 1-2,TUmor adherent to trachea rings 1-2
+canonical_patient_master,ops_ll_para_visualized,other,out prior,1,0.068,rare_value_review,1,out prior,out prior,out prior
+canonical_patient_master,ops_lu_para_visualized,other,1,1176,80.438,raw_variant_drift;leading_trailing_whitespace,2,1 || 1 ,1,1
+canonical_patient_master,ops_nerve_stim_final,other,right;,1,0.877,rare_value_review,1,Right;,right;,Right;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;rl parathyroidectomy;,2,0.096,rare_value_review,1,Partial Parathyroidectomy ;RL parathyroidectomy;,partial parathyroidectomy ;rl parathyroidectomy;,Partial Parathyroidectomy ;RL parathyroidectomy;
+canonical_patient_master,ops_para_ag_performed,other,0;1,1,0.048,rare_value_review,1,0;1,0;1,0;1
+canonical_patient_master,ops_para_ag_performed,other,0;incidental ll resection,1,0.048,rare_value_review,1,0;Incidental LL resection,0;incidental ll resection,0;Incidental LL resection
+canonical_patient_master,ops_para_ag_performed,other,0;lm parathyroid (3 left total);,1,0.048,rare_value_review,1,0;LM parathyroid (3 Left total);,0;lm parathyroid (3 left total);,0;LM parathyroid (3 Left total);
+canonical_patient_master,ops_para_ag_performed,other,1 x para gland included in ll specimen,1,0.048,rare_value_review,1,1 x para gland included in LL specimen,1 x para gland included in ll specimen,1 x para gland included in LL specimen
+canonical_patient_master,ops_para_ag_performed,other,1partial parathyroidectomy ;ru and lu resected,1,0.048,rare_value_review,1,1Partial Parathyroidectomy ;RU and LU resected,1partial parathyroidectomy ;ru and lu resected,1Partial Parathyroidectomy ;RU and LU resected
+canonical_patient_master,ops_para_ag_performed,other,1partial parathyroidectomy ;ru para resection;,1,0.048,rare_value_review,1,1Partial Parathyroidectomy ;RU para resection;,1partial parathyroidectomy ;ru para resection;,1Partial Parathyroidectomy ;RU para resection;
+canonical_patient_master,ops_para_ag_performed,other,1ru and rm autograft,1,0.048,rare_value_review,1,1RU and RM autograft,1ru and rm autograft,1RU and RM autograft
+canonical_patient_master,ops_para_ag_performed,other,3 x left para glands; lm ob;,1,0.048,rare_value_review,1,3 x left para glands; LM OB;,3 x left para glands; lm ob;,3 x left para glands; LM OB;
+canonical_patient_master,ops_para_ag_performed,other,excision of ru para gland,1,0.048,rare_value_review,1,excision of RU para gland,excision of ru para gland,excision of RU para gland
+canonical_patient_master,ops_para_ag_performed,other,n/s,1,0.048,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;,partial parathyroidectomy ;,Partial Parathyroidectomy ;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;1ll para resection;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;1LL para resection;,partial parathyroidectomy ;1ll para resection;,Partial Parathyroidectomy ;1LL para resection;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;1lu para excision,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;1LU para excision,partial parathyroidectomy ;1lu para excision,Partial Parathyroidectomy ;1LU para excision
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;1rl para adenoma resection;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;1RL para adenoma resection;,partial parathyroidectomy ;1rl para adenoma resection;,Partial Parathyroidectomy ;1RL para adenoma resection;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;1rl para ag; ru parathyroidectomy,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;1RL para AG; RU parathyroidectomy,partial parathyroidectomy ;1rl para ag; ru parathyroidectomy,Partial Parathyroidectomy ;1RL para AG; RU parathyroidectomy
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;lu para adenoma excision;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;LU para adenoma excision;,partial parathyroidectomy ;lu para adenoma excision;,Partial Parathyroidectomy ;LU para adenoma excision;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;lu parathyroid excision;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;LU parathyroid excision;,partial parathyroidectomy ;lu parathyroid excision;,Partial Parathyroidectomy ;LU parathyroid excision;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;resection of ll para adenoma,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;Resection of LL para adenoma,partial parathyroidectomy ;resection of ll para adenoma,Partial Parathyroidectomy ;Resection of LL para adenoma
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;rl para adenoma resection;,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;RL para adenoma resection;,partial parathyroidectomy ;rl para adenoma resection;,Partial Parathyroidectomy ;RL para adenoma resection;
+canonical_patient_master,ops_para_ag_performed,other,partial parathyroidectomy ;ru parathyroid adenoma excision,1,0.048,rare_value_review,1,Partial Parathyroidectomy ;RU parathyroid adenoma excision,partial parathyroidectomy ;ru parathyroid adenoma excision,Partial Parathyroidectomy ;RU parathyroid adenoma excision
+canonical_patient_master,ops_para_ag_performed,other,rl para resection;1,1,0.048,rare_value_review,1,RL para resection;1,rl para resection;1,RL para resection;1
+canonical_patient_master,ops_preop_imaging_performed,other,"us;i-123 (thyroid scintigraphy, mibg)",2,1.399,rare_value_review,1,"US;I-123 (Thyroid scintigraphy, MIBG)","us;i-123 (thyroid scintigraphy, mibg)","US;I-123 (Thyroid scintigraphy, MIBG)"
+canonical_patient_master,ops_preop_imaging_performed,other,us;pet,2,1.399,rare_value_review,1,US;PET,us;pet,US;PET
+canonical_patient_master,ops_preop_imaging_performed,other,"11/12/2019 us neck right: within the right thyroid fossa, there is a subcentimeter hypoechoic nodule, not definitely seen on prior study although this may be due to differences in technique. anterior/superior to the fossa, there is a similar appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. right level 3 heterogeneous-appearing subcentimeter node is similar in morphology from prior study although slightly increased in size. additional benign-appearing lymph nodes are present. left: no soft tissue. benign-appearing left sided lymph nodes. impression: 1. hypoechoic/heterogeneous nodules within the right thyroid fossa and anterior/superior to the fossa measuring less than 1 cm, nonspecific. these were not definitely seen on prior study although this may due to differences in technique. attention on follow-up. 2. bilateral benign-appearing lymph nodes. 3. post thyroidectomy. 4/3/19 us neck: right: no soft tissue. benign-appearing level 2, 3 and 4 nodes are present. these measure less than 1 cm in short axis diameter. left: no soft tissue. left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. impression: 1. bilateral benign-appearing lymph nodes. patient is status post thyroidectomy.",1,0.699,leading_trailing_whitespace;repeated_internal_whitespace;rare_value_review,1,"  11/12/2019 US neck 
+          Right: Within the right thyroid fossa, there is a subcentimeter hypoechoic 
+     nodule, not definitely seen on prior study although this may be due to 
+     differences in technique. Anterior/superior to the fossa, there is a similar 
+     appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. Right level 
+     3 heterogeneous-appearing subcentimeter node is similar in morphology from prior 
+     study although slightly increased in size. Additional benign-appearing lymph 
+     nodes are present. 
+       
+     Left: No soft tissue. Benign-appearing left sided lymph nodes. 
+       
+     IMPRESSION:  
+     1. Hypoechoic/heterogeneous nodules within the right thyroid fossa and 
+     anterior/superior to the fossa measuring less than 1 cm, nonspecific. These were 
+     not definitely seen on prior study although this may due to differences in 
+     technique. Attention on follow-up. 
+     2. Bilateral benign-appearing lymph nodes. 
+     3. Post thyroidectomy. 
+           
+          4/3/19 US Neck:       
+      Right: No soft tissue. Benign-appearing level 2, 3 and 4 nodes are present.  These measure less than 1 cm in short axis diameter. 
+     Left: No soft tissue. Left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. 
+     IMPRESSION: 1. Bilateral benign-appearing lymph nodes. Patient is status post thyroidectomy. ","11/12/2019 us neck right: within the right thyroid fossa, there is a subcentimeter hypoechoic nodule, not definitely seen on prior study although this may be due to differences in technique. anterior/superior to the fossa, there is a similar appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. right level 3 heterogeneous-appearing subcentimeter node is similar in morphology from prior study although slightly increased in size. additional benign-appearing lymph nodes are present. left: no soft tissue. benign-appearing left sided lymph nodes. impression: 1. hypoechoic/heterogeneous nodules within the right thyroid fossa and anterior/superior to the fossa measuring less than 1 cm, nonspecific. these were not definitely seen on prior study although this may due to differences in technique. attention on follow-up. 2. bilateral benign-appearing lymph nodes. 3. post thyroidectomy. 4/3/19 us neck: right: no soft tissue. benign-appearing level 2, 3 and 4 nodes are present. these measure less than 1 cm in short axis diameter. left: no soft tissue. left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. impression: 1. bilateral benign-appearing lymph nodes. patient is status post thyroidectomy.","11/12/2019 US neck Right: Within the right thyroid fossa, there is a subcentimeter hypoechoic nodule, not definitely seen on prior study although this may be due to differences in technique. Anterior/superior to the fossa, there is a similar appearing heterogeneous nodule measuring 4 x 6 x 3 mm, nonspecific. Right level 3 heterogeneous-appearing subcentimeter node is similar in morphology from prior study although slightly increased in size. Additional benign-appearing lymph nodes are present. Left: No soft tissue. Benign-appearing left sided lymph nodes. IMPRESSION: 1. Hypoechoic/heterogeneous nodules within the right thyroid fossa and anterior/superior to the fossa measuring less than 1 cm, nonspecific. These were not definitely seen on prior study although this may due to differences in technique. Attention on follow-up. 2. Bilateral benign-appearing lymph nodes. 3. Post thyroidectomy. 4/3/19 US Neck: Right: No soft tissue. Benign-appearing level 2, 3 and 4 nodes are present. These measure less than 1 cm in short axis diameter. Left: No soft tissue. Left-sided subcentimeter benign-appearing level 2, 3 and 4 nodes are also present. IMPRESSION: 1. Bilateral benign-appearing lymph nodes. Patient is status post thyroidectomy."
+canonical_patient_master,ops_preop_imaging_performed,other,ct and us preop revealed lesion at least 5.5 cm in size extended substernal. fna preop dx hurthle cell tumor. ;,1,0.699,rare_value_review,1,CT and US preop revealed lesion at least 5.5 cm in size extended substernal. FNA preop dx hurthle cell tumor. ;,ct and us preop revealed lesion at least 5.5 cm in size extended substernal. fna preop dx hurthle cell tumor. ;,CT and US preop revealed lesion at least 5.5 cm in size extended substernal. FNA preop dx hurthle cell tumor. ;
+canonical_patient_master,ops_preop_imaging_performed,other,ct preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;,1,0.699,rare_value_review,1,CT preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;,ct preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;,CT preop goiter absolutely enormous on both sides in hypopharynx terminating at level of clavicale extending 3.5 cm deep on left to clavicle. ;
+canonical_patient_master,ops_preop_imaging_performed,other,ct showed left neck mass preop 4/02/2002. note: 3 weeks ago rt x 9 6/26/2002;,1,0.699,rare_value_review,1,CT showed left neck mass preop 4/02/2002. note: 3 weeks ago RT x 9 6/26/2002;,ct showed left neck mass preop 4/02/2002. note: 3 weeks ago rt x 9 6/26/2002;,CT showed left neck mass preop 4/02/2002. note: 3 weeks ago RT x 9 6/26/2002;
+canonical_patient_master,ops_preop_imaging_performed,other,ct;mibi + ru; ct negative,1,0.699,rare_value_review,1,CT;Mibi + RU; CT negative,ct;mibi + ru; ct negative,CT;Mibi + RU; CT negative
+canonical_patient_master,ops_preop_imaging_performed,other,ct;mri,1,0.699,rare_value_review,1,CT;MRI,ct;mri,CT;MRI
+canonical_patient_master,ops_preop_imaging_performed,other,ct;preop ct w/o substernal extension;,1,0.699,rare_value_review,1,CT;preop CT w/o substernal extension;,ct;preop ct w/o substernal extension;,CT;preop CT w/o substernal extension;
+canonical_patient_master,ops_preop_imaging_performed,other,"ct;preop ct without substernal extension, ;",1,0.699,rare_value_review,1,"CT;preop CT without substernal extension, ;","ct;preop ct without substernal extension, ;","CT;preop CT without substernal extension, ;"
+canonical_patient_master,ops_preop_imaging_performed,other,mri,1,0.699,rare_value_review,1,MRI,mri,MRI
+canonical_patient_master,ops_preop_imaging_performed,other,"mri;preop mri and iodine scan confirmed no right neck thyroid tissue;i-123 (thyroid scintigraphy, mibg);",1,0.699,rare_value_review,1,"MRI;preop MRI and iodine scan confirmed no right neck thyroid tissue;I-123 (Thyroid scintigraphy, MIBG);","mri;preop mri and iodine scan confirmed no right neck thyroid tissue;i-123 (thyroid scintigraphy, mibg);","MRI;preop MRI and iodine scan confirmed no right neck thyroid tissue;I-123 (Thyroid scintigraphy, MIBG);"
+canonical_patient_master,ops_preop_imaging_performed,other,mri;preop mri confirmed no thyroid tissue in the left neck;,1,0.699,rare_value_review,1,MRI;preop MRI confirmed no thyroid tissue in the left neck;,mri;preop mri confirmed no thyroid tissue in the left neck;,MRI;preop MRI confirmed no thyroid tissue in the left neck;
+canonical_patient_master,ops_preop_imaging_performed,other,mri;preop mri identified 2 tumor nodules within left thyroidal bed;,1,0.699,rare_value_review,1,MRI;preop MRI identified 2 tumor nodules within left thyroidal bed;,mri;preop mri identified 2 tumor nodules within left thyroidal bed;,MRI;preop MRI identified 2 tumor nodules within left thyroidal bed;
+canonical_patient_master,ops_preop_imaging_performed,other,mri;preop mri lateral views show evidence of substernal extension in the right paratracheal space;,1,0.699,rare_value_review,1,MRI;preop MRI lateral views show evidence of substernal extension in the right paratracheal space;,mri;preop mri lateral views show evidence of substernal extension in the right paratracheal space;,MRI;preop MRI lateral views show evidence of substernal extension in the right paratracheal space;
+canonical_patient_master,ops_preop_imaging_performed,other,mri;preop mri showed intact ll and presence of right upper thyroid pole;,1,0.699,rare_value_review,1,MRI;preop MRI showed intact LL and presence of right upper thyroid pole;,mri;preop mri showed intact ll and presence of right upper thyroid pole;,MRI;preop MRI showed intact LL and presence of right upper thyroid pole;
+canonical_patient_master,ops_preop_imaging_performed,other,mri;preop mri showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery,1,0.699,rare_value_review,1,MRI;preop MRI showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery,mri;preop mri showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery,MRI;preop MRI showed minimal residual disease in the right neck with a 4 mm remnant thyroid and a question of a 7 mm mass or node in the thyroid ed just posterior to the right carotid artery
+canonical_patient_master,ops_preop_imaging_performed,other,"preop fna = ""indeterminant""",1,0.699,rare_value_review,1,"preop FNA = ""indeterminant""","preop fna = ""indeterminant""","preop FNA = ""indeterminant"""
+canonical_patient_master,ops_preop_imaging_performed,other,preop fna = aytpical cells;,1,0.699,rare_value_review,1,Preop FNA = aytpical cells;,preop fna = aytpical cells;,Preop FNA = aytpical cells;
+canonical_patient_master,ops_preop_imaging_performed,other,preop fna = indeterminant,1,0.699,rare_value_review,1,preop FNA = indeterminant,preop fna = indeterminant,preop FNA = indeterminant
+canonical_patient_master,ops_preop_imaging_performed,other,"preop: us with solid mass, cold nodule in right lobe of the thyroid.",1,0.699,leading_trailing_whitespace;rare_value_review,1,"Preop: US with solid mass, cold nodule in right lobe of the thyroid. ","preop: us with solid mass, cold nodule in right lobe of the thyroid.","Preop: US with solid mass, cold nodule in right lobe of the thyroid."
+canonical_patient_master,ops_preop_imaging_performed,other,us;ct;mri,1,0.699,rare_value_review,1,US;CT;MRI,us;ct;mri,US;CT;MRI
+canonical_patient_master,ops_preop_imaging_performed,other,us;mri,1,0.699,rare_value_review,1,US;MRI,us;mri,US;MRI
+canonical_patient_master,ops_preop_imaging_performed,other,"us;mri;tgb 17, tgab 947",1,0.699,rare_value_review,1,"US;MRI;Tgb 17, TgAb 947","us;mri;tgb 17, tgab 947","US;MRI;Tgb 17, TgAb 947"
+canonical_patient_master,ops_preop_imaging_performed,other,us;nm +lu pth,1,0.699,rare_value_review,1,US;NM +LU PTH,us;nm +lu pth,US;NM +LU PTH
+canonical_patient_master,ops_preop_laryngoscopy,other,no;,1,0.84,rare_value_review,1,No;,no;,No;
+canonical_patient_master,ops_preop_laryngoscopy,other,yes;l vc palsy,1,0.84,rare_value_review,1,Yes;L VC palsy,yes;l vc palsy,Yes;L VC palsy
+canonical_patient_master,ops_preop_laryngoscopy,other,yes;left vocal cord dysfunction;,1,0.84,rare_value_review,1,Yes;left vocal cord dysfunction;,yes;left vocal cord dysfunction;,Yes;left vocal cord dysfunction;
+canonical_patient_master,ops_preop_laryngoscopy,other,yes;rt. vc palsy,1,0.84,rare_value_review,1,Yes;Rt. VC palsy,yes;rt. vc palsy,Yes;Rt. VC palsy
+canonical_patient_master,ops_preop_nodules_count_size,other,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in left upper pole and bilateral adenopathy including subclavicular nodes.,1,2.128,leading_trailing_whitespace,1,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in Left upper pole and bilateral adenopathy including subclavicular nodes. ,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in left upper pole and bilateral adenopathy including subclavicular nodes.,preop imgaging and on exam obvious large 3.5 - 5 cm tumor in Left upper pole and bilateral adenopathy including subclavicular nodes.
+canonical_patient_master,ops_preop_symptoms,other,graves optho,56,35.22,raw_variant_drift,3,graves optho || Graves optho || Graves Optho,graves optho,graves optho
+canonical_patient_master,ops_preop_symptoms,other,graves w. opthalmic involvement;,3,1.887,raw_variant_drift,2,Graves w. opthalmic involvement; || Graves w. Opthalmic involvement;,graves w. opthalmic involvement;,Graves w. opthalmic involvement;
+canonical_patient_master,ops_preop_symptoms,other,graves with opthalmic involvement;,2,1.258,rare_value_review,1,Graves with opthalmic involvement;,graves with opthalmic involvement;,Graves with opthalmic involvement;
+canonical_patient_master,ops_preop_symptoms,other,voice abnormality,2,1.258,rare_value_review,1,Voice abnormality,voice abnormality,Voice abnormality
+canonical_patient_master,ops_preop_symptoms,other,"""some airway symptoms""",1,0.629,rare_value_review,1,"""some airway symptoms""","""some airway symptoms""","""some airway symptoms"""
+canonical_patient_master,ops_preop_symptoms,other,3 cm tracheal deviation to the right;,1,0.629,rare_value_review,1,3 cm tracheal deviation to the right;,3 cm tracheal deviation to the right;,3 cm tracheal deviation to the right;
+canonical_patient_master,ops_preop_symptoms,other,diarrhea,1,0.629,rare_value_review,1,diarrhea,diarrhea,diarrhea
+canonical_patient_master,ops_preop_symptoms,other,"dysphagia, hoarseness",1,0.629,rare_value_review,1,"Dysphagia, Hoarseness","dysphagia, hoarseness","Dysphagia, Hoarseness"
+canonical_patient_master,ops_preop_symptoms,other,dysphagia;compressive sx,1,0.629,rare_value_review,1,Dysphagia;compressive sx,dysphagia;compressive sx,Dysphagia;compressive sx
+canonical_patient_master,ops_preop_symptoms,other,graves opthalmic sx;,1,0.629,rare_value_review,1,Graves opthalmic sx;,graves opthalmic sx;,Graves opthalmic sx;
+canonical_patient_master,ops_preop_symptoms,other,graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep,1,0.629,rare_value_review,1,Graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep,graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep,Graves optho; hyperparathyroid x 3; positive hair loss; positive weight loss; positive tremors; positive palpitations; poor sleep
+canonical_patient_master,ops_preop_symptoms,other,graves with ophthalmic involvement;,1,0.629,rare_value_review,1,Graves with ophthalmic involvement;,graves with ophthalmic involvement;,Graves with ophthalmic involvement;
+canonical_patient_master,ops_preop_symptoms,other,hoarseness,1,0.629,rare_value_review,1,hoarseness,hoarseness,hoarseness
+canonical_patient_master,ops_preop_symptoms,other,hx of osteoporosis @ age 18;,1,0.629,rare_value_review,1,hx of osteoporosis @ age 18;,hx of osteoporosis @ age 18;,hx of osteoporosis @ age 18;
+canonical_patient_master,ops_preop_symptoms,other,"hyperthyroid, eye disease",1,0.629,rare_value_review,1,"Hyperthyroid, eye disease","hyperthyroid, eye disease","Hyperthyroid, eye disease"
+canonical_patient_master,ops_preop_symptoms,other,optho involvement;,1,0.629,rare_value_review,1,Optho involvement;,optho involvement;,Optho involvement;
+canonical_patient_master,ops_preop_symptoms,other,original operative date reschedule due to bronchitis treated with course of antibiotics,1,0.629,rare_value_review,1,original operative date reschedule due to bronchitis treated with course of antibiotics,original operative date reschedule due to bronchitis treated with course of antibiotics,original operative date reschedule due to bronchitis treated with course of antibiotics
+canonical_patient_master,ops_preop_symptoms,other,preop fna w. ptc,1,0.629,rare_value_review,1,preop FNA w. PTC,preop fna w. ptc,preop FNA w. PTC
+canonical_patient_master,ops_preop_symptoms,other,recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy,1,0.629,rare_value_review,1,Recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy,recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy,Recurrent goiter in setting of tongue cancer; due to size of tongue lesion a tracheostomy was performed at time of goiter resection along with hemiglossectomy
+canonical_patient_master,ops_preop_symptoms,other,rightward tracheal deviation;,1,0.629,rare_value_review,1,Rightward tracheal deviation;,rightward tracheal deviation;,Rightward tracheal deviation;
+canonical_patient_master,ops_preop_symptoms,other,sob;chest tightness,1,0.629,rare_value_review,1,SOB;Chest tightness,sob;chest tightness,SOB;Chest tightness
+canonical_patient_master,ops_preop_symptoms,other,sob;dysphagia;pemberton's sign,1,0.629,rare_value_review,1,SOB;Dysphagia;Pemberton's Sign,sob;dysphagia;pemberton's sign,SOB;Dysphagia;Pemberton's Sign
+canonical_patient_master,ops_preop_symptoms,other,sob;dysphagia;voice abnormality,1,0.629,rare_value_review,1,SOB;Dysphagia;Voice abnormality,sob;dysphagia;voice abnormality,SOB;Dysphagia;Voice abnormality
+canonical_patient_master,ops_preop_symptoms,other,stridor,1,0.629,rare_value_review,1,Stridor,stridor,Stridor
+canonical_patient_master,ops_preop_symptoms,other,tachycardia,1,0.629,rare_value_review,1,tachycardia,tachycardia,tachycardia
+canonical_patient_master,ops_preop_symptoms,other,tracheal compression,1,0.629,rare_value_review,1,Tracheal compression,tracheal compression,Tracheal compression
+canonical_patient_master,ops_preop_symptoms,other,voice abnormality;vocal cord paresis,1,0.629,rare_value_review,1,Voice abnormality;Vocal cord paresis,voice abnormality;vocal cord paresis,Voice abnormality;Vocal cord paresis
+canonical_patient_master,ops_prior_neck_irradiation,other,s/p rai;,2,1.361,rare_value_review,1,s/p RAI;,s/p rai;,s/p RAI;
+canonical_patient_master,ops_prior_neck_irradiation,other,prior radiation expsoure;,1,0.68,rare_value_review,1,prior radiation expsoure;,prior radiation expsoure;,prior radiation expsoure;
+canonical_patient_master,ops_prior_neck_irradiation,other,s/p iodo 131 rx;,1,0.68,rare_value_review,1,s/p iodo 131 Rx;,s/p iodo 131 rx;,s/p iodo 131 Rx;
+canonical_patient_master,ops_prior_neck_irradiation,other,s/p rai ablation;,1,0.68,rare_value_review,1,s/p RAI ablation;,s/p rai ablation;,s/p RAI ablation;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;chemo?,1,0.68,rare_value_review,1,Yes;Chemo?,yes;chemo?,Yes;Chemo?
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;for hodgkin lymphoma 1989;,1,0.68,rare_value_review,1,Yes;for hodgkin lymphoma 1989;,yes;for hodgkin lymphoma 1989;,Yes;for hodgkin lymphoma 1989;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;history of radiation to the neck in distant past,1,0.68,rare_value_review,1,Yes;history of radiation to the neck in distant past,yes;history of radiation to the neck in distant past,Yes;history of radiation to the neck in distant past
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;hx of neck irradiation;,1,0.68,rare_value_review,1,Yes;Hx of neck irradiation;,yes;hx of neck irradiation;,Yes;Hx of neck irradiation;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;hx of neck radiation for lynphoma;,1,0.68,rare_value_review,1,Yes;hx of neck radiation for lynphoma;,yes;hx of neck radiation for lynphoma;,Yes;hx of neck radiation for lynphoma;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;hx of rt for lymphoma;,1,0.68,rare_value_review,1,Yes;hx of RT for lymphoma;,yes;hx of rt for lymphoma;,Yes;hx of RT for lymphoma;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;prior llx,1,0.68,rare_value_review,1,Yes;Prior LLx,yes;prior llx,Yes;Prior LLx
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;prior rai ablation;,1,0.68,rare_value_review,1,Yes;prior RAI ablation;,yes;prior rai ablation;,Yes;prior RAI ablation;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;prior rt for hodgkins;,1,0.68,rare_value_review,1,Yes;prior RT for Hodgkins;,yes;prior rt for hodgkins;,Yes;prior RT for Hodgkins;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;rai for graves in 1993;,1,0.68,rare_value_review,1,Yes;RAI for graves in 1993;,yes;rai for graves in 1993;,Yes;RAI for graves in 1993;
+canonical_patient_master,ops_prior_neck_irradiation,other,yes;rt exposure as a child;,1,0.68,rare_value_review,1,Yes;RT exposure as a child;,yes;rt exposure as a child;,Yes;RT exposure as a child;
+canonical_patient_master,ops_rl_ag,other,rl parathyroid ag,1,0.388,rare_value_review,1,RL parathyroid AG,rl parathyroid ag,RL parathyroid AG
+canonical_patient_master,ops_ru_para_visualized,other,aa,1,0.07,rare_value_review,1,Aa,aa,Aa
+canonical_patient_master,ops_supranumerary_para,other,3 left paras; lu/lm/ll,1,7.692,leading_trailing_whitespace,1,3 left paras; LU/LM/LL ,3 left paras; lu/lm/ll,3 left paras; LU/LM/LL
+canonical_patient_master,path_margin_raw,other,x,3296,84.861,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_margin_raw,other,involved,542,13.955,raw_variant_drift,2,involved || Involved,involved,involved
+canonical_patient_master,path_margin_raw,other,0.1,1,0.026,rare_value_review,1,0.1,0.1,0.1
+canonical_patient_master,path_margin_raw,other,<1,1,0.026,rare_value_review,1,<1,<1,<1
+canonical_patient_master,path_margin_raw,other,involvd,1,0.026,rare_value_review,1,involvd,involvd,involvd
+canonical_patient_master,path_margin_raw,other,n/s,1,0.026,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,path_margin_raw,other,negative,1,0.026,rare_value_review,1,negative,negative,negative
+canonical_patient_master,path_n_stage_raw,stage,x,1610,40.1,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_n_stage_raw,stage,n1b,121,3.014,raw_variant_drift,2,N1b || n1b,n1b,N1b
+canonical_patient_master,path_n_stage_raw,stage,nx,113,2.814,raw_variant_drift,2,NX || nx,nx,NX
+canonical_patient_master,path_n_stage_raw,stage,n,1,0.025,rare_value_review,1,n,n,n
+canonical_patient_master,path_n_stage_raw,stage,n0a,1,0.025,rare_value_review,1,n0a,n0a,n0a
+canonical_patient_master,path_n_stage_raw,stage,oa,1,0.025,rare_value_review,1,oa,oa,oa
+canonical_patient_master,path_t_stage_raw,stage,t3,3,0.075,rare_value_review,1,T3,t3,T3
+canonical_patient_master,path_t_stage_raw,stage,t3b,3,0.075,rare_value_review,1,T3b,t3b,T3b
+canonical_patient_master,path_t_stage_raw,stage,0,2,0.05,rare_value_review,1,0,0,0
+canonical_patient_master,path_t_stage_raw,stage,r(recurrent)t4b,1,0.025,rare_value_review,1,r(recurrent)T4b,r(recurrent)t4b,r(recurrent)T4b
+canonical_patient_master,path_t_stage_raw,stage,t1,1,0.025,rare_value_review,1,T1,t1,T1
+canonical_patient_master,perineural_invasion,other,x,1340,93.185,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,perineural_invasion,other,indeterminate,2,0.139,rare_value_review,1,indeterminate,indeterminate,indeterminate
+canonical_patient_master,perineural_invasion,other,c/a,1,0.07,rare_value_review,1,c/a,c/a,c/a
+canonical_patient_master,pet_distant_met_sites,other,"bone,brain",2,1.538,rare_value_review,1,"bone,brain","bone,brain","bone,brain"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver",2,1.538,rare_value_review,1,"bone,liver","bone,liver","bone,liver"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,lung,mediastinal_ln,other",2,1.538,rare_value_review,1,"bone,liver,lung,mediastinal_ln,other","bone,liver,lung,mediastinal_ln,other","bone,liver,lung,mediastinal_ln,other"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,mediastinal_ln,other",2,1.538,rare_value_review,1,"bone,liver,mediastinal_ln,other","bone,liver,mediastinal_ln,other","bone,liver,mediastinal_ln,other"
+canonical_patient_master,pet_distant_met_sites,other,"bone,lung,mediastinal_ln",2,1.538,rare_value_review,1,"bone,lung,mediastinal_ln","bone,lung,mediastinal_ln","bone,lung,mediastinal_ln"
+canonical_patient_master,pet_distant_met_sites,other,"bone,mediastinal_ln",2,1.538,rare_value_review,1,"bone,mediastinal_ln","bone,mediastinal_ln","bone,mediastinal_ln"
+canonical_patient_master,pet_distant_met_sites,other,"liver,lung,mediastinal_ln,other",2,1.538,rare_value_review,1,"liver,lung,mediastinal_ln,other","liver,lung,mediastinal_ln,other","liver,lung,mediastinal_ln,other"
+canonical_patient_master,pet_distant_met_sites,other,"liver,mediastinal_ln,other",2,1.538,rare_value_review,1,"liver,mediastinal_ln,other","liver,mediastinal_ln,other","liver,mediastinal_ln,other"
+canonical_patient_master,pet_distant_met_sites,other,"axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate",1,0.769,rare_value_review,1,"axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate","axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate","axillary_ln,bone,inguinal_ln,mediastinal_ln,other,prostate"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,lung",1,0.769,rare_value_review,1,"bone,liver,lung","bone,liver,lung","bone,liver,lung"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,lung,mediastinal_ln",1,0.769,rare_value_review,1,"bone,liver,lung,mediastinal_ln","bone,liver,lung,mediastinal_ln","bone,liver,lung,mediastinal_ln"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,lung,other",1,0.769,rare_value_review,1,"bone,liver,lung,other","bone,liver,lung,other","bone,liver,lung,other"
+canonical_patient_master,pet_distant_met_sites,other,"bone,liver,other",1,0.769,rare_value_review,1,"bone,liver,other","bone,liver,other","bone,liver,other"
+canonical_patient_master,pet_distant_met_sites,other,"bone,mediastinal_ln,other",1,0.769,rare_value_review,1,"bone,mediastinal_ln,other","bone,mediastinal_ln,other","bone,mediastinal_ln,other"
+canonical_patient_master,pet_distant_met_sites,other,"bone,other",1,0.769,rare_value_review,1,"bone,other","bone,other","bone,other"
+canonical_patient_master,pet_distant_met_sites,other,"brain,lung,other",1,0.769,rare_value_review,1,"brain,lung,other","brain,lung,other","brain,lung,other"
+canonical_patient_master,pet_distant_met_sites,other,"inguinal_ln,pancreatic_head",1,0.769,rare_value_review,1,"inguinal_ln,pancreatic_head","inguinal_ln,pancreatic_head","inguinal_ln,pancreatic_head"
+canonical_patient_master,pet_radiotracer_primary,demographics,dotatate,1,0.352,rare_value_review,1,DOTATATE,dotatate,DOTATATE
+canonical_patient_master,pet_radiotracer_primary,demographics,rb-82,1,0.352,rare_value_review,1,Rb-82,rb-82,Rb-82
+canonical_patient_master,pmhx_llm_note_types,other,"h_p,endocrine_note",1,0.345,rare_value_review,1,"h_p,endocrine_note","h_p,endocrine_note","h_p,endocrine_note"
+canonical_patient_master,pmhx_llm_note_types,other,"op_note,h_p",1,0.345,rare_value_review,1,"op_note,h_p","op_note,h_p","op_note,h_p"
+canonical_patient_master,pmhx_llm_note_types,other,"other_notes,endocrine_note",1,0.345,rare_value_review,1,"other_notes,endocrine_note","other_notes,endocrine_note","other_notes,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"dc_sum,endocrine_note",3,0.077,rare_value_review,1,"dc_sum,endocrine_note","dc_sum,endocrine_note","dc_sum,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"ed_note,h_p,op_note",3,0.077,rare_value_review,1,"ed_note,h_p,op_note","ed_note,h_p,op_note","ed_note,h_p,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,endocrine_note,dc_sum",3,0.077,rare_value_review,1,"h_p,endocrine_note,dc_sum","h_p,endocrine_note,dc_sum","h_p,endocrine_note,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,endocrine_note,op_note",3,0.077,rare_value_review,1,"h_p,endocrine_note,op_note","h_p,endocrine_note,op_note","h_p,endocrine_note,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,h_p,endocrine_note",3,0.077,rare_value_review,1,"op_note,h_p,endocrine_note","op_note,h_p,endocrine_note","op_note,h_p,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"dc_sum,h_p,op_note",2,0.051,rare_value_review,1,"dc_sum,h_p,op_note","dc_sum,h_p,op_note","dc_sum,h_p,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"dc_sum,op_note",2,0.051,rare_value_review,1,"dc_sum,op_note","dc_sum,op_note","dc_sum,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"endocrine_note,h_p,dc_sum",2,0.051,rare_value_review,1,"endocrine_note,h_p,dc_sum","endocrine_note,h_p,dc_sum","endocrine_note,h_p,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,dc_sum,op_note",2,0.051,rare_value_review,1,"h_p,dc_sum,op_note","h_p,dc_sum,op_note","h_p,dc_sum,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,dc_sum,endocrine_note",2,0.051,rare_value_review,1,"op_note,dc_sum,endocrine_note","op_note,dc_sum,endocrine_note","op_note,dc_sum,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,dc_sum,h_p",2,0.051,rare_value_review,1,"op_note,dc_sum,h_p","op_note,dc_sum,h_p","op_note,dc_sum,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"other_notes,endocrine_note",2,0.051,rare_value_review,1,"other_notes,endocrine_note","other_notes,endocrine_note","other_notes,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"other_notes,h_p",2,0.051,rare_value_review,1,"other_notes,h_p","other_notes,h_p","other_notes,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"other_notes,h_p,endocrine_note",2,0.051,rare_value_review,1,"other_notes,h_p,endocrine_note","other_notes,h_p,endocrine_note","other_notes,h_p,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"dc_sum,h_p,endocrine_note",1,0.026,rare_value_review,1,"dc_sum,h_p,endocrine_note","dc_sum,h_p,endocrine_note","dc_sum,h_p,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"dc_sum,other_notes,h_p",1,0.026,rare_value_review,1,"dc_sum,other_notes,h_p","dc_sum,other_notes,h_p","dc_sum,other_notes,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"ed_note,dc_sum",1,0.026,rare_value_review,1,"ed_note,dc_sum","ed_note,dc_sum","ed_note,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"ed_note,endocrine_note",1,0.026,rare_value_review,1,"ed_note,endocrine_note","ed_note,endocrine_note","ed_note,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"ed_note,endocrine_note,h_p",1,0.026,rare_value_review,1,"ed_note,endocrine_note,h_p","ed_note,endocrine_note,h_p","ed_note,endocrine_note,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"endocrine_note,h_p,op_note",1,0.026,rare_value_review,1,"endocrine_note,h_p,op_note","endocrine_note,h_p,op_note","endocrine_note,h_p,op_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"endocrine_note,history_summary",1,0.026,rare_value_review,1,"endocrine_note,history_summary","endocrine_note,history_summary","endocrine_note,history_summary"
+canonical_patient_master,pmhx_nlp_note_types,other,"endocrine_note,other_notes",1,0.026,rare_value_review,1,"endocrine_note,other_notes","endocrine_note,other_notes","endocrine_note,other_notes"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,ed_note,dc_sum",1,0.026,rare_value_review,1,"h_p,ed_note,dc_sum","h_p,ed_note,dc_sum","h_p,ed_note,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,history_summary",1,0.026,rare_value_review,1,"h_p,history_summary","h_p,history_summary","h_p,history_summary"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,op_note,dc_sum",1,0.026,rare_value_review,1,"h_p,op_note,dc_sum","h_p,op_note,dc_sum","h_p,op_note,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"h_p,other_history",1,0.026,rare_value_review,1,"h_p,other_history","h_p,other_history","h_p,other_history"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,dc_sum",1,0.026,rare_value_review,1,"op_note,dc_sum","op_note,dc_sum","op_note,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,ed_note,h_p",1,0.026,rare_value_review,1,"op_note,ed_note,h_p","op_note,ed_note,h_p","op_note,ed_note,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,endocrine_note",1,0.026,rare_value_review,1,"op_note,endocrine_note","op_note,endocrine_note","op_note,endocrine_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,endocrine_note,h_p",1,0.026,rare_value_review,1,"op_note,endocrine_note,h_p","op_note,endocrine_note,h_p","op_note,endocrine_note,h_p"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,h_p,dc_sum",1,0.026,rare_value_review,1,"op_note,h_p,dc_sum","op_note,h_p,dc_sum","op_note,h_p,dc_sum"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,h_p,dc_sum,ed_note",1,0.026,rare_value_review,1,"op_note,h_p,dc_sum,ed_note","op_note,h_p,dc_sum,ed_note","op_note,h_p,dc_sum,ed_note"
+canonical_patient_master,pmhx_nlp_note_types,other,"op_note,h_p,ed_note",1,0.026,rare_value_review,1,"op_note,h_p,ed_note","op_note,h_p,ed_note","op_note,h_p,ed_note"
+canonical_patient_master,pmhx_nlp_smoking_status,other,never smoker,7,35.0,raw_variant_drift,2,never smoker || Never smoker,never smoker,never smoker
+canonical_patient_master,pmhx_nlp_smoking_status,other,former smoker,4,20.0,raw_variant_drift,2,former smoker || Former smoker,former smoker,former smoker
+canonical_patient_master,postop_calcium_source_reliability,provenance,0.65,1,0.179,rare_value_review,1,0.65,0.65,0.65
+canonical_patient_master,postop_calcium_source_reliability,provenance,0.8,1,0.179,rare_value_review,1,0.8,0.8,0.8
+canonical_patient_master,postop_pth_source_reliability,provenance,0.9,2,0.297,rare_value_review,1,0.9,0.9,0.9
+canonical_patient_master,postop_pth_source_reliability,provenance,0.55,1,0.149,rare_value_review,1,0.55,0.55,0.55
+canonical_patient_master,postop_pth_source_reliability,provenance,0.65,1,0.149,rare_value_review,1,0.65,0.65,0.65
+canonical_patient_master,prm_molecular_risk_category,risk_scoring,fusion_positive,7,0.07,rare_value_review,1,fusion_positive,fusion_positive,fusion_positive
+canonical_patient_master,prm_rln_worst_grade,other,paralysis,7,0.064,rare_value_review,1,paralysis,paralysis,paralysis
+canonical_patient_master,prm_rln_worst_grade,other,paresis,1,0.009,rare_value_review,1,paresis,paresis,paresis
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,h_p,op_note",5,0.106,rare_value_review,1,"endocrine_note,h_p,op_note","endocrine_note,h_p,op_note","endocrine_note,h_p,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,dc_sum,endocrine_note,h_p",5,0.106,rare_value_review,1,"op_note,dc_sum,endocrine_note,h_p","op_note,dc_sum,endocrine_note,h_p","op_note,dc_sum,endocrine_note,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,h_p,ed_note",5,0.106,rare_value_review,1,"op_note,h_p,ed_note","op_note,h_p,ed_note","op_note,h_p,ed_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,h_p,endocrine_note",5,0.106,rare_value_review,1,"op_note,h_p,endocrine_note","op_note,h_p,endocrine_note","op_note,h_p,endocrine_note"
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,h_p",4,0.085,rare_value_review,1,"dc_sum,h_p","dc_sum,h_p","dc_sum,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,op_note",4,0.085,rare_value_review,1,"endocrine_note,op_note","endocrine_note,op_note","endocrine_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,endocrine_note",4,0.085,rare_value_review,1,"op_note,endocrine_note","op_note,endocrine_note","op_note,endocrine_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,other_notes,h_p",4,0.085,rare_value_review,1,"op_note,other_notes,h_p","op_note,other_notes,h_p","op_note,other_notes,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"other_notes,op_note",4,0.085,rare_value_review,1,"other_notes,op_note","other_notes,op_note","other_notes,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,other_notes,op_note",3,0.064,rare_value_review,1,"h_p,other_notes,op_note","h_p,other_notes,op_note","h_p,other_notes,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,dc_sum,endocrine_note",3,0.064,rare_value_review,1,"op_note,dc_sum,endocrine_note","op_note,dc_sum,endocrine_note","op_note,dc_sum,endocrine_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,endocrine_note,h_p",3,0.064,rare_value_review,1,"op_note,endocrine_note,h_p","op_note,endocrine_note,h_p","op_note,endocrine_note,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"other_notes,endocrine_note,op_note",3,0.064,rare_value_review,1,"other_notes,endocrine_note,op_note","other_notes,endocrine_note,op_note","other_notes,endocrine_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,endocrine_note,h_p,op_note",2,0.042,rare_value_review,1,"dc_sum,endocrine_note,h_p,op_note","dc_sum,endocrine_note,h_p,op_note","dc_sum,endocrine_note,h_p,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,dc_sum",2,0.042,rare_value_review,1,"h_p,dc_sum","h_p,dc_sum","h_p,dc_sum"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,ed_note,op_note",2,0.042,rare_value_review,1,"h_p,ed_note,op_note","h_p,ed_note,op_note","h_p,ed_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,endocrine_note,dc_sum,op_note",2,0.042,rare_value_review,1,"h_p,endocrine_note,dc_sum,op_note","h_p,endocrine_note,dc_sum,op_note","h_p,endocrine_note,dc_sum,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,endocrine_note,dc_sum",2,0.042,rare_value_review,1,"op_note,endocrine_note,dc_sum","op_note,endocrine_note,dc_sum","op_note,endocrine_note,dc_sum"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,endocrine_note,dc_sum,h_p",2,0.042,rare_value_review,1,"op_note,endocrine_note,dc_sum,h_p","op_note,endocrine_note,dc_sum,h_p","op_note,endocrine_note,dc_sum,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,other_notes",2,0.042,rare_value_review,1,"op_note,other_notes","op_note,other_notes","op_note,other_notes"
+canonical_patient_master,proc_nlp_note_types,other,other_notes,2,0.042,rare_value_review,1,other_notes,other_notes,other_notes
+canonical_patient_master,proc_nlp_note_types,other,"other_notes,h_p",2,0.042,rare_value_review,1,"other_notes,h_p","other_notes,h_p","other_notes,h_p"
+canonical_patient_master,proc_nlp_note_types,other,dc_sum,1,0.021,rare_value_review,1,dc_sum,dc_sum,dc_sum
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,endocrine_note,op_note",1,0.021,rare_value_review,1,"dc_sum,endocrine_note,op_note","dc_sum,endocrine_note,op_note","dc_sum,endocrine_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,h_p,ed_note,op_note",1,0.021,rare_value_review,1,"dc_sum,h_p,ed_note,op_note","dc_sum,h_p,ed_note,op_note","dc_sum,h_p,ed_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,other_notes,h_p,op_note",1,0.021,rare_value_review,1,"dc_sum,other_notes,h_p,op_note","dc_sum,other_notes,h_p,op_note","dc_sum,other_notes,h_p,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"dc_sum,other_notes,op_note",1,0.021,rare_value_review,1,"dc_sum,other_notes,op_note","dc_sum,other_notes,op_note","dc_sum,other_notes,op_note"
+canonical_patient_master,proc_nlp_note_types,other,ed_note,1,0.021,rare_value_review,1,ed_note,ed_note,ed_note
+canonical_patient_master,proc_nlp_note_types,other,"ed_note,dc_sum,op_note",1,0.021,rare_value_review,1,"ed_note,dc_sum,op_note","ed_note,dc_sum,op_note","ed_note,dc_sum,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,dc_sum,h_p,op_note",1,0.021,rare_value_review,1,"endocrine_note,dc_sum,h_p,op_note","endocrine_note,dc_sum,h_p,op_note","endocrine_note,dc_sum,h_p,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,dc_sum,op_note",1,0.021,rare_value_review,1,"endocrine_note,dc_sum,op_note","endocrine_note,dc_sum,op_note","endocrine_note,dc_sum,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,other_notes",1,0.021,rare_value_review,1,"endocrine_note,other_notes","endocrine_note,other_notes","endocrine_note,other_notes"
+canonical_patient_master,proc_nlp_note_types,other,"endocrine_note,other_notes,h_p,op_note",1,0.021,rare_value_review,1,"endocrine_note,other_notes,h_p,op_note","endocrine_note,other_notes,h_p,op_note","endocrine_note,other_notes,h_p,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,dc_sum,endocrine_note,op_note",1,0.021,rare_value_review,1,"h_p,dc_sum,endocrine_note,op_note","h_p,dc_sum,endocrine_note,op_note","h_p,dc_sum,endocrine_note,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,history_summary",1,0.021,rare_value_review,1,"h_p,history_summary","h_p,history_summary","h_p,history_summary"
+canonical_patient_master,proc_nlp_note_types,other,"h_p,history_summary,op_note",1,0.021,rare_value_review,1,"h_p,history_summary,op_note","h_p,history_summary,op_note","h_p,history_summary,op_note"
+canonical_patient_master,proc_nlp_note_types,other,"history_summary,op_note,h_p",1,0.021,rare_value_review,1,"history_summary,op_note,h_p","history_summary,op_note,h_p","history_summary,op_note,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,dc_sum,other_notes",1,0.021,rare_value_review,1,"op_note,dc_sum,other_notes","op_note,dc_sum,other_notes","op_note,dc_sum,other_notes"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,ed_note",1,0.021,rare_value_review,1,"op_note,ed_note","op_note,ed_note","op_note,ed_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,h_p,dc_sum,endocrine_note",1,0.021,rare_value_review,1,"op_note,h_p,dc_sum,endocrine_note","op_note,h_p,dc_sum,endocrine_note","op_note,h_p,dc_sum,endocrine_note"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,h_p,dc_sum,other_notes",1,0.021,rare_value_review,1,"op_note,h_p,dc_sum,other_notes","op_note,h_p,dc_sum,other_notes","op_note,h_p,dc_sum,other_notes"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,history_summary",1,0.021,rare_value_review,1,"op_note,history_summary","op_note,history_summary","op_note,history_summary"
+canonical_patient_master,proc_nlp_note_types,other,"op_note,other_history,h_p",1,0.021,rare_value_review,1,"op_note,other_history,h_p","op_note,other_history,h_p","op_note,other_history,h_p"
+canonical_patient_master,proc_nlp_note_types,other,"other_notes,endocrine_note",1,0.021,rare_value_review,1,"other_notes,endocrine_note","other_notes,endocrine_note","other_notes,endocrine_note"
+canonical_patient_master,proc_nlp_note_types,other,"other_notes,endocrine_note,h_p",1,0.021,rare_value_review,1,"other_notes,endocrine_note,h_p","other_notes,endocrine_note,h_p","other_notes,endocrine_note,h_p"
+canonical_patient_master,pshx_llm_note_types,other,"h_p,dc_sum",2,0.107,rare_value_review,1,"h_p,dc_sum","h_p,dc_sum","h_p,dc_sum"
+canonical_patient_master,pshx_llm_note_types,other,op_note,2,0.107,rare_value_review,1,op_note,op_note,op_note
+canonical_patient_master,pshx_llm_note_types,other,"endocrine_note,history_summary",1,0.054,rare_value_review,1,"endocrine_note,history_summary","endocrine_note,history_summary","endocrine_note,history_summary"
+canonical_patient_master,pshx_llm_note_types,other,"h_p,ed_note",1,0.054,rare_value_review,1,"h_p,ed_note","h_p,ed_note","h_p,ed_note"
+canonical_patient_master,pshx_llm_note_types,other,"h_p,history_summary",1,0.054,rare_value_review,1,"h_p,history_summary","h_p,history_summary","h_p,history_summary"
+canonical_patient_master,pshx_llm_note_types,other,"h_p,other_notes",1,0.054,rare_value_review,1,"h_p,other_notes","h_p,other_notes","h_p,other_notes"
+canonical_patient_master,pshx_llm_note_types,other,"history_summary,h_p",1,0.054,rare_value_review,1,"history_summary,h_p","history_summary,h_p","history_summary,h_p"
+canonical_patient_master,pshx_llm_note_types,other,"other_notes,h_p",1,0.054,rare_value_review,1,"other_notes,h_p","other_notes,h_p","other_notes,h_p"
+canonical_patient_master,rai_dose_confidence_worst,treatment,0.4,1,0.402,rare_value_review,1,0.4,0.4,0.4
+canonical_patient_master,rai_dose_confidence_worst,treatment,0.7,1,0.402,rare_value_review,1,0.7,0.7,0.7
+canonical_patient_master,rai_dose_source,treatment,other_notes,2,0.725,rare_value_review,1,other_notes,other_notes,other_notes
+canonical_patient_master,rai_dose_source,treatment,dc_sum,1,0.362,rare_value_review,1,dc_sum,dc_sum,dc_sum
+canonical_patient_master,rai_dose_source,treatment,ed_note,1,0.362,rare_value_review,1,ed_note,ed_note,ed_note
+canonical_patient_master,ras_protein_change_v11,molecular,g13r,3,5.455,raw_variant_drift,2,G13R || g13R,g13r,G13R
+canonical_patient_master,recurrence_definition,recurrence_survival,fna_bethesda_v_suspicious,5,0.046,rare_value_review,1,fna_bethesda_v_suspicious,fna_bethesda_v_suspicious,fna_bethesda_v_suspicious
+canonical_patient_master,recurrence_histology,histology,ptc,234,53.182,raw_variant_drift;leading_trailing_whitespace,2,PTC || PTC ,ptc,PTC
+canonical_patient_master,recurrence_histology,histology,metastatic ptc,82,18.636,raw_variant_drift,3,metastatic PTC || Metastatic PTC || metastatic pTC,metastatic ptc,metastatic PTC
+canonical_patient_master,recurrence_histology,histology,follicular carcinoma,54,12.273,raw_variant_drift,2,follicular carcinoma || Follicular carcinoma,follicular carcinoma,follicular carcinoma
+canonical_patient_master,recurrence_histology,histology,metastatic mtc,9,2.045,raw_variant_drift,2,metastatic MTC || Metastatic MTC,metastatic mtc,metastatic MTC
+canonical_patient_master,recurrence_histology,histology,metastatic ptc tall cell variant,4,0.909,raw_variant_drift,2,metastatic PTC tall cell variant || Metastatic PTC tall cell variant,metastatic ptc tall cell variant,metastatic PTC tall cell variant
+canonical_patient_master,recurrence_histology,histology,poorly differentiated thyroid carcinoma,3,0.682,raw_variant_drift,2,Poorly differentiated thyroid carcinoma || poorly differentiated thyroid carcinoma,poorly differentiated thyroid carcinoma,Poorly differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology,histology,metastatic carcinoma,2,0.455,raw_variant_drift;rare_value_review,2,Metastatic Carcinoma || metastatic carcinoma,metastatic carcinoma,Metastatic Carcinoma
+canonical_patient_master,recurrence_histology,histology,recurrent/metastatic follicular carcinoma,2,0.455,raw_variant_drift;rare_value_review,2,Recurrent/metastatic follicular carcinoma || recurrent/metastatic follicular Carcinoma,recurrent/metastatic follicular carcinoma,Recurrent/metastatic follicular carcinoma
+canonical_patient_master,recurrence_histology,histology,recurrent/metastatic ptc,2,0.455,rare_value_review,1,recurrent/metastatic PTC,recurrent/metastatic ptc,recurrent/metastatic PTC
+canonical_patient_master,recurrence_histology,histology,angiosarcoma of the thyroid,1,0.227,rare_value_review,1,angiosarcoma of the thyroid,angiosarcoma of the thyroid,angiosarcoma of the thyroid
+canonical_patient_master,recurrence_histology,histology,differentiated high grade thyroid carcinoma,1,0.227,rare_value_review,1,differentiated high grade thyroid carcinoma,differentiated high grade thyroid carcinoma,differentiated high grade thyroid carcinoma
+canonical_patient_master,recurrence_histology,histology,differentiated thyroid carcinoma,1,0.227,rare_value_review,1,differentiated thyroid carcinoma,differentiated thyroid carcinoma,differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology,histology,ftump,1,0.227,rare_value_review,1,FTUMP,ftump,FTUMP
+canonical_patient_master,recurrence_histology,histology,metastatic high grade neuroendocrine tumor,1,0.227,rare_value_review,1,metastatic high grade neuroendocrine tumor,metastatic high grade neuroendocrine tumor,metastatic high grade neuroendocrine tumor
+canonical_patient_master,recurrence_histology,histology,metastatic poorly differentiated thyroid carcinoma,1,0.227,rare_value_review,1,metastatic poorly differentiated thyroid carcinoma,metastatic poorly differentiated thyroid carcinoma,metastatic poorly differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology,histology,metastatic ptc calssical with focal tall cell features (<5%),1,0.227,rare_value_review,1,metastatic PTC calssical with focal tall cell features (<5%),metastatic ptc calssical with focal tall cell features (<5%),metastatic PTC calssical with focal tall cell features (<5%)
+canonical_patient_master,recurrence_histology,histology,metastatic ptc classic,1,0.227,rare_value_review,1,metastatic PTC classic,metastatic ptc classic,metastatic PTC classic
+canonical_patient_master,recurrence_histology,histology,metastatic ptc classic subtype with tall cell component ~25%,1,0.227,rare_value_review,1,"metastatic PTC
+classic subtype with tall cell component ~25%",metastatic ptc classic subtype with tall cell component ~25%,metastatic PTC classic subtype with tall cell component ~25%
+canonical_patient_master,recurrence_histology,histology,metastatic ptc follicular,1,0.227,rare_value_review,1,metastatic PTC follicular,metastatic ptc follicular,metastatic PTC follicular
+canonical_patient_master,recurrence_histology,histology,metastatic ptc high grade,1,0.227,rare_value_review,1,metastatic PTC high grade,metastatic ptc high grade,metastatic PTC high grade
+canonical_patient_master,recurrence_histology,histology,metastatic ptc onocytic classical,1,0.227,rare_value_review,1,metastatic PTC onocytic classical,metastatic ptc onocytic classical,metastatic PTC onocytic classical
+canonical_patient_master,recurrence_histology,histology,metastatic ptc with focal tall cell features,1,0.227,rare_value_review,1,metastatic PTC with focal tall cell features,metastatic ptc with focal tall cell features,metastatic PTC with focal tall cell features
+canonical_patient_master,recurrence_histology,histology,metastatic ptc with tall cell features,1,0.227,rare_value_review,1,metastatic PTC with tall cell features,metastatic ptc with tall cell features,metastatic PTC with tall cell features
+canonical_patient_master,recurrence_histology,histology,metastatic ptc?,1,0.227,rare_value_review,1,metastatic PTC?,metastatic ptc?,metastatic PTC?
+canonical_patient_master,recurrence_histology,histology,metastatic thyroid carcinoma,1,0.227,rare_value_review,1,metastatic thyroid carcinoma,metastatic thyroid carcinoma,metastatic thyroid carcinoma
+canonical_patient_master,recurrence_histology,histology,metastatic/recurrent ptc,1,0.227,rare_value_review,1,metastatic/recurrent PTC,metastatic/recurrent ptc,metastatic/recurrent PTC
+canonical_patient_master,recurrence_histology,histology,metastatic/recurrent ptc classical,1,0.227,rare_value_review,1,metastatic/recurrent PTC classical,metastatic/recurrent ptc classical,metastatic/recurrent PTC classical
+canonical_patient_master,recurrence_histology,histology,recurrent anaplastic carcinoma,1,0.227,rare_value_review,1,recurrent anaplastic carcinoma,recurrent anaplastic carcinoma,recurrent anaplastic carcinoma
+canonical_patient_master,recurrence_histology,histology,recurrent differentiated high grade thyroid carcinoma metastatic,1,0.227,rare_value_review,1,recurrent differentiated high grade thyroid carcinoma metastatic,recurrent differentiated high grade thyroid carcinoma metastatic,recurrent differentiated high grade thyroid carcinoma metastatic
+canonical_patient_master,seroma_status,other,probable,4,0.037,rare_value_review,1,probable,probable,probable
+canonical_patient_master,surg_procedure_type,treatment,unknown,9,0.103,rare_value_review,1,unknown,unknown,unknown
+canonical_patient_master,syn_lymphatic_invasion_clean,other,absent,1,0.029,rare_value_review,1,absent,absent,absent
+canonical_patient_master,syn_margin_status_synoptic,other,x,3358,84.862,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,syn_margin_status_synoptic,other,involved,553,13.975,raw_variant_drift,2,involved || Involved,involved,involved
+canonical_patient_master,syn_margin_status_synoptic,other,0.1,1,0.025,rare_value_review,1,0.1,0.1,0.1
+canonical_patient_master,syn_margin_status_synoptic,other,<1,1,0.025,rare_value_review,1,<1,<1,<1
+canonical_patient_master,syn_margin_status_synoptic,other,involvd,1,0.025,rare_value_review,1,involvd,involvd,involvd
+canonical_patient_master,syn_margin_status_synoptic,other,n/s,1,0.025,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,syn_margin_status_synoptic,other,negative,1,0.025,rare_value_review,1,negative,negative,negative
+canonical_patient_master,syn_mitotic_rate_qualifier,other,extracted,2,0.491,rare_value_review,1,extracted,extracted,extracted
+canonical_patient_master,syn_tumor2_histologic_type,other,ptc,1162,86.33,raw_variant_drift;leading_trailing_whitespace,3,PTC || PTC  || pTC,ptc,PTC
+canonical_patient_master,syn_tumor2_histologic_type,other,follicular carcinoma,40,2.972,raw_variant_drift,2,follicular carcinoma || Follicular carcinoma,follicular carcinoma,follicular carcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,metastatic ptc,2,0.149,rare_value_review,1,metastatic PTC,metastatic ptc,metastatic PTC
+canonical_patient_master,syn_tumor2_histologic_type,other,ptc follicular variant,2,0.149,rare_value_review,1,PTC follicular variant,ptc follicular variant,PTC follicular variant
+canonical_patient_master,syn_tumor2_histologic_type,other,(niftp),1,0.074,leading_trailing_whitespace;rare_value_review,1, (NIFTP),(niftp),(NIFTP)
+canonical_patient_master,syn_tumor2_histologic_type,other,*ptc,1,0.074,rare_value_review,1,*PTC,*ptc,*PTC
+canonical_patient_master,syn_tumor2_histologic_type,other,anaplastic carcinoma,1,0.074,rare_value_review,1,anaplastic carcinoma,anaplastic carcinoma,anaplastic carcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,angiosarcoma of the thyroid,1,0.074,rare_value_review,1,angiosarcoma of the thyroid,angiosarcoma of the thyroid,angiosarcoma of the thyroid
+canonical_patient_master,syn_tumor2_histologic_type,other,follicular caricinoma,1,0.074,rare_value_review,1,Follicular caricinoma,follicular caricinoma,Follicular caricinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,follicular tumor of uncertain malignant potential with focal high-grade features,1,0.074,leading_trailing_whitespace;repeated_internal_whitespace;rare_value_review,1,Follicular tumor of uncertain malignant potential  with focal high-grade features ,follicular tumor of uncertain malignant potential with focal high-grade features,Follicular tumor of uncertain malignant potential with focal high-grade features
+canonical_patient_master,syn_tumor2_histologic_type,other,hürthle cell neoplasm of uncertain malignant potential,1,0.074,rare_value_review,1,HÜRTHLE cell neoplasm of uncertain malignant potential,hürthle cell neoplasm of uncertain malignant potential,HÜRTHLE cell neoplasm of uncertain malignant potential
+canonical_patient_master,syn_tumor2_histologic_type,other,insular carcinoma,1,0.074,rare_value_review,1,insular carcinoma,insular carcinoma,insular carcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,"low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, ft-ump)",1,0.074,rare_value_review,1,"Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP)","low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, ft-ump)","Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP)"
+canonical_patient_master,syn_tumor2_histologic_type,other,medullary,1,0.074,rare_value_review,1,medullary,medullary,medullary
+canonical_patient_master,syn_tumor2_histologic_type,other,medullary carcinoma,1,0.074,rare_value_review,1,medullary carcinoma,medullary carcinoma,medullary carcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,metastatic insular carcinoma,1,0.074,rare_value_review,1,metastatic insular carcinoma,metastatic insular carcinoma,metastatic insular carcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,metastatic mtc,1,0.074,rare_value_review,1,metastatic MTC,metastatic mtc,metastatic MTC
+canonical_patient_master,syn_tumor2_histologic_type,other,metastatic ptc classical,1,0.074,rare_value_review,1,metastatic PTC classical,metastatic ptc classical,metastatic PTC classical
+canonical_patient_master,syn_tumor2_histologic_type,other,metastatic ptc classical?,1,0.074,rare_value_review,1,metastatic PTC classical?,metastatic ptc classical?,metastatic PTC classical?
+canonical_patient_master,syn_tumor2_histologic_type,other,oncocytic follicular tumor of uncertain malignant potential,1,0.074,leading_trailing_whitespace;rare_value_review,1,Oncocytic follicular tumor of uncertain malignant potential ,oncocytic follicular tumor of uncertain malignant potential,Oncocytic follicular tumor of uncertain malignant potential
+canonical_patient_master,syn_tumor2_histologic_type,other,ptc follicular variant microcarcinoma,1,0.074,rare_value_review,1,PTC follicular variant microcarcinoma,ptc follicular variant microcarcinoma,PTC follicular variant microcarcinoma
+canonical_patient_master,syn_tumor2_histologic_type,other,ptc nos,1,0.074,rare_value_review,1,PTC NOS,ptc nos,PTC NOS
+canonical_patient_master,syn_tumor2_histologic_type,other,sarcomatoid anaplastic carcinoma,1,0.074,rare_value_review,1,sarcomatoid anaplastic carcinoma,sarcomatoid anaplastic carcinoma,sarcomatoid anaplastic carcinoma
+canonical_patient_master,voice_outcome_category,other,permanent_paralysis,5,0.046,rare_value_review,1,permanent_paralysis,permanent_paralysis,permanent_paralysis
+canonical_patient_master,voice_outcome_category,other,prolonged_paresis,1,0.009,rare_value_review,1,prolonged_paresis,prolonged_paresis,prolonged_paresis
+canonical_patient_master,wound_infection_status,other,confirmed_duration_unknown,2,0.018,rare_value_review,1,confirmed_duration_unknown,confirmed_duration_unknown,confirmed_duration_unknown
+canonical_patient_master,wound_infection_status,other,probable,2,0.018,rare_value_review,1,probable,probable,probable
+canonical_patient_master,lab_tsh_unit,other,ng/ml,8,0.074,rare_value_review,1,ng/mL,ng/ml,ng/mL
+canonical_patient_master,lab_tsh_unit,other,uiu/ml,5,0.046,raw_variant_drift;rare_value_review,2,uIU/ml || uIU/mL,uiu/ml,uIU/ml
+canonical_patient_master,lab_tsh_unit,other,mg/dl,2,0.018,raw_variant_drift;rare_value_review,2,mg/dL || mg/dl,mg/dl,mg/dL
+canonical_patient_master,lab_tsh_unit,other,mci,1,0.009,rare_value_review,1,mcI,mci,mcI
+canonical_patient_master,lab_tsh_unit,other,ng/dl,1,0.009,rare_value_review,1,ng/dL,ng/dl,ng/dL
+canonical_patient_master,lab_vitd_unit,other,iu/l,1,0.009,rare_value_review,1,IU/L,iu/l,IU/L
+canonical_patient_master,lab_vitd_unit,other,units,1,0.009,rare_value_review,1,units,units,units
+canonical_patient_master,lab_pth_unit,other,ng/ml,1,0.009,rare_value_review,1,ng/mL,ng/ml,ng/mL
+canonical_patient_master,lab_calcium_unit,other,l,1,0.009,rare_value_review,1,L,l,L
+canonical_patient_master,lab_calcium_unit,other,mcg,1,0.009,rare_value_review,1,mcg,mcg,mcg
+canonical_patient_master,lab_calcium_unit,other,mg,1,0.009,rare_value_review,1,mg,mg,mg
+canonical_patient_master,lab_calcium_unit,other,ug/day,1,0.009,rare_value_review,1,ug/day,ug/day,ug/day
+canonical_patient_master,cnln_modalities_present,other,clinical; imaging; pathology,2,0.139,rare_value_review,1,clinical; imaging; pathology,clinical; imaging; pathology,clinical; imaging; pathology
+canonical_patient_master,cnln_modalities_present,other,clinical; pathology; surgical_path,2,0.139,rare_value_review,1,clinical; pathology; surgical_path,clinical; pathology; surgical_path,clinical; pathology; surgical_path
+canonical_patient_master,cnln_modalities_present,other,clinical; surgical_path; pathology,2,0.139,rare_value_review,1,clinical; surgical_path; pathology,clinical; surgical_path; pathology,clinical; surgical_path; pathology
+canonical_patient_master,cnln_modalities_present,other,imaging; clinical,2,0.139,rare_value_review,1,imaging; clinical,imaging; clinical,imaging; clinical
+canonical_patient_master,cnln_modalities_present,other,surgical_path; clinical; imaging,2,0.139,rare_value_review,1,surgical_path; clinical; imaging,surgical_path; clinical; imaging,surgical_path; clinical; imaging
+canonical_patient_master,cnln_modalities_present,other,ambiguous,1,0.07,rare_value_review,1,ambiguous,ambiguous,ambiguous
+canonical_patient_master,cnln_modalities_present,other,ambiguous; pathology; imaging,1,0.07,rare_value_review,1,ambiguous; pathology; imaging,ambiguous; pathology; imaging,ambiguous; pathology; imaging
+canonical_patient_master,cnln_modalities_present,other,imaging; ambiguous,1,0.07,rare_value_review,1,imaging; ambiguous,imaging; ambiguous,imaging; ambiguous
+canonical_patient_master,cnln_modalities_present,other,imaging; clinical; pathology,1,0.07,rare_value_review,1,imaging; clinical; pathology,imaging; clinical; pathology,imaging; clinical; pathology
+canonical_patient_master,cnln_modalities_present,other,imaging; pathology,1,0.07,rare_value_review,1,imaging; pathology,imaging; pathology,imaging; pathology
+canonical_patient_master,cnln_modalities_present,other,pathology; clinical,1,0.07,rare_value_review,1,pathology; clinical,pathology; clinical,pathology; clinical
+canonical_patient_master,cnln_modalities_present,other,pathology; clinical; imaging,1,0.07,rare_value_review,1,pathology; clinical; imaging,pathology; clinical; imaging,pathology; clinical; imaging
+canonical_patient_master,cnln_modalities_present,other,pathology; imaging; clinical,1,0.07,rare_value_review,1,pathology; imaging; clinical,pathology; imaging; clinical,pathology; imaging; clinical
+canonical_patient_master,cnln_modalities_present,other,pathology; imaging; clinical; surgical_path,1,0.07,rare_value_review,1,pathology; imaging; clinical; surgical_path,pathology; imaging; clinical; surgical_path,pathology; imaging; clinical; surgical_path
+canonical_patient_master,cnln_modalities_present,other,pathology; imaging; surgical_path,1,0.07,rare_value_review,1,pathology; imaging; surgical_path,pathology; imaging; surgical_path,pathology; imaging; surgical_path
+canonical_patient_master,cnln_modalities_present,other,pathology; surgical_path; clinical,1,0.07,rare_value_review,1,pathology; surgical_path; clinical,pathology; surgical_path; clinical,pathology; surgical_path; clinical
+canonical_patient_master,cnln_img_laterality,laterality,lateral,2,0.735,rare_value_review,1,lateral,lateral,lateral
+canonical_patient_master,cnln_img_laterality,laterality,left; bilateral,2,0.735,rare_value_review,1,left; bilateral,left; bilateral,left; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,left; right; bilateral,2,0.735,rare_value_review,1,left; right; bilateral,left; right; bilateral,left; right; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,null; bilateral,2,0.735,rare_value_review,1,null; bilateral,null; bilateral,null; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,bilateral; central,1,0.368,rare_value_review,1,bilateral; central,bilateral; central,bilateral; central
+canonical_patient_master,cnln_img_laterality,laterality,bilateral; lateral neck,1,0.368,rare_value_review,1,bilateral; lateral neck,bilateral; lateral neck,bilateral; lateral neck
+canonical_patient_master,cnln_img_laterality,laterality,bilateral; left,1,0.368,rare_value_review,1,bilateral; left,bilateral; left,bilateral; left
+canonical_patient_master,cnln_img_laterality,laterality,bilateral; right,1,0.368,rare_value_review,1,bilateral; right,bilateral; right,bilateral; right
+canonical_patient_master,cnln_img_laterality,laterality,central; left,1,0.368,rare_value_review,1,central; left,central; left,central; left
+canonical_patient_master,cnln_img_laterality,laterality,central; left; bilateral,1,0.368,rare_value_review,1,central; left; bilateral,central; left; bilateral,central; left; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,central; right; left,1,0.368,rare_value_review,1,central; right; left,central; right; left,central; right; left
+canonical_patient_master,cnln_img_laterality,laterality,lateral neck; bilateral,1,0.368,rare_value_review,1,lateral neck; bilateral,lateral neck; bilateral,lateral neck; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,lateral; central,1,0.368,rare_value_review,1,lateral; central,lateral; central,lateral; central
+canonical_patient_master,cnln_img_laterality,laterality,left; central; bilateral,1,0.368,rare_value_review,1,left; central; bilateral,left; central; bilateral,left; central; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,null; lateral; bilateral,1,0.368,rare_value_review,1,null; lateral; bilateral,null; lateral; bilateral,null; lateral; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,null; right; bilateral,1,0.368,rare_value_review,1,null; right; bilateral,null; right; bilateral,null; right; bilateral
+canonical_patient_master,cnln_img_laterality,laterality,right; bilateral; left,1,0.368,rare_value_review,1,right; bilateral; left,right; bilateral; left,right; bilateral; left
+canonical_patient_master,cnln_img_laterality,laterality,right; central; left,1,0.368,rare_value_review,1,right; central; left,right; central; left,right; central; left
+canonical_patient_master,cnln_img_laterality,laterality,right; lateral neck,1,0.368,rare_value_review,1,right; lateral neck,right; lateral neck,right; lateral neck
+canonical_patient_master,cnln_img_laterality,laterality,right; left; central,1,0.368,rare_value_review,1,right; left; central,right; left; central,right; left; central
+canonical_patient_master,followup_recovery_method,provenance,rai_treatment_episode_v2,7,0.064,rare_value_review,1,rai_treatment_episode_v2,rai_treatment_episode_v2,rai_treatment_episode_v2
+canonical_patient_master,ct_exam_type_first,other,ct angio chest,4,0.132,rare_value_review,1,CT angio chest,ct angio chest,CT angio chest
+canonical_patient_master,ct_exam_type_first,other,ct orbit with contrast,4,0.132,rare_value_review,1,CT orbit with contrast,ct orbit with contrast,CT orbit with contrast
+canonical_patient_master,ct_exam_type_first,other,ct abdomen and pelvis with contrast,3,0.099,rare_value_review,1,CT abdomen and pelvis with contrast,ct abdomen and pelvis with contrast,CT abdomen and pelvis with contrast
+canonical_patient_master,ct_exam_type_first,other,ct orbit,3,0.099,rare_value_review,1,CT orbit,ct orbit,CT orbit
+canonical_patient_master,ct_exam_type_first,other,ct abdomen and pelvis,2,0.066,rare_value_review,1,CT abdomen and pelvis,ct abdomen and pelvis,CT abdomen and pelvis
+canonical_patient_master,ct_exam_type_first,other,ct orbit non-contrast,2,0.066,rare_value_review,1,CT orbit non-contrast,ct orbit non-contrast,CT orbit non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct orbit without contrast,2,0.066,rare_value_review,1,CT orbit without contrast,ct orbit without contrast,CT orbit without contrast
+canonical_patient_master,ct_exam_type_first,other,ct sinus,2,0.066,rare_value_review,1,CT sinus,ct sinus,CT sinus
+canonical_patient_master,ct_exam_type_first,other,ct abdomen pelvis non-contrast,1,0.033,rare_value_review,1,CT abdomen pelvis non-contrast,ct abdomen pelvis non-contrast,CT abdomen pelvis non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct angio head and neck,1,0.033,rare_value_review,1,CT angio head and neck,ct angio head and neck,CT angio head and neck
+canonical_patient_master,ct_exam_type_first,other,ct angio head with contrast,1,0.033,rare_value_review,1,CT angio head with contrast,ct angio head with contrast,CT angio head with contrast
+canonical_patient_master,ct_exam_type_first,other,ct angiogram combo head neck w wo contrast,1,0.033,rare_value_review,1,CT angiogram combo head neck w wo contrast,ct angiogram combo head neck w wo contrast,CT angiogram combo head neck w wo contrast
+canonical_patient_master,ct_exam_type_first,other,ct angiography head and neck,1,0.033,rare_value_review,1,CT angiography head and neck,ct angiography head and neck,CT angiography head and neck
+canonical_patient_master,ct_exam_type_first,other,ct chest,1,0.033,rare_value_review,1,CT chest,ct chest,CT chest
+canonical_patient_master,ct_exam_type_first,other,ct facial bones with contrast,1,0.033,rare_value_review,1,CT facial bones with contrast,ct facial bones with contrast,CT facial bones with contrast
+canonical_patient_master,ct_exam_type_first,other,ct maxillofacial non-contrast,1,0.033,rare_value_review,1,CT maxillofacial non-contrast,ct maxillofacial non-contrast,CT maxillofacial non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct orbits and sella with and without contrast,1,0.033,rare_value_review,1,CT orbits and sella with and without contrast,ct orbits and sella with and without contrast,CT orbits and sella with and without contrast
+canonical_patient_master,ct_exam_type_first,other,ct sinus non-contrast,1,0.033,rare_value_review,1,CT sinus non-contrast,ct sinus non-contrast,CT sinus non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct sinus/facial bone without contrast,1,0.033,rare_value_review,1,CT sinus/facial bone without contrast,ct sinus/facial bone without contrast,CT sinus/facial bone without contrast
+canonical_patient_master,ct_exam_type_first,other,ct sinuses,1,0.033,rare_value_review,1,CT sinuses,ct sinuses,CT sinuses
+canonical_patient_master,ct_exam_type_first,other,ct spine non-contrast,1,0.033,rare_value_review,1,CT spine non-contrast,ct spine non-contrast,CT spine non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct thoracic lumbar spine without contrast,1,0.033,rare_value_review,1,CT thoracic lumbar spine without contrast,ct thoracic lumbar spine without contrast,CT thoracic lumbar spine without contrast
+canonical_patient_master,ct_exam_type_first,other,ct thoracic spine,1,0.033,rare_value_review,1,CT thoracic spine,ct thoracic spine,CT thoracic spine
+canonical_patient_master,ct_exam_type_first,other,ct thoracic spine non-contrast,1,0.033,rare_value_review,1,CT thoracic spine non-contrast,ct thoracic spine non-contrast,CT thoracic spine non-contrast
+canonical_patient_master,ct_exam_type_first,other,ct thoracic spine without contrast,1,0.033,rare_value_review,1,CT thoracic spine without contrast,ct thoracic spine without contrast,CT thoracic spine without contrast
+canonical_patient_master,nsqip_match_method,provenance,mrn_date_disambig,2,0.159,rare_value_review,1,MRN_DATE_DISAMBIG,mrn_date_disambig,MRN_DATE_DISAMBIG
+canonical_patient_master,nsqip_match_method,provenance,mrn_dob_multisurgery,2,0.159,rare_value_review,1,MRN_DOB_MULTISURGERY,mrn_dob_multisurgery,MRN_DOB_MULTISURGERY
+canonical_patient_master,nsqip_hypocalcemia_predischarge,other,unknown,1,0.106,rare_value_review,1,Unknown,unknown,Unknown
+canonical_patient_master,nsqip_rln_injury,other,yes-severe hoarseness/vocal cord dysfunction; tracheostomy,2,0.211,rare_value_review,1,Yes-severe hoarseness/vocal cord dysfunction; tracheostomy,yes-severe hoarseness/vocal cord dysfunction; tracheostomy,Yes-severe hoarseness/vocal cord dysfunction; tracheostomy
+canonical_patient_master,nsqip_neck_hematoma,other,"yes-hematoma noted, tracheostomy performed",1,0.106,rare_value_review,1,"Yes-hematoma noted, tracheostomy performed","yes-hematoma noted, tracheostomy performed","Yes-hematoma noted, tracheostomy performed"
+canonical_patient_master,nsqip_neck_hematoma,other,yes-other intervention not specified,1,0.106,rare_value_review,1,Yes-other intervention not specified,yes-other intervention not specified,Yes-other intervention not specified
+canonical_patient_master,nsqip_discharge_destination,other,other facility,2,0.16,rare_value_review,1,Other facility,other facility,Other facility
+canonical_patient_master,nsqip_discharge_destination,other,rehab,2,0.16,rare_value_review,1,Rehab,rehab,Rehab
+canonical_patient_master,nsqip_discharge_destination,other,expired,1,0.08,rare_value_review,1,Expired,expired,Expired
+canonical_patient_master,nsqip_discharge_destination,other,facility which was home,1,0.08,rare_value_review,1,Facility which was home,facility which was home,Facility which was home
+canonical_patient_master,nsqip_death_30d,recurrence_survival,yes,1,0.08,rare_value_review,1,Yes,yes,Yes
+canonical_patient_master,nsqip_primary_indication,other,hyperthyroidism only,2,0.212,rare_value_review,1,Hyperthyroidism Only,hyperthyroidism only,Hyperthyroidism Only
+canonical_patient_master,nsqip_central_neck_dissection,other,unknown,1,0.106,rare_value_review,1,Unknown,unknown,Unknown
+canonical_patient_master,nsqip_t_classification,other,t4b,2,0.542,rare_value_review,1,T4b,t4b,T4b
+canonical_patient_master,nsqip_t_classification,other,tx,2,0.542,rare_value_review,1,Tx,tx,Tx
+canonical_patient_master,nsqip_multifocal,other,"more than one spot of cancer-""multifocal"", bilateral",109,29.539,repeated_internal_whitespace,1,"More than one spot of cancer-""multifocal"",  bilateral","more than one spot of cancer-""multifocal"", bilateral","More than one spot of cancer-""multifocal"", bilateral"
+canonical_patient_master,nsqip_multifocal,other,"more than one spot of cancer-""multifocal"", unilateral",58,15.718,repeated_internal_whitespace,1,"More than one spot of cancer-""multifocal"",  unilateral","more than one spot of cancer-""multifocal"", unilateral","More than one spot of cancer-""multifocal"", unilateral"
+canonical_patient_master,nsqip_m_classification,other,m1,2,0.623,rare_value_review,1,M1,m1,M1
+canonical_patient_master,nsqip_neoplasm_type,other,anaplastic cancer / poorly differentiated cancer,2,0.452,rare_value_review,1,Anaplastic cancer / poorly differentiated cancer,anaplastic cancer / poorly differentiated cancer,Anaplastic cancer / poorly differentiated cancer
+canonical_patient_master,nsqip_neoplasm_type,other,hurthle cell cancer,2,0.452,rare_value_review,1,Hurthle cell cancer,hurthle cell cancer,Hurthle cell cancer
+canonical_patient_master,nsqip_neoplasm_type,other,other malignant,2,0.452,rare_value_review,1,Other malignant,other malignant,Other malignant
+canonical_patient_master,para_removal_intent,other,not stated,1,0.027,rare_value_review,1,not stated,not stated,not stated
+canonical_patient_master,para_removal_intent,other,purposeful,1,0.027,rare_value_review,1,purposeful,purposeful,purposeful
+canonical_patient_master,ete_grade_final,other,true,4,0.097,rare_value_review,1,true,true,true
+canonical_patient_master,path_ete_raw,other,x,3234,79.362,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_ete_raw,other,extensive,23,0.564,raw_variant_drift,2,extensive || Extensive,extensive,extensive
+canonical_patient_master,path_ete_raw,other,yes,19,0.466,raw_variant_drift,2,yes || Yes,yes,yes
+canonical_patient_master,path_ete_raw,other,extesive,2,0.049,rare_value_review,1,extesive,extesive,extesive
+canonical_patient_master,path_ete_raw,other,yes (minimal),2,0.049,rare_value_review,1,yes (minimal),yes (minimal),yes (minimal)
+canonical_patient_master,path_ete_raw,other,* (see margin comment),1,0.025,rare_value_review,1,* (see margin comment),* (see margin comment),* (see margin comment)
+canonical_patient_master,path_ete_raw,other,`x,1,0.025,rare_value_review,1,`x,`x,`x
+canonical_patient_master,path_ete_raw,other,focal early extension into perithyroidal fat,1,0.025,rare_value_review,1,Focal early extension into perithyroidal fat,focal early extension into perithyroidal fat,Focal early extension into perithyroidal fat
+canonical_patient_master,path_ete_raw,other,focal right side,1,0.025,rare_value_review,1,focal right side,focal right side,focal right side
+canonical_patient_master,path_ete_raw,other,microscopic extension,1,0.025,rare_value_review,1,microscopic extension,microscopic extension,microscopic extension
+canonical_patient_master,path_ete_raw,other,minimal into fat,1,0.025,rare_value_review,1,minimal into fat,minimal into fat,minimal into fat
+canonical_patient_master,path_ete_raw,other,minimal microscopic,1,0.025,rare_value_review,1,minimal microscopic,minimal microscopic,minimal microscopic
+canonical_patient_master,path_ete_raw,other,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),1,0.025,rare_value_review,1,present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion),present (microscopic perithyroidal soft tissue only with no clinical or macroscopic evidence of invasion)
+canonical_patient_master,path_ete_raw,other,present (perithyroidal fibroadipose tissue involved),1,0.025,rare_value_review,1,present (perithyroidal fibroadipose tissue involved),present (perithyroidal fibroadipose tissue involved),present (perithyroidal fibroadipose tissue involved)
+canonical_patient_master,path_ete_raw,other,x (single microscopic focus of extension),1,0.025,rare_value_review,1,"x
+(single microscopic focus of extension)",x (single microscopic focus of extension),x (single microscopic focus of extension)
+canonical_patient_master,path_ete_raw,other,yes (focal),1,0.025,rare_value_review,1,yes (focal),yes (focal),yes (focal)
+canonical_patient_master,path_ete_raw,other,"yes, extensive",1,0.025,rare_value_review,1,"yes, extensive","yes, extensive","yes, extensive"
+canonical_patient_master,path_ete_raw,other,"yes, minimal",1,0.025,rare_value_review,1,"yes, minimal","yes, minimal","yes, minimal"
+canonical_patient_master,path_ete_raw,other,yes;minimal;,1,0.025,rare_value_review,1,Yes;minimal;,yes;minimal;,Yes;minimal;
+canonical_patient_master,path_lvi_raw,other,preesent,3,0.089,rare_value_review,1,preesent,preesent,preesent
+canonical_patient_master,path_lvi_raw,other,extensivre,2,0.059,rare_value_review,1,extensivre,extensivre,extensivre
+canonical_patient_master,path_lvi_raw,other,cannot be determined: focal interstitial psammomatoid calcification present,1,0.03,rare_value_review,1,Cannot be determined: Focal interstitial psammomatoid calcification present,cannot be determined: focal interstitial psammomatoid calcification present,Cannot be determined: Focal interstitial psammomatoid calcification present
+canonical_patient_master,path_lvi_raw,other,extensiver,1,0.03,rare_value_review,1,extensiver,extensiver,extensiver
+canonical_patient_master,path_lvi_raw,other,indeeterminate,1,0.03,rare_value_review,1,indeeterminate,indeeterminate,indeeterminate
+canonical_patient_master,path_lvi_raw,other,indetermiante,1,0.03,rare_value_review,1,indetermiante,indetermiante,indetermiante
+canonical_patient_master,path_lvi_raw,other,indeterminent,1,0.03,rare_value_review,1,indeterminent,indeterminent,indeterminent
+canonical_patient_master,path_lvi_raw,other,n/s,1,0.03,rare_value_review,1,n/s,n/s,n/s
+canonical_patient_master,path_lvi_raw,other,no,1,0.03,rare_value_review,1,no,no,no
+canonical_patient_master,path_lvi_raw,other,suspicious,1,0.03,rare_value_review,1,suspicious,suspicious,suspicious
+canonical_patient_master,path_m_stage_raw,stage,x,2577,64.345,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_m_stage_raw,stage,m1,7,0.175,raw_variant_drift,2,M1 || m1,m1,M1
+canonical_patient_master,path_m_stage_raw,stage,0,1,0.025,rare_value_review,1,0,0,0
+canonical_patient_master,path_m_stage_raw,stage,m,1,0.025,rare_value_review,1,m,m,m
+canonical_patient_master,path_pni_raw,other,x,1340,93.185,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_pni_raw,other,indeterminate,2,0.139,rare_value_review,1,indeterminate,indeterminate,indeterminate
+canonical_patient_master,path_pni_raw,other,c/a,1,0.07,rare_value_review,1,c/a,c/a,c/a
+canonical_patient_master,path_stage_raw,stage,t2,4,0.097,rare_value_review,1,T2,t2,T2
+canonical_patient_master,path_stage_raw,stage,t1a,3,0.073,rare_value_review,1,T1a,t1a,T1a
+canonical_patient_master,path_stage_raw,stage,t1a | t1a,2,0.048,rare_value_review,1,T1a | T1a,t1a | t1a,T1a | T1a
+canonical_patient_master,path_stage_raw,stage,t1b,2,0.048,rare_value_review,1,T1b,t1b,T1b
+canonical_patient_master,path_stage_raw,stage,t1b | t1a,1,0.024,rare_value_review,1,T1b | T1a,t1b | t1a,T1b | T1a
+canonical_patient_master,path_vascular_invasion_raw,other,x,2993,81.287,raw_variant_drift,2,x || X,x,x
+canonical_patient_master,path_vascular_invasion_raw,other,focal,215,5.839,raw_variant_drift,2,focal || Focal,focal,focal
+canonical_patient_master,path_vascular_invasion_raw,other,minimal,2,0.054,rare_value_review,1,minimal,minimal,minimal
+canonical_patient_master,path_vascular_invasion_raw,other,multifocal,2,0.054,rare_value_review,1,multifocal,multifocal,multifocal
+canonical_patient_master,path_vascular_invasion_raw,other,estensive,1,0.027,rare_value_review,1,estensive,estensive,estensive
+canonical_patient_master,path_vascular_invasion_raw,other,extrensive,1,0.027,rare_value_review,1,extrensive,extrensive,extrensive
+canonical_patient_master,path_vascular_invasion_raw,other,foacl,1,0.027,rare_value_review,1,foacl,foacl,foacl
+canonical_patient_master,path_vascular_invasion_raw,other,identified,1,0.027,rare_value_review,1,identified,identified,identified
+canonical_patient_master,path_vascular_invasion_raw,other,limited,1,0.027,rare_value_review,1,limited,limited,limited
+canonical_patient_master,path_vascular_invasion_raw,other,presnt,1,0.027,rare_value_review,1,presnt,presnt,presnt
+canonical_patient_master,path_vascular_invasion_raw,other,prominent,1,0.027,rare_value_review,1,prominent,prominent,prominent
+canonical_patient_master,path_vascular_invasion_raw,other,s,1,0.027,rare_value_review,1,s,s,s
+canonical_patient_master,path_vascular_invasion_raw,other,suspicious,1,0.027,rare_value_review,1,suspicious,suspicious,suspicious
+canonical_patient_master,recurrence_site_text,recurrence_survival,lung,1,0.079,rare_value_review,1,lung,lung,lung
+canonical_patient_master,recurrence_site_text,recurrence_survival,mediastinal,1,0.079,rare_value_review,1,mediastinal,mediastinal,mediastinal
+canonical_patient_master,ete_grade_final_v2,other,true,2,0.049,rare_value_review,1,true,true,true
+canonical_patient_master,ajcc8_t_stage_v2,stage,t1,2,0.048,rare_value_review,1,T1,t1,T1
+canonical_patient_master,ajcc8_n_stage_note,stage,derived from ln laterality (central-only),2,0.048,rare_value_review,1,derived from LN laterality (central-only),derived from ln laterality (central-only),derived from LN laterality (central-only)
+canonical_patient_master,ajcc8_n_stage_note,stage,derived from ln laterality (lateral involvement),2,0.048,rare_value_review,1,derived from LN laterality (lateral involvement),derived from ln laterality (lateral involvement),derived from LN laterality (lateral involvement)
+canonical_patient_master,ajcc8_stage_group_v2,stage,iva,4,0.097,rare_value_review,1,IVA,iva,IVA
+canonical_patient_master,ajcc7_missing_components,stage,n,3,0.044,rare_value_review,1,N,n,N
+canonical_patient_master,stage_migration_7_to_8,stage,ivb->i,1,0.065,rare_value_review,1,IVB->I,ivb->i,IVB->I
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc,66,55.932,raw_variant_drift,3,metastatic PTC || Metastatic PTC || metastatic pTC,metastatic ptc,metastatic PTC
+canonical_patient_master,recurrence_histology_v2,histology,metastatic mtc,10,8.475,raw_variant_drift,2,metastatic MTC || Metastatic MTC,metastatic mtc,metastatic MTC
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc tall cell variant,4,3.39,raw_variant_drift,2,metastatic PTC tall cell variant || Metastatic PTC tall cell variant,metastatic ptc tall cell variant,metastatic PTC tall cell variant
+canonical_patient_master,recurrence_histology_v2,histology,differentiated thyroid carcinoma,1,0.847,rare_value_review,1,differentiated thyroid carcinoma,differentiated thyroid carcinoma,differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,metastatic carcinoma,1,0.847,rare_value_review,1,metastatic carcinoma,metastatic carcinoma,metastatic carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,metastatic high grade neuroendocrine tumor,1,0.847,rare_value_review,1,metastatic high grade neuroendocrine tumor,metastatic high grade neuroendocrine tumor,metastatic high grade neuroendocrine tumor
+canonical_patient_master,recurrence_histology_v2,histology,metastatic poorly differentiated thyroid carcinoma,1,0.847,rare_value_review,1,metastatic poorly differentiated thyroid carcinoma,metastatic poorly differentiated thyroid carcinoma,metastatic poorly differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc calssical with focal tall cell features (<5%),1,0.847,rare_value_review,1,metastatic PTC calssical with focal tall cell features (<5%),metastatic ptc calssical with focal tall cell features (<5%),metastatic PTC calssical with focal tall cell features (<5%)
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc classic,1,0.847,rare_value_review,1,metastatic PTC classic,metastatic ptc classic,metastatic PTC classic
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc with focal tall cell features,1,0.847,rare_value_review,1,metastatic PTC with focal tall cell features,metastatic ptc with focal tall cell features,metastatic PTC with focal tall cell features
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc with tall cell features,1,0.847,rare_value_review,1,metastatic PTC with tall cell features,metastatic ptc with tall cell features,metastatic PTC with tall cell features
+canonical_patient_master,recurrence_histology_v2,histology,metastatic ptc?,1,0.847,rare_value_review,1,metastatic PTC?,metastatic ptc?,metastatic PTC?
+canonical_patient_master,recurrence_histology_v2,histology,metastatic thyroid carcinoma,1,0.847,rare_value_review,1,metastatic thyroid carcinoma,metastatic thyroid carcinoma,metastatic thyroid carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,metastatic/recurrent ptc,1,0.847,rare_value_review,1,metastatic/recurrent PTC,metastatic/recurrent ptc,metastatic/recurrent PTC
+canonical_patient_master,recurrence_histology_v2,histology,metastatic/recurrent ptc classical,1,0.847,rare_value_review,1,metastatic/recurrent PTC classical,metastatic/recurrent ptc classical,metastatic/recurrent PTC classical
+canonical_patient_master,recurrence_histology_v2,histology,poorly differentiated thyroid carcinoma,1,0.847,rare_value_review,1,Poorly differentiated thyroid carcinoma,poorly differentiated thyroid carcinoma,Poorly differentiated thyroid carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,recurrent anaplastic carcinoma,1,0.847,rare_value_review,1,recurrent anaplastic carcinoma,recurrent anaplastic carcinoma,recurrent anaplastic carcinoma
+canonical_patient_master,recurrence_histology_v2,histology,recurrent differentiated high grade thyroid carcinoma metastatic,1,0.847,rare_value_review,1,recurrent differentiated high grade thyroid carcinoma metastatic,recurrent differentiated high grade thyroid carcinoma metastatic,recurrent differentiated high grade thyroid carcinoma metastatic
+canonical_patient_master,recurrence_histology_v2,histology,recurrent/metastatic follicular carcinoma,1,0.847,rare_value_review,1,Recurrent/metastatic follicular carcinoma,recurrent/metastatic follicular carcinoma,Recurrent/metastatic follicular carcinoma
+canonical_patient_master,ajcc8_t_stage,stage,t1,2,0.048,rare_value_review,1,T1,t1,T1
+canonical_patient_master,bethesda_derivation_methods,provenance,none|rules,1,0.019,rare_value_review,1,none|rules,none|rules,none|rules
+canonical_patient_master,op_esophageal_inv_source_table,provenance,note_entities_operative_detail,2,0.581,rare_value_review,1,note_entities_operative_detail,note_entities_operative_detail,note_entities_operative_detail
+canonical_patient_master,margin_status_final,other,r0,1,0.025,rare_value_review,1,R0,r0,R0
