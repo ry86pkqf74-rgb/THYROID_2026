@@ -1,0 +1,27 @@
+{
+  "migration": "mig_169",
+  "run_timestamp_utc": "20260429_180716",
+  "posture": "read_only_motherduck_audit_no_db_writes",
+  "target_table": "main.canonical_patient_master",
+  "verified_pm_columns_audited": 1302,
+  "findings_total": 55,
+  "findings_by_bucket": {
+    "VARCHAR-where-BOOLEAN": 19,
+    "VARCHAR-date-column": 11,
+    "TIMESTAMP-where-DATE-expected": 8,
+    "VARCHAR-with-units": 7,
+    "DOUBLE-where-INTEGER-expected": 7,
+    "VARCHAR-where-numeric": 3
+  },
+  "findings_by_priority": {
+    "high": 26,
+    "medium": 22,
+    "low": 7
+  },
+  "export_dir": "exports/mig169_pm_dtype_units_audit_20260429_180550",
+  "artifacts": [
+    "pm_dtype_column_catalog.csv",
+    "pm_dtype_findings.csv",
+    "manifest.json"
+  ]
+}
