@@ -254,7 +254,10 @@ FROM (
   GROUP BY 1, 2
 ) subq
 WHERE ts.schema_name = subq.schema_name
-  AND ts.table_name  = subq.table_name;
+  AND ts.table_name  = subq.table_name
+  -- Idempotent: column UPDATEs are no-ops when already verified; skip rollup
+  -- re-append on accidental re-run.
+  AND ts.table_status <> 'verified';
 
 -- =============================================================================
 -- end migration 148 — rai_treatment_episode_v2 verified (mig_148)
