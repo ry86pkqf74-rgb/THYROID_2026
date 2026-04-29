@@ -1,0 +1,292 @@
+-- =============================================================================
+-- Migration 177 — mig_154 invasion-family PM-vs-events READ-ONLY probes
+-- =============================================================================
+-- Date: 2026-04-29
+-- Batch: mig_177_mig154_invasion_family_reconcile_20260429
+-- Lane: 66 / mig_177
+-- Posture: read-only probe SQL only. Do NOT execute UPDATE/ALTER/CREATE in this lane.
+-- Report: qc_framework_v1/reports/mig_177_mig154_invasion_family_reconcile_20260429.md
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Target tables:
+--   main.canonical_patient_master
+--   main.canonical_invasion_events_v1
+--   main.canonical_invasion_patient_rollup_v1
+-- Carry-forwards:
+--   CF-mig154-PM-VI-VS-INVASION-EVENT-PRESENT
+--   CF-mig154-PM-CAPSULAR-VS-EVENT-PRESENT
+--   CF-mig154-PM-LVI-VS-EVENT-PRESENT
+--   CF-mig154-PM-PNIANY-VS-EVENT-PRESENT
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- Scope guard: canonical patient master invariants.
+-- Expected 2026-04-29: 10,871 rows / 10,871 distinct research_id.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS n_rows,
+--        COUNT(DISTINCT research_id) AS n_distinct_research_id
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Event-grain schema. Live 2026-04-29 note: canonical_invasion_events_v1 uses
+-- invasion_type, not invasion_subtype, and does NOT expose invasion_ordinal_grade
+-- or vessel-count columns. Grade/vessel reconciliation must therefore be a
+-- decision-package item, not a simple event MAX() replay in mig_177.
+-- -----------------------------------------------------------------------------
+-- SELECT column_name, data_type
+-- FROM information_schema.columns
+-- WHERE table_catalog = 'thyroid_canonical_publication_v1_0'
+--   AND table_schema = 'main'
+--   AND table_name = 'canonical_invasion_events_v1'
+-- ORDER BY ordinal_position;
+
+-- -----------------------------------------------------------------------------
+-- Patient-rollup schema for existing event-derived bridge columns.
+-- -----------------------------------------------------------------------------
+-- SELECT column_name, data_type
+-- FROM information_schema.columns
+-- WHERE table_catalog = 'thyroid_canonical_publication_v1_0'
+--   AND table_schema = 'main'
+--   AND table_name = 'canonical_invasion_patient_rollup_v1'
+-- ORDER BY ordinal_position;
+
+-- -----------------------------------------------------------------------------
+-- PM column dtypes for the 23 mig_154 invasion-family columns.
+-- -----------------------------------------------------------------------------
+-- SELECT column_name, data_type
+-- FROM information_schema.columns
+-- WHERE table_catalog = 'thyroid_canonical_publication_v1_0'
+--   AND table_schema = 'main'
+--   AND table_name = 'canonical_patient_master'
+--   AND column_name IN (
+--       'vasc_confidence_final_v13', 'vasc_grade', 'vasc_grade_final_v13',
+--       'vasc_source_final_v13', 'vasc_vessel_count_v13',
+--       'vascular_invasion_final', 'vascular_invasion_grade',
+--       'vascular_vessel_count', 'vascular_who_2022_grade',
+--       'vi_any_present_path', 'vi_ordinal_worst', 'vi_vessels_max',
+--       'capsular_any_present_path', 'capsular_invasion_refined',
+--       'capsular_invasion_v6', 'capsular_ordinal_worst',
+--       'lvi_any_present_path', 'lvi_grade', 'lvi_ordinal_worst',
+--       'perineural_invasion', 'pni_any_present_path', 'pni_positive',
+--       'pni_refined_v6'
+--   )
+-- ORDER BY column_name;
+
+-- -----------------------------------------------------------------------------
+-- Registry provenance for the 23 columns.
+-- -----------------------------------------------------------------------------
+-- SELECT schema_name,
+--        table_name,
+--        column_name,
+--        data_type,
+--        verification_status,
+--        verification_method,
+--        batch_id,
+--        notes
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE schema_name = 'main'
+--   AND table_name = 'canonical_patient_master'
+--   AND column_name IN (
+--       'vasc_confidence_final_v13', 'vasc_grade', 'vasc_grade_final_v13',
+--       'vasc_source_final_v13', 'vasc_vessel_count_v13',
+--       'vascular_invasion_final', 'vascular_invasion_grade',
+--       'vascular_vessel_count', 'vascular_who_2022_grade',
+--       'vi_any_present_path', 'vi_ordinal_worst', 'vi_vessels_max',
+--       'capsular_any_present_path', 'capsular_invasion_refined',
+--       'capsular_invasion_v6', 'capsular_ordinal_worst',
+--       'lvi_any_present_path', 'lvi_grade', 'lvi_ordinal_worst',
+--       'perineural_invasion', 'pni_any_present_path', 'pni_positive',
+--       'pni_refined_v6'
+--   )
+-- ORDER BY column_name;
+
+-- -----------------------------------------------------------------------------
+-- Event coverage by invasion_type and finding_status.
+-- Expected live 2026-04-29: 51,751 event rows / 10,871 patients.
+-- -----------------------------------------------------------------------------
+-- SELECT invasion_type,
+--        finding_status,
+--        COUNT(*) AS n_rows,
+--        COUNT(DISTINCT research_id) AS n_patients
+-- FROM main.canonical_invasion_events_v1
+-- GROUP BY 1, 2
+-- ORDER BY 1, 2;
+
+-- -----------------------------------------------------------------------------
+-- Family 2x2 template: PM bool vs strict event-present assertion, plus existing
+-- patient-rollup bridge vs event-present. Change the first four CTE constants
+-- to replay each family.
+--
+-- Family mappings used in mig_177:
+--   vascular: pm_bool_col = vi_any_present_path,
+--             event_type = vascular_microscopic,
+--             rollup_col = any_vascular_microscopic_anywhere
+--   capsular: pm_bool_col = capsular_any_present_path,
+--             event_type = capsular,
+--             rollup_col = any_capsular_anywhere
+--   lvi:      pm_bool_col = lvi_any_present_path,
+--             event_type = lymphatic_microscopic,
+--             rollup_col = any_lymphatic_microscopic_anywhere
+--   pni:      pm_bool_col = pni_any_present_path,
+--             event_type = perineural,
+--             rollup_col = any_perineural_anywhere
+-- -----------------------------------------------------------------------------
+-- WITH ev AS (
+--   SELECT research_id,
+--          BOOL_OR(finding_status = 'present') AS ev_present,
+--          BOOL_OR(finding_status = 'suspected') AS ev_suspected,
+--          BOOL_OR(finding_status = 'indeterminate') AS ev_indeterminate,
+--          BOOL_OR(finding_status = 'absent') AS ev_absent,
+--          COUNT(*) AS ev_rows,
+--          COUNT(*) FILTER (WHERE finding_status = 'present') AS ev_present_rows
+--   FROM main.canonical_invasion_events_v1
+--   WHERE invasion_type = 'vascular_microscopic'
+--   GROUP BY 1
+-- ), base AS (
+--   SELECT CAST(pm.research_id AS VARCHAR) AS research_id,
+--          pm.vi_any_present_path AS pm_any,
+--          pr.any_vascular_microscopic_anywhere AS rollup_any,
+--          COALESCE(ev.ev_present, FALSE) AS ev_present,
+--          COALESCE(ev.ev_suspected, FALSE) AS ev_suspected,
+--          COALESCE(ev.ev_indeterminate, FALSE) AS ev_indeterminate,
+--          COALESCE(ev.ev_absent, FALSE) AS ev_absent,
+--          COALESCE(ev.ev_rows, 0) AS ev_rows,
+--          COALESCE(ev.ev_present_rows, 0) AS ev_present_rows
+--   FROM main.canonical_patient_master pm
+--   LEFT JOIN main.canonical_invasion_patient_rollup_v1 pr
+--     ON CAST(pm.research_id AS VARCHAR) = CAST(pr.research_id AS VARCHAR)
+--   LEFT JOIN ev
+--     ON CAST(pm.research_id AS VARCHAR) = CAST(ev.research_id AS VARCHAR)
+-- )
+-- SELECT COUNT(*) AS pm_rows,
+--        SUM(CASE WHEN pm_any IS TRUE  AND ev_present THEN 1 ELSE 0 END) AS pm_t_ev_t,
+--        SUM(CASE WHEN pm_any IS TRUE  AND NOT ev_present THEN 1 ELSE 0 END) AS pm_t_ev_f,
+--        SUM(CASE WHEN pm_any IS FALSE AND ev_present THEN 1 ELSE 0 END) AS pm_f_ev_t,
+--        SUM(CASE WHEN pm_any IS FALSE AND NOT ev_present THEN 1 ELSE 0 END) AS pm_f_ev_f,
+--        SUM(CASE WHEN pm_any IS NULL  AND ev_present THEN 1 ELSE 0 END) AS pm_null_ev_t,
+--        SUM(CASE WHEN pm_any IS NULL  AND NOT ev_present THEN 1 ELSE 0 END) AS pm_null_ev_f,
+--        SUM(CASE WHEN rollup_any IS TRUE  AND ev_present THEN 1 ELSE 0 END) AS roll_t_ev_t,
+--        SUM(CASE WHEN rollup_any IS TRUE  AND NOT ev_present THEN 1 ELSE 0 END) AS roll_t_ev_f,
+--        SUM(CASE WHEN rollup_any IS FALSE AND ev_present THEN 1 ELSE 0 END) AS roll_f_ev_t,
+--        SUM(CASE WHEN rollup_any IS FALSE AND NOT ev_present THEN 1 ELSE 0 END) AS roll_f_ev_f,
+--        SUM(CASE WHEN rollup_any IS NULL  AND ev_present THEN 1 ELSE 0 END) AS roll_null_ev_t,
+--        SUM(CASE WHEN rollup_any IS NULL  AND NOT ev_present THEN 1 ELSE 0 END) AS roll_null_ev_f,
+--        SUM(CASE WHEN ev_present THEN 1 ELSE 0 END) AS event_present_patients,
+--        SUM(CASE WHEN ev_suspected THEN 1 ELSE 0 END) AS event_suspected_patients,
+--        SUM(CASE WHEN ev_indeterminate THEN 1 ELSE 0 END) AS event_indeterminate_patients,
+--        SUM(CASE WHEN ev_absent THEN 1 ELSE 0 END) AS event_absent_patients,
+--        SUM(CASE WHEN ev_rows > 0 THEN 1 ELSE 0 END) AS event_any_status_patients
+-- FROM base;
+
+-- -----------------------------------------------------------------------------
+-- Compact 2x2 replay for all four families.
+-- -----------------------------------------------------------------------------
+-- WITH family_map AS (
+--   SELECT 'vascular' AS family, 'vascular_microscopic' AS event_type, 'vi_any_present_path' AS pm_bool_col
+--   UNION ALL SELECT 'capsular', 'capsular', 'capsular_any_present_path'
+--   UNION ALL SELECT 'lvi', 'lymphatic_microscopic', 'lvi_any_present_path'
+--   UNION ALL SELECT 'pni', 'perineural', 'pni_any_present_path'
+-- ), events AS (
+--   SELECT invasion_type,
+--          CAST(research_id AS VARCHAR) AS research_id,
+--          BOOL_OR(finding_status = 'present') AS ev_present
+--   FROM main.canonical_invasion_events_v1
+--   GROUP BY 1, 2
+-- ), long_pm AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id, 'vascular' AS family, vi_any_present_path AS pm_any FROM main.canonical_patient_master
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'capsular', capsular_any_present_path FROM main.canonical_patient_master
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'lvi', lvi_any_present_path FROM main.canonical_patient_master
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'pni', pni_any_present_path FROM main.canonical_patient_master
+-- ), joined AS (
+--   SELECT fm.family,
+--          fm.event_type,
+--          pm.pm_any,
+--          COALESCE(ev.ev_present, FALSE) AS ev_present
+--   FROM family_map fm
+--   JOIN long_pm pm ON pm.family = fm.family
+--   LEFT JOIN events ev ON ev.invasion_type = fm.event_type AND ev.research_id = pm.research_id
+-- )
+-- SELECT family,
+--        event_type,
+--        COUNT(*) AS pm_rows,
+--        SUM(CASE WHEN pm_any IS TRUE  AND ev_present THEN 1 ELSE 0 END) AS pm_t_ev_t,
+--        SUM(CASE WHEN pm_any IS TRUE  AND NOT ev_present THEN 1 ELSE 0 END) AS pm_t_ev_f,
+--        SUM(CASE WHEN pm_any IS FALSE AND ev_present THEN 1 ELSE 0 END) AS pm_f_ev_t,
+--        SUM(CASE WHEN pm_any IS FALSE AND NOT ev_present THEN 1 ELSE 0 END) AS pm_f_ev_f,
+--        SUM(CASE WHEN pm_any IS NULL  AND ev_present THEN 1 ELSE 0 END) AS pm_null_ev_t,
+--        SUM(CASE WHEN pm_any IS NULL  AND NOT ev_present THEN 1 ELSE 0 END) AS pm_null_ev_f
+-- FROM joined
+-- GROUP BY 1, 2
+-- ORDER BY family;
+
+-- -----------------------------------------------------------------------------
+-- Explain rollup-only positives where patient_rollup says TRUE but no strict
+-- event-present row exists.
+-- -----------------------------------------------------------------------------
+-- WITH family_map AS (
+--   SELECT 'vascular' AS family, 'vascular_microscopic' AS event_type, 'any_vascular_microscopic_anywhere' AS rollup_col
+--   UNION ALL SELECT 'capsular', 'capsular', 'any_capsular_anywhere'
+--   UNION ALL SELECT 'lvi', 'lymphatic_microscopic', 'any_lymphatic_microscopic_anywhere'
+--   UNION ALL SELECT 'pni', 'perineural', 'any_perineural_anywhere'
+-- ), rollup AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id, 'vascular' AS family, any_vascular_microscopic_anywhere AS rollup_any FROM main.canonical_invasion_patient_rollup_v1
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'capsular', any_capsular_anywhere FROM main.canonical_invasion_patient_rollup_v1
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'lvi', any_lymphatic_microscopic_anywhere FROM main.canonical_invasion_patient_rollup_v1
+--   UNION ALL SELECT CAST(research_id AS VARCHAR), 'pni', any_perineural_anywhere FROM main.canonical_invasion_patient_rollup_v1
+-- ), events AS (
+--   SELECT invasion_type,
+--          CAST(research_id AS VARCHAR) AS research_id,
+--          BOOL_OR(finding_status = 'present') AS ev_present,
+--          STRING_AGG(DISTINCT finding_status, ',' ORDER BY finding_status) AS statuses,
+--          STRING_AGG(DISTINCT source_modality, ',' ORDER BY source_modality) AS modalities
+--   FROM main.canonical_invasion_events_v1
+--   GROUP BY 1, 2
+-- )
+-- SELECT fm.family,
+--        COALESCE(ev.statuses, 'NO_ROWS') AS event_statuses,
+--        COALESCE(ev.modalities, 'NO_ROWS') AS event_modalities,
+--        COUNT(*) AS n
+-- FROM family_map fm
+-- JOIN rollup r ON r.family = fm.family
+-- LEFT JOIN events ev ON ev.invasion_type = fm.event_type AND ev.research_id = r.research_id
+-- WHERE r.rollup_any IS TRUE
+--   AND COALESCE(ev.ev_present, FALSE) IS FALSE
+-- GROUP BY 1, 2, 3
+-- ORDER BY 1, n DESC, 2;
+
+-- -----------------------------------------------------------------------------
+-- PM column completeness/top-value template. Replace the selected column as
+-- needed for the 23-column family profile.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS n_rows,
+--        COUNT(vi_any_present_path) AS n_nonnull,
+--        COUNT(DISTINCT CAST(vi_any_present_path AS VARCHAR)) FILTER (WHERE vi_any_present_path IS NOT NULL) AS n_distinct_nonnull,
+--        SUM(CASE WHEN vi_any_present_path IS NULL THEN 1 ELSE 0 END) AS n_null
+-- FROM main.canonical_patient_master;
+--
+-- SELECT CAST(vi_any_present_path AS VARCHAR) AS value_text,
+--        COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE vi_any_present_path IS NOT NULL
+-- GROUP BY 1
+-- ORDER BY n DESC, value_text;
+
+-- -----------------------------------------------------------------------------
+-- PM value vs event-present template for grade/source/count columns.
+-- This demonstrates why versioned grade/confidence/count columns are not simple
+-- event-present booleans and should remain in D3/per-column governance.
+-- -----------------------------------------------------------------------------
+-- WITH ev AS (
+--   SELECT research_id,
+--          BOOL_OR(finding_status = 'present') AS ev_present
+--   FROM main.canonical_invasion_events_v1
+--   WHERE invasion_type = 'vascular_microscopic'
+--   GROUP BY 1
+-- )
+-- SELECT CAST(pm.vasc_grade_final_v13 AS VARCHAR) AS pm_value,
+--        COALESCE(ev.ev_present, FALSE) AS ev_present,
+--        COUNT(*) AS n
+-- FROM main.canonical_patient_master pm
+-- LEFT JOIN ev ON CAST(pm.research_id AS VARCHAR) = CAST(ev.research_id AS VARCHAR)
+-- WHERE pm.vasc_grade_final_v13 IS NOT NULL
+-- GROUP BY 1, 2
+-- ORDER BY n DESC, pm_value, ev_present;
