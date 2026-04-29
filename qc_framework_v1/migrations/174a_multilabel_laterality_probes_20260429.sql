@@ -1,0 +1,149 @@
+-- =============================================================================
+-- Migration 174a — CNLN / LATERAL LEVELS / ENE MULTI-LABEL PARSER PROBES
+-- =============================================================================
+-- Date: 2026-04-29
+-- Batch: mig_174_multilabel_laterality_parser_20260429
+-- Posture: read-only probe SQL only. Do NOT execute parser DDL/DML in mig_174a.
+-- Report: qc_framework_v1/reports/mig_174a_multilabel_laterality_design_20260429.md
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Target table: main.canonical_patient_master
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- Scope guard: canonical patient master invariants.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS n_rows,
+--        COUNT(DISTINCT research_id) AS n_distinct_research_id
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Cardinality + sample for each scoped column.
+-- -----------------------------------------------------------------------------
+-- SELECT cnln_img_laterality, COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE cnln_img_laterality IS NOT NULL
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- SELECT lateral_levels_v10, COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE lateral_levels_v10 IS NOT NULL
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- SELECT ene_levels_v9, COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE ene_levels_v9 IS NOT NULL
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- -----------------------------------------------------------------------------
+-- Semicolon token-level enumeration.
+-- Note: this is sufficient for cnln_img_laterality but intentionally exposes that
+-- lateral_levels_v10 and ene_levels_v9 need comma/range parsing too.
+-- -----------------------------------------------------------------------------
+-- WITH tokens AS (
+--   SELECT TRIM(unnest(string_split(CAST(cnln_img_laterality AS VARCHAR), ';'))) AS token
+--   FROM main.canonical_patient_master
+--   WHERE cnln_img_laterality IS NOT NULL
+-- )
+-- SELECT LOWER(token) AS norm_token, COUNT(*) AS n
+-- FROM tokens
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- WITH tokens AS (
+--   SELECT TRIM(unnest(string_split(CAST(lateral_levels_v10 AS VARCHAR), ';'))) AS token
+--   FROM main.canonical_patient_master
+--   WHERE lateral_levels_v10 IS NOT NULL
+-- )
+-- SELECT LOWER(token) AS norm_token, COUNT(*) AS n
+-- FROM tokens
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- WITH tokens AS (
+--   SELECT TRIM(unnest(string_split(CAST(ene_levels_v9 AS VARCHAR), ';'))) AS token
+--   FROM main.canonical_patient_master
+--   WHERE ene_levels_v9 IS NOT NULL
+-- )
+-- SELECT LOWER(token) AS norm_token, COUNT(*) AS n
+-- FROM tokens
+-- GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 80;
+
+-- -----------------------------------------------------------------------------
+-- Literal NULL-token and blank sentinel quantification.
+-- -----------------------------------------------------------------------------
+-- SELECT
+--   COUNT(*) AS n_rows,
+--   SUM(CASE WHEN cnln_img_laterality IS NOT NULL THEN 1 ELSE 0 END) AS lat_nonnull,
+--   COUNT(DISTINCT cnln_img_laterality) FILTER (WHERE cnln_img_laterality IS NOT NULL) AS lat_distinct,
+--   SUM(CASE WHEN cnln_img_laterality ILIKE '%null%' THEN 1 ELSE 0 END) AS n_null_token_lat,
+--   SUM(CASE WHEN TRIM(COALESCE(cnln_img_laterality, '')) = 'null' THEN 1 ELSE 0 END) AS n_lat_sentinel_only,
+--   SUM(CASE WHEN lateral_levels_v10 IS NOT NULL THEN 1 ELSE 0 END) AS lvl_nonnull,
+--   COUNT(DISTINCT lateral_levels_v10) FILTER (WHERE lateral_levels_v10 IS NOT NULL) AS lvl_distinct,
+--   SUM(CASE WHEN lateral_levels_v10 ILIKE '%null%' THEN 1 ELSE 0 END) AS n_null_token_lvl,
+--   SUM(CASE WHEN lateral_levels_v10 IS NOT NULL AND TRIM(lateral_levels_v10) = '' THEN 1 ELSE 0 END) AS n_lvl_blank_sentinel,
+--   SUM(CASE WHEN ene_levels_v9 IS NOT NULL THEN 1 ELSE 0 END) AS ene_nonnull,
+--   COUNT(DISTINCT ene_levels_v9) FILTER (WHERE ene_levels_v9 IS NOT NULL) AS ene_distinct,
+--   SUM(CASE WHEN ene_levels_v9 ILIKE '%null%' THEN 1 ELSE 0 END) AS n_null_token_ene,
+--   SUM(CASE WHEN ene_levels_v9 IS NOT NULL AND TRIM(ene_levels_v9) = '' THEN 1 ELSE 0 END) AS n_ene_blank_sentinel
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Semicolon token-count distributions.
+-- -----------------------------------------------------------------------------
+-- WITH s AS (
+--   SELECT list_count(string_split(CAST(cnln_img_laterality AS VARCHAR), ';')) AS n_tokens
+--   FROM main.canonical_patient_master
+--   WHERE cnln_img_laterality IS NOT NULL
+-- )
+-- SELECT n_tokens, COUNT(*) AS n_rows
+-- FROM s GROUP BY 1 ORDER BY 1;
+
+-- WITH s AS (
+--   SELECT list_count(string_split(CAST(lateral_levels_v10 AS VARCHAR), ';')) AS n_tokens
+--   FROM main.canonical_patient_master
+--   WHERE lateral_levels_v10 IS NOT NULL
+-- )
+-- SELECT n_tokens, COUNT(*) AS n_rows
+-- FROM s GROUP BY 1 ORDER BY 1;
+
+-- WITH s AS (
+--   SELECT list_count(string_split(CAST(ene_levels_v9 AS VARCHAR), ';')) AS n_tokens
+--   FROM main.canonical_patient_master
+--   WHERE ene_levels_v9 IS NOT NULL
+-- )
+-- SELECT n_tokens, COUNT(*) AS n_rows
+-- FROM s GROUP BY 1 ORDER BY 1;
+
+-- -----------------------------------------------------------------------------
+-- Parser-design aid: normalize obvious level strings to inspect comma/range grammar.
+-- This is a probe only; mig_174b should implement a governed parser after Logan
+-- ratifies representation.
+-- -----------------------------------------------------------------------------
+-- WITH raw AS (
+--   SELECT 'lateral_levels_v10' AS column_name, lateral_levels_v10 AS raw_value
+--   FROM main.canonical_patient_master
+--   WHERE lateral_levels_v10 IS NOT NULL
+--   UNION ALL
+--   SELECT 'ene_levels_v9' AS column_name, ene_levels_v9 AS raw_value
+--   FROM main.canonical_patient_master
+--   WHERE ene_levels_v9 IS NOT NULL
+-- ), norm AS (
+--   SELECT column_name,
+--          raw_value,
+--          LOWER(TRIM(REGEXP_REPLACE(CAST(raw_value AS VARCHAR), '\\s+', ' ', 'g'))) AS norm_value
+--   FROM raw
+-- )
+-- SELECT column_name,
+--        norm_value,
+--        COUNT(*) AS n,
+--        CASE
+--          WHEN norm_value = '' THEN 'empty_sentinel'
+--          WHEN regexp_matches(norm_value, '\\b(level|levels)\\s+(ii|iii|iv|v|vi|vii|[1-7])\\s*[-–]\\s*(ii|iii|iv|v|vi|vii|[1-7])') THEN 'range_candidate'
+--          WHEN regexp_matches(norm_value, ',') THEN 'comma_list_candidate'
+--          WHEN regexp_matches(norm_value, 'central|paratracheal|pretracheal|level\\s*6|level\\s*vi') THEN 'central_candidate'
+--          WHEN regexp_matches(norm_value, 'ij|supraclavicular|lateral') THEN 'lateral_unspec_candidate'
+--          ELSE 'single_level_candidate'
+--        END AS parser_bucket
+-- FROM norm
+-- GROUP BY 1,2,4
+-- ORDER BY column_name, n DESC, norm_value;
+
+-- End mig_174a read-only probe stub.
