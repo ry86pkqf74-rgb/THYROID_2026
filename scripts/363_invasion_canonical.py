@@ -174,7 +174,7 @@ VARCHAR_TO_FINDING_STATUS: dict[str, str] = {
     # ------------------------------------------------------------------
     # ----- ABSENT
     "x": "absent", "no": "absent", "false": "absent", "none": "absent",
-    "n/s": "absent", "n/a": "absent", "0": "absent",
+    "n/s": "absent", "0": "absent",
     "not identified": "absent",
     # ----- PRESENT — clean keywords
     "present": "present", "yes": "present", "true": "present",
@@ -233,6 +233,13 @@ VARCHAR_TO_FINDING_STATUS: dict[str, str] = {
     "*": "indeterminate", "* (see margin comment)": "indeterminate",
     "`x": "indeterminate", "classical": "indeterminate", "m": "indeterminate",
 }
+
+# Values that are true missingness tokens rather than negative findings.
+# mig_179 closes CF-mig177-EVENTS-VOCAB-FOACL-EXTRENSIVE-INDETERMINENT-CA-X:
+# mixed case is handled by LOWER(); typo variants above map to status; these
+# nullish tokens are filtered at extraction time so downstream event-present
+# filters do not treat them as either present or absent.
+NULLISH_VARCHAR_TOKENS = {"", "n/a", "null", "nan"}
 
 # gross_ete is BIGINT: only value 1 ever observed in the archive
 # (1,571 rows). Per Logan: 1 → present; 0 → absent in source schema
@@ -360,7 +367,11 @@ ENTITY_TYPE_TO_INVASION_TYPE: dict[str, str] = {
     "vascular_invasion_focal": "vascular_microscopic",
     "angioinvasion": "vascular_microscopic",
     "lymphatic_invasion": "lymphatic_microscopic",
-    "lymphovascular_invasion": "vascular_microscopic",  # rare composite
+    # Composite LVI entities are duplicated into lymphatic_microscopic by the
+    # mig_179 path_synoptics re-extract CTE below; this legacy single-value
+    # map remains vascular_microscopic so old LLM rows do not lose vascular
+    # signal in the one-row entity CTE.
+    "lymphovascular_invasion": "vascular_microscopic",
     # capsular / perineural / soft_tissue — split from v2 'local'
     "capsular_invasion": "capsular",
     "perineural_invasion": "perineural",
@@ -374,6 +385,7 @@ ENTITY_TYPE_TO_INVASION_TYPE: dict[str, str] = {
 # kind: 'structured_bool' | 'live_varchar' | 'live_varchar_ete'
 #       | 'live_bigint' | 'archive_varchar' | 'archive_varchar_ete'
 #       | 'archive_bigint' | 'llm_json_unnest'
+#       | 'path_synoptics_lvi_reextract'
 # All entries also carry source_kind ∈ {'structured', 'llm'} which is
 # emitted as a column on canonical_invasion_events_v1 (Pattern 13:
 # orthogonal source_modality vs source_kind). source_modality is "what
@@ -468,6 +480,15 @@ MODALITY_PLAN: list[dict[str, Any]] = [
      "value_col": "capsular_invasion",
      "row_id_col": "path_surgery_id", "date_col": "surgery_date",
      "rid_col": "research_id"},
+    # mig_179: direct path_synoptics LVI re-extract for six Logan-ratified
+    # source patterns missed by the canonical_path_malignant_events_v1 feeder:
+    # combined "Lymph-Vascular", older "Angiolymphatic", lymphangitic,
+    # separate "Lymphatic Invasion", quantitative "< N per 2mm2", and vocab
+    # typo/nullish normalization. This supplements the existing per-field CTEs
+    # without changing capsular/perineural/ETE axes.
+    {"modality": "synoptic_path", "source_kind": "structured_mig179",
+     "kind": "path_synoptics_lvi_reextract",
+     "source_schema": "main", "source_table": "path_synoptics"},
     # ===== synoptic_path (LLM) — note_entities_llm_*_invasion path_synoptics
     {"modality": "synoptic_path", "source_kind": "llm",
      "kind": "llm_json_unnest",
@@ -662,6 +683,13 @@ def _status_case_sql(norm_expr: str) -> str:
     for k, v in VARCHAR_TO_FINDING_STATUS.items():
         by_status.setdefault(v, []).append(k.replace("'", "''"))
     parts = ["CASE"]
+    nullish = ", ".join(f"'{v}'" for v in sorted(NULLISH_VARCHAR_TOKENS))
+    parts.append(f"  WHEN {norm_expr} IN ({nullish}) THEN NULL")
+    parts.append(
+        f"  WHEN regexp_matches({norm_expr}, "
+        "'^<\\\\s*[0-9]+(\\\\.[0-9]+)?\\\\s*per\\\\s*2\\\\s*mm2?$') "
+        "THEN 'present'"
+    )
     for status in ("absent", "indeterminate", "suspected", "present"):
         if status not in by_status:
             continue
@@ -670,6 +698,12 @@ def _status_case_sql(norm_expr: str) -> str:
     parts.append("  ELSE 'indeterminate'")
     parts.append("END")
     return "\n".join(parts)
+
+
+def _nonnull_norm_predicate_sql(norm_expr: str) -> str:
+    """Predicate that drops nullish normalized VARCHAR tokens."""
+    nullish = ", ".join(f"'{v}'" for v in sorted(NULLISH_VARCHAR_TOKENS))
+    return f"{norm_expr} NOT IN ({nullish})"
 
 
 def _ete_subtype_case_sql(norm_expr: str) -> str:
@@ -747,6 +781,7 @@ def _entity_invasion_case_sql(et_expr: str,
 # ---------------------------------------------------------------------------
 
 DEPENDENCY_TABLES = [
+    ("main", "path_synoptics"),
     ("main", "canonical_path_malignant_events_v1"),
     ("main", "canonical_path_benign_events_v1"),
     ("main", "canonical_operative_events_v1"),
@@ -1397,7 +1432,8 @@ def _build_cte_varchar_generic(plan: dict[str, Any],
         NULL::VARCHAR AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
     FROM {table_fq}
-    WHERE "{value_col}" IS NOT NULL
+        WHERE "{value_col}" IS NOT NULL
+            AND {_nonnull_norm_predicate_sql(norm_expr)}
 )"""
 
 
@@ -1432,7 +1468,8 @@ def _build_cte_varchar_ete_generic(plan: dict[str, Any],
         NULL::VARCHAR AS extraction_run_id,
         NULL::BIGINT AS exact_linked_episode_id
     FROM {table_fq}
-    WHERE "{value_col}" IS NOT NULL
+        WHERE "{value_col}" IS NOT NULL
+            AND {_nonnull_norm_predicate_sql(norm_expr)}
 )"""
 
 
@@ -1472,6 +1509,172 @@ def _build_cte_bigint_generic(plan: dict[str, Any],
     FROM {table_fq}
     WHERE "{value_col}" IS NOT NULL
 )"""
+
+
+def _build_cte_path_synoptics_lvi_reextract(plan: dict[str, Any]) -> str:
+    """mig_179 supplemental path_synoptics LVI extraction.
+
+    The existing structured path CTE reads canonical_path_malignant_events_v1
+    fields. Cowork's mig_177 review found that feeder misses legitimate
+    lymphatic_microscopic rows when raw synoptic text uses combined CAP labels
+    ("Lymph-Vascular" / "Angiolymphatic"), newer separate "Lymphatic
+    Invasion: Present" labels, lymphangitic phrasing, or quantitative
+    "< N per 2mm2" values. This CTE unpivots tumor slots 1-5 from
+    main.path_synoptics and emits only vascular/lymphatic supplemental events,
+    leaving capsular/perineural/ETE axes unchanged.
+    """
+    schema = plan["source_schema"]
+    table = plan["source_table"]
+    table_label = f"{schema}.{table}"
+    cte_name = "cte_synoptic_path_structured_mig179_lvi_reextract"
+
+    whole_text_cols = [
+        "synoptic_diagnosis",
+        "path_diagnosis_summary",
+        "path_diagnosis_comment",
+        "microscopic_description",
+        "fs_pathology_frozen_section",
+        "path_special_studies",
+        "ancillary_studies",
+        "other_findings",
+    ]
+    tumor_cols = {
+        1: ("tumor_1_lymphatic_invasion", "tumor_1_angioinvasion",
+            "tumor_1_angioinvasion_quantify",
+            "tumor_1_margin_angiolymphatic_invasion_comment"),
+        2: ("tumor_2_lymphatic_invasion", "tumor_2_angioinvasion",
+            "tumor_2_angioinvasion_quantify", "tumor_2_margin_comment"),
+        3: ("tumor_3_lymphatic_invasion", "tumor_3_angioinvasion",
+            "tumor_3_angioinvasion_quantify", "tumor_3_margin_comment"),
+        4: ("tumor_4_lymphatic_invasion", "tumor_4_angioinvasion",
+            "tumor_4_angioinvasion_quantify", "tumor_4_margin_comment"),
+        5: ("tumor_5_lymphatic_invasion", "tumor_5_angioinvasion",
+            "tumor_5_angioinvasion_quantify", "tumor_5_margin_comment"),
+    }
+    whole_text_expr = " || '\\n' || ".join(
+        f"COALESCE(CAST({col} AS VARCHAR), '')" for col in whole_text_cols
+    )
+    legs: list[str] = []
+    for tumor_index, (lvi_col, angio_col, qty_col, comment_col) in tumor_cols.items():
+        legs.append(f"""
+        SELECT
+            TRY_CAST(research_id AS BIGINT) AS research_id,
+            TRY_CAST(surg_date AS DATE) AS finding_date,
+            {tumor_index}::INTEGER AS tumor_index,
+            CAST({lvi_col} AS VARCHAR) AS lymphatic_raw,
+            CAST({angio_col} AS VARCHAR) AS angio_raw,
+            CAST({qty_col} AS VARCHAR) AS angio_qty_raw,
+            CAST({comment_col} AS VARCHAR) AS comment_raw,
+            {whole_text_expr} || '\\n' || COALESCE(CAST({comment_col} AS VARCHAR), '')
+                AS source_text
+        FROM {fq(schema, table)}
+        """)
+    union_sql = "\nUNION ALL\n".join(legs)
+    return f"""
+path_syn_lvi_mig179_unpivot AS (
+{union_sql}
+),
+path_syn_lvi_mig179_flags AS (
+    SELECT
+        research_id,
+        finding_date,
+        tumor_index,
+        lymphatic_raw,
+        angio_raw,
+        angio_qty_raw,
+        comment_raw,
+        source_text,
+        LOWER(TRIM(REGEXP_REPLACE(COALESCE(lymphatic_raw, ''), '[;.]+$', ''))) AS lymphatic_norm,
+        LOWER(TRIM(REGEXP_REPLACE(COALESCE(angio_raw, ''), '[;.]+$', ''))) AS angio_norm,
+        LOWER(source_text) AS source_text_lc
+    FROM path_syn_lvi_mig179_unpivot
+    WHERE research_id IS NOT NULL
+),
+path_syn_lvi_mig179_classified AS (
+    SELECT
+        *,
+        (
+            lymphatic_norm IN (
+                'present', 'yes', 'true', 'identified', 'positive',
+                'focal', 'foacl', 'extensive', 'extrensive', 'extensivre',
+                'extensiver', 'estensive', 'extesive', 'minimal', 'microscopic'
+            )
+            OR regexp_matches(lymphatic_norm, '^<\\s*[0-9]+(\\.[0-9]+)?\\s*per\\s*2\\s*mm2?$')
+        ) AS lymphatic_structured_present,
+        (
+            angio_norm IN (
+                'present', 'yes', 'true', 'identified', 'positive',
+                'focal', 'foacl', 'extensive', 'extrensive', 'extensivre',
+                'extensiver', 'estensive', 'extesive', 'minimal', 'microscopic'
+            )
+            OR regexp_matches(angio_norm, '^<\\s*[0-9]+(\\.[0-9]+)?\\s*per\\s*2\\s*mm2?$')
+        ) AS vascular_structured_present,
+        (
+            (
+                regexp_matches(source_text_lc, '(lymph[ -]?vascular|lymphovascular)\\s+invasion\\s*:?\\s*(is\\s+)?(present|yes|identified)')
+                OR regexp_matches(source_text_lc, 'angiolymphatic\\s+invasion\\s*(is\\s*)?(present|yes|identified)')
+            )
+            AND NOT regexp_matches(source_text_lc, '(no|not identified|negative)\\s+(lymph[ -]?vascular|lymphovascular|angiolymphatic)\\s+invasion')
+            AND NOT regexp_matches(source_text_lc, '(lymph[ -]?vascular|lymphovascular|angiolymphatic)\\s+invasion\\s*:?\\s*(not identified|negative|absent|no)')
+        ) AS combined_lymphovascular_present,
+        (
+            regexp_matches(source_text_lc, 'lymphangitic\\s+invasion\\s*(is\\s*)?(present|identified)')
+            OR regexp_matches(source_text_lc, 'multifocal\\s+lymphangitic\\s+invasion\\s+present')
+        ) AS lymphangitic_present,
+        (
+            regexp_matches(source_text_lc, 'lymphatic\\s+invasion\\s*:?\\s*(present|yes|identified|<\\s*[0-9]+(\\.[0-9]+)?\\s*per\\s*2\\s*mm2?)')
+            AND NOT regexp_matches(source_text_lc, 'lymphatic\\s+invasion\\s*:?\\s*(not identified|negative|absent|no)')
+        ) AS separate_lymphatic_present,
+        regexp_extract(lymphatic_norm, '(<\\s*[0-9]+(\\.[0-9]+)?\\s*per\\s*2\\s*mm2?)', 1) AS lymphatic_quantifier
+    FROM path_syn_lvi_mig179_flags
+),
+path_syn_lvi_mig179_emit AS (
+    SELECT 'lymphatic_microscopic' AS invasion_type,
+           'mig179_lvi_structured_or_text' AS pattern_name,
+           lymphatic_quantifier AS pattern_qualifier,
+           *
+    FROM path_syn_lvi_mig179_classified
+    WHERE lymphatic_structured_present
+       OR combined_lymphovascular_present
+       OR lymphangitic_present
+       OR separate_lymphatic_present
+    UNION ALL
+    SELECT 'vascular_microscopic' AS invasion_type,
+           'mig179_combined_lymphovascular' AS pattern_name,
+           NULL::VARCHAR AS pattern_qualifier,
+           *
+    FROM path_syn_lvi_mig179_classified
+    WHERE combined_lymphovascular_present
+)
+,
+{cte_name} AS (
+    SELECT
+        invasion_type,
+        'present' AS finding_status,
+        '{plan["modality"]}' AS source_modality,
+        '{plan["source_kind"]}' AS source_kind,
+        '{table_label}' AS source_table,
+        'rid=' || CAST(research_id AS VARCHAR) ||
+            '|surg=' || COALESCE(CAST(finding_date AS VARCHAR), 'NA') ||
+            '|tumor=' || CAST(tumor_index AS VARCHAR) ||
+            '|pattern=' || pattern_name ||
+            '|type=' || invasion_type AS source_row_id,
+        research_id,
+        finding_date,
+        0.90::DOUBLE AS confidence,
+        md5(COALESCE(source_text, '')) AS evidence_span_hash,
+        TRIM(BOTH '|' FROM
+            'pattern=' || pattern_name ||
+            '|lymphatic_raw=' || COALESCE(lymphatic_raw, '') ||
+            '|angio_raw=' || COALESCE(angio_raw, '') ||
+            '|angio_qty=' || COALESCE(angio_qty_raw, '') ||
+            '|quantifier=' || COALESCE(NULLIF(pattern_qualifier, ''), '')
+        ) AS evidence_qualifier,
+        'mig_179_events_rebuild_lvi_extraction_20260429' AS extraction_run_id,
+        NULL::BIGINT AS exact_linked_episode_id
+    FROM path_syn_lvi_mig179_emit
+)
+"""
 
 
 def _build_cte_llm_json(plan: dict[str, Any]) -> str:
@@ -1759,6 +1962,42 @@ def _build_step_1_sql(con: duckdb.DuckDBPyConnection,
                 cte_name = (f"cte_{plan['modality']}_{plan['source_kind']}_"
                             f"{plan['source_table']}"
                             f"{('_' + tsuffix) if tsuffix else ''}")
+            elif kind == "path_synoptics_lvi_reextract":
+                if not table_exists(con, plan["source_schema"],
+                                    plan["source_table"]):
+                    skipped.append(
+                        f"{plan['modality']}/{plan['source_kind']}/"
+                        f"{plan['source_table']} (missing table)")
+                    continue
+                cols = list_columns(con, plan["source_schema"],
+                                    plan["source_table"])
+                required_cols = {
+                    "research_id", "surg_date", "synoptic_diagnosis",
+                    "path_diagnosis_summary", "path_diagnosis_comment",
+                    "microscopic_description", "fs_pathology_frozen_section",
+                    "path_special_studies", "ancillary_studies",
+                    "other_findings",
+                    "tumor_1_lymphatic_invasion", "tumor_1_angioinvasion",
+                    "tumor_1_angioinvasion_quantify",
+                    "tumor_1_margin_angiolymphatic_invasion_comment",
+                    "tumor_2_lymphatic_invasion", "tumor_2_angioinvasion",
+                    "tumor_2_angioinvasion_quantify", "tumor_2_margin_comment",
+                    "tumor_3_lymphatic_invasion", "tumor_3_angioinvasion",
+                    "tumor_3_angioinvasion_quantify", "tumor_3_margin_comment",
+                    "tumor_4_lymphatic_invasion", "tumor_4_angioinvasion",
+                    "tumor_4_angioinvasion_quantify", "tumor_4_margin_comment",
+                    "tumor_5_lymphatic_invasion", "tumor_5_angioinvasion",
+                    "tumor_5_angioinvasion_quantify", "tumor_5_margin_comment",
+                }
+                missing_cols = sorted(required_cols.difference(cols))
+                if missing_cols:
+                    skipped.append(
+                        f"{plan['modality']}/{plan['source_kind']}/"
+                        f"{plan['source_table']} (missing cols "
+                        f"{','.join(missing_cols[:6])})")
+                    continue
+                cte_sql = _build_cte_path_synoptics_lvi_reextract(plan)
+                cte_name = "cte_synoptic_path_structured_mig179_lvi_reextract"
             else:
                 skipped.append(f"{plan['modality']}/{plan['source_kind']} "
                                f"(unknown kind={kind})")
