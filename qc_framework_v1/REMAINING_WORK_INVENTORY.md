@@ -136,7 +136,7 @@ Misc canonical tables — labs, molecular, recurrence, ETE adjudication, surviva
 | Table | Cols | Notes |
 |---|---|---|
 | `canonical_molecular_genetics_v2` | 74 | Memory `project_molecular_v2_schema.md` has architecture. |
-| `canonical_ete_event_resolved_v1` | 62 | Cross-source ETE resolution; per master plan §11 will be re-verified when path_malignant.extrathyroidal_extension is verified (now done in mig_87). Re-open. |
+| `canonical_ete_event_resolved_v1` | 62 | **Closed mig_121 (2026-04-29)** — Protocol v2 Tier-2 multi-source enrichment sign-off; recurrence/survival carry-forwards documented. |
 | `canonical_molecular_genetics_from_notes_v2` | 28 | Notes-extracted molecular. |
 | `canonical_recurrence_resolved_v1` | 19 | Re-verify pending per master plan §11. |
 | `canonical_operative_procedure_codes_v1` | 16 | Built by Script 362 Step 3. |
@@ -144,7 +144,7 @@ Misc canonical tables — labs, molecular, recurrence, ETE adjudication, surviva
 | `canonical_column_verification_registry_v1` | 14 | Self-referential — meta. |
 | `canonical_survival_followup_v1` | 13 |  |
 | `canonical_recurrence_v1` | 12 |  |
-| `canonical_ete_inline_adjudication_v1` | 12 |  |
+| `canonical_ete_inline_adjudication_v1` | 12 | **Closed mig_121 (2026-04-29)** — paired inline adjudication warehouse. |
 | `canonical_labs_thyroglobulin_v1` | 12 | Memory `project_lab_consolidation_script_347.md`. |
 | `canonical_labs_calcium_v1`, `canonical_labs_pth_v1`, `canonical_labs_tsh_v1`, `canonical_labs_vitamin_d_v1` | 10 each | Same pattern. |
 | `manuscript_workspace.canonical_cleanup_audit_v1` | 18 |  |
