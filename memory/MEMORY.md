@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [clinical_date_retype_20260428](../qc_framework_v1/migrations/clinical_date_retype_20260428.md) — Script 413; six cols VARCHAR/TIMESTAMP→DATE + archive snapshots + view DDL refresh on MotherDuck
 - [Script 365b close-out](project_script_365b_close_out.md) — 2026-04-22 SHA 0a2ec27; 6 canonicals (CHANGES A-N) + Option-C cleanup; 5 patterns
 - [Frozen CPM source DB](reference_thyroid_ete_fix_20260413_namespace.md) — holds 78 frozen CPM cols via Scripts 212/215 lineage; do not delete
 - [Dry-run before build](feedback_dryrun_signoff_before_build.md) — Tier-2 builds need dry-run + QA sign-off before any main.* CREATE OR REPLACE
