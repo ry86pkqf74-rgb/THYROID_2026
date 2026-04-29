@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [US v2 imaging family mig_117 close-out](project_us_v2_family_mig_117_closeout.md) — 2026-04-29: 3 US v2 canonicals verified; exam-id portability CF documented
 - [Molecular genetics v2 mig_116 close-out](project_molecular_genetics_v2_mig_116_closeout.md) — 2026-04-29: canonical_molecular_genetics_v2 verified; 69 cols closed, 5 na
 - [Labs family mig_115 close-out](project_labs_family_mig_115_closeout.md) — 2026-04-29: 5 lab canonicals verified via Script-347 normalizer replay; 0 drift
 - [PMH rollup mig_114 close-out](project_pmh_rollup_mig_114_closeout.md) — 2026-04-29: stale PMH rollup rebuilt; 77 derived cols, 0 post-rebuild drift
