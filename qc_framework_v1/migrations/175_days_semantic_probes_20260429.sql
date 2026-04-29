@@ -1,0 +1,188 @@
+-- =============================================================================
+-- Migration 175 — mig_136 DAYS-SEMANTIC READ-ONLY ADJUDICATION PROBES
+-- =============================================================================
+-- Date: 2026-04-29
+-- Batch: mig_175_mig136_days_semantic_adjudication_20260429
+-- Posture: read-only probe SQL only. Do NOT execute UPDATE/ALTER/CREATE in this lane.
+-- Report: qc_framework_v1/reports/mig_175_mig136_days_semantic_adjudication_20260429.md
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Target table: main.canonical_patient_master
+-- Carry-forward: CF-mig136-DAYS-SEMANTIC
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- Scope guard: canonical patient master invariants.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS n_rows,
+--        COUNT(DISTINCT research_id) AS n_distinct_research_id
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Full list of columns carrying CF-mig136-DAYS-SEMANTIC.
+-- Expected on 2026-04-29: 58 rows.
+-- -----------------------------------------------------------------------------
+-- SELECT column_name,
+--        data_type,
+--        COALESCE(verification_status, 'unknown') AS status
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE notes ILIKE '%CF-mig136-DAYS-SEMANTIC%'
+-- ORDER BY column_name;
+
+-- -----------------------------------------------------------------------------
+-- Sub-type categorization by suffix/name pattern.
+-- -----------------------------------------------------------------------------
+-- WITH scoped AS (
+--   SELECT column_name,
+--          data_type,
+--          CASE
+--            WHEN regexp_matches(column_name, '(_first_days_from_surg|_days_from_surg)$')
+--              THEN 'date-derived days-from-surgery metric'
+--            WHEN regexp_matches(column_name, '(_first_date|_date)$')
+--              THEN 'source first/event date'
+--            WHEN regexp_matches(column_name, '_n_mentions$')
+--              OR column_name IN ('pmhx_nlp_n_comorbidities', 'pmhx_nlp_n_source_notes')
+--              THEN 'count metric (no date anchor)'
+--            WHEN regexp_matches(column_name, '_confidence$')
+--              THEN 'confidence score (no date anchor)'
+--            WHEN column_name IN ('pmhx_nlp_extraction_method', 'pmhx_nlp_comorbidity_list', 'pmhx_nlp_note_types', 'pmhx_nlp_smoking_status')
+--              THEN 'categorical/provenance text (no date anchor)'
+--            WHEN UPPER(data_type) = 'BOOLEAN'
+--              THEN 'boolean PMH/family-history flag (no date anchor)'
+--            ELSE 'other'
+--          END AS semantic_subtype
+--   FROM main.canonical_column_verification_registry_v1
+--   WHERE notes ILIKE '%CF-mig136-DAYS-SEMANTIC%'
+-- )
+-- SELECT semantic_subtype,
+--        COUNT(*) AS n_cols,
+--        STRING_AGG(column_name, ', ' ORDER BY column_name) AS columns
+-- FROM scoped
+-- GROUP BY 1
+-- ORDER BY 1;
+
+-- -----------------------------------------------------------------------------
+-- Per-column non-null/distinct profile.
+-- Run individual SELECTs if a compact one-query profile is desired.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) FILTER (WHERE pmhx_nlp_diabetes_first_date IS NOT NULL) AS n_diabetes_first_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_diabetes_first_days_from_surg IS NOT NULL) AS n_diabetes_days,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hypertension_first_date IS NOT NULL) AS n_hypertension_first_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hypertension_first_days_from_surg IS NOT NULL) AS n_hypertension_days,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hyperthyroidism_first_date IS NOT NULL) AS n_hyperthyroidism_first_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hyperthyroidism_first_days_from_surg IS NOT NULL) AS n_hyperthyroidism_days,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hypothyroidism_first_date IS NOT NULL) AS n_hypothyroidism_first_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_hypothyroidism_first_days_from_surg IS NOT NULL) AS n_hypothyroidism_days,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_obesity_first_date IS NOT NULL) AS n_obesity_first_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_obesity_first_days_from_surg IS NOT NULL) AS n_obesity_days,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_radiation_exposure_date IS NOT NULL) AS n_radiation_date,
+--        COUNT(*) FILTER (WHERE pmhx_nlp_radiation_exposure_days_from_surg IS NOT NULL) AS n_radiation_days
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Representative live distribution samples for date-derived day metrics.
+-- Repeat for the other five day columns as needed.
+-- -----------------------------------------------------------------------------
+-- SELECT pmhx_nlp_diabetes_first_days_from_surg, COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE pmhx_nlp_diabetes_first_days_from_surg IS NOT NULL
+-- GROUP BY 1
+-- ORDER BY 1
+-- LIMIT 25;
+
+-- SELECT pmhx_nlp_radiation_exposure_days_from_surg, COUNT(*) AS n
+-- FROM main.canonical_patient_master
+-- WHERE pmhx_nlp_radiation_exposure_days_from_surg IS NOT NULL
+-- GROUP BY 1
+-- ORDER BY 1
+-- LIMIT 25;
+
+-- -----------------------------------------------------------------------------
+-- Per-anchor impact package across the six actual date-derived day columns.
+-- Option A impact is current_days != 0 if event_start is the event date itself.
+-- Option B verifies current_days equals DATE_DIFF('day', first_surgery_date, event_date).
+-- Option C recalculates as DATE_DIFF('day', last_contact_date, event_date).
+-- -----------------------------------------------------------------------------
+-- WITH long AS (
+--   SELECT research_id,
+--          'pmhx_nlp_diabetes_first_days_from_surg' AS day_col,
+--          CAST(pmhx_nlp_diabetes_first_date AS DATE) AS event_date,
+--          CAST(pmhx_nlp_diabetes_first_days_from_surg AS INTEGER) AS current_days,
+--          CAST(first_surgery_date AS DATE) AS first_surgery_date,
+--          CAST(last_contact_date AS DATE) AS last_contact_date
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hypertension_first_days_from_surg', CAST(pmhx_nlp_hypertension_first_date AS DATE), CAST(pmhx_nlp_hypertension_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE)
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hyperthyroidism_first_days_from_surg', CAST(pmhx_nlp_hyperthyroidism_first_date AS DATE), CAST(pmhx_nlp_hyperthyroidism_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE)
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hypothyroidism_first_days_from_surg', CAST(pmhx_nlp_hypothyroidism_first_date AS DATE), CAST(pmhx_nlp_hypothyroidism_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE)
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_obesity_first_days_from_surg', CAST(pmhx_nlp_obesity_first_date AS DATE), CAST(pmhx_nlp_obesity_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE)
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_radiation_exposure_days_from_surg', CAST(pmhx_nlp_radiation_exposure_date AS DATE), CAST(pmhx_nlp_radiation_exposure_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE)
+--   FROM main.canonical_patient_master
+-- ), calc AS (
+--   SELECT *,
+--          DATE_DIFF('day', first_surgery_date, event_date) AS option_b_first_surgery_days,
+--          DATE_DIFF('day', last_contact_date, event_date) AS option_c_lka_days,
+--          0 AS option_a_event_start_days
+--   FROM long
+-- )
+-- SELECT COUNT(DISTINCT research_id) FILTER (WHERE current_days IS NOT NULL) AS patients_with_any_current_day,
+--        COUNT(DISTINCT research_id) FILTER (WHERE current_days IS NOT NULL AND current_days <> 0) AS option_a_patients_changed_vs_current,
+--        COUNT(DISTINCT research_id) FILTER (WHERE current_days IS NOT NULL AND option_b_first_surgery_days IS NOT NULL AND current_days IS DISTINCT FROM option_b_first_surgery_days) AS option_b_patients_changed_vs_current,
+--        COUNT(DISTINCT research_id) FILTER (WHERE current_days IS NOT NULL AND option_c_lka_days IS NOT NULL AND current_days IS DISTINCT FROM option_c_lka_days) AS option_c_patients_changed_vs_current,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL) AS patient_col_day_cells,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND current_days <> 0) AS option_a_cells_changed_vs_current,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND option_b_first_surgery_days IS NOT NULL AND current_days IS DISTINCT FROM option_b_first_surgery_days) AS option_b_cells_changed_vs_current,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND option_c_lka_days IS NOT NULL AND current_days IS DISTINCT FROM option_c_lka_days) AS option_c_cells_changed_vs_current
+-- FROM calc;
+
+-- -----------------------------------------------------------------------------
+-- Per-day-column option-impact and date-position profile.
+-- -----------------------------------------------------------------------------
+-- WITH long AS (
+--   SELECT research_id,
+--          'pmhx_nlp_diabetes_first_days_from_surg' AS day_col,
+--          CAST(pmhx_nlp_diabetes_first_date AS DATE) AS event_date,
+--          CAST(pmhx_nlp_diabetes_first_days_from_surg AS INTEGER) AS current_days,
+--          CAST(first_surgery_date AS DATE) AS first_surgery_date,
+--          CAST(last_contact_date AS DATE) AS last_contact_date
+--   FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hypertension_first_days_from_surg', CAST(pmhx_nlp_hypertension_first_date AS DATE), CAST(pmhx_nlp_hypertension_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE) FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hyperthyroidism_first_days_from_surg', CAST(pmhx_nlp_hyperthyroidism_first_date AS DATE), CAST(pmhx_nlp_hyperthyroidism_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE) FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_hypothyroidism_first_days_from_surg', CAST(pmhx_nlp_hypothyroidism_first_date AS DATE), CAST(pmhx_nlp_hypothyroidism_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE) FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_obesity_first_days_from_surg', CAST(pmhx_nlp_obesity_first_date AS DATE), CAST(pmhx_nlp_obesity_first_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE) FROM main.canonical_patient_master
+--   UNION ALL
+--   SELECT research_id, 'pmhx_nlp_radiation_exposure_days_from_surg', CAST(pmhx_nlp_radiation_exposure_date AS DATE), CAST(pmhx_nlp_radiation_exposure_days_from_surg AS INTEGER), CAST(first_surgery_date AS DATE), CAST(last_contact_date AS DATE) FROM main.canonical_patient_master
+-- ), calc AS (
+--   SELECT *,
+--          DATE_DIFF('day', first_surgery_date, event_date) AS option_b_first_surgery_days,
+--          DATE_DIFF('day', last_contact_date, event_date) AS option_c_lka_days
+--   FROM long
+-- )
+-- SELECT day_col,
+--        COUNT(*) FILTER (WHERE event_date IS NOT NULL) AS n_event_date,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL) AS n_current_days,
+--        COUNT(*) FILTER (WHERE event_date < first_surgery_date) AS n_pre_surg,
+--        COUNT(*) FILTER (WHERE event_date >= first_surgery_date) AS n_on_after_surg,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND current_days <> 0) AS option_a_cells_changed_vs_current,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND option_b_first_surgery_days IS NOT NULL AND current_days IS DISTINCT FROM option_b_first_surgery_days) AS option_b_mismatch_cells,
+--        COUNT(*) FILTER (WHERE current_days IS NOT NULL AND option_c_lka_days IS NOT NULL AND current_days IS DISTINCT FROM option_c_lka_days) AS option_c_cells_changed_vs_current,
+--        MIN(current_days) FILTER (WHERE current_days IS NOT NULL) AS current_min,
+--        MAX(current_days) FILTER (WHERE current_days IS NOT NULL) AS current_max,
+--        MIN(option_c_lka_days) FILTER (WHERE option_c_lka_days IS NOT NULL) AS lka_min,
+--        MAX(option_c_lka_days) FILTER (WHERE option_c_lka_days IS NOT NULL) AS lka_max
+-- FROM calc
+-- GROUP BY 1
+-- ORDER BY 1;
+
+-- End mig_175 read-only probe stub.
