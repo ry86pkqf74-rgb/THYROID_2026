@@ -1,0 +1,5 @@
+source_col,research_id,raw_value,canonical_code,variant_subtype,display_label,reason
+recurrence_histology,3129,Metastatic Carcinoma,ptc,follicular_variant,"PTC, Follicular Variant",path_malignant_events_v1 shows 'PTC' primary_histology with 'follicular' histology_variant; raw label was vague catch-all
+recurrence_histology,111,differentiated thyroid carcinoma,ptc,mixed_papillary_follicular_dtc_label,"PTC, Mixed Papillary/Follicular (DTC label)",path_malignant_events_v1 shows 'differentiated thyroid carcinoma' primary with 'Mixed Papillary & follicular' variant; resolved to PTC family per Logan option (a)
+recurrence_histology,3726,metastatic carcinoma,ptc,classical_microcarcinoma,"PTC, Classical Microcarcinoma",path_malignant_events_v1 shows 'PTC' primary with 'classical | microcarcinoma' variant; raw label was vague catch-all
+recurrence_histology,6922,metastatic thyroid carcinoma,ptc,classical_with_follicular,"PTC, Classical with Follicular",path_malignant_events_v1 shows 'PTC' primary with 'classical | follicular' variants; raw label was vague catch-all
