@@ -1,0 +1,234 @@
+-- =============================================================================
+-- Migration 176 — dominant_nodule_size_cm v1/v2 READ-ONLY RECONCILIATION PROBES
+-- =============================================================================
+-- Date: 2026-04-29
+-- Batch: mig_176_dominant_nodule_v1_v2_reconcile_20260429
+-- Lane: 65 / mig_176
+-- Posture: read-only probe SQL only. Do NOT execute UPDATE/ALTER/CREATE in this lane.
+-- Report: qc_framework_v1/reports/mig_176_dominant_nodule_v1_v2_reconcile_20260429.md
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Target table: main.canonical_patient_master
+-- Carry-forward: CF-mig157-DOMINANT-NODULE-V1-V2-DRIFT
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- Scope guard: canonical patient master invariants.
+-- -----------------------------------------------------------------------------
+-- SELECT COUNT(*) AS n_rows,
+--        COUNT(DISTINCT research_id) AS n_distinct_research_id
+-- FROM main.canonical_patient_master;
+
+-- -----------------------------------------------------------------------------
+-- Full v1/v2 shape.
+-- Expected 2026-04-29: 1,065 both-non-null mismatches and 166 v2-only rows.
+-- -----------------------------------------------------------------------------
+-- WITH dual AS (
+--   SELECT research_id,
+--          dominant_nodule_size_cm    AS v1_size,
+--          dominant_nodule_size_cm_v2 AS v2_size
+--   FROM main.canonical_patient_master
+-- )
+-- SELECT
+--   COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size) AS n_mismatch,
+--   COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NULL) AS n_v1_only,
+--   COUNT(*) FILTER (WHERE v1_size IS NULL AND v2_size IS NOT NULL) AS n_v2_only,
+--   COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size = v2_size) AS n_match,
+--   COUNT(*) FILTER (WHERE v1_size IS NULL AND v2_size IS NULL) AS n_both_null,
+--   COUNT(*) AS n_rows
+-- FROM dual;
+
+-- -----------------------------------------------------------------------------
+-- Mismatch magnitude distribution.
+-- -----------------------------------------------------------------------------
+-- SELECT
+--   COUNT(*) FILTER (WHERE ABS(v1_size - v2_size) < 0.1) AS n_diff_lt_0_1cm,
+--   COUNT(*) FILTER (WHERE ABS(v1_size - v2_size) >= 0.1 AND ABS(v1_size - v2_size) < 0.5) AS n_diff_0_1_to_lt_0_5cm,
+--   COUNT(*) FILTER (WHERE ABS(v1_size - v2_size) >= 0.5 AND ABS(v1_size - v2_size) < 1.0) AS n_diff_0_5_to_lt_1cm,
+--   COUNT(*) FILTER (WHERE ABS(v1_size - v2_size) >= 1.0) AS n_diff_gte_1cm,
+--   MIN(ABS(v1_size - v2_size)) AS min_abs_diff,
+--   MEDIAN(ABS(v1_size - v2_size)) AS median_abs_diff,
+--   AVG(ABS(v1_size - v2_size)) AS mean_abs_diff,
+--   QUANTILE_CONT(ABS(v1_size - v2_size), 0.95) AS p95_abs_diff,
+--   MAX(ABS(v1_size - v2_size)) AS max_abs_diff
+-- FROM (
+--   SELECT dominant_nodule_size_cm AS v1_size, dominant_nodule_size_cm_v2 AS v2_size
+--   FROM main.canonical_patient_master
+--   WHERE dominant_nodule_size_cm IS NOT NULL
+--     AND dominant_nodule_size_cm_v2 IS NOT NULL
+--     AND dominant_nodule_size_cm <> dominant_nodule_size_cm_v2
+-- );
+
+-- -----------------------------------------------------------------------------
+-- Directionality.
+-- -----------------------------------------------------------------------------
+-- SELECT
+--   COUNT(*) FILTER (WHERE v1_size > v2_size) AS n_v1_larger,
+--   COUNT(*) FILTER (WHERE v2_size > v1_size) AS n_v2_larger,
+--   AVG(v1_size - v2_size) AS mean_signed_diff,
+--   MEDIAN(v1_size - v2_size) AS median_signed_diff,
+--   MIN(v1_size - v2_size) AS min_signed_diff,
+--   MAX(v1_size - v2_size) AS max_signed_diff
+-- FROM (
+--   SELECT dominant_nodule_size_cm AS v1_size, dominant_nodule_size_cm_v2 AS v2_size
+--   FROM main.canonical_patient_master
+--   WHERE dominant_nodule_size_cm IS NOT NULL
+--     AND dominant_nodule_size_cm_v2 IS NOT NULL
+--     AND dominant_nodule_size_cm <> dominant_nodule_size_cm_v2
+-- );
+
+-- -----------------------------------------------------------------------------
+-- Registry provenance for both canonical patient master columns.
+-- -----------------------------------------------------------------------------
+-- SELECT column_name,
+--        data_type,
+--        verification_status,
+--        verification_method,
+--        batch_id,
+--        notes
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE schema_name='main'
+--   AND table_name='canonical_patient_master'
+--   AND column_name IN ('dominant_nodule_size_cm', 'dominant_nodule_size_cm_v2')
+-- ORDER BY column_name;
+
+-- -----------------------------------------------------------------------------
+-- Independent OR pre-op signal check.
+-- regexp_extract returns '' when no match, so NULLIF is required before TRY_CAST.
+-- -----------------------------------------------------------------------------
+-- WITH d AS (
+--   SELECT research_id,
+--          dominant_nodule_size_cm AS v1_size,
+--          dominant_nodule_size_cm_v2 AS v2_size,
+--          ops_dominant_nodule_size_us,
+--          TRY_CAST(NULLIF(regexp_extract(ops_dominant_nodule_size_us, '(\d+(?:\.\d+)?)', 1), '') AS DOUBLE) AS ops_size_first_num
+--   FROM main.canonical_patient_master
+--   WHERE dominant_nodule_size_cm IS NOT NULL
+--     AND dominant_nodule_size_cm_v2 IS NOT NULL
+--     AND dominant_nodule_size_cm <> dominant_nodule_size_cm_v2
+-- )
+-- SELECT
+--   COUNT(*) AS n_mismatch,
+--   COUNT(*) FILTER (WHERE ops_dominant_nodule_size_us IS NOT NULL AND TRIM(ops_dominant_nodule_size_us) <> '') AS n_with_ops_text,
+--   COUNT(*) FILTER (WHERE ops_size_first_num IS NOT NULL) AS n_with_ops_num,
+--   COUNT(*) FILTER (WHERE v1_size = ops_size_first_num) AS n_v1_exact_match_ops,
+--   COUNT(*) FILTER (WHERE v2_size = ops_size_first_num) AS n_v2_exact_match_ops,
+--   COUNT(*) FILTER (WHERE ops_size_first_num IS NOT NULL AND ABS(v1_size - ops_size_first_num) < ABS(v2_size - ops_size_first_num)) AS n_ops_closer_to_v1,
+--   COUNT(*) FILTER (WHERE ops_size_first_num IS NOT NULL AND ABS(v2_size - ops_size_first_num) < ABS(v1_size - ops_size_first_num)) AS n_ops_closer_to_v2,
+--   COUNT(*) FILTER (WHERE ops_size_first_num IS NOT NULL AND ABS(v2_size - ops_size_first_num) = ABS(v1_size - ops_size_first_num)) AS n_ops_tie
+-- FROM d;
+
+-- -----------------------------------------------------------------------------
+-- Feeder/source comparison. v1 matches the live patient summary and read-only
+-- legacy US nodule tables for all 1,065 mismatch patients. v2 does not match
+-- those source rollups in current live state.
+-- -----------------------------------------------------------------------------
+-- WITH cpm AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id,
+--          dominant_nodule_size_cm AS v1_size,
+--          dominant_nodule_size_cm_v2 AS v2_size
+--   FROM main.canonical_patient_master
+--   WHERE dominant_nodule_size_cm IS NOT NULL
+--     AND dominant_nodule_size_cm_v2 IS NOT NULL
+--     AND dominant_nodule_size_cm <> dominant_nodule_size_cm_v2
+-- ), ips AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id,
+--          dominant_nodule_size_cm AS ips_size
+--   FROM main.imaging_patient_summary_v1
+-- ), cunc AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id,
+--          MAX(size_cm_max) AS cunc_size
+--   FROM "Thyroid 2026 UPdated".us_legacy_20260421.canonical_us_nodule_characteristics_v1
+--   GROUP BY 1
+-- ), inm AS (
+--   SELECT CAST(research_id AS VARCHAR) AS research_id,
+--          MAX(max_dimension_cm) AS inm_max_size
+--   FROM "Thyroid 2026 UPdated".us_legacy_20260421.imaging_nodule_master_v1
+--   GROUP BY 1
+-- )
+-- SELECT
+--   COUNT(*) AS n_mismatch,
+--   COUNT(*) FILTER (WHERE ips_size IS NOT NULL) AS n_has_ips,
+--   COUNT(*) FILTER (WHERE cunc_size IS NOT NULL) AS n_has_cunc,
+--   COUNT(*) FILTER (WHERE inm_max_size IS NOT NULL) AS n_has_inm,
+--   COUNT(*) FILTER (WHERE ips_size = v1_size) AS n_ips_matches_v1,
+--   COUNT(*) FILTER (WHERE ips_size = v2_size) AS n_ips_matches_v2,
+--   COUNT(*) FILTER (WHERE cunc_size = v1_size) AS n_cunc_matches_v1,
+--   COUNT(*) FILTER (WHERE cunc_size = v2_size) AS n_cunc_matches_v2,
+--   COUNT(*) FILTER (WHERE inm_max_size = v1_size) AS n_inm_matches_v1,
+--   COUNT(*) FILTER (WHERE inm_max_size = v2_size) AS n_inm_matches_v2
+-- FROM cpm
+-- LEFT JOIN ips USING (research_id)
+-- LEFT JOIN cunc USING (research_id)
+-- LEFT JOIN inm USING (research_id);
+
+-- -----------------------------------------------------------------------------
+-- Unit/scale drift hypothesis check.
+-- -----------------------------------------------------------------------------
+-- WITH d AS (
+--   SELECT research_id,
+--          dominant_nodule_size_cm AS v1_size,
+--          dominant_nodule_size_cm_v2 AS v2_size
+--   FROM main.canonical_patient_master
+--   WHERE dominant_nodule_size_cm IS NOT NULL
+--     AND dominant_nodule_size_cm_v2 IS NOT NULL
+--     AND dominant_nodule_size_cm <> dominant_nodule_size_cm_v2
+-- )
+-- SELECT COUNT(*) AS n,
+--        COUNT(*) FILTER (WHERE v2_size > 10) AS n_v2_gt_10,
+--        COUNT(*) FILTER (WHERE v2_size > 15) AS n_v2_gt_15,
+--        COUNT(*) FILTER (WHERE ABS((v2_size / 10.0) - v1_size) < 0.05) AS n_v2_div10_matches_v1_005,
+--        COUNT(*) FILTER (WHERE ABS((v2_size / 10.0) - v1_size) < 0.10) AS n_v2_div10_matches_v1_010,
+--        COUNT(*) FILTER (WHERE ABS((v2_size / 10.0) - v1_size) < 0.25) AS n_v2_div10_matches_v1_025,
+--        COUNT(*) FILTER (WHERE ABS(v2_size - (v1_size * 10.0)) < 0.25) AS n_v2_equals_v1_times10_025,
+--        AVG(v2_size / NULLIF(v1_size, 0)) AS mean_ratio,
+--        MEDIAN(v2_size / NULLIF(v1_size, 0)) AS median_ratio
+-- FROM d;
+
+-- -----------------------------------------------------------------------------
+-- Candidate resolution-rule distribution package.
+-- R5 falls back to v2 when no ops tiebreaker exists; live ops signal is absent.
+-- -----------------------------------------------------------------------------
+-- WITH base AS (
+--   SELECT research_id,
+--          dominant_nodule_size_cm AS v1_size,
+--          dominant_nodule_size_cm_v2 AS v2_size,
+--          TRY_CAST(NULLIF(regexp_extract(ops_dominant_nodule_size_us, '(\d+(?:\.\d+)?)', 1), '') AS DOUBLE) AS ops_size
+--   FROM main.canonical_patient_master
+-- ), calc AS (
+--   SELECT *,
+--          COALESCE(v2_size, v1_size) AS r1_prefer_v2,
+--          COALESCE(v1_size, v2_size) AS r2_prefer_v1,
+--          GREATEST(v1_size, v2_size) AS r3_max,
+--          CASE
+--            WHEN v1_size IS NOT NULL AND v2_size IS NOT NULL THEN (v1_size + v2_size) / 2.0
+--            ELSE COALESCE(v1_size, v2_size)
+--          END AS r4_avg,
+--          CASE
+--            WHEN ops_size IS NOT NULL AND v1_size IS NOT NULL AND v2_size IS NOT NULL AND ABS(v1_size - ops_size) < ABS(v2_size - ops_size) THEN v1_size
+--            WHEN ops_size IS NOT NULL AND v1_size IS NOT NULL AND v2_size IS NOT NULL AND ABS(v2_size - ops_size) < ABS(v1_size - ops_size) THEN v2_size
+--            ELSE COALESCE(v2_size, v1_size)
+--          END AS r5_ops_tiebreak
+--   FROM base
+-- ), long AS (
+--   SELECT 'R1_prefer_v2' AS rule, r1_prefer_v2 AS resolved, v1_size, v2_size FROM calc
+--   UNION ALL SELECT 'R2_prefer_v1', r2_prefer_v1, v1_size, v2_size FROM calc
+--   UNION ALL SELECT 'R3_max', r3_max, v1_size, v2_size FROM calc
+--   UNION ALL SELECT 'R4_avg', r4_avg, v1_size, v2_size FROM calc
+--   UNION ALL SELECT 'R5_ops_tiebreak_else_v2', r5_ops_tiebreak, v1_size, v2_size FROM calc
+-- )
+-- SELECT rule,
+--        COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size) AS mismatch_denominator,
+--        COUNT(*) FILTER (WHERE resolved IS NOT NULL) AS n_resolved_all_rows,
+--        COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size AND resolved IS NOT NULL) AS n_resolved_mismatch,
+--        COUNT(*) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size AND resolved IS DISTINCT FROM v1_size) AS mismatch_cells_changed_vs_v1,
+--        AVG(resolved) FILTER (WHERE resolved IS NOT NULL) AS mean_resolved_all,
+--        MEDIAN(resolved) FILTER (WHERE resolved IS NOT NULL) AS median_resolved_all,
+--        QUANTILE_CONT(resolved, 0.95) FILTER (WHERE resolved IS NOT NULL) AS p95_resolved_all,
+--        AVG(resolved) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size) AS mean_resolved_mismatch,
+--        MEDIAN(resolved) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size) AS median_resolved_mismatch,
+--        QUANTILE_CONT(resolved, 0.95) FILTER (WHERE v1_size IS NOT NULL AND v2_size IS NOT NULL AND v1_size <> v2_size) AS p95_resolved_mismatch
+-- FROM long
+-- GROUP BY 1
+-- ORDER BY 1;
+
+-- End mig_176 read-only probe stub.
