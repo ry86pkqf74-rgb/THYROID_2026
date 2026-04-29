@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [canonical_recurrence_v1 mig_122 close-out](project_canonical_recurrence_v1_mig_122_closeout.md) — 2026-04-29: cohort-wide recurrence shell verified Protocol v2; TIMESTAMP/fs CFs; Lane 13 recurrence-note follow-through
 - [ETE event resolved + inline adjudication mig_121 close-out](project_ete_event_resolved_mig_121_closeout.md) — 2026-04-29: Tier-2 `canonical_ete_event_resolved_v1` 62 cols + inline table; first full multi-source Tier-2 enrichment sign-off
 - [Path rollup pair mig_120 close-out](project_path_rollup_pair_mig_120_closeout.md) — 2026-04-29: 5th–6th patient rollup (malig+benign path); Protocol v2 derivation signoff
 - [Frozen-section rollup mig_119 close-out](project_frozen_section_rollup_mig_119_closeout.md) — 2026-04-29: frozen-section patient rollup rebuilt + verified; 187 cols closed
