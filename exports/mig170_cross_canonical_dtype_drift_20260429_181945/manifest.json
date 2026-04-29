@@ -1,0 +1,29 @@
+{
+  "migration": "mig_170",
+  "run_timestamp_utc": "20260429_181945",
+  "posture": "read_only_motherduck_audit_no_db_writes",
+  "scope": "PM same-name columns across verified canonical_% tables",
+  "verified_comparator_tables_in_registry": 57,
+  "cpm_anchor_included_outside_signoff_registry": true,
+  "verified_canonical_tables_inspected": 58,
+  "pm_shared_columns": 52,
+  "dtype_drift_findings": 11,
+  "findings_by_classification": {
+    "BENIGN": 7,
+    "DATA-LOSS-RISK": 2,
+    "CASTABLE": 2
+  },
+  "findings_by_priority": {
+    "low": 8,
+    "high": 2,
+    "medium": 1
+  },
+  "join_trap_probe_rows": 21,
+  "export_dir": "exports/mig170_cross_canonical_dtype_drift_20260429_181945",
+  "artifacts": [
+    "cross_canonical_shared_columns.csv",
+    "cross_canonical_dtype_findings.csv",
+    "cross_canonical_join_trap_probes.csv",
+    "manifest.json"
+  ]
+}
