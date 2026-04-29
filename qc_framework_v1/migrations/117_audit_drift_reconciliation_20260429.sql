@@ -153,3 +153,48 @@ WHERE schema_name = 'main'
 --
 -- This becomes the new canonical audit query template (replaces mig_109's).
 -- =============================================================================
+--
+-- ADDENDUM (2026-04-29 post-execution): audit regex refinement
+--
+-- After mig_117a/b ran and Cursor 10 mig_117_us_v2_family closed in parallel,
+-- gate 5 with extended allowlist returned 5, not the expected 4. Investigation
+-- found a false positive: `canonical_us_nodule_v2.updated_tirads_category`
+-- (VARCHAR) matched `column_name ILIKE '%date%'` because `upDATEd` contains
+-- the substring `date`. The audit regex is overly permissive.
+--
+-- Refinement: replace ILIKE substring match with regexp word-boundary match.
+-- New canonical audit query (date-violation gate 5):
+--
+-- WITH verified_tables AS (
+--   SELECT table_name FROM main.canonical_table_signoff_registry_v1
+--   WHERE table_status='verified' AND table_name LIKE 'canonical_%'
+-- ),
+-- audit_allowlist AS (
+--   SELECT col_name FROM (VALUES
+--     ('build_ts'),('built_at'),('extracted_at'),('llm_build_ts'),
+--     ('llm_extracted_at'),('verified_ts'),('signed_off_ts'),
+--     ('registered_ts'),('updated_at'),('created_at'),('promoted_at'),
+--     ('completed_at'),('started_at'),('ended_at'),('ingested_at_utc'),
+--     ('ingestion_date'),('lab_datetime')
+--   ) v(col_name)
+-- )
+-- SELECT COUNT(*) AS gate5_date_violations -- expect 4 (the 4 CF-117 rows)
+-- FROM information_schema.columns c
+-- JOIN verified_tables v ON c.table_name = v.table_name
+-- WHERE c.table_catalog='thyroid_canonical_publication_v1_0' AND c.table_schema='main'
+--   AND c.column_name NOT IN (SELECT col_name FROM audit_allowlist)
+--   AND c.column_name NOT LIKE '%_status'
+--   AND c.column_name NOT LIKE '%_source'
+--   AND c.column_name NOT LIKE '%_keyword'
+--   AND c.column_name NOT LIKE '%_raw'
+--   AND (c.data_type IN ('TIMESTAMP','TIMESTAMP WITH TIME ZONE')
+--        OR (c.data_type='VARCHAR' AND (
+--              regexp_matches(c.column_name, '(^|_)dates?(_|$)')
+--           OR regexp_matches(c.column_name, '(^|_)dt(_|$)')
+--        )));
+--
+-- Confirmed 2026-04-29 via Cowork query: gate5 = 4 with 54 verified canonicals.
+-- Both fixes (allowlist extension + regex refinement) are documentation-only
+-- changes to the canonical audit query template; no registry data updates
+-- needed for the regex refinement specifically.
+-- =============================================================================
