@@ -3,6 +3,10 @@
 THYROID_2026 — Recurrence Re-Adjudication
 Prompt 2: SQL/Python with strict clinical definitions.
 
+Publication-spine successor (operative + CPM cohort): see
+scripts/203b_canonical_recurrence_harmonized_20260429.py (Lane 19 / mig_123 —
+replaces operative_episode_detail_v2 + gold_master_patient_facts_v1 refs).
+
 Creates: canonical_recurrence_v1
 
 TRUE RECURRENCE requires ONE of:
