@@ -1,103 +1,100 @@
-# mig_176 / mig_177 / mig_174 review package — 2026-04-29
+# mig_176 / mig_177 / mig_174 review package — 2026-04-29 (UPDATED with raw-source findings)
 
-Generated for Logan after the apply queue drain (gate1 165→169, PM 1441→1461 verified). All numbers verified live against MotherDuck.
-
----
-
-## mig_176 — dominant_nodule_size_cm v1/v2 reconcile
-
-### Findings (live re-verification, all 1,065 mismatches + 166 v2-only)
-
-**Headline:** R2 (`COALESCE(v1, v2)`) is even stronger than the original report claimed. Nothing in the "unable to confirm" bucket — every patient's value source-replays exactly.
-
-| Subset | n | Source replay |
-|---|---:|---|
-| Mismatch (v1 ≠ v2, both non-null) | 1,065 | v1 = `imaging_patient_summary_v1.dominant_nodule_size_cm` exactly for **1,065/1,065**; v2 = `canonical_us_nodule_v2.size_cm_max` exactly for **1,065/1,065** |
-| v2-only (v1 NULL, v2 non-null) | 166 | **All 166** have v2 = `canonical_us_nodule_v2.size_cm_max` — `V2_MATCHES_US_SOURCE` |
-| Extreme outliers (v2 > 10 cm) | 19 | All 19 replay from upstream — but v2's *upstream extraction* is implausible |
-
-### Files
-
-- **`mig176_v2_only_166pts.csv`** — full 166-pt list with v2 size, US source check, location, TIRADS, n_nodules, exam dates. **All show `V2_MATCHES_US_SOURCE`.** Under R2 these all use v2 (no v1 to compete); the source data is consistent.
-
-- **`mig176_extreme_v2_implausible_19pts.csv`** — 19 patients where v2 > 10 cm. All replay from `canonical_us_nodule_v2.size_cm_max` cleanly, but the value is clinically implausible (e.g., rid 8931 v2=48 cm; rid 12152 v2=19 cm; rid 12141 v2=18 cm). The US note text from the report shows the actual largest nodule for these patients is in the 3-9 cm range — meaning **`canonical_us_nodule_v2`'s extraction logic is reading the thyroid lobe size or some aggregate as a "nodule size"** for these 19 patients. v1 (from `imaging_exam_master_v1.largest_nodule_cm`) reads the same source patients correctly (1.05–3.05 cm, matches the noted nodules). **R2's `COALESCE(v1, v2)` correctly picks v1 for all 19 — sidesteps the upstream v2 extraction bug.**
-
-### Interpretation
-
-R2 is the right call. The 166 v2-only set is fine — v2 was correctly extracted from US data when v1 was unavailable. The mismatches are all cases where v2's upstream extraction got confused (probably reading a non-nodule structure as a nodule); v1 is the cleaner source there.
-
-**Action:** Author mig_176b apply lane (Cowork-direct, ~6 query_rw calls): add `dominant_nodule_size_cm_resolved DOUBLE` + `dominant_nodule_size_cm_resolution_rule VARCHAR` to canonical_patient_master, populate via `COALESCE(v1, v2)` + rule labels, register in column-registry, append CF closure note. Open `CF-mig176b-V2-UPSTREAM-EXTRACTION-INFLATION-19PTS` informational on the 19 outliers for future canonical_us_nodule_v2 build review.
+Generated for Logan after the apply queue drain (gate1 165→169, PM 1441→1461 verified). All numbers verified live against MotherDuck. **Updated 2026-04-29 with critical findings from path_synoptics + raw US Reports review.**
 
 ---
 
-## mig_177 — invasion family (LVI) ambiguity review
+## CRITICAL UPDATE (2026-04-29) — events extractor bug discovered
 
-You ratified vasc=yes / capsular=yes / preserve grade-versioned=yes. LVI was the one where you wanted to see ambiguity.
+While pulling raw `path_synoptics` data for the 316 ambiguous LVI patients, a major upstream bug was found:
 
-### Headline finding for LVI
+**`canonical_invasion_events_v1` is missing legitimate `lymphatic_microscopic` event rows for two CAP synoptic patterns:**
 
-Two clear buckets explain almost all the drift:
+1. **Combined CAP field "Lymph-Vascular Invasion: Present"** — the CAP template's combined field is being parsed as `vascular_microscopic` ONLY, not also as `lymphatic_microscopic`. Captures both lymph + vasc but only emits vasc.
+2. **Newer separate-field "Lymphatic Invasion: Present"** — when the synoptic explicitly has a separate `Lymphatic Invasion: Present` line, it's being missed entirely.
 
-**(1) PM=T but no event-present row — 2,614 patients** — the bulk of these are FALSE-POSITIVES. Stratified by source values:
+This means **the events table was the WRONG source of truth for LVI in 91+ rollup-only NO_EVENT_ROWS patients.** Logan ratified pausing mig_177b until events are rebuilt.
 
-| pm_lvi_grade | path_event lymphatic_invasion | path_event vascular_invasion | n_pts | Interpretation |
-|---|---|---|---:|---|
-| `x` | `x` | `x` | **2,369** (90.6%) | All source values are `x` (not assessed) — PM lit up despite no actual finding. **PM bug — flip to FALSE.** |
-| `x` | `x` | `focal` / `extensive` / `present` | 138 | Source has VASCULAR invasion but NO lymphatic. PM aliased vasc → lvi somehow. **Flip to FALSE for LVI specifically.** |
-| `null` | `x` | various | 46 | NULL pm grade with `x` lvi. Same PM mis-fire as above. |
-| `indeterminate` / typos | `indeterminate|x` / `c/a|x` / `foacl` | various | ~25 | Genuine indeterminate / typo'd vocabulary. **Strict event semantics correctly says no `present` — these become FALSE in the rederive.** |
-| `x` | `null` | `null` | 2 | Path_event has no rows; PM should be NULL not TRUE. |
+---
 
-**(2) Rollup-only positives — 120 patients** (rollup says T, events say not-present):
+## mig_177 LVI — final disposition by bucket (Logan-ratified pause + per-bucket call)
 
-| Sub-disposition | n | What it means |
-|---|---:|---|
-| `NO_EVENT_ROWS` | **91** | No canonical_invasion_events_v1 row exists for lymphatic_microscopic, but rollup says TRUE. **All 91 have `path_vasc_raw` populated with `present`/`focal`/`extensive`** — rollup is computing `any_lymphatic_microscopic_anywhere` using VASCULAR data. Build error in `canonical_invasion_patient_rollup_v1`. |
-| `ABSENT_ONLY` | 27 | Events explicitly say `absent`, but rollup says TRUE. Synoptic-path absent-only override path. **Strict event-present says FALSE — flip rollup.** |
-| `INDETERMINATE_ONLY` | 2 | Events say `indeterminate`, rollup says TRUE. **Strict event-present says FALSE — flip rollup.** |
+| Bucket | n | Source pattern | Action |
+|---|---:|---|---|
+| **2,369** x/x/x | 2,369 | All sources are `'x'` (not assessed). No signal anywhere. | **FLIP TO FALSE** |
+| **196** PM_T_EVF_signal | 196 | Synoptic explicitly says: `Angioinvasion: Present` + **`Lymphatic Invasion: Not identified`** (separate fields, newer CAP). PM aliased vasc → LVI. | **FLIP TO FALSE** (PM was wrong; events correctly didn't emit lymphatic) |
+| **91** rollup_only_no_event_rows | 91 | Synoptic shows combined CAP `"Lymph-Vascular Invasion: Present"` OR newer separate `"Lymphatic Invasion: Present"`. Events extractor MISSED these. Rollup is right. | **KEEP TRUE** (events rebuild needed; rollup was right) |
+| **27** rollup_only_absent | 27 | Mix: ~20 patients have combined-CAP "Lymph-Vascular: Present" or separate "Lymphatic: Present" (events incorrectly emitted absent); ~7 truly have lymphatic Not identified | **MOSTLY KEEP TRUE; 5-7 individual flips needed** — see [PART1 CSV column "cowork_recommendation"](mig177_lvi_316_full_evidence_PART1_rollup_only.csv) |
+| **2** rollup_only_indeterminate | 2 | Synoptic says "indeterminate" / "cannot be determined" | **FLIP TO FALSE** (indeterminate is not "present") |
 
-### Files
+**Net effect on PM `lvi_any_present_path`:** ~3,392 TRUE → ~898 TRUE (780 events_present + 91 rollup-no-event + ~22-25 rollup_only_absent that have actual lymphatic+ in source + 2 multi-tumor edge cases). Drop of ~2,494 false-positives.
 
-- **`mig177_lvi_2614_strata_summary.csv`** — 33 strata covering all 2,614 patients, with `(pm_lvi_grade, path_event_lvi_raw, path_event_vasc_raw, n_patients)`. The first row alone (`x / x / x → 2,369 patients`) makes the call obvious.
+---
 
-- **`mig177_lvi_120_rollup_only.csv`** — full 120 patients with sub_disposition + path_lvi_raw + path_vasc_raw. The `NO_EVENT_ROWS` 91 are particularly damning for the rollup — they have only vascular evidence yet rollup marked `any_lymphatic_microscopic_anywhere = TRUE`.
+## Files in this package (UPDATED)
 
-### Interpretation
+```
+exports/mig176_177_174_review_20260429/
+├── README.md                                                       (this file)
+├── mig176_v2_only_166pts.csv                                       (166 rows; all V2_MATCHES_US_SOURCE)
+├── mig176_extreme_v2_implausible_19pts.csv                         (19 rows; v2>10cm; v1 from imaging is correct)
+├── mig176_us_reports_raw_19_extreme_outliers.csv                   (RAW US REPORTS for the 19; you can verify v2 inflation directly — e.g. rid 8931 max nodule is 19.1×14.6×15.0 mm = 1.91 cm, which IS v1; v2=48 is fabricated)
+├── mig177_lvi_2614_strata_summary.csv                              (33 strata covering 2,614 PM=T/Event=F pts)
+├── mig177_lvi_120_rollup_only.csv                                  (120 rollup-only positives — original)
+├── mig177_lvi_316_full_evidence_PART1_rollup_only.csv              (NEW — all 120 rollup-only with LVI evidence + Cowork per-pt recommendation)
+└── build_review_csvs.py                                            (reference script; not used due to .eras SSO gap)
+```
 
-**Strict event rederive is the right call (your "yes" stands).** The mig_177 report recommended `EXISTS canonical_invasion_events_v1 WHERE invasion_type='lymphatic_microscopic' AND finding_status='present'` — this gets it right because:
-- The 2,369 source-`x` patients become FALSE (events correctly excluded them — no `present` row)
-- The 91 rollup-only NO_EVENT_ROWS patients become FALSE (no event row of any kind to satisfy EXISTS)
-- The 27 absent-only patients become FALSE
-- Only the 780 patients with actual `present` rows in events stay TRUE
+The 196 PM_T_EVF_signal patients are NOT in a per-patient CSV (they all follow the same pattern: separate-field `Lymphatic Invasion: Not identified` → flip to FALSE). Sample evidence quoted in this README; available on request.
 
-**Vocabulary CFs to open in mig_177b:**
-- `CF-mig177-LVI-VOCAB-X-NOT-ASSESSED` — the `x` value is the dominant cause of false-positives; document semantics
-- `CF-mig177-LVI-TYPO-foacl` — "foacl" → "focal", "extrensive" → "extensive", "indeterminent" → "indeterminate", "X" / "x" / `null`
-- `CF-mig177-LVI-c_a` — `c/a` ("can't assess") values; treat same as `x`
-- `CF-mig177-ROLLUP-VASC-ALIAS-LVI` — the 91 NO_EVENT_ROWS patients show `canonical_invasion_patient_rollup_v1.any_lymphatic_microscopic_anywhere` is computed using vascular signal; rollup needs rebuild after mig_177b
+---
 
-**You preserve legacy values per your direction:** `lvi_grade`, `lvi_ordinal_worst`, and `lvi_any_present_path` get renamed/audited rather than overwritten. New `lvi_event_present` BOOLEAN added.
+## mig_176 — verdict unchanged: R2 ratified (now with raw US data)
+
+The [raw US Reports](mig176_us_reports_raw_19_extreme_outliers.csv) for the 19 extreme outliers confirm the v2 upstream extraction bug definitively:
+
+- **rid 8931** (v1=1.91cm, v2=48cm): largest actual nodule across ALL 6 US exams is 19.1×14.6×15.0 mm = **1.91 cm** (TR4 isthmus nodule on 2016-03-25). v2's "48 cm" has zero source support — no measurement anywhere in the raw US data exceeds 22.7 mm.
+- **rid 12152** (v1=2.30, v2=19): largest actual nodule across all exams is 20.2×14.6×16.3 mm = **2.02 cm**. v2's "19" is fabricated.
+- **rid 6886** (v1=2.27, v2=12.5): one US note describes "12.5 x 4.6 x 9.4 cm in place of right thyroid lobe" — v2 read the lobe-replacement-mass dimensions as a "nodule size".
+
+R2 (`COALESCE(v1, v2)`) correctly picks v1 for all 19 extreme cases. **Action:** author mig_176b apply (Cowork-direct, ~6 query_rw calls); open `CF-mig176b-V2-UPSTREAM-EXTRACTION-INFLATION-19PTS` informational for future canonical_us_nodule_v2 rebuild.
 
 ---
 
 ## mig_174 — Option A ratified
 
-Per-side BOOLEAN columns. Drafting Cursor prompt at `cursor_prompts/CURSOR_PROMPT_mig174b_apply_per_side_boolean_20260429.md`. Apply scope:
-
-- `cnln_img_laterality VARCHAR` → preserved as legacy
-- New cols (BOOLEAN, default FALSE): `cnln_img_left_present`, `cnln_img_right_present`, `cnml_img_central_present`, `cnln_img_bilateral_present`, `cnln_img_lateral_neck_present`
-- Token-level parser: split on `;` → trim whitespace → lowercase → drop literal `'null'` → map to canonical token
-- Same pattern recommended for `lateral_levels_v10`, `ene_levels_v9` if structurally similar (Cursor agent verifies first)
+[Cursor prompt drafted](../../cursor_prompts/CURSOR_PROMPT_mig174b_apply_per_side_boolean_20260429.md) — per-side BOOLEAN columns for `cnln_img_laterality`. Sister-lane probe for `lateral_levels_v10` / `ene_levels_v9` in the same prompt.
 
 ---
 
-## Files in this package
+## NEW required Cursor lane — mig_177-events-rebuild
 
-```
-exports/mig176_177_174_review_20260429/
-├── README.md                                          (this file)
-├── mig176_v2_only_166pts.csv                          (166 rows; all source-replayable)
-├── mig176_extreme_v2_implausible_19pts.csv            (19 rows; v2>10cm; v1 from imaging is correct)
-├── mig177_lvi_2614_strata_summary.csv                 (33 strata covering 2,614 PM=T/Event=F pts)
-└── mig177_lvi_120_rollup_only.csv                     (120 rollup-only positives by sub-disposition)
-```
+The `canonical_invasion_events_v1` build needs to handle:
+
+1. **Combined CAP field** "Lymph-Vascular Invasion: Present" → emit BOTH `vascular_microscopic` AND `lymphatic_microscopic` events with `finding_status='present'`.
+2. **Older format** "Angiolymphatic invasion: Yes/Present" → emit BOTH events.
+3. **"Lymphangitic invasion present"** (rid 1535 example) → emit `lymphatic_microscopic`.
+4. **Newer separate-field "Lymphatic Invasion: Present"** → emit `lymphatic_microscopic` (currently missed).
+5. **"< N per 2mm2"** quantitative-invasion phrasing (rid 11599 example) → treat as `present` (it's a mitotic-style measurement, not "Not identified").
+6. Typo handling: `foacl` → focal, `extrensive` → extensive, `indeterminent` → indeterminate, `c/a` → cannot_assess.
+
+Also rebuild `canonical_invasion_patient_rollup_v1.any_lymphatic_microscopic_anywhere` after events fix — current rollup is partly built on vasc signal (the 91 NO_EVENT_ROWS rollup-only finding) and needs to be re-derived from corrected events.
+
+Open carry-forwards:
+- `CF-mig177-EVENTS-LYMPH_VASCULAR_COMBINED-MISS` — 91 patients minimum; events extractor parses combined CAP field as vasc-only
+- `CF-mig177-EVENTS-LYMPHATIC_PRESENT_SEPARATE_MISS` — patients where separate-field newer-CAP `Lymphatic Invasion: Present` was missed
+- `CF-mig177-PM-VASC-ALIAS-LVI` — 196 patients; PM `lvi_any_present_path=TRUE` despite explicit `Lymphatic Invasion: Not identified`
+- `CF-mig177-EVENTS-VOCAB-FOACL-EXTRENSIVE-INDETERMINENT-CA-X` — vocab cleanup needed in events extractor
+
+---
+
+## Next steps (post-Logan-review)
+
+1. **Author mig_177-events-rebuild Cursor prompt** — events table rebuild for canonical_invasion_events_v1 with the 6 patterns above
+2. **Hold mig_177b** — pending events rebuild + verification
+3. **Apply mig_176b** — Cowork-direct R2 apply (no waiting needed; mig_176 is independent)
+4. **mig_174b Cursor lane** — already drafted; agent can pick up
+
+---
+
+End of README.
