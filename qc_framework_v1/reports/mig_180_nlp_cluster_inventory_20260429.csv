@@ -1,0 +1,117 @@
+col_name,family,metric_kind,data_type,description_inferred
+nlp_airway_has_data,nlp_airway,has_data,BOOLEAN,Boolean presence flag for validated airway NLP/source rows.
+nlp_airway_key_finding,nlp_airway,key_finding,VARCHAR,Text rollup for key finding in the airway NLP/source cluster.
+nlp_airway_n_entities,nlp_airway,n_entities,BIGINT,Count of validated airway NLP/source rows per patient.
+nlp_airway_n_notes,nlp_airway,n_notes,BIGINT,Count of distinct notes contributing validated airway NLP/source rows.
+nlp_dynrisk_has_data,nlp_dynrisk,has_data,BOOLEAN,Boolean presence flag for validated dynrisk NLP/source rows.
+nlp_dynrisk_key_finding,nlp_dynrisk,key_finding,VARCHAR,Text rollup for key finding in the dynrisk NLP/source cluster.
+nlp_dynrisk_n_entities,nlp_dynrisk,n_entities,BIGINT,Count of validated dynrisk NLP/source rows per patient.
+nlp_dynrisk_n_notes,nlp_dynrisk,n_notes,BIGINT,Count of distinct notes contributing validated dynrisk NLP/source rows.
+nlp_frozensec_has_data,nlp_frozensec,has_data,BOOLEAN,Boolean presence flag for validated frozensec NLP/source rows.
+nlp_frozensec_key_finding,nlp_frozensec,key_finding,VARCHAR,Text rollup for key finding in the frozensec NLP/source cluster.
+nlp_frozensec_n_entities,nlp_frozensec,n_entities,BIGINT,Count of validated frozensec NLP/source rows per patient.
+nlp_frozensec_n_notes,nlp_frozensec,n_notes,BIGINT,Count of distinct notes contributing validated frozensec NLP/source rows.
+nlp_funcoutcome_has_data,nlp_funcoutcome,has_data,BOOLEAN,Boolean presence flag for validated funcoutcome NLP/source rows.
+nlp_funcoutcome_key_finding,nlp_funcoutcome,key_finding,VARCHAR,Text rollup for key finding in the funcoutcome NLP/source cluster.
+nlp_funcoutcome_n_entities,nlp_funcoutcome,n_entities,BIGINT,Count of validated funcoutcome NLP/source rows per patient.
+nlp_funcoutcome_n_notes,nlp_funcoutcome,n_notes,BIGINT,Count of distinct notes contributing validated funcoutcome NLP/source rows.
+nlp_imaging_has_data,nlp_imaging,has_data,BOOLEAN,Boolean presence flag for validated imaging NLP/source rows.
+nlp_imaging_key_finding,nlp_imaging,key_finding,VARCHAR,Text rollup for key finding in the imaging NLP/source cluster.
+nlp_imaging_n_entities,nlp_imaging,n_entities,BIGINT,Count of validated imaging NLP/source rows per patient.
+nlp_imaging_n_notes,nlp_imaging,n_notes,BIGINT,Count of distinct notes contributing validated imaging NLP/source rows.
+nlp_labs_has_data,nlp_labs,has_data,BOOLEAN,Boolean presence flag for validated labs NLP/source rows.
+nlp_labs_key_finding,nlp_labs,key_finding,VARCHAR,Text rollup for key finding in the labs NLP/source cluster.
+nlp_labs_n_entities,nlp_labs,n_entities,BIGINT,Count of validated labs NLP/source rows per patient.
+nlp_labs_n_notes,nlp_labs,n_notes,BIGINT,Count of distinct notes contributing validated labs NLP/source rows.
+nlp_ln_has_data,nlp_ln,has_data,BOOLEAN,Boolean presence flag for validated ln NLP/source rows.
+nlp_ln_levels_mentioned,nlp_ln,levels_mentioned,VARCHAR,Boolean rollup indicating levels mentioned in the ln NLP/source cluster.
+nlp_ln_n_entities,nlp_ln,n_entities,BIGINT,Count of validated ln NLP/source rows per patient.
+nlp_ln_n_notes,nlp_ln,n_notes,BIGINT,Count of distinct notes contributing validated ln NLP/source rows.
+nlp_ln_positive_mentioned,nlp_ln,positive_mentioned,BOOLEAN,Boolean rollup indicating positive mentioned in the ln NLP/source cluster.
+nlp_ne_complications_has_data,nlp_ne_complications,has_data,BOOLEAN,Boolean presence flag for validated note entities complications NLP/source rows.
+nlp_ne_complications_n_rows,nlp_ne_complications,n_rows,BIGINT,Count of validated note entities complications NLP/source rows per patient.
+nlp_ne_genetics_has_data,nlp_ne_genetics,has_data,BOOLEAN,Boolean presence flag for validated note entities genetics NLP/source rows.
+nlp_ne_genetics_n_rows,nlp_ne_genetics,n_rows,BIGINT,Count of validated note entities genetics NLP/source rows per patient.
+nlp_ne_medications_has_data,nlp_ne_medications,has_data,BOOLEAN,Boolean presence flag for validated note entities medications NLP/source rows.
+nlp_ne_medications_n_rows,nlp_ne_medications,n_rows,BIGINT,Count of validated note entities medications NLP/source rows per patient.
+nlp_ne_operative_has_data,nlp_ne_operative,has_data,BOOLEAN,Boolean presence flag for validated note entities operative NLP/source rows.
+nlp_ne_operative_n_rows,nlp_ne_operative,n_rows,BIGINT,Count of validated note entities operative NLP/source rows per patient.
+nlp_ne_problemlist_has_data,nlp_ne_problemlist,has_data,BOOLEAN,Boolean presence flag for validated note entities problemlist NLP/source rows.
+nlp_ne_problemlist_n_rows,nlp_ne_problemlist,n_rows,BIGINT,Count of validated note entities problemlist NLP/source rows per patient.
+nlp_ne_staging_has_data,nlp_ne_staging,has_data,BOOLEAN,Boolean presence flag for validated note entities staging NLP/source rows.
+nlp_ne_staging_n_rows,nlp_ne_staging,n_rows,BIGINT,Count of validated note entities staging NLP/source rows per patient.
+nlp_parathyroid_has_data,nlp_parathyroid,has_data,BOOLEAN,Boolean presence flag for validated parathyroid NLP/source rows.
+nlp_parathyroid_key_finding,nlp_parathyroid,key_finding,VARCHAR,Text rollup for key finding in the parathyroid NLP/source cluster.
+nlp_parathyroid_n_entities,nlp_parathyroid,n_entities,BIGINT,Count of validated parathyroid NLP/source rows per patient.
+nlp_parathyroid_n_notes,nlp_parathyroid,n_notes,BIGINT,Count of distinct notes contributing validated parathyroid NLP/source rows.
+nlp_path_has_data,nlp_path,has_data,BOOLEAN,Boolean presence flag for validated path NLP/source rows.
+nlp_path_ln_positive_mentioned,nlp_path,ln_positive_mentioned,BOOLEAN,Boolean rollup indicating ln positive mentioned in the path NLP/source cluster.
+nlp_path_margin_mentioned,nlp_path,margin_mentioned,BOOLEAN,Boolean rollup indicating margin mentioned in the path NLP/source cluster.
+nlp_path_multifocal_mentioned,nlp_path,multifocal_mentioned,BOOLEAN,Boolean rollup indicating multifocal mentioned in the path NLP/source cluster.
+nlp_path_n_entities,nlp_path,n_entities,BIGINT,Count of validated path NLP/source rows per patient.
+nlp_path_n_notes,nlp_path,n_notes,BIGINT,Count of distinct notes contributing validated path NLP/source rows.
+nlp_path_vasc_inv_mentioned,nlp_path,vasc_inv_mentioned,BOOLEAN,Boolean rollup indicating vasc inv mentioned in the path NLP/source cluster.
+nlp_physexam_has_data,nlp_physexam,has_data,BOOLEAN,Boolean presence flag for validated physexam NLP/source rows.
+nlp_physexam_key_finding,nlp_physexam,key_finding,VARCHAR,Text rollup for key finding in the physexam NLP/source cluster.
+nlp_physexam_n_entities,nlp_physexam,n_entities,BIGINT,Count of validated physexam NLP/source rows per patient.
+nlp_physexam_n_notes,nlp_physexam,n_notes,BIGINT,Count of distinct notes contributing validated physexam NLP/source rows.
+nlp_pmhx_has_data,nlp_pmhx,has_data,BOOLEAN,Boolean presence flag for validated pmhx NLP/source rows.
+nlp_pmhx_key_finding,nlp_pmhx,key_finding,VARCHAR,Text rollup for key finding in the pmhx NLP/source cluster.
+nlp_pmhx_n_entities,nlp_pmhx,n_entities,BIGINT,Count of validated pmhx NLP/source rows per patient.
+nlp_pmhx_n_notes,nlp_pmhx,n_notes,BIGINT,Count of distinct notes contributing validated pmhx NLP/source rows.
+nlp_pshx_has_data,nlp_pshx,has_data,BOOLEAN,Boolean presence flag for validated pshx NLP/source rows.
+nlp_pshx_key_finding,nlp_pshx,key_finding,VARCHAR,Text rollup for key finding in the pshx NLP/source cluster.
+nlp_pshx_n_entities,nlp_pshx,n_entities,BIGINT,Count of validated pshx NLP/source rows per patient.
+nlp_pshx_n_notes,nlp_pshx,n_notes,BIGINT,Count of distinct notes contributing validated pshx NLP/source rows.
+nlp_ptdecision_has_data,nlp_ptdecision,has_data,BOOLEAN,Boolean presence flag for validated ptdecision NLP/source rows.
+nlp_ptdecision_key_finding,nlp_ptdecision,key_finding,VARCHAR,Text rollup for key finding in the ptdecision NLP/source cluster.
+nlp_ptdecision_n_entities,nlp_ptdecision,n_entities,BIGINT,Count of validated ptdecision NLP/source rows per patient.
+nlp_ptdecision_n_notes,nlp_ptdecision,n_notes,BIGINT,Count of distinct notes contributing validated ptdecision NLP/source rows.
+nlp_radtx_has_data,nlp_radtx,has_data,BOOLEAN,Boolean presence flag for validated radtx NLP/source rows.
+nlp_radtx_key_finding,nlp_radtx,key_finding,VARCHAR,Text rollup for key finding in the radtx NLP/source cluster.
+nlp_radtx_n_entities,nlp_radtx,n_entities,BIGINT,Count of validated radtx NLP/source rows per patient.
+nlp_radtx_n_notes,nlp_radtx,n_notes,BIGINT,Count of distinct notes contributing validated radtx NLP/source rows.
+nlp_rec_any_mentioned,nlp_rec,any_mentioned,BOOLEAN,Boolean rollup indicating any mentioned in the rec NLP/source cluster.
+nlp_rec_confidence_tier,nlp_rec,confidence_tier,VARCHAR,Text rollup for confidence tier in the rec NLP/source cluster.
+nlp_rec_disease_free_mentioned,nlp_rec,disease_free_mentioned,BOOLEAN,Boolean rollup indicating disease free mentioned in the rec NLP/source cluster.
+nlp_rec_earliest_date,nlp_rec,earliest_date,DATE,Derived earliest date metric for the rec NLP/source cluster.
+nlp_rec_has_data,nlp_rec,has_data,BOOLEAN,Boolean presence flag for validated rec NLP/source rows.
+nlp_rec_n_entities,nlp_rec,n_entities,BIGINT,Count of validated rec NLP/source rows per patient.
+nlp_rec_type_worst,nlp_rec,type_worst,VARCHAR,Text rollup for type worst in the rec NLP/source cluster.
+nlp_survfu_has_data,nlp_survfu,has_data,BOOLEAN,Boolean presence flag for validated survfu NLP/source rows.
+nlp_survfu_key_finding,nlp_survfu,key_finding,VARCHAR,Text rollup for key finding in the survfu NLP/source cluster.
+nlp_survfu_n_entities,nlp_survfu,n_entities,BIGINT,Count of validated survfu NLP/source rows per patient.
+nlp_survfu_n_notes,nlp_survfu,n_notes,BIGINT,Count of distinct notes contributing validated survfu NLP/source rows.
+nlp_symptoms_has_data,nlp_symptoms,has_data,BOOLEAN,Boolean presence flag for validated symptoms NLP/source rows.
+nlp_symptoms_key_finding,nlp_symptoms,key_finding,VARCHAR,Text rollup for key finding in the symptoms NLP/source cluster.
+nlp_symptoms_n_entities,nlp_symptoms,n_entities,BIGINT,Count of validated symptoms NLP/source rows per patient.
+nlp_symptoms_n_notes,nlp_symptoms,n_notes,BIGINT,Count of distinct notes contributing validated symptoms NLP/source rows.
+nlp_tg_has_data,nlp_tg,has_data,BOOLEAN,Boolean presence flag for validated tg NLP/source rows.
+nlp_tg_n_entities,nlp_tg,n_entities,BIGINT,Count of validated tg NLP/source rows per patient.
+nlp_tg_rising_mentioned,nlp_tg,rising_mentioned,BOOLEAN,Boolean rollup indicating rising mentioned in the tg NLP/source cluster.
+nlp_tg_undetectable_mentioned,nlp_tg,undetectable_mentioned,BOOLEAN,Boolean rollup indicating undetectable mentioned in the tg NLP/source cluster.
+nlp_tirads_has_component_detail,nlp_tirads,has_component_detail,BOOLEAN,Derived has component detail metric for the tirads NLP/source cluster.
+nlp_tirads_has_data,nlp_tirads,has_data,BOOLEAN,Boolean presence flag for validated tirads NLP/source rows.
+nlp_tirads_max_category,nlp_tirads,max_category,VARCHAR,Text rollup for max category in the tirads NLP/source cluster.
+nlp_tirads_n_entities,nlp_tirads,n_entities,BIGINT,Count of validated tirads NLP/source rows per patient.
+nlp_tirads_n_notes,nlp_tirads,n_notes,BIGINT,Count of distinct notes contributing validated tirads NLP/source rows.
+nlp_usnodule_has_data,nlp_usnodule,has_data,BOOLEAN,Boolean presence flag for validated usnodule NLP/source rows.
+nlp_usnodule_key_finding,nlp_usnodule,key_finding,VARCHAR,Text rollup for key finding in the usnodule NLP/source cluster.
+nlp_usnodule_n_entities,nlp_usnodule,n_entities,BIGINT,Count of validated usnodule NLP/source rows per patient.
+nlp_usnodule_n_notes,nlp_usnodule,n_notes,BIGINT,Count of distinct notes contributing validated usnodule NLP/source rows.
+nlp_vasc_confidence_tier,nlp_vasc,confidence_tier,VARCHAR,Text rollup for confidence tier in the vasc NLP/source cluster.
+nlp_vasc_has_data,nlp_vasc,has_data,BOOLEAN,Boolean presence flag for validated vasc NLP/source rows.
+nlp_vasc_n_entities,nlp_vasc,n_entities,BIGINT,Count of validated vasc NLP/source rows per patient.
+nlp_vasc_positive_mentioned,nlp_vasc,positive_mentioned,BOOLEAN,Boolean rollup indicating positive mentioned in the vasc NLP/source cluster.
+nlp_rec_earliest_days_from_surg,nlp_rec,earliest_days_from_surg,INTEGER,Derived earliest days from surg metric for the rec NLP/source cluster.
+nlp_path_multifocal_concordance_v2,nlp_path,multifocal_concordance_v2,VARCHAR,Text rollup for multifocal concordance v2 in the path NLP/source cluster.
+nlp_path_positive_mentioned,nlp_path,positive_mentioned,BOOLEAN,Boolean rollup indicating positive mentioned in the path NLP/source cluster.
+nlp_path_confidence_tier,nlp_path,confidence_tier,VARCHAR,Text rollup for confidence tier in the path NLP/source cluster.
+nlp_cervln_has_data,nlp_cervln,has_data,BOOLEAN,Boolean presence flag for validated cervln NLP/source rows.
+nlp_cervln_n_entities,nlp_cervln,n_entities,INTEGER,Count of validated cervln NLP/source rows per patient.
+nlp_cervln_positive_mentioned,nlp_cervln,positive_mentioned,BOOLEAN,Boolean rollup indicating positive mentioned in the cervln NLP/source cluster.
+nlp_cervln_confidence_tier,nlp_cervln,confidence_tier,VARCHAR,Text rollup for confidence tier in the cervln NLP/source cluster.
+nlp_esoph_has_data,nlp_esoph,has_data,BOOLEAN,Boolean presence flag for validated esoph NLP/source rows.
+nlp_esoph_n_entities,nlp_esoph,n_entities,INTEGER,Count of validated esoph NLP/source rows per patient.
+nlp_esoph_positive_mentioned,nlp_esoph,positive_mentioned,BOOLEAN,Boolean rollup indicating positive mentioned in the esoph NLP/source cluster.
+nlp_esoph_confidence_tier,nlp_esoph,confidence_tier,VARCHAR,Text rollup for confidence tier in the esoph NLP/source cluster.
