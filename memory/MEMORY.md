@@ -11,6 +11,8 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [PMH events mig_107 close-out](project_pmh_events_mig_107_closeout.md) — 2026-04-28: 4-source PMH verification; legacy+LLM exact, synthetic verify-as-injected
+- [Multi-source canonical verification](feedback_multisource_canonical_verification.md) — Pattern: stratify by source, exact rederive deterministic rows, verify synthetic rows as injected
 - [clinical_date_retype_20260428](../qc_framework_v1/migrations/clinical_date_retype_20260428.md) — Script 413; six cols VARCHAR/TIMESTAMP→DATE + archive snapshots + view DDL refresh on MotherDuck
 - [mig_103 medications classifier](../qc_framework_v1/migrations/103_mig_medications_apply.md) — 2026-04-29: REAL/TEMPLATE note classifier; 7501→6473 meds rows; +6 PMH; table verified
 - [Script 365b close-out](project_script_365b_close_out.md) — 2026-04-22 SHA 0a2ec27; 6 canonicals (CHANGES A-N) + Option-C cleanup; 5 patterns
