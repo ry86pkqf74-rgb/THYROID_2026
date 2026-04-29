@@ -1,0 +1,5 @@
+Executing qc_framework_v1/migrations/173_syn_size_cm_dtype_reform_20260429.sql against locked publication database...
+Rolled back transaction after error.
+Traceback (most recent call last):
+  File "<stdin>", line 10, in <module>
+_duckdb.TransactionException: TransactionContext Error: Attempting to write to database "thyroid_canonical_publication_v1_0" in a transaction that has already modified database "Thyroid 2026 UPdated" - a single transaction can only write to a single attached database.
