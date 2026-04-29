@@ -1,0 +1,99 @@
+source_col,raw_value,canonical_code,variant_subtype,display_label,n_rows,review_status,ratification_notes
+recurrence_histology,PTC,ptc,,PTC,234,ratified,base PTC; case-only normalization
+recurrence_histology,PTC ,ptc,,PTC,234,ratified,base PTC; trailing-whitespace alias of 'PTC'
+recurrence_histology,metastatic PTC,ptc,,PTC,82,ratified,strip metastatic prefix per Logan rule (metastatic-ness derived from LN canonical)
+recurrence_histology,Metastatic PTC,ptc,,PTC,82,ratified,case alias of 'metastatic PTC'
+recurrence_histology,metastatic pTC,ptc,,PTC,82,ratified,case alias of 'metastatic PTC'
+recurrence_histology,follicular carcinoma,ftc,,Follicular Carcinoma,54,ratified,base FTC
+recurrence_histology,Follicular carcinoma,ftc,,Follicular Carcinoma,54,ratified,case alias of 'follicular carcinoma'
+recurrence_histology,metastatic MTC,mtc,,MTC,9,ratified,strip metastatic prefix
+recurrence_histology,Metastatic MTC,mtc,,MTC,9,ratified,case alias of 'metastatic MTC'
+recurrence_histology,NIFTP,niftp,,NIFTP,9,ratified,base NIFTP
+recurrence_histology,MTC,mtc,,MTC,8,ratified,base MTC
+recurrence_histology,metastatic PTC classical,ptc,classical,"PTC, Classical",6,ratified,strip metastatic; classical variant_subtype
+recurrence_histology,metastatic follicular carcinoma,ftc,,Follicular Carcinoma,5,ratified,strip metastatic prefix
+recurrence_histology,metastatic PTC tall cell variant,ptc,tall_cell,"PTC, Tall Cell Variant",4,ratified,strip metastatic; tall_cell variant_subtype
+recurrence_histology,Metastatic PTC tall cell variant,ptc,tall_cell,"PTC, Tall Cell Variant",4,ratified,case alias
+recurrence_histology,Poorly differentiated thyroid carcinoma,pdtc,,PDTC,3,ratified,base PDTC (distinct from DHGTC per WHO 2022)
+recurrence_histology,poorly differentiated thyroid carcinoma,pdtc,,PDTC,3,ratified,case alias
+recurrence_histology,Metastatic Carcinoma,dtc_nos,,Metastatic Carcinoma (NOS),2,per_patient_override,catch-all; resolved per-patient via canonical_path_malignant_events_v1 (see overrides file)
+recurrence_histology,metastatic carcinoma,dtc_nos,,Metastatic Carcinoma (NOS),2,per_patient_override,catch-all; resolved per-patient
+recurrence_histology,Recurrent/metastatic follicular carcinoma,ftc,,Follicular Carcinoma,2,ratified,strip recurrent/metastatic
+recurrence_histology,recurrent/metastatic follicular Carcinoma,ftc,,Follicular Carcinoma,2,ratified,case alias
+recurrence_histology,recurrent/metastatic PTC,ptc,,PTC,2,ratified,strip recurrent/metastatic
+recurrence_histology,angiosarcoma of the thyroid,angiosarcoma,,Angiosarcoma of the Thyroid,1,ratified,base angiosarcoma (rare non-thyroid-cell tumor)
+recurrence_histology,differentiated high grade thyroid carcinoma,dhgtc,,DHGTC,1,ratified,base DHGTC (kept separate from PDTC per WHO 2022)
+recurrence_histology,differentiated thyroid carcinoma,dtc_nos,,DTC (NOS),1,per_patient_override,catch-all; pt 111 resolved to ptc per path_malignant events
+recurrence_histology,FTUMP,ftump,,FTUMP,1,ratified,base FTUMP (follicular tumor of uncertain malignant potential)
+recurrence_histology,metastatic high grade neuroendocrine tumor,neuroendocrine,high_grade,"Neuroendocrine Tumor, High Grade",1,ratified,strip metastatic; high_grade variant_subtype
+recurrence_histology,metastatic poorly differentiated thyroid carcinoma,pdtc,,PDTC,1,ratified,strip metastatic
+recurrence_histology,metastatic PTC calssical with focal tall cell features (<5%),ptc,classical_with_focal_tall_cell,"PTC, Classical with Focal Tall Cell",1,ratified,strip metastatic; typo 'calssical' normalized; variant captured
+recurrence_histology,metastatic PTC classic,ptc,classical,"PTC, Classical",1,ratified,'classic' normalized to classical
+recurrence_histology,metastatic PTC classic subtype with tall cell component ~25%,ptc,classical_with_tall_cell_25pct,"PTC, Classical with ~25% Tall Cell",1,ratified,strip metastatic; preserve quantitative variant
+recurrence_histology,"metastatic PTC
+classic subtype with tall cell component ~25%",ptc,classical_with_tall_cell_25pct,"PTC, Classical with ~25% Tall Cell",1,ratified,strip metastatic; preserve quantitative variant; mig_172b exact-match alias for live MotherDuck newline-bearing raw value
+recurrence_histology,metastatic PTC follicular,ptc,follicular_variant,"PTC, Follicular Variant",1,ratified,strip metastatic; follicular_variant subtype
+recurrence_histology,metastatic PTC high grade,ptc,high_grade,"PTC, High Grade",1,ratified,strip metastatic; high_grade variant
+recurrence_histology,metastatic PTC onocytic classical,ptc,oncocytic_classical,"PTC, Oncocytic Classical",1,ratified,strip metastatic; typo 'onocytic' normalized to oncocytic; classical variant
+recurrence_histology,metastatic PTC with focal tall cell features,ptc,classical_with_focal_tall_cell,"PTC, Classical with Focal Tall Cell",1,ratified,strip metastatic; same variant code as 'metastatic PTC calssical with focal tall cell features (<5%)'
+recurrence_histology,metastatic PTC with tall cell features,ptc,tall_cell,"PTC, Tall Cell",1,ratified,strip metastatic; tall_cell variant
+recurrence_histology,metastatic PTC?,ptc,,PTC,1,ratified,strip metastatic; trailing '?' indicates uncertainty in upstream note but tumor type inferred PTC
+recurrence_histology,metastatic thyroid carcinoma,dtc_nos,,Metastatic Thyroid Carcinoma (NOS),1,per_patient_override,catch-all; resolved per-patient
+recurrence_histology,metastatic/recurrent PTC,ptc,,PTC,1,ratified,strip metastatic/recurrent
+recurrence_histology,metastatic/recurrent PTC classical,ptc,classical,"PTC, Classical",1,ratified,strip metastatic/recurrent; classical variant
+recurrence_histology,recurrent anaplastic carcinoma,atc,,Anaplastic Thyroid Carcinoma,1,ratified,strip recurrent
+recurrence_histology,recurrent differentiated high grade thyroid carcinoma metastatic,dhgtc,,DHGTC,1,ratified,strip recurrent and metastatic
+recurrence_histology_v2,metastatic PTC,ptc,,PTC,66,ratified,strip metastatic
+recurrence_histology_v2,Metastatic PTC,ptc,,PTC,66,ratified,case alias
+recurrence_histology_v2,metastatic pTC,ptc,,PTC,66,ratified,case alias
+recurrence_histology_v2,follicular carcinoma,ftc,,Follicular Carcinoma,15,ratified,base FTC
+recurrence_histology_v2,metastatic MTC,mtc,,MTC,10,ratified,strip metastatic
+recurrence_histology_v2,Metastatic MTC,mtc,,MTC,10,ratified,case alias
+recurrence_histology_v2,metastatic PTC classical,ptc,classical,"PTC, Classical",4,ratified,strip metastatic; classical variant
+recurrence_histology_v2,metastatic PTC tall cell variant,ptc,tall_cell,"PTC, Tall Cell Variant",4,ratified,strip metastatic; tall_cell variant
+recurrence_histology_v2,Metastatic PTC tall cell variant,ptc,tall_cell,"PTC, Tall Cell Variant",4,ratified,case alias
+recurrence_histology_v2,metastatic follicular carcinoma,ftc,,Follicular Carcinoma,3,ratified,strip metastatic
+recurrence_histology_v2,differentiated thyroid carcinoma,dtc_nos,,DTC (NOS),1,per_patient_override,catch-all; pt 111 resolved per path_malignant events
+recurrence_histology_v2,metastatic carcinoma,dtc_nos,,Metastatic Carcinoma (NOS),1,per_patient_override,catch-all; resolved per-patient
+recurrence_histology_v2,metastatic high grade neuroendocrine tumor,neuroendocrine,high_grade,"Neuroendocrine Tumor, High Grade",1,ratified,strip metastatic; high_grade variant
+recurrence_histology_v2,metastatic poorly differentiated thyroid carcinoma,pdtc,,PDTC,1,ratified,strip metastatic
+recurrence_histology_v2,metastatic PTC calssical with focal tall cell features (<5%),ptc,classical_with_focal_tall_cell,"PTC, Classical with Focal Tall Cell",1,ratified,strip metastatic; variant preserved
+recurrence_histology_v2,metastatic PTC classic,ptc,classical,"PTC, Classical",1,ratified,classic normalized to classical
+recurrence_histology_v2,metastatic PTC with focal tall cell features,ptc,classical_with_focal_tall_cell,"PTC, Classical with Focal Tall Cell",1,ratified,strip metastatic
+recurrence_histology_v2,metastatic PTC with tall cell features,ptc,tall_cell,"PTC, Tall Cell",1,ratified,strip metastatic
+recurrence_histology_v2,metastatic PTC?,ptc,,PTC,1,ratified,strip metastatic; '?' uncertainty marker discarded
+recurrence_histology_v2,metastatic thyroid carcinoma,dtc_nos,,Metastatic Thyroid Carcinoma (NOS),1,per_patient_override,catch-all
+recurrence_histology_v2,metastatic/recurrent PTC,ptc,,PTC,1,ratified,strip
+recurrence_histology_v2,metastatic/recurrent PTC classical,ptc,classical,"PTC, Classical",1,ratified,strip
+recurrence_histology_v2,Poorly differentiated thyroid carcinoma,pdtc,,PDTC,1,ratified,base PDTC
+recurrence_histology_v2,recurrent anaplastic carcinoma,atc,,Anaplastic Thyroid Carcinoma,1,ratified,strip recurrent
+recurrence_histology_v2,recurrent differentiated high grade thyroid carcinoma metastatic,dhgtc,,DHGTC,1,ratified,strip recurrent/metastatic
+recurrence_histology_v2,Recurrent/metastatic follicular carcinoma,ftc,,Follicular Carcinoma,1,ratified,strip recurrent/metastatic
+completion_prior_histology,PTC,ptc,,PTC,235,ratified,base PTC
+completion_prior_histology,PTC ,ptc,,PTC,235,ratified,trailing-whitespace alias
+completion_prior_histology,follicular carcinoma,ftc,,Follicular Carcinoma,119,ratified,base FTC
+completion_prior_histology,Follicular carcinoma,ftc,,Follicular Carcinoma,119,ratified,case alias
+completion_prior_histology,MTC,mtc,,MTC,10,ratified,base MTC
+completion_prior_histology,poorly differentiated thyroid carcinoma,pdtc,,PDTC,8,ratified,base PDTC
+completion_prior_histology,Poorly differentiated thyroid carcinoma,pdtc,,PDTC,8,ratified,case alias
+completion_prior_histology,NIFTP,niftp,,NIFTP,3,ratified,base NIFTP
+completion_prior_histology,differentiated high grade thyroid carcinoma,dhgtc,,DHGTC,2,ratified,base DHGTC (kept separate from PDTC)
+completion_prior_histology,FTUMP,ftump,,FTUMP,2,ratified,base FTUMP
+completion_prior_histology,metastatic PTC,ptc,,PTC,2,ratified,strip metastatic
+completion_prior_histology,Atypical hurthle cell neoplasm,atypical_hurthle_neoplasm,,Atypical Hurthle Cell Neoplasm,1,ratified,WHO 2022 Hurthle cell tumor of uncertain malignant potential family
+completion_prior_histology,metastatic follicular carcinoma,ftc,,Follicular Carcinoma,1,ratified,strip metastatic
+completion_prior_histology,metastatic thyroid carcinoma,dtc_nos,,Metastatic Thyroid Carcinoma (NOS),1,per_patient_override,catch-all
+completion_prior_histology,MTC PTC mixed composit,MTC | PTC,,MTC | PTC,1,ratified,rare composite tumor; typo 'composit' normalized; mig_172b post-mig_178 rewrite: Logan rejected mtc_ptc_mixed; remapped to MTC | PTC convention
+completion_prior_histology,"MTC
+PTC mixed composit",MTC | PTC,,MTC | PTC,1,ratified,rare composite tumor; typo 'composit' normalized; mig_172b post-mig_178 rewrite: Logan rejected mtc_ptc_mixed; remapped to MTC | PTC convention; mig_172b exact-match alias for live MotherDuck newline-bearing raw value
+completion_histology_type,PTC,ptc,,PTC,153,ratified,base PTC
+completion_histology_type,PTC ,ptc,,PTC,153,ratified,trailing-whitespace alias
+completion_histology_type,metastatic PTC,ptc,,PTC,11,ratified,strip metastatic
+completion_histology_type,follicular carcinoma,ftc,,Follicular Carcinoma,10,ratified,base FTC
+completion_histology_type,Follicular carcinoma,ftc,,Follicular Carcinoma,10,ratified,case alias
+completion_histology_type,MTC,mtc,,MTC,7,ratified,base MTC
+completion_histology_type,NIFTP,niftp,,NIFTP,3,ratified,base NIFTP
+completion_histology_type,Metastatic MTC,mtc,,MTC,2,ratified,strip metastatic
+completion_histology_type,metastatic MTC,mtc,,MTC,2,ratified,case alias
+completion_histology_type,FTUMP,ftump,,FTUMP,1,ratified,base FTUMP
+completion_histology_type,metastatic/recurrent PTC,ptc,,PTC,1,ratified,strip metastatic/recurrent
