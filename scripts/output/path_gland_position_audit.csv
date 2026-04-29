@@ -1,0 +1,539 @@
+source_location_raw,n_source_rows,canonical_position,parse_status
+total thyroidectomy,635,extrathyroidal_other,parsed
+right lobectomy,591,extrathyroidal_other,parsed
+left lobectomy,535,extrathyroidal_other,parsed
+right upper,169,right_superior,parsed
+left upper,163,left_superior,parsed
+right inferior,150,right_inferior,parsed
+right lower,134,right_inferior,parsed
+left lower,129,left_inferior,parsed
+left inferior,124,left_inferior,parsed
+right superior,117,right_superior,parsed
+left superior,111,left_superior,parsed
+Total thyroidectomy,95,extrathyroidal_other,parsed
+thyroidectomy,66,extrathyroidal_other,parsed
+right (unspecified),31,extrathyroidal_other,parsed
+left (unspecified),29,extrathyroidal_other,parsed
+right central compartment,27,extrathyroidal_other,parsed
+left central compartment,25,extrathyroidal_other,parsed
+right paratracheal mass,22,extrathyroidal_other,parsed
+parathyroid (unspecified),21,extrathyroidal_other,parsed
+central neck dissection,20,,unparseable_left_null
+right paratracheal soft tissue,13,extrathyroidal_other,parsed
+unspecified,13,extrathyroidal_other,parsed
+left paratracheal mass,11,extrathyroidal_other,parsed
+left upper excision,10,left_superior,parsed
+central compartment,9,extrathyroidal_other,parsed
+total thyroidectomy and central compartment,9,extrathyroidal_other,parsed
+right lower biopsy,8,right_inferior,parsed
+left paratracheal soft tissue,7,extrathyroidal_other,parsed
+left upper biopsy,7,left_superior,parsed
+parathyroid gland (unspecified),7,extrathyroidal_other,parsed
+right upper biopsy,7,right_superior,parsed
+total thyroidectomy and central node dissection,7,extrathyroidal_other,parsed
+Right lobectomy,6,extrathyroidal_other,parsed
+right parathyroid,6,,unparseable_left_null
+right paratracheal tissue,6,extrathyroidal_other,parsed
+right upper excision,6,right_superior,parsed
+superior (unspecified),6,extrathyroidal_other,parsed
+central compartment dissection,5,extrathyroidal_other,parsed
+left and central lymph node dissection,5,,unparseable_left_null
+left central neck dissection,5,,unparseable_left_null
+left lobe,5,,unparseable_left_null
+Left lobectomy,5,extrathyroidal_other,parsed
+left lower excision,5,left_inferior,parsed
+left thymus biopsy,5,extrathyroidal_other,parsed
+left upper parathyroidectomy,5,left_superior,parsed
+parathyroid (unsepcified),5,,unparseable_left_null
+right lobe,5,,unparseable_left_null
+rule out parathyroid,5,,unparseable_left_null
+total thyroidectomy and central lymph nodes,5,extrathyroidal_other,parsed
+left lower biopsy,4,left_inferior,parsed
+parathyroid (unspecfified),4,,unparseable_left_null
+pretracheal lymph node excision,4,,unparseable_left_null
+right central comaprtment,4,,unparseable_left_null
+right infeiror,4,right_inferior,parsed
+right lobectomy (2),4,extrathyroidal_other,parsed
+right lower excision,4,right_inferior,parsed
+total thyroidctomy,4,,unparseable_left_null
+total thyroidecotmy,4,,unparseable_left_null
+central lymph nodes,3,,unparseable_left_null
+central neck lymph node dissection,3,,unparseable_left_null
+intrathyroidal,3,,unparseable_left_null
+left central compartment dissection,3,extrathyroidal_other,parsed
+left inferior paratracheal mass,3,left_inferior,parsed
+left inferior remainder,3,left_inferior,parsed
+left lobectomy (2),3,extrathyroidal_other,parsed
+left supeiror,3,left_superior,parsed
+left superior (2),3,left_superior,parsed
+left superior remainder,3,left_superior,parsed
+left upper (2),3,left_superior,parsed
+pretracheal lymph node,3,,unparseable_left_null
+right and central lymph node dissection,3,,unparseable_left_null
+right neck mass,3,,unparseable_left_null
+right paratracheal,3,extrathyroidal_other,parsed
+right paratracheal mass #2,3,extrathyroidal_other,parsed
+right paratracheal mass excision,3,extrathyroidal_other,parsed
+right upper parathyroidectomy,3,right_superior,parsed
+substernal thyroidectomy,3,extrathyroidal_other,parsed
+total thyroidectomy and central lymph node dissection,3,extrathyroidal_other,parsed
+Total thyroidectomy and central neck contents,3,extrathyroidal_other,parsed
+central compartment lymph nodes,2,extrathyroidal_other,parsed
+central compartment lymph nodes excsion,2,extrathyroidal_other,parsed
+Central lymph node dissection,2,,unparseable_left_null
+central lymph node excision,2,,unparseable_left_null
+left,2,,unparseable_left_null
+left central compartment content,2,extrathyroidal_other,parsed
+left central compartment lymphadenectomy,2,extrathyroidal_other,parsed
+left infeiror,2,left_inferior,parsed
+left inferior (2),2,left_inferior,parsed
+left level 6 lymph node dissection,2,extrathyroidal_other,parsed
+left lobe & isthmus intrathyroidal,2,intrathyroidal_left,parsed
+left lobe intrathyroidal,2,intrathyroidal_left,parsed
+left lower (2),2,left_inferior,parsed
+left lower parathyroidectomy,2,left_inferior,parsed
+left neck mass,2,,unparseable_left_null
+left paratracheal lymph node,2,extrathyroidal_other,parsed
+left paratracheal mass excision,2,extrathyroidal_other,parsed
+left paratracheal tissue,2,extrathyroidal_other,parsed
+Left superior paratracheal mass,2,left_superior,parsed
+left thyroid nodule biopsy,2,,unparseable_left_null
+left upper partial resection,2,left_superior,parsed
+left upper remainder,2,left_superior,parsed
+lower (unspecified),2,extrathyroidal_other,parsed
+mediastinal,2,extrathyroidal_other,parsed
+parathyroid (unspecified-2),2,extrathyroidal_other,parsed
+paratracheal lymph node biopsy,2,extrathyroidal_other,parsed
+paratracheal mass,2,extrathyroidal_other,parsed
+pretracheal lymph node biopsy,2,,unparseable_left_null
+questionable parathyroid,2,,unparseable_left_null
+"REMAINDER OF RIGHT UPPER LOBE THYROID"", EXCISION:",2,right_superior,parsed
+right central compartment dissection,2,extrathyroidal_other,parsed
+right central neck contents,2,,unparseable_left_null
+right central neck dissection,2,,unparseable_left_null
+Right inferior,2,right_inferior,parsed
+right lobe and isthmus,2,,unparseable_left_null
+right lobectomy intrathyroidal,2,intrathyroidal_right,parsed
+right lower (2),2,right_inferior,parsed
+Right lower excsion,2,right_inferior,parsed
+right neck excision,2,,unparseable_left_null
+right neck mass excision,2,,unparseable_left_null
+right parathyroid (unspecified),2,extrathyroidal_other,parsed
+right paratracheal excision,2,extrathyroidal_other,parsed
+right paratracheal lymph node excision,2,extrathyroidal_other,parsed
+right superior (2),2,right_superior,parsed
+right superior paratracheal mass,2,right_superior,parsed
+right superior remainder,2,right_superior,parsed
+right thymus,2,extrathyroidal_other,parsed
+right upper (2),2,right_superior,parsed
+substeranl thyroidectomy,2,extrathyroidal_other,parsed
+subtotal thyroidectomy,2,extrathyroidal_other,parsed
+Thyroidectomy,2,extrathyroidal_other,parsed
+total thyroidectomy & central neck dissection,2,extrathyroidal_other,parsed
+total thyroidectomy (2),2,extrathyroidal_other,parsed
+total thyroidectomy and central neck dissection,2,extrathyroidal_other,parsed
+total thyroidectomy and central neck dissection:,2,extrathyroidal_other,parsed
+Total thyroidectomy and neck dissection,2,extrathyroidal_other,parsed
+total thyroidectomy with central compartment dissection,2,extrathyroidal_other,parsed
+Total thyroidectomy with central compartment dissection,2,extrathyroidal_other,parsed
+additioinal parathyroid impalnts (unspecified),1,extrathyroidal_other,parsed
+anterior compartment,1,,unparseable_left_null
+anterior mediastinal mass,1,extrathyroidal_other,parsed
+central and right cervical lymph hnode dissection,1,,unparseable_left_null
+Central compartment dissection,1,extrathyroidal_other,parsed
+Central compartment excision,1,extrathyroidal_other,parsed
+central compartment level 6,1,extrathyroidal_other,parsed
+central compartment lymph node,1,extrathyroidal_other,parsed
+CENTRAL COMPARTMENT LYMPH NODE AND RIGHT PARATRACHEAL NODES,1,extrathyroidal_other,parsed
+central compartment right lymphadenectomy,1,extrathyroidal_other,parsed
+central compartment right lymphadenectomy (2),1,extrathyroidal_other,parsed
+central compartmnet dissectino,1,,unparseable_left_null
+central lymph node,1,,unparseable_left_null
+central lymphadenectomy,1,,unparseable_left_null
+central neck,1,,unparseable_left_null
+central neck contents,1,,unparseable_left_null
+"CENTRAL NECK CONTENTS, EXCISION:",1,,unparseable_left_null
+Central Neck dissection,1,,unparseable_left_null
+central neck excision,1,,unparseable_left_null
+Central Neck Lymph Node,1,,unparseable_left_null
+central neck lymph nodes excision,1,,unparseable_left_null
+"CENTRAL NECK LYMPH NODES, DISSECTION",1,,unparseable_left_null
+central neck lymphadenectomy,1,,unparseable_left_null
+central neck nodes,1,,unparseable_left_null
+central neck tissue,1,,unparseable_left_null
+Central neck tissue:,1,,unparseable_left_null
+central node dissection,1,,unparseable_left_null
+cervical thyroidectomy,1,extrathyroidal_other,parsed
+completion thyroidectomy,1,extrathyroidal_other,parsed
+deep right (unspecified),1,extrathyroidal_other,parsed
+delphian lymph node,1,,unparseable_left_null
+ectopic right substernal thyroid,1,extrathyroidal_other,parsed
+evaluate for parathyroid,1,,unparseable_left_null
+"HYROID AND LEFT NECK LYMPH NODES LEVEL VI, TOTAL THYROIDECTOMY AND LYMPH NODE DISSECTION:",1,extrathyroidal_other,parsed
+intrathyroidal parathyroid gland left lobe,1,intrathyroidal_left,parsed
+isthmic margin excision,1,,unparseable_left_null
+isthmusectomy,1,,unparseable_left_null
+left (unspecfified),1,,unparseable_left_null
+left (unspecified,1,extrathyroidal_other,parsed
+left and central compartment,1,extrathyroidal_other,parsed
+left and central lymphadenectomy,1,,unparseable_left_null
+left cenrtral compartment,1,,unparseable_left_null
+left central comaprtment,1,,unparseable_left_null
+left central compartment content dissection,1,extrathyroidal_other,parsed
+LEFT CENTRAL COMPARTMENT CONTENTS (DISSECTION),1,extrathyroidal_other,parsed
+"Left central compartment contents, excision:",1,extrathyroidal_other,parsed
+Left central compartment dissection,1,extrathyroidal_other,parsed
+left central compartment lymph nodes,1,extrathyroidal_other,parsed
+left central compartmnt,1,,unparseable_left_null
+left central neck content,1,,unparseable_left_null
+left central neck lymph nodes excision,1,,unparseable_left_null
+left central neck lymphadenectomy,1,,unparseable_left_null
+"LEFT CENTRAL NECK, DISSECTION:",1,,unparseable_left_null
+left cervical lymph nodes and thymus excision,1,extrathyroidal_other,parsed
+left compartment lymph node dissection,1,,unparseable_left_null
+Left inferior,1,left_inferior,parsed
+left inferior 3/4 excision,1,left_inferior,parsed
+left inferior compartment dissection,1,left_inferior,parsed
+left inferior neck content,1,left_inferior,parsed
+left inferior neck content (2),1,left_inferior,parsed
+left inferior neck mass,1,left_inferior,parsed
+Left inferior paratracheal mass,1,left_inferior,parsed
+left intrathyroidal,1,intrathyroidal_left,parsed
+left isthmus,1,,unparseable_left_null
+left level 6 cervical lymph node excision,1,extrathyroidal_other,parsed
+left level 6 lymph nodes excision,1,extrathyroidal_other,parsed
+left level 6 neck dissection,1,extrathyroidal_other,parsed
+left lobe excision,1,,unparseable_left_null
+left lobe parathyroid resection (1),1,,unparseable_left_null
+left lobe parathyroid resection (2),1,,unparseable_left_null
+left lobe perithyroidal,1,,unparseable_left_null
+left lobe subtotal,1,,unparseable_left_null
+Left Lobectomy,1,extrathyroidal_other,parsed
+left lobectomy (inferior pole section),1,left_inferior,parsed
+left lobectomy and attached parathyroidectomy,1,extrathyroidal_other,parsed
+left lobectomy and centrl neck dissection,1,extrathyroidal_other,parsed
+left lobectomy and parathyroid tumor excision,1,extrathyroidal_other,parsed
+left lobectomy and parathyroidectomy,1,extrathyroidal_other,parsed
+Left lobectomy and paratracheal node,1,extrathyroidal_other,parsed
+Left lobectomy and substernal goiter,1,extrathyroidal_other,parsed
+left lobectomy intrathyroidal,1,intrathyroidal_left,parsed
+left lobectoy,1,,unparseable_left_null
+left lower cyst excision,1,left_inferior,parsed
+Left lower excision,1,left_inferior,parsed
+left lower incision,1,left_inferior,parsed
+"LEFT LOWER PARATHYROID, BIOPSY",1,left_inferior,parsed
+left lower pretracheal lymph node excision,1,left_inferior,parsed
+left lower remaining excision,1,left_inferior,parsed
+left lower resection,1,left_inferior,parsed
+left mid,1,,unparseable_left_null
+left middle,1,,unparseable_left_null
+left midiastinal,1,,unparseable_left_null
+left neck cyst,1,,unparseable_left_null
+left neck dissection,1,,unparseable_left_null
+left neck level 2 dissection,1,,unparseable_left_null
+left neck level 6,1,extrathyroidal_other,parsed
+left neck lymph node biopsy,1,,unparseable_left_null
+left neck mass possible superior parathyroid,1,left_superior,parsed
+Left paraglandular lymph node,1,,unparseable_left_null
+left parathyroid,1,,unparseable_left_null
+left parathyroid (unspecified),1,extrathyroidal_other,parsed
+Left parathyroid tumor (unspecified),1,extrathyroidal_other,parsed
+left parathyroidectomy intrathyroidal,1,intrathyroidal_left,parsed
+left paratracheal,1,extrathyroidal_other,parsed
+Left paratracheal,1,extrathyroidal_other,parsed
+left paratracheal and central compartment,1,extrathyroidal_other,parsed
+left paratracheal content,1,extrathyroidal_other,parsed
+left paratracheal contents,1,extrathyroidal_other,parsed
+"LEFT PARATRACHEAL LESION, BIOPSY",1,extrathyroidal_other,parsed
+left paratracheal lymph node dissection,1,extrathyroidal_other,parsed
+left paratracheal lymph node excision,1,extrathyroidal_other,parsed
+left paratracheal lymph nodes dissection,1,extrathyroidal_other,parsed
+left paratracheal lymph nodes excision,1,extrathyroidal_other,parsed
+left paratracheal mass excsion,1,extrathyroidal_other,parsed
+left paratracheal neck content,1,extrathyroidal_other,parsed
+left paratracheal node,1,extrathyroidal_other,parsed
+"Left paratracheal soft tissue #1, excision:",1,extrathyroidal_other,parsed
+"Left paratracheal, excision (1)",1,extrathyroidal_other,parsed
+"Left paratracheal, excision (2)",1,extrathyroidal_other,parsed
+left partracheal soft tissue,1,,unparseable_left_null
+left radial neck dissection,1,,unparseable_left_null
+left remainder (unspecified),1,extrathyroidal_other,parsed
+left soft tissue,1,,unparseable_left_null
+left subotal thyroid,1,,unparseable_left_null
+left substernal,1,,unparseable_left_null
+left substernal goiter,1,,unparseable_left_null
+left substernal thyroidectomy,1,extrathyroidal_other,parsed
+left supeiror remainder,1,left_superior,parsed
+left superioer,1,,unparseable_left_null
+left superior paratracheal mass,1,left_superior,parsed
+"Left superior paratracheal soft tissue, excision",1,left_superior,parsed
+"Left superior paratracheal tissue, excision:",1,left_superior,parsed
+left superrior,1,,unparseable_left_null
+left suprerior,1,left_superior,parsed
+left thymic para gland biopsy,1,extrathyroidal_other,parsed
+LEft thymus excision,1,extrathyroidal_other,parsed
+left thymus excision,1,extrathyroidal_other,parsed
+"LEFT THYMUS GLAND, RULE OUT PARATHYROID TISSUE, EXCISION",1,extrathyroidal_other,parsed
+"LEFT THYMUS, EXCISION",1,extrathyroidal_other,parsed
+"LEFT THYROID AND PARATHYROID GLANDS,",1,,unparseable_left_null
+Left thyroid biopsy,1,,unparseable_left_null
+left thyroid cyst,1,,unparseable_left_null
+left thyroid nodule,1,,unparseable_left_null
+Left upper,1,left_superior,parsed
+left upper (3),1,left_superior,parsed
+left upper biopsy75,1,left_superior,parsed
+Left upper excision,1,left_superior,parsed
+left upper neck,1,left_superior,parsed
+"LEFT UPPER PARATHYROID, BIOPSY:",1,left_superior,parsed
+left upper partial,1,left_superior,parsed
+let inferior,1,,unparseable_left_null
+level 6 compartment dissection,1,extrathyroidal_other,parsed
+level 6 dissection,1,extrathyroidal_other,parsed
+level 6 lymph node biopsy,1,extrathyroidal_other,parsed
+level 6 lymph node dissection,1,extrathyroidal_other,parsed
+Level 6 lymph nodes lymphadenectomy,1,extrathyroidal_other,parsed
+level 6 lymphadenectomy,1,extrathyroidal_other,parsed
+level 6 right central compartment,1,extrathyroidal_other,parsed
+LEVEL 6; EXCISION:,1,extrathyroidal_other,parsed
+LL,1,,unparseable_left_null
+lower parathyroid (unspecified),1,extrathyroidal_other,parsed
+lymph node central dissection,1,,unparseable_left_null
+lymph node right neck dissection,1,,unparseable_left_null
+"Lymph node, left, central compartment, dissection",1,extrathyroidal_other,parsed
+LYMPH NODES FROM RIGHT AND CENTRAL COMPARTMENT,1,extrathyroidal_other,parsed
+lymph nodes level 6 excision,1,extrathyroidal_other,parsed
+"LYMPH NODES, LEFT CENTRAL COMPARTMENT, RESECTION:",1,extrathyroidal_other,parsed
+"lymph nodes, Left central neck, neck dissection",1,,unparseable_left_null
+"Lymph nodes, level VI pretracheal, dissection:",1,extrathyroidal_other,parsed
+"LYMPH NODES, LEVEL VI, EXCISION:",1,extrathyroidal_other,parsed
+"LYMPH NODES, PRETRACHEAL, EXCISIONAL BIOPSY",1,,unparseable_left_null
+"LYMPH NODES, RIGHT CENTRAL COMPARTMENT, EXCISION",1,extrathyroidal_other,parsed
+"lymph nodes, Right central compartment, excision",1,extrathyroidal_other,parsed
+"LYMPH NODES, RIGHT CENTRAL COMPARTMENT, EXCISION:",1,extrathyroidal_other,parsed
+"lymph nodes, Right neck contents, neck dissection",1,,unparseable_left_null
+"Lymph nodes, right neck, dissection:",1,,unparseable_left_null
+"LYMPH NODES, RIGHT NECK, LEVEL VI, EXCISION,",1,extrathyroidal_other,parsed
+mediastinal soft tissue tumor,1,extrathyroidal_other,parsed
+"Neck, left level IV lymph node",1,,unparseable_left_null
+"neck, left, excision:",1,,unparseable_left_null
+"NODULE, AREA OF RIGHT RECURRENT LARYNGEAL NERVE, EXCISIONAL BIOPSY,",1,,unparseable_left_null
+parathyroid (unspecified-3),1,extrathyroidal_other,parsed
+"PARATHYROID ADENOMA, (0.19 GRAMS), EXACT SITE NOT SPECIFIED:",1,,unparseable_left_null
+parathyroid biopsy 2,1,,unparseable_left_null
+parathyroid biopsy-1,1,,unparseable_left_null
+parathyroid excision,1,,unparseable_left_null
+parathyroid excision (unspecified),1,extrathyroidal_other,parsed
+parathyroid gland,1,,unparseable_left_null
+parathyroid gland biopsy (unspecified),1,extrathyroidal_other,parsed
+parathyroid gland excision,1,,unparseable_left_null
+"PARATHYROID GLAND, ""LEFT PARATRACHEAL LYMPH NODES"", EXCISION:",1,extrathyroidal_other,parsed
+parathyroid implant biopsy,1,,unparseable_left_null
+parathyroid implant biopsy (2),1,,unparseable_left_null
+parathyroid questionable excision (unspecified),1,extrathyroidal_other,parsed
+parathyroid tissue anteterior mediastinal mass,1,extrathyroidal_other,parsed
+parathyroidectomy (unspecified),1,extrathyroidal_other,parsed
+paratracheal lymph node excision,1,extrathyroidal_other,parsed
+paratracheal node excision,1,extrathyroidal_other,parsed
+paratracheal nodule,1,extrathyroidal_other,parsed
+paratracheal soft tissue,1,extrathyroidal_other,parsed
+parthyroid gland (unspecified),1,extrathyroidal_other,parsed
+portion of right thymus biopsy,1,extrathyroidal_other,parsed
+Portion of Right thyroid,1,,unparseable_left_null
+possible left inferior,1,left_inferior,parsed
+possible parathhyroid,1,,unparseable_left_null
+possible parathyroid biopsy,1,,unparseable_left_null
+possible parathyroid gland,1,,unparseable_left_null
+possible parathyroid gland (2),1,,unparseable_left_null
+possible parathyroid tissue resection (1),1,,unparseable_left_null
+possible parathyroid tissue resection (2),1,,unparseable_left_null
+pretracheal,1,,unparseable_left_null
+pretracheal mass,1,,unparseable_left_null
+pretracheal soft tissue,1,,unparseable_left_null
+pretracheal ymph node excision,1,,unparseable_left_null
+pyramidal lobectomy,1,extrathyroidal_other,parsed
+questionable left thyroid cancer,1,,unparseable_left_null
+questionable parathyroid gland,1,,unparseable_left_null
+remainder left inferior,1,left_inferior,parsed
+remainder of left upper excision,1,left_superior,parsed
+Remainder of right lobectomy,1,extrathyroidal_other,parsed
+retroesophageral parathyroid,1,,unparseable_left_null
+retrophaaryngeal mass,1,,unparseable_left_null
+right,1,,unparseable_left_null
+right (unspecified) with right lobectomy specimen,1,extrathyroidal_other,parsed
+"right (unspecified, #2)",1,extrathyroidal_other,parsed
+"right (unspecified, 2)",1,extrathyroidal_other,parsed
+right and central lymphadenectomy,1,,unparseable_left_null
+right anterior,1,,unparseable_left_null
+right central compartment contents,1,extrathyroidal_other,parsed
+"RIGHT CENTRAL COMPARTMENT CONTENTS, DISSECTION",1,extrathyroidal_other,parsed
+"Right Central Compartment Contents, excision",1,extrathyroidal_other,parsed
+"RIGHT CENTRAL COMPARTMENT CONTENTS, RESECTION:",1,extrathyroidal_other,parsed
+right central compartment excision,1,extrathyroidal_other,parsed
+right central comprartment,1,,unparseable_left_null
+right central lymph nodes excsiion,1,,unparseable_left_null
+right central neck,1,,unparseable_left_null
+right central neck level 6,1,extrathyroidal_other,parsed
+right central neck lymph nodes,1,,unparseable_left_null
+right central neck mass,1,,unparseable_left_null
+right central neck tissue,1,,unparseable_left_null
+right cervical lobectomy,1,extrathyroidal_other,parsed
+right ectopic carotid sheath parathyroid,1,extrathyroidal_other,parsed
+right Ectopic parathyroid gland,1,extrathyroidal_other,parsed
+right inerior,1,,unparseable_left_null
+right infeiror (#2),1,right_inferior,parsed
+right inferior (2),1,right_inferior,parsed
+right inferior intrathyroidal,1,intrathyroidal_right,parsed
+right inferior nodule possible parathyroid,1,right_inferior,parsed
+right inferior remainder,1,right_inferior,parsed
+right inferior remains,1,right_inferior,parsed
+Right intrathyroidal nodule/ parathyroid,1,intrathyroidal_right,parsed
+right level 2 lymph node dissection,1,,unparseable_left_null
+right level 3 neck dissection,1,,unparseable_left_null
+right level 6 dissection,1,extrathyroidal_other,parsed
+Right level 6 lymph node resection,1,extrathyroidal_other,parsed
+Right LEvel 6 lymph nodes excision,1,extrathyroidal_other,parsed
+Right lobe,1,,unparseable_left_null
+right Lobe biopsy,1,,unparseable_left_null
+right lobe excision,1,,unparseable_left_null
+right lobe incisional biopsy,1,,unparseable_left_null
+right lobe intrathyroidal,1,intrathyroidal_right,parsed
+right lobe nodule excision,1,,unparseable_left_null
+Right Lobectomy,1,extrathyroidal_other,parsed
+right lobectomy (in the right postero-superior aspect),1,right_superior,parsed
+right lobectomy and central neck dissection,1,extrathyroidal_other,parsed
+right lobectomy and parathyroidecotmy,1,extrathyroidal_other,parsed
+right lobectomy and upper mediastinal mass,1,right_superior,parsed
+Right lobectomy substernal goiter,1,extrathyroidal_other,parsed
+right lobectomy with central neck contents,1,extrathyroidal_other,parsed
+right lobectomy with substernal extension:,1,extrathyroidal_other,parsed
+RIGHT LOWER,1,right_inferior,parsed
+right lower neck tissue,1,right_inferior,parsed
+"RIGHT LOWER PARATHYROID FROM THYMUS, EXCISION,",1,right_inferior,parsed
+"RIGHT LOWER PARATHYROID, EXCISION",1,right_inferior,parsed
+right lower parathyroidectomy,1,right_inferior,parsed
+right lower remainder,1,right_inferior,parsed
+right lower thyroid soft tissue,1,right_inferior,parsed
+right mediastinal,1,extrathyroidal_other,parsed
+right neck dissection,1,,unparseable_left_null
+right neck lymph nodes excision (1),1,,unparseable_left_null
+right neck lymph nodes excision (2),1,,unparseable_left_null
+right neck substernal resection,1,,unparseable_left_null
+right neck tissue excision,1,,unparseable_left_null
+right paraesophageal soft tissue,1,,unparseable_left_null
+right paraglandular nodule biopsy,1,,unparseable_left_null
+right parathryoid (unspecified),1,extrathyroidal_other,parsed
+right paratracheal contents,1,extrathyroidal_other,parsed
+right paratracheal lesion,1,extrathyroidal_other,parsed
+right paratracheal lymph node dissection,1,extrathyroidal_other,parsed
+right paratracheal lymph node excision speciemn,1,extrathyroidal_other,parsed
+right paratracheal mass biopsy,1,extrathyroidal_other,parsed
+"Right paratracheal mass, excision",1,extrathyroidal_other,parsed
+right paratracheal nodes dissection,1,extrathyroidal_other,parsed
+right paratracheal nodule,1,extrathyroidal_other,parsed
+right paratracheal resection,1,extrathyroidal_other,parsed
+Right paratracheal soft tissue,1,extrathyroidal_other,parsed
+"Right paratracheal soft tissue #2, excision:",1,extrathyroidal_other,parsed
+"right paratracheal soft tissue #3, excision",1,extrathyroidal_other,parsed
+"Right paratracheal soft tissue, excision:",1,extrathyroidal_other,parsed
+right paratrahceal mass #3,1,,unparseable_left_null
+Right remainder parathyroid,1,,unparseable_left_null
+RIGHT RETROESOPHAGEAL TISSUE,1,,unparseable_left_null
+right sided extra,1,,unparseable_left_null
+right sided nodule resection,1,,unparseable_left_null
+right substernal thyroidectomy,1,extrathyroidal_other,parsed
+right subtotal,1,,unparseable_left_null
+right supeior,1,right_superior,parsed
+right supeiror,1,right_superior,parsed
+right superior nodule possible thyroid,1,right_superior,parsed
+right superior paratracheal mass excision,1,right_superior,parsed
+"right superior paratracheal soft tissue, excision",1,right_superior,parsed
+right superior pole,1,right_superior,parsed
+right thymus excision,1,extrathyroidal_other,parsed
+"RIGHT THYMUS, RESECTION",1,extrathyroidal_other,parsed
+right thyroid and isthmus,1,,unparseable_left_null
+right thyroid bed nodule,1,,unparseable_left_null
+right thyroid cyst,1,,unparseable_left_null
+right thyroid nodule excsiion,1,,unparseable_left_null
+right thyroid nodule versus parathyroid tissue,1,,unparseable_left_null
+"RIGHT THYROID NODULE, BIOPSY",1,,unparseable_left_null
+"Right thyroid, mass (excision):",1,,unparseable_left_null
+right thyroidectomy,1,extrathyroidal_other,parsed
+right upper biopsy (2),1,right_superior,parsed
+right upper neck soft tissue,1,right_superior,parsed
+"RIGHT UPPER PARATHYROID, EXCISION",1,right_superior,parsed
+right upper remainder,1,right_superior,parsed
+right upper remnant,1,right_superior,parsed
+right upper remnant (2),1,right_superior,parsed
+"RIGHT UPPER THYROID, BIOPSY:",1,right_superior,parsed
+rule out lymph node,1,,unparseable_left_null
+rule out parathyroid (unspecified),1,extrathyroidal_other,parsed
+"Rule out parathyroid, biopsy",1,,unparseable_left_null
+rule out thyroid,1,,unparseable_left_null
+sentinel lymph node compartment,1,,unparseable_left_null
+SENTINEL MASS LYMPH NODE,1,,unparseable_left_null
+"Soft tissue and lymph nodes, Completion Left Thyroidectomy & level 6, excision",1,extrathyroidal_other,parsed
+soft tissue neck biopsy,1,,unparseable_left_null
+soft tissue parathyroid rule out,1,,unparseable_left_null
+soft tissue possible parathyroid (unspecified),1,extrathyroidal_other,parsed
+"SOFT TISSUE, ANTERIOR MEDIASTINUM, RESECTION",1,extrathyroidal_other,parsed
+"Soft tissue, central compartment (dissection):",1,extrathyroidal_other,parsed
+"soft tissue, central neck, excision",1,,unparseable_left_null
+"Soft tissue, evaluate for parathyroid",1,,unparseable_left_null
+"SOFT TISSUE, LEFT INFERIOR PARATRACHEAL, EXCISION",1,left_inferior,parsed
+"SOFT TISSUE, LEFT INFERIOR PARATRACHEAL, EXCISION (2)",1,left_inferior,parsed
+"SOFT TISSUE, LEFT PARATRACHEAL MEDIASTINUM; EXCISION",1,extrathyroidal_other,parsed
+"soft tissue, Left paratracheal, excision",1,extrathyroidal_other,parsed
+"soft tissue, left paratracheal, excision",1,extrathyroidal_other,parsed
+"soft tissue, Left pretracheal, central neck, dissection",1,,unparseable_left_null
+"soft tissue, left tracheoesophageal tissue",1,,unparseable_left_null
+"SOFT TISSUE, LEVEL VI LEFT NECK, LYMPH NODE DISSECTION:",1,extrathyroidal_other,parsed
+"SOFT TISSUE, RIGHT PARATRACHEAL, EXCISION",1,extrathyroidal_other,parsed
+"Soft tissue, right, central compartment, dissection",1,extrathyroidal_other,parsed
+"Soft tissue, rule out parathyroid",1,,unparseable_left_null
+"SPECIMEN LABELED ""THYROID VS PARATHYROID:""",1,,unparseable_left_null
+substernal goiter,1,,unparseable_left_null
+substernal thyroid nodule,1,,unparseable_left_null
+superior parathyroid,1,,unparseable_left_null
+Thymectomy,1,,unparseable_left_null
+Thymic nodule,1,extrathyroidal_other,parsed
+thymus excision,1,extrathyroidal_other,parsed
+thymus resection,1,extrathyroidal_other,parsed
+thymus tissue,1,extrathyroidal_other,parsed
+"THYMUS, LEFT, PARTIAL EXCISION",1,extrathyroidal_other,parsed
+"THYMUS, RIGHT LOBE, EXCISION",1,extrathyroidal_other,parsed
+thyroid,1,,unparseable_left_null
+thyroid and anterior mediastinal resection,1,extrathyroidal_other,parsed
+thyroid fossa excsion,1,,unparseable_left_null
+thyroid gland intrathyroidal,1,,unparseable_left_null
+thyroid gland lower excision,1,,unparseable_left_null
+"THYROID GLAND, RIGHT UPPER LOBE, EXCISION",1,right_superior,parsed
+thyroid intrathyroidal,1,,unparseable_left_null
+thyroid remnant excision,1,,unparseable_left_null
+thyroid tissue biopsy,1,,unparseable_left_null
+"THYROID, RIGHT UPPER LOBE, EXCISION",1,right_superior,parsed
+thyroidectomy (2),1,extrathyroidal_other,parsed
+thyroidectomy (unspecified),1,extrathyroidal_other,parsed
+thyroidectomy and right neck contents,1,extrathyroidal_other,parsed
+total thhyroidectomy and central compartment,1,extrathyroidal_other,parsed
+Total thyroidecotmy,1,,unparseable_left_null
+total thyroidecromy with central node,1,,unparseable_left_null
+Total Thyroidectomy,1,extrathyroidal_other,parsed
+Total thyroidectomy (2),1,extrathyroidal_other,parsed
+total thyroidectomy and attached parathyroid,1,extrathyroidal_other,parsed
+Total thyroidectomy and central compartment,1,extrathyroidal_other,parsed
+total thyroidectomy and central compartment dissection,1,extrathyroidal_other,parsed
+TOTAL THYROIDECTOMY AND CENTRAL COMPARTMENT NECK DISSECTION:,1,extrathyroidal_other,parsed
+Total thyroidectomy and central lymph node dissection,1,extrathyroidal_other,parsed
+Total thyroidectomy AND central neck compartment dissection,1,extrathyroidal_other,parsed
+Total thyroidectomy and central neck dissection,1,extrathyroidal_other,parsed
+total thyroidectomy and neck dissection,1,extrathyroidal_other,parsed
+total thyroidectomy and parathyroidectomy,1,extrathyroidal_other,parsed
+total thyroidectomy and paratracheal lymph nodes,1,extrathyroidal_other,parsed
+total thyroidectomy specimen (left upper),1,left_superior,parsed
+TOTAL THYROIDECTOMY WITH CENTRAL COMPARTMENT LYMPHADENECTOMY,1,extrathyroidal_other,parsed
+total thyroidectomy with central compartment neck dissection:,1,extrathyroidal_other,parsed
+total thyroidectomy with central lymph node,1,extrathyroidal_other,parsed
+total thyroidectomy with central neck dissection,1,extrathyroidal_other,parsed
+total thyroidectromy,1,,unparseable_left_null
+total thyroiectomy and central lymph nodes,1,,unparseable_left_null
+upper parathyroid (unspecified),1,extrathyroidal_other,parsed
