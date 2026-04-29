@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [canonical_patient_master operative cluster mig_130 (first PM slice)](project_patient_master_operative_cluster_mig_130_closeout.md) — 2026-04-29: Lane 22; 233 cols verified (op_/ops_/nsqip_/surg_/surgery spine); CPM table stays `in_progress` (1,365 cols remain)
 - [molecular genetics from notes v2 mig_124 close-out](project_molecular_genetics_from_notes_v2_mig_124_closeout.md) — 2026-04-29: 1,738×605 mentions layer; 0 drift vs molecular_legacy note_entities_genetics; 372/605 pts overlap master (233 mentions-only expected); Lane 16 closes molecular family with mig_116
 - [canonical_survival_followup_v1 mig_123 close-out](project_canonical_survival_followup_v1_mig_123_closeout.md) — 2026-04-29: Script 364B derivation replay (staged LLM parquet); 8 cols 0 drift; last_followup_source ANY_VALUE tie (2 rids); Lane 13 ete survival method flip
 - [canonical_recurrence_v1 mig_122 close-out](project_canonical_recurrence_v1_mig_122_closeout.md) — 2026-04-29: cohort-wide recurrence shell verified Protocol v2; TIMESTAMP/fs CFs; Lane 13 recurrence-note follow-through
