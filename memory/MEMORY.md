@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [Complications rollup mig_108 close-out](project_complications_rollup_mig_108_closeout.md) — 2026-04-29: verify-only patient rollup signoff; 49 derived cols, 0 drift
 - [PMH events mig_107 close-out](project_pmh_events_mig_107_closeout.md) — 2026-04-28: 4-source PMH verification; legacy+LLM exact, synthetic verify-as-injected
 - [Multi-source canonical verification](feedback_multisource_canonical_verification.md) — Pattern: stratify by source, exact rederive deterministic rows, verify synthetic rows as injected
 - [clinical_date_retype_20260428](../qc_framework_v1/migrations/clinical_date_retype_20260428.md) — Script 413; six cols VARCHAR/TIMESTAMP→DATE + archive snapshots + view DDL refresh on MotherDuck
