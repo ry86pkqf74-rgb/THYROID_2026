@@ -1,0 +1,135 @@
+-- =============================================================================
+-- Migration 162 — canonical_patient_master FINALIZATION + lakehouse audit record
+-- =============================================================================
+-- Date:   2026-04-29 (UTC)
+-- Path:   qc_framework_v1/migrations/162_patient_master_finalization_and_lakehouse_audit_20260429.sql
+-- Prompt: cursor_prompts/CURSOR_PROMPT_patient_master_finalization_and_lakehouse_audit_20260429.md
+--
+-- Lane:   mig_162 (batch close-out) — RUN ONLY AFTER mig_152/154/156/157/159/160/161
+--         all land AND pre-flight passes.
+--
+-- =============================================================================
+-- Section A — Pre-flight gate (agent run 2026-04-29, MotherDuck RW via connect_locked)
+-- =============================================================================
+-- Required:
+--   SELECT n_verified, n_na, n_not_started, n_failed, n_columns_total, table_status
+--   FROM main.canonical_table_signoff_registry_v1
+--   WHERE table_name='canonical_patient_master';
+--   Expect: n_not_started = 0 AND n_failed = 0 AND table_status = 'in_progress'
+--
+-- **2026-04-29 LIVE RESULT — BLOCKED (DO NOT APPLY Section B/E until cleared):**
+--   (1441, 13, 144, 0, 1598, 'in_progress')
+--   n_not_started = 144  → STOP. List residuals via Section A1; complete outstanding
+--   cluster sign-offs before re-running gate.
+--
+-- When n_not_started = 0, delete this BLOCKED stanza from the header and paste fresh
+-- pre-flight numbers + Cowork clearance.
+
+-- -----------------------------------------------------------------------------
+-- Section A1 — List residual not_started cols on canonical_patient_master (diagnostic)
+-- -----------------------------------------------------------------------------
+-- SELECT column_name, notes, batch_id
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE table_name = 'canonical_patient_master'
+--   AND verification_status = 'not_started'
+-- ORDER BY column_name;
+
+-- =============================================================================
+-- Pre-snapshot (Logan-only, run immediately BEFORE Section B on first successful gate)
+-- =============================================================================
+-- Creates archive_pub_v1_0 preservation row for canonical_patient_master signoff slice.
+--
+-- CREATE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_table_signoff_registry_pre_mig162_pm_20260429 AS
+-- SELECT *, CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS pre_mig162_snapshot_ts
+-- FROM thyroid_canonical_publication_v1_0.main.canonical_table_signoff_registry_v1
+-- WHERE table_name = 'canonical_patient_master';
+
+-- =============================================================================
+-- Section B — PM table_status flip — APPLY ONLY WHEN Section A GATE PASSES
+-- =============================================================================
+--
+-- BEGIN TRANSACTION;
+--
+-- UPDATE main.canonical_table_signoff_registry_v1
+-- SET table_status       = 'verified',
+--     signed_off_ts       = CAST(CURRENT_TIMESTAMP AS TIMESTAMP),
+--     signoff_migration   = 'qc_framework_v1/migrations/162_patient_master_finalization_and_lakehouse_audit_20260429.sql',
+--     notes               = COALESCE(notes,'')
+--                           || ' | mig_162: canonical_patient_master FINALIZED — all '
+--                           || CAST(n_columns_total AS VARCHAR)
+--                           || ' cols verified or na. '
+--                           || 'Lakehouse v1.0 manuscript-ready (per coverage report appendix).'
+--                           || ' CF-mig162-PM-FINALIZATION informational.'
+-- WHERE table_name = 'canonical_patient_master';
+--
+-- COMMIT;
+
+-- =============================================================================
+-- Section C — 5-gate cleanliness audit (template: COWORK_HANDOFF §11 / mig_127 refinement)
+-- =============================================================================
+-- Agent run **before** Section B APPLY (canonical_patient_master still **in_progress**):
+--   gate1 | gate2 | gate3 | gate4 | gate5
+-- --------+-------+-------+-------+------
+--      88 |     0 |     0 |     0 |    21
+--
+-- Expected **after** mig_162 APPLY (PM verified, mig_160 date closure assumed): gate1 = **89**.
+-- Other gates unchanged at 0; if gate5 > 0 with mig_160 applied → CF-mig162-GATE-5-RESIDUAL.
+
+-- WITH verified_tables AS (
+--   SELECT table_name FROM main.canonical_table_signoff_registry_v1
+--   WHERE table_status='verified' AND table_name LIKE 'canonical_%'
+-- ),
+-- audit_allowlist AS (
+--   SELECT col_name FROM (VALUES
+--     ('build_ts'),('built_at'),('extracted_at'),('llm_build_ts'),
+--     ('llm_extracted_at'),('verified_ts'),('signed_off_ts'),
+--     ('registered_ts'),('updated_at'),('created_at'),('promoted_at'),
+--     ('completed_at'),('started_at'),('ended_at'),('ingested_at_utc'),
+--     ('ingestion_date'),('lab_datetime')
+--   ) v(col_name)
+-- )
+-- SELECT
+--   (SELECT COUNT(*) FROM main.canonical_table_signoff_registry_v1 WHERE table_status='verified') AS gate1,
+--   (SELECT COUNT(*) FROM main.canonical_table_signoff_registry_v1 WHERE table_status='verified' AND signoff_migration IS NULL) AS gate2,
+--   (SELECT COUNT(*) FROM main.canonical_table_signoff_registry_v1 t WHERE t.table_status='verified' AND (t.n_verified + t.n_na <> t.n_columns_total OR t.n_not_started <> 0 OR t.n_failed <> 0)) AS gate3,
+--   (SELECT COUNT(*) FROM main.canonical_column_verification_registry_v1 r JOIN main.canonical_table_signoff_registry_v1 t USING (schema_name, table_name) WHERE t.table_status='verified' AND r.verification_status='verified' AND (r.verified_by IS NULL OR r.batch_id IS NULL OR r.verification_method IS NULL)) AS gate4,
+--   (SELECT COUNT(*) FROM information_schema.columns c JOIN verified_tables v ON c.table_name = v.table_name LEFT JOIN main.canonical_column_verification_registry_v1 r ON r.schema_name='main' AND r.table_name=c.table_name AND r.column_name=c.column_name WHERE c.table_catalog='thyroid_canonical_publication_v1_0' AND c.table_schema='main' AND c.column_name NOT IN (SELECT col_name FROM audit_allowlist) AND c.column_name NOT LIKE '%_status' AND c.column_name NOT LIKE '%_source' AND c.column_name NOT LIKE '%_keyword' AND c.column_name NOT LIKE '%_raw' AND COALESCE(r.verification_status,'unknown') != 'na' AND (c.data_type IN ('TIMESTAMP','TIMESTAMP WITH TIME ZONE') OR (c.data_type='VARCHAR' AND (regexp_matches(c.column_name, '(^|_)dates?(_|$)') OR regexp_matches(c.column_name, '(^|_)dt(_|$)'))))) AS gate5;
+
+-- =============================================================================
+-- Section D — Coverage report queries → paste results into reports/
+--           v1_0_manuscript_readiness_report_20260429.md
+-- =============================================================================
+-- §1 Tier-2 canonical inventory
+-- SELECT table_name, table_status, n_columns_total, n_verified, n_na, n_not_started, n_failed
+-- FROM main.canonical_table_signoff_registry_v1
+-- WHERE table_name LIKE 'canonical_%'
+-- ORDER BY table_status, table_name;
+
+-- §2 Verification methodology distribution (lakehouse-wide, verified cols)
+-- SELECT verification_method, COUNT(*) AS n_cols
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE verification_status='verified'
+-- GROUP BY 1 ORDER BY 2 DESC LIMIT 30;
+
+-- §3 Carry-forward inventory (regex CF tags on column notes)
+-- SELECT regexp_extract(notes, 'CF-[A-Za-z0-9_-]+', 0) AS cf_tag, COUNT(*) AS n_cols
+-- FROM main.canonical_column_verification_registry_v1
+-- WHERE notes ILIKE '%CF-%'
+-- GROUP BY 1 ORDER BY 2 DESC;
+
+-- §5 Cohort parity
+-- SELECT
+--   (SELECT COUNT(*) FROM main.canonical_patient_master) AS pm_rows,
+--   (SELECT COUNT(DISTINCT research_id) FROM main.canonical_patient_master) AS pm_distinct_rids;
+-- Expect: 10871 / 10871 → else CF-mig162-COHORT-PARITY-VIOLATION
+
+-- =============================================================================
+-- Section E — Suggested commit message (when SQL + report are green)
+-- =============================================================================
+-- git add qc_framework_v1/migrations/162_patient_master_finalization_and_lakehouse_audit_20260429.sql \
+--         qc_framework_v1/reports/v1_0_manuscript_readiness_report_20260429.md
+-- git -c user.name="Logan Glosser" -c user.email="logan.glosser@gmail.com" commit -m "qc: mig_162 PM finalization + lakehouse v1.0 manuscript-readiness coverage report"
+
+-- =============================================================================
+-- end migration 162
+-- =============================================================================
