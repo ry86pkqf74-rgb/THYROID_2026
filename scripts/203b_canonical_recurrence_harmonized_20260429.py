@@ -20,7 +20,8 @@ Safety:
     does **not** write parquet to DB or MotherDuck.
   * **RW:** pass ``--write`` — same behavior as Script 203 (parquet + CREATE OR REPLACE).
 
-Pause gate (Lane 19): Logan approval required before ``--write`` in production batches.
+Lane 19 pause gate **cleared 2026-04-29** — spot-check Option 1; sign-off migration
+``qc_framework_v1/migrations/131_canonical_recurrence_v1_rebuild_signoff_20260429.sql`` (batch ``mig_123_*``).
 Original Script 203: ``scripts/203_canonical_recurrence.py``
 """
 from __future__ import annotations
@@ -279,7 +280,8 @@ def parse_llm_recurrence_entities(con: duckdb.DuckDBPyConnection) -> pd.DataFram
     return df
 
 
-def _first_surg_sql() -> str:
+def _first_surg_inner_sql() -> str:
+    """Common first-surgery CTE body (canonical_operative_events_v1 ∪ path_synoptics fallback)."""
     return f"""
         SELECT CAST(research_id AS VARCHAR) AS research_id,
                MIN(COALESCE(surgery_date_native, TRY_CAST(resolved_surgery_date AS DATE))) AS first_surgery_date
@@ -297,6 +299,56 @@ def _first_surg_sql() -> str:
           )
         GROUP BY 1
     """
+
+
+def _first_surg_sql() -> str:
+    return _first_surg_inner_sql()
+
+
+PATH_PROVEN_DEFENSIVE_DATE_FILTER = """
+    CAST(path_proven_date AS DATE) BETWEEN DATE '1990-01-01' AND DATE '2027-01-01'
+"""
+# CF-mig123-UPSTREAM-DATE-202-TYPO defensive filter — manuscript_workspace.recurrence_path_proven_candidates_v1
+# can harbor OCR/typing errors (e.g. year 0202, 1950). Any future Tier-1 UNION from this table MUST retain
+# this predicate (matches spot-check Logan approval 2026-04-29).
+
+
+def probe_path_proven_date_outliers(con: duckdb.DuckDBPyConnection) -> int:
+    """Count upstream rows outside defensive date band — audit until Tier-1 path_proven UNION (CF-mig124)."""
+    filt = PATH_PROVEN_DEFENSIVE_DATE_FILTER.strip()
+    try:
+        sql = f"""
+            SELECT COUNT(*)::BIGINT
+            FROM manuscript_workspace.recurrence_path_proven_candidates_v1
+            WHERE path_proven_date IS NOT NULL
+              AND NOT ({filt})
+        """
+        return int(con.execute(sql).fetchone()[0])
+    except duckdb.Error:
+        return -1
+
+
+def sql_legacy_old_structural_outside_placeholders(placeholders_sql: str) -> str:
+    """Legacy structural_confirmed fallback with TTR-positive filter."""
+    fs = _first_surg_inner_sql().strip()
+    # Filter completion thyroidectomy / initial-dx misclassifications — spot-check 2026-04-29
+    # CF-mig123-NEGATIVE-TTR-9-PATIENTS (etc.): recurrence_date MUST be strictly after first_surgery_date.
+    return f"""
+WITH first_surg AS (
+{fs}
+)
+SELECT CAST(r.research_id AS VARCHAR) AS research_id,
+       r.recurrence_date,
+       r.recurrence_type,
+       r.recurrence_definition
+FROM recurrence_event_clean_v1 r
+INNER JOIN first_surg fs
+  ON CAST(r.research_id AS VARCHAR) = fs.research_id
+WHERE r.recurrence_type = 'structural'
+  AND r.recurrence_definition = 'structural_confirmed'
+  AND CAST(r.recurrence_date AS DATE) > CAST(fs.first_surgery_date AS DATE)
+  AND CAST(r.research_id AS VARCHAR) NOT IN ({placeholders_sql})
+"""
 
 
 def cohort_sql() -> str:
@@ -487,16 +539,15 @@ def build_canonical_rows(
             })
 
     old_rids = {r["research_id"] for r in rows}
-    old_sql = """
-        SELECT CAST(research_id AS VARCHAR) AS research_id,
-               recurrence_date, recurrence_type, recurrence_definition
-        FROM recurrence_event_clean_v1
-        WHERE recurrence_type = 'structural'
-          AND recurrence_definition = 'structural_confirmed'
-          AND CAST(research_id AS VARCHAR) NOT IN ({})
-    """
     placeholders = ",".join(f"'{r}'" for r in sorted(old_rids)) if old_rids else "'__none__'"
-    old_structural = con.execute(old_sql.format(placeholders)).fetchdf()
+    legacy_sql = sql_legacy_old_structural_outside_placeholders(placeholders)
+    print("\n=== Legacy: structural_confirmed from recurrence_event_clean_v1 (> first_surgery) ===")
+    outlier_pp = probe_path_proven_date_outliers(con)
+    if outlier_pp >= 0:
+        print(f"  path_proven_candidates_v1 rows outside 1990–2027 DATE band (audit): {outlier_pp}")
+    old_structural = con.execute(legacy_sql).fetchdf()
+    print(f"  Legacy structural_confirmed rows kept: {len(old_structural)} (recurrence_date > first_surgery_date)")
+    # CF-mig123-LEGACY-COMPLETION-CHECK-6674 — rid 6674 retains 34d TTR (planned 2-stage); out-of-lane adjudication if needed.
     tier_frames["legacy_old_structural"] = old_structural
 
     for _, r in old_structural.iterrows():
@@ -578,6 +629,8 @@ def build_canonical_rows(
     tier_counts["final_row_count"] = len(df_final)
     tier_counts["final_distinct_research_id"] = int(df_final["research_id"].nunique())
     tier_counts["confirmed_true_count"] = int((df_final["recurrence_confirmed"] == True).sum())
+    tier_counts["path_proven_upstream_date_outliers"] = outlier_pp
+    tier_counts["legacy_structural_confirmed_rows_kept"] = int(len(old_structural))
 
     neg_ttr = df_final["time_to_recurrence_days"].notna() & (
         df_final["time_to_recurrence_days"] < 0
@@ -672,7 +725,14 @@ def main() -> None:
         "generated_utc": datetime.now(UTC).isoformat(),
         "script": str(Path(__file__).name),
         "dry_run": not args.write,
-        "harmonization": {"operative_spine": OE, "cohort_padding": CPM},
+        "harmonization": {
+            "operative_spine": OE,
+            "cohort_padding": CPM,
+            "path_proven_defensive_predicate": PATH_PROVEN_DEFENSIVE_DATE_FILTER.strip(),
+            "legacy_structural_filter": (
+                "recurrence_date > first_surgery_date (join to first_surg spine)"
+            ),
+        },
         "live_table_before_run": live_snapshot,
         "tier_summaries": {
             str(k): (int(v) if not hasattr(v, "item") else v)
@@ -745,8 +805,13 @@ def main() -> None:
         json.dumps(report["gates"], indent=2),
         "```",
         "",
-        "### Logan — pause gate (§3d)",
-        "Do **not** run `--write`, archive snapshot, or mig_123 until Logan approves RW rebuild.",
+        "### Spot-check filters — Lane 19 RESUME (2026-04-29)",
+        "",
+        "- `recurrence_event_clean_v1` legacy fallback: **`recurrence_date > first_surgery_date`** ",
+        "  (`structural_confirmed`) — excludes initial-diagnosis/completion-Thy mismaps (CF narrative in mig_123).",
+        "- **`manuscript_workspace.recurrence_path_proven_candidates_v1`**: predicate constant ",
+        "`PATH_PROVEN_DEFENSIVE_DATE_FILTER` (1990–2027 inclusive) retained for Tier-1 future UNION;",
+        "`path_proven_upstream_date_outliers` count = rows outside band (upstream clean-up deferred).",
         "",
         "- JSON: `" + rep_path.as_posix() + "`",
         "- Preview parquet: `" + OUTPUT_DIR.as_posix() + "/canonical_recurrence_v1_preview_203b.parquet`",
@@ -768,7 +833,7 @@ def main() -> None:
         print(f"\n  Uploaded canonical_recurrence_v1: {n} rows")
         print("\n✓ Harmonized Prompt 203b COMPLETE — table replaced on MotherDuck")
     else:
-        print("\n(Dry-run) No CREATE OR REPLACE; use --write after Logan approval.")
+        print("\n(Dry-run) No CREATE OR REPLACE MotherDuck table; omit `--write`.")
 
     con.close()
 

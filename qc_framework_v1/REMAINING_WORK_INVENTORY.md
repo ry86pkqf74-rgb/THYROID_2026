@@ -143,7 +143,7 @@ Misc canonical tables — labs, molecular, recurrence, ETE adjudication, surviva
 | `canonical_table_signoff_registry_v1` | 13 | Self-referential — meta. |
 | `canonical_column_verification_registry_v1` | 14 | Self-referential — meta. |
 | `canonical_survival_followup_v1` | 13 |  |
-| `canonical_recurrence_v1` | 12 | **Closed mig_122 (2026-04-29)** — cohort-wide shell derivation verified Protocol v2; operative-proxy/fs CFs documented. |
+| `canonical_recurrence_v1` | 12 | **Closed mig_131 logical batch mig_123 (2026-04-29)** — Lane 19 Script **203b** RW populated rebuild + spot-check filters; replaces mig_122 shell sign-off (`131_canonical_recurrence_v1_rebuild_signoff_20260429.sql`). |
 | `canonical_ete_inline_adjudication_v1` | 12 | **Closed mig_121 (2026-04-29)** — paired inline adjudication warehouse. |
 | `canonical_labs_thyroglobulin_v1` | 12 | Memory `project_lab_consolidation_script_347.md`. |
 | `canonical_labs_calcium_v1`, `canonical_labs_pth_v1`, `canonical_labs_tsh_v1`, `canonical_labs_vitamin_d_v1` | 10 each | Same pattern. |

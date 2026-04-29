@@ -1,18 +1,26 @@
 {
-  "generated_utc": "2026-04-29T03:22:14.672409+00:00",
+  "generated_utc": "2026-04-29T03:46:36.823841+00:00",
   "script": "203b_canonical_recurrence_harmonized_20260429.py",
   "dry_run": true,
   "harmonization": {
     "operative_spine": "canonical_operative_events_v1",
-    "cohort_padding": "canonical_patient_master"
+    "cohort_padding": "canonical_patient_master",
+    "path_proven_defensive_predicate": "CAST(path_proven_date AS DATE) BETWEEN DATE '1990-01-01' AND DATE '2027-01-01'",
+    "legacy_structural_filter": "recurrence_date > first_surgery_date (join to first_surg spine)"
   },
   "live_table_before_run": {
     "live_row_count": 10871,
     "recurrence_type_counts": {
-      "none": 10871
+      "none": 9583,
+      "persistent_biochemical_disease": 649,
+      "structural_confirmed": 440,
+      "biochemical_tg_rise": 80,
+      "fna_confirmed": 58,
+      "imaging_suspicious_unconfirmed": 45,
+      "structural_confirmed_legacy": 16
     },
-    "confirmed_true": 0,
-    "confirmed_false": 10871,
+    "confirmed_true": 514,
+    "confirmed_false": 10357,
     "distinct_cpm_research_ids": 10871
   },
   "tier_summaries": {
@@ -22,29 +30,31 @@
     "tier4_patients_unique": 792,
     "tier5_patients_unique": 66,
     "cohort_all_patients": 10871,
-    "no_recurrence_pad_rows": 9569,
+    "no_recurrence_pad_rows": 9583,
     "final_row_count": 10871,
     "final_distinct_research_id": 10871,
-    "confirmed_true_count": 528,
-    "time_to_recurrence_negative_clipped": 9
+    "confirmed_true_count": 514,
+    "path_proven_upstream_date_outliers": 2,
+    "legacy_structural_confirmed_rows_kept": 16,
+    "time_to_recurrence_negative_clipped": 0
   },
   "rebuilt_distribution": {
     "biochemical_tg_rise": 80,
     "fna_confirmed": 58,
     "imaging_suspicious_unconfirmed": 45,
-    "none": 9569,
+    "none": 9583,
     "persistent_biochemical_disease": 649,
     "structural_confirmed": 440,
-    "structural_confirmed_legacy": 30
+    "structural_confirmed_legacy": 16
   },
-  "confirmed_true_total": 528,
+  "confirmed_true_total": 514,
   "preview_parquet": "/Users/ros/THyroid 2026/scripts/output/canonical_recurrence_v1_preview_203b.parquet",
   "gates": {
     "cohort_10871_expectation": true,
     "distinct_rids_equals_rows": true,
     "non_shell_confirmed_positive": true,
     "confirmed_have_evidence_when_true": true,
-    "time_to_recurrence_negative_clipped_rows": 9,
+    "time_to_recurrence_negative_clipped_rows": 0,
     "none_category_null_recurrence_date": true
   }
 }
