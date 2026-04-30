@@ -175,16 +175,14 @@ SET acr2017_tirads_category = CASE
 WHERE tirads_conflict_resolution_source LIKE '%mig_220:tirads_score_2017:prefer_tirads_v2%';
 
 -- =============================================================================
--- §7 Concordance flag refresh where both categories set
+-- §7 Concordance flag refresh when both category columns present
 -- =============================================================================
 UPDATE main.canonical_us_nodule_v2
-SET acr2017_vs_updated_concordant = CASE
-      WHEN acr2017_tirads_category IS NOT NULL
-       AND updated_tirads_category IS NOT NULL
-      THEN (acr2017_tirads_category = updated_tirads_category)
-      ELSE acr2017_vs_updated_concordant
-    END
-WHERE tirads_conflict_resolution_source LIKE '%mig_220%';
+SET acr2017_vs_updated_concordant =
+      (acr2017_tirads_category = updated_tirads_category)
+WHERE tirads_conflict_resolution_source LIKE '%mig_220%'
+  AND acr2017_tirads_category IS NOT NULL
+  AND updated_tirads_category IS NOT NULL;
 
 -- =============================================================================
 -- §8 Post checks (run after apply)
