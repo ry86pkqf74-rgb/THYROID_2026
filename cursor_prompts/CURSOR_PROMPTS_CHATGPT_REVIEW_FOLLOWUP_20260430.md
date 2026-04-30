@@ -207,26 +207,197 @@ After Cowork-direct apply of mig_209 (P1 registry reconciliation) + mig_210 (P7 
 >    - `updated_tirads_category`: "Manuscript sensitivity-analysis surface — <document the rule>."
 > 3. Write a memory note `feedback_tirads_category_canonical.md` documenting: primary = `acr2017_tirads_category`; sensitivity = `updated_tirads_category` (what rule); both reportable in manuscript supplementary.
 >
-> **Acceptance:**
-> - Investigation reports for E1 + E2 committed at `qc_framework_v1/reports/mig_215_tirads_investigation_20260430.md`
-> - Any data corrections applied with pre-snapshot
-> - Col_registry notes updated for both TIRADS category columns
-> - Memory note `feedback_tirads_category_canonical.md` written
+> **E4 (Round 2 add) — Build 4 manuscript-facing TIRADS cohort views** (ChatGPT TIRADS doc Phase 1; Logan ratified)
+>
+> Create in `manuscript_workspace`:
+> - `vw_us_nodule_tirads_strict_acr2017_v1` — non-aggregate + non-shell + `acr2017_feature_points_complete=TRUE` + ACR points/category present
+> - `vw_us_nodule_tirads_any_reported_v1` — non-aggregate + non-shell + (tirads_reported_in_text OR acr2017_tirads_category OR updated_tirads_category present)
+> - `vw_us_nodule_tirads_reported_not_fully_parsed_v1` — same as any_reported BUT `acr2017_feature_points_complete=FALSE`
+> - `vw_us_nodule_tirads_unresolved_or_excluded_v1` — `is_aggregate_row=TRUE OR us_row_type='shell' OR nlp_backfill_pending=TRUE`
+>
+> Use `manuscript_workspace.canonical_us_nodule_v2_filtered` as source (already provides us_row_type + us_resolution_strength). Per `reference_view_naming_convention.md`: VIEW names need `_VIEW` suffix → use `vw_us_nodule_tirads_strict_acr2017_VIEW_v1` etc. Verify post-create row counts match Doc 2 expected: strict cohort ≈ 5,149; any_reported ≈ 22,276+12,070+27,885 deduped; reported-not-parsed ≈ 8,243; excluded ≈ 141 aggregate + 3,067 shell + 2,061 nlp_pending - overlaps.
+>
+> Register all 4 views per VIEW pattern (status=verified, method=`view_filter_inheritance_per_chatgpt_tirads_doc_phase1_2026-04-30`).
+>
+> **E5 (Round 2 add) — Resolve 2,640 high-priority TIRADS conflicts** (ChatGPT TIRADS doc Phase 2)
+>
+> `manuscript_workspace.us_nodule_conflict_queue_v1` has 2,640 high-priority conflicts (2,494 `tirads_reported` + 123 `tirads_category_v2` + 23 `tirads_score_2017`).
+>
+> Sample 30 of each conflict family. For each:
+> 1. Identify both conflicting source values + their source provenance.
+> 2. Apply Logan-ratified resolution rule (likely: prefer `source_tirads_v2` over `source_tirads_llm` for category/score; prefer text-reported for tirads_reported).
+> 3. Write resolution into `canonical_us_nodule_v2` with new `tirads_conflict_resolution_source` provenance col (or document why no auto-resolution possible → leaves in queue).
+>
+> If resolution rules are non-trivial, escalate batch to Logan with sample CSV before bulk apply.
+>
+> **E6 (Round 2 add) — Clarify acr2017_feature_points_complete semantics** (ChatGPT TIRADS doc Phase 4)
+>
+> 21,454 rows have all 5 ACR point fields non-null but only 5,149 have `acr2017_feature_points_complete=TRUE`. The 4× gap needs explanation. Find the build script that sets `acr2017_feature_points_complete`. Document the actual semantic (likely "5 fields non-null AND text-evidence-grounded" vs "5 fields non-null only") in:
+> 1. col_registry note for `acr2017_feature_points_complete`
+> 2. Memory note: `feedback_acr2017_feature_points_complete_semantic.md`
+> 3. Methods section update for manuscript
+>
+> If the strict semantic is too restrictive (5,149 rows = small primary cohort), Logan may want to relax. Surface for ratification.
+>
+> **Combined acceptance** (Lane E + E4 + E5 + E6):
+> - All 4 cohort views created, named per VIEW convention, registered as verified
+> - Conflict queue resolution: at least the 2,640 high-priority rows triaged (resolved or documented why deferred)
+> - Completeness flag semantic documented in memory + methods + col_registry notes
+> - Spot-checks: strict cohort row count ≈ 5,149; size_outlier-flagged rows visible; 23 ACR rule violations corrected
 > - Cowork verification suite stays clean
 >
 > Commit + push.
 
 ---
 
-## Suggested execution order (parallelizable)
+## Lane F: Multi-nodule under-explosion + deferred LLM absorption triage
+**Agent:** **Cline GPT-5.5**
+**Why GPT-5.5:** Investigation-heavy; needs fresh-eyes reasoning on TIRADS extractor logic; multi-day autonomous loops; GPT-5.5's different reasoning patterns provide valuable cross-check vs Sonnet.
+**Mig:** `mig_217_multi_nodule_under_explosion_triage_20260430` (per Logan F2: triage now)
 
-| Order | Lane | Why this order |
-|---|---|---|
-| 1 (start now) | **A** + **B** in parallel | A is biggest; B is quick — kick both off |
-| 2 (after A done) | **C** + **D** in parallel | Can't overlap A signoff_registry writes |
-| 3 (last) | **E** | Most investigation; do after the simpler lanes confirm tooling works |
+### Prompt:
 
-After all 5 land: re-run Cowork verification suite. Expected: gate1 175 → 186 (10 from A + 1 from B), all gates stay clean, §12=0, §14=0.
+> ChatGPT TIRADS doc Phase 3: 448 multi-nodule under-explosion candidate exams (`manuscript_workspace.qc_tir03_llm_candidates_v1`) + 825 deferred LLM absorption patients (`manuscript_workspace.us_llm_absorption_deferred_multi_nodule_v1`) have unresolved nodule attribution. Logan ratified F2 = triage now (manuscript-relevant).
+>
+> **Step 1 — Read the queue tables in full + raw upstream**
+> ```sql
+> SELECT * FROM manuscript_workspace.qc_tir03_llm_candidates_v1 ORDER BY n_current_nodules DESC, n_reported_tirads DESC;
+> SELECT * FROM manuscript_workspace.us_llm_absorption_deferred_multi_nodule_v1 ORDER BY 1;
+> ```
+> Identify the schema of each queue table. Cross-reference to source US reports (probably `raw.us_reports` or similar — search information_schema.tables for upstream).
+>
+> **Step 2 — Triage rules**
+> Rank candidates by:
+> 1. Patient has malignancy (`is_malignant=TRUE` in canonical_patient_master)
+> 2. Patient has FNA event (`canonical_fna_events_v1`)
+> 3. Patient has surgical pathology linkage (`canonical_path_malignant_events_v1`)
+> 4. Patient has molecular testing (`canonical_molecular_genetics_v2`)
+> 5. Number of nodules in exam (more = higher TIRADS conflict risk)
+>
+> Top-tier patients (malignancy + FNA + surgery + molecular) get priority review.
+>
+> **Step 3 — Decision per exam**
+> For each candidate exam:
+> - **Absorb**: if nodule identity unambiguous → write LLM-derived features into canonical row + provenance col
+> - **Document as limitation**: if nodule attribution ambiguous → flag with `multi_nodule_attribution_unresolved` flag + remove from QC queue
+> - **Escalate**: if pattern suggests extractor bug → write to Logan with sample
+>
+> **Step 4 — Apply with safety**
+> Pre-snapshot `canonical_us_nodule_v2` + relevant queue tables. ALTER TABLE ADD COLUMN `multi_nodule_attribution_unresolved BOOLEAN DEFAULT FALSE` if needed for "document as limitation" path. Bulk UPDATE per Step 3 decisions. Provenance row.
+>
+> **Step 5 — Post-apply**
+> - Both queue tables shrink (or empty) per absorption decisions
+> - Methods section update describing remaining limitations
+> - Memory note: `project_multi_nodule_attribution_triage_20260430.md`
+>
+> **Acceptance:**
+> - 448 candidate exams + 825 deferred patients all categorized (absorbed / documented / escalated)
+> - Cowork verification suite stays clean
+> - Memory + methods updated
+
+---
+
+## Lane G: Release manifest + semantic_publication views
+**Agent:** **Cline GPT-5.5**
+**Why GPT-5.5:** Architectural cross-check valuable (vs Sonnet which built most of the canonical layer); GPT-5.5 brings fresh eyes to the manuscript-safe semantic layer design; autonomous multi-table build.
+**Mig:** `mig_218_semantic_publication_layer_20260430` (Logan G1: build it)
+
+### Prompt:
+
+> Build the `semantic_publication` schema for manuscript reproducibility + future-release stability per ChatGPT MD/Power BI doc Priorities 1+3. This is V1.0 reproducibility work — needed before manuscript publication so the analysis surface is stable across future data additions.
+>
+> **Step 1 — Create schema**
+> ```sql
+> CREATE SCHEMA IF NOT EXISTS semantic_publication;
+> ```
+>
+> **Step 2 — Create release_manifest_v1**
+> ```sql
+> CREATE TABLE semantic_publication.release_manifest_v1 (
+>   release_id VARCHAR PRIMARY KEY,  -- e.g., 'pub_v1_0_20260430'
+>   release_name VARCHAR,
+>   source_database VARCHAR,
+>   source_schema VARCHAR,
+>   frozen_schema VARCHAR,
+>   created_at TIMESTAMP,
+>   created_by VARCHAR,
+>   repo_name VARCHAR,
+>   git_commit_hash VARCHAR,
+>   motherduck_database VARCHAR,
+>   n_patients INTEGER,
+>   n_surgeries INTEGER,
+>   n_malignant_patients INTEGER,
+>   n_pathology_events INTEGER,
+>   n_fna_events INTEGER,
+>   n_molecular_events INTEGER,
+>   n_us_exams INTEGER,
+>   n_recurrence_path_proven INTEGER,
+>   n_recurrence_imaging_only INTEGER,
+>   qc_open_issue_count INTEGER,
+>   notes VARCHAR
+> );
+> ```
+> Populate with row 1 for `pub_v1_0_20260430` (current state).
+>
+> **Step 3 — Create 8 manuscript-safe semantic views**
+> Per ChatGPT doc Priority 3 + memory `reference_view_naming_convention.md` (use `_VIEW` suffix):
+> 1. `vw_patient_master_safe_VIEW_v1` — wraps `canonical_patient_master`; excludes hundreds of CPM cols not in manuscript scope; clean stable column names
+> 2. `vw_path_malignant_tumor_safe_VIEW_v1` — uses `canonical_path_malignant_events_dedup_VIEW_v1` (from Lane B); exposes `publication_dedup_rank` + linkage tier + completeness
+> 3. `vw_recurrence_safe_VIEW_v1` — uses `canonical_recurrence_resolved_v1` with `is_implausible_date_quarantine=FALSE` filter (from Lane C); preserves dual-track recurrence
+> 4. `vw_molecular_safe_VIEW_v1` — uses `canonical_molecular_genetics_v2` with `is_patient_level_only_evidence` flag exposed (from Lane D)
+> 5. `vw_fna_safe_VIEW_v1` — wraps `canonical_fna_events_v1` clean Bethesda + date cols
+> 6. `vw_us_nodule_safe_VIEW_v1` — uses `vw_us_nodule_tirads_any_reported_VIEW_v1` (from Lane E4)
+> 7. `vw_labs_long_safe_VIEW_v1` — UNION of 5 per-analyte canonical labs into one long table (`research_id`, `lab_analyte`, `lab_date`, `value_numeric`, `unit`)
+> 8. `vw_cohort_membership_safe_VIEW_v1` — uses `manuscript_cohort_v1` (from Lane A) with `release_id` join
+>
+> **Step 4 — Register all in canonical_table_signoff_registry_v1** + col_registry per mig_205 retro-signoff pattern
+>
+> **Step 5 — Pre-snapshot signoff_registry + provenance row**
+>
+> **Acceptance:**
+> - `semantic_publication` schema exists with `release_manifest_v1` table populated for v1.0
+> - 8 vw_*_safe_VIEW_v1 views exist + registered as verified
+> - Each view's row count matches expected (e.g., vw_path_malignant_tumor_safe = 5,944 from Lane B; vw_recurrence_safe excludes the 132 quarantined; etc.)
+> - Cowork verification suite stays clean
+>
+> **Memory note:** `project_semantic_publication_layer_20260430.md` documenting the manuscript-safe read path.
+>
+> Commit + push.
+
+---
+
+## Future Tasks (Cowork to execute when v1.0 cleanup is complete)
+
+These are deferred per Logan H + I decisions. Add to a `TASKS.md`-style backlog and execute when current cleanup waves finish.
+
+### Future Task H: Power BI star-schema marts (`bi_powerbi.*`)
+- **Trigger:** When Logan starts on Phase 4 actual Power BI Desktop migration
+- **Scope:** Build 13 dim/fact tables per ChatGPT MD/Power BI doc Priority 2 (`dim_patient_v1`, `fact_surgery_v1`, `fact_pathology_tumor_v1`, etc.)
+- **Source:** Reads from `semantic_publication.vw_*_safe_VIEW_v1` (Lane G output)
+- **Agent:** TBD when triggered (Cursor composer probably; multi-day star-schema design)
+- **Why deferred:** Eats remaining 5 days of MD Pro trial; Phase 4 work not blocking for v1.0 manuscript
+
+### Future Task I: Parquet export of frozen tables
+- **Trigger:** AFTER all current cleanup lanes (A-G) finish + Cowork verification suite passes clean
+- **Scope:** `EXPORT TO PARQUET` for canonical_*, manuscript_cohort_v1, signoff registries, archive_pub_v1_0 freeze snapshots, semantic_publication.* (when built)
+- **Why deferred per Logan:** No point exporting mid-cleanup — would have to re-export after each lane; one comprehensive export when state stabilizes
+- **Agent:** Cline Sonnet 4.6 (mechanical EXPORT TO statements)
+- **Estimated time:** ~1-2 hours when triggered
+
+---
+
+## Suggested execution order (updated)
+
+| Order | Lane | Agent | Why this order |
+|---|---|---|---|
+| **Wave 1 (in flight)** | **A** + **B** in parallel | Cursor composer + Cline Sonnet 4.6 | A is biggest; B is quick |
+| **Wave 2 (after A)** | **C** + **D** in parallel | Cline Sonnet 4.6 + Cursor composer | Avoid signoff_registry write contention with A |
+| **Wave 3** | **E** (E1+E2+E3+E4+E5+E6 combined) | Cursor composer | TIRADS investigation + cohort views; longest single lane |
+| **Wave 4** | **F** + **G** in parallel | Cline GPT-5.5 (both) | F=multi-nodule triage; G=semantic layer; touch different tables, safe to parallelize |
+| **Wave 5 (post-cleanup)** | **I** Parquet export | Cline Sonnet 4.6 | One comprehensive export after state stabilizes |
+| **Future** | **H** Power BI marts | TBD when Phase 4 triggers | Out of v1.0 scope |
+
+After all of A-G land + I exports: re-run Cowork verification suite. Expected end-state: gate1 175 → ~190+ (10 from A + 1 from B + 4 from E4 + 8 from G + maybe more from F absorption rows).
 
 ---
 
@@ -237,3 +408,22 @@ After all 5 land: re-run Cowork verification suite. Expected: gate1 175 → 186 
 **mig_210 — P7 rid 610 fix:** UPDATE `canonical_patient_master.first_surgery_date` 1945-07-13 → 2004-07-13 (matches operative event; only such pre-1990 row in entire 10,871-row cohort).
 
 Both at HEAD `27c3c74` pushed to origin.
+
+---
+
+## Round 2 additions (post-Doc 2 + Doc 3 review, 2026-04-30)
+
+Documents reviewed:
+- `motherduck_powerbi_future_data_final_recommendations.md` — Architecture for Power BI / future-data integration
+- `us_nodules_tirads_comprehensive_assessment_plan.md` — 5-phase US/TIRADS publication-readiness plan
+
+Logan-locked decisions (Round 2):
+- **F2:** Triage multi-nodule under-explosion now (Cline GPT-5.5)
+- **G1:** Build semantic_publication schema (Cline GPT-5.5)
+- **H:** Defer Power BI marts to post-cleanup (Future Task H)
+- **I:** Defer Parquet export until all cleanup done (Future Task I)
+- **E-extension:** Add E4 (4 cohort views) + E5 (2,640 conflicts) + E6 (completeness flag) to existing Lane E
+
+ChatGPT verified counts (all real):
+- Doc 2 TIRADS: 5/5 QA tables exist; 21,454 vs 5,149 completeness gap real (4×); 2,640 high-pri conflicts (2,494+123+23); 448 candidate exams / 319 patients; 825 deferred patients
+- Doc 1 architecture: `semantic_publication` + `bi_powerbi` schemas DO NOT YET EXIST (need to be created); existing schemas are `main`, `manuscript_workspace`, `archive_pub_v1_0` (in attached "Thyroid 2026 UPdated"), `raw`, `views_readable`
