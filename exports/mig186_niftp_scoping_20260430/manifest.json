@@ -1,0 +1,30 @@
+{
+  "run_id": "mig186_niftp_scoping_20260430",
+  "created_at_utc": "2026-04-30T02:09:29.649144+00:00",
+  "posture": "read_only_scoping_no_motherduck_ddl_or_dml",
+  "target_db": "thyroid_canonical_publication_v1_0",
+  "affected_events": 220,
+  "affected_patients": 202,
+  "niftp_events": 213,
+  "niftp_patients": 195,
+  "uncertain_events": 7,
+  "uncertain_patients": 7,
+  "patient_disposition": [
+    {
+      "proposed_patient_disposition": "edge_no_other_path_event_but_pm_malignant",
+      "n_pts": 115,
+      "n_events": 122
+    },
+    {
+      "proposed_patient_disposition": "mixed_keep_patient_exclude_affected_event_rows",
+      "n_pts": 87,
+      "n_events": 98
+    }
+  ],
+  "artifacts": [
+    "qc_framework_v1/migrations/186_niftp_uncertain_exclusion_TBD_20260430.sql",
+    "qc_framework_v1/reports/mig_186_niftp_uncertain_exclusion_scoping_20260430.md",
+    "exports/mig186_niftp_scoping_20260430/niftp_uncertain_inventory.csv",
+    "exports/mig186_niftp_scoping_20260430/niftp_uncertain_patient_disposition.csv"
+  ]
+}

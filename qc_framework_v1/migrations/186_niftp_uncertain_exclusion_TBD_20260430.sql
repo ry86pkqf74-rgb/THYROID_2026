@@ -1,0 +1,70 @@
+-- mig_186 NIFTP + uncertain-malignancy exclusion skeleton
+-- Date: 2026-04-30
+-- Status: PLACEHOLDER / NOT FOR EXECUTION until Logan ratifies disposition rule.
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Recommended rule from scoping report: R-D hybrid — archive affected rows, then
+-- delete NIFTP/uncertain-malignancy rows from canonical_path_malignant_events_v1,
+-- preserving them in an indeterminate/provenance archive and opening
+-- CF-mig186-WHO-2017-NIFTP-RECLASS for downstream rebuild review.
+
+-- ---------------------------------------------------------------------------
+-- A. Pre-snapshot affected rows before any mutation.
+-- ---------------------------------------------------------------------------
+-- CREATE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_path_malignant_events_v1_pre_mig186_niftp_uncertain_YYYYMMDD AS
+-- SELECT *
+-- FROM thyroid_canonical_publication_v1_0.main.canonical_path_malignant_events_v1
+-- WHERE primary_histology ILIKE '%NIFTP%'
+--    OR histology_variant ILIKE '%NIFTP%'
+--    OR primary_histology ILIKE '%uncertain%'
+--    OR primary_histology ILIKE '%hurthle%neoplasm%'
+--    OR primary_histology ILIKE '%hürthle%neoplasm%'
+--    OR primary_histology ILIKE '%FT-UMP%'
+--    OR primary_histology ILIKE '%WDT-UMP%';
+
+-- Optional provenance-preserving indeterminate landing table if Logan chooses R-B/R-D.
+-- CREATE TABLE IF NOT EXISTS thyroid_canonical_publication_v1_0.main.canonical_path_indeterminate_events_v1 AS
+-- SELECT *,
+--        'mig186_niftp_uncertain_exclusion'::VARCHAR AS indeterminate_reason,
+--        CURRENT_TIMESTAMP AS reclassified_at
+-- FROM "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_path_malignant_events_v1_pre_mig186_niftp_uncertain_YYYYMMDD
+-- WHERE FALSE;
+
+-- INSERT INTO thyroid_canonical_publication_v1_0.main.canonical_path_indeterminate_events_v1
+-- SELECT *,
+--        CASE
+--          WHEN primary_histology ILIKE '%NIFTP%' OR histology_variant ILIKE '%NIFTP%'
+--            THEN 'NIFTP_WHO_2017_non_malignant'
+--          ELSE 'uncertain_malignant_potential'
+--        END AS indeterminate_reason,
+--        CURRENT_TIMESTAMP AS reclassified_at
+-- FROM "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_path_malignant_events_v1_pre_mig186_niftp_uncertain_YYYYMMDD;
+
+-- ---------------------------------------------------------------------------
+-- B. Logan-ratified exclusion from malignant event table.
+-- ---------------------------------------------------------------------------
+-- DELETE FROM thyroid_canonical_publication_v1_0.main.canonical_path_malignant_events_v1
+-- WHERE primary_histology ILIKE '%NIFTP%'
+--    OR histology_variant ILIKE '%NIFTP%'
+--    OR primary_histology ILIKE '%uncertain%'
+--    OR primary_histology ILIKE '%hurthle%neoplasm%'
+--    OR primary_histology ILIKE '%hürthle%neoplasm%'
+--    OR primary_histology ILIKE '%FT-UMP%'
+--    OR primary_histology ILIKE '%WDT-UMP%';
+
+-- ---------------------------------------------------------------------------
+-- C. Cascade rebuild placeholders after row-level exclusion.
+-- ---------------------------------------------------------------------------
+-- Rebuild/refresh, in dependency order, any downstream path malignant rollups,
+-- patient-level dominant tumor fields, and manuscript registry metrics that read
+-- canonical_path_malignant_events_v1. Do not run until dependency list is
+-- enumerated and Logan approves exact scope.
+
+-- ---------------------------------------------------------------------------
+-- D. Registry/provenance note placeholders.
+-- ---------------------------------------------------------------------------
+-- INSERT INTO thyroid_canonical_publication_v1_0.manuscript_workspace.cpm_reconciliation_provenance_v1
+--   (run_id, started_at, ended_at, phases_applied, critical_findings_cleared,
+--    high_findings_cleared, med_findings_cleared, held_for_adjudication)
+-- VALUES
+--   ('mig186_niftp_uncertain_exclusion_apply_YYYYMMDD', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
+--    'archive_indeterminate_delete_rebuild_registry', '0', '0', '0', 'CF-mig186-WHO-2017-NIFTP-RECLASS');

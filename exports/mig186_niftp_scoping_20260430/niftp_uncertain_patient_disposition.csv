@@ -1,0 +1,203 @@
+research_id,affected_events,niftp_events,uncertain_events,affected_primary_histologies,affected_histology_variants,other_path_malignant_events,other_primary_histologies,other_histology_variants,is_malignant,histology_final,histologic_types_all,ajcc8_t_stage,ajcc8_n_stage,ajcc8_stage_group,dominant_tumor_ajcc8_t_stage,dominant_tumor_ajcc8_stage_group,pm_is_malignant_bool,proposed_patient_disposition
+10015,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,II,T3a,II,True,edge_no_other_path_event_but_pm_malignant
+10079,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N1a,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+10153,1,1,0,NIFTP,,3,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N0,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+10176,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N0,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+10282,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+10288,1,1,0,NIFTP,,1,follicular carcinoma,,True,follicular carcinoma,NIFTP | follicular carcinoma,T1b,N1a,II,T1b,II,True,mixed_keep_patient_exclude_affected_event_rows
+10314,1,1,0,NIFTP,,1,PTC,classical,True,PTC,NIFTP | PTC,T1b,N0,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+10367,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+10446,1,1,0,NIFTP,,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T1b,N1a,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+10461,2,2,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+10466,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+10477,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+10500,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3b,,I,T3b,I,True,edge_no_other_path_event_but_pm_malignant
+10542,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+10551,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+10558,1,0,1,"Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP)",,1,follicular carcinoma,,True,follicular carcinoma,"Low-risk atypical follicular neoplasm (follicular thyroid neoplasm of uncertain malignant potential, FT-UMP) | follicular carcinoma",T2,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+10596,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+10610,1,1,0,NIFTP,,2,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+10684,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+10696,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+10766,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3b,,I,T3b,I,True,edge_no_other_path_event_but_pm_malignant
+10961,1,1,0,NIFTP,,1,follicular carcinoma,,True,follicular carcinoma,NIFTP | follicular carcinoma,T2,N0,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+10963,1,1,0,NIFTP,,3,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+10983,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+10986,1,0,1,Oncocytic follicular tumor of uncertain malignant potential,,1,PTC,tall cell,True,PTC,Oncocytic follicular tumor of uncertain malignant potential | PTC,T3b,N1a,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11030,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+11062,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+11099,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+11113,2,2,0,NIFTP,,3,PTC,follicular | microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11128,1,1,0,NIFTP,,1,PTC,classical,True,PTC,NIFTP | PTC,T1a,N1a,II,T1a,II,True,mixed_keep_patient_exclude_affected_event_rows
+11191,1,0,1,Follicular tumor of uncertain malignant potential with focal high-grade features,,1,PTC,microcarcinoma,True,PTC,Follicular tumor of uncertain malignant potential with focal high-grade features | PTC,T1a,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+11255,1,0,1,Oncocytic tumor of uncertain malignant potential (atypical oncocytic tumor),,2,PTC,follicular | microcarcinoma,True,PTC,Oncocytic tumor of uncertain malignant potential (atypical oncocytic tumor) | PTC,T2,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+11277,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+11281,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11295,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+11316,1,1,0,NIFTP,,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+11337,1,1,0,NIFTP,,1,FTUMP,,True,FTUMP,FTUMP | NIFTP,T3b,N1a,II,T3b,II,True,mixed_keep_patient_exclude_affected_event_rows
+11343,1,1,0,NIFTP,,1,PTC,classical,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11382,1,1,0,NIFTP,,1,PTC,oncocytic/hurthle,True,PTC,NIFTP | PTC,T3b,N0,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11408,1,1,0,NIFTP,,2,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,II,T3b,II,True,mixed_keep_patient_exclude_affected_event_rows
+11430,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+11449,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+11500,1,0,1,Oncocytic lesion of uncertain malignant potential,,2,PTC,microcarcinoma,True,PTC,Oncocytic lesion of uncertain malignant potential | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11502,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11570,1,1,0,NIFTP,,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T1b,N1a,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11576,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+11609,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,,,,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+11715,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11731,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3b,N0,II,T3b,II,True,edge_no_other_path_event_but_pm_malignant
+11803,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+11865,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+11893,1,1,0,NIFTP,,1,follicular carcinoma,oncocytic/hurthle,True,follicular carcinoma,NIFTP | follicular carcinoma,T3a,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+11923,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+11941,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+11951,2,2,0,NIFTP,,1,follicular carcinoma,,True,follicular carcinoma,NIFTP | follicular carcinoma,T1b,N1a,II,T1b,II,True,mixed_keep_patient_exclude_affected_event_rows
+11959,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+11986,2,2,0,NIFTP,,3,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3a,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+12027,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+12031,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+12032,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+12043,1,1,0,NIFTP,,1,PTC,tall cell,True,metastatic PTC,NIFTP | PTC,T3a,N1a,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+12048,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,Nx,II,T1b,II,True,mixed_keep_patient_exclude_affected_event_rows
+12106,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+12129,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+12188,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,,,,,,True,edge_no_other_path_event_but_pm_malignant
+1732,1,0,1,Atypical hurthle cell neoplasm,oncocytic/hurthle,3,follicular carcinoma,oncocytic/hurthle,True,Atypical hurthle cell neoplasm,Atypical hurthle cell neoplasm | follicular carcinoma,T3b,N0,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+20042,2,2,0,NIFTP,,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T2,N1a,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+5151,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T3a,N1a,I,T3a,I,True,mixed_keep_patient_exclude_affected_event_rows
+5209,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+5327,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N0,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+5465,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+5466,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+5500,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+5515,1,1,0,NIFTP,follicular,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+5532,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+5538,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+5589,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+5706,2,2,0,NIFTP,,2,MTC | PTC,microcarcinoma,True,MTC,MTC | NIFTP | PTC,T3a,N0,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+5736,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+5738,1,1,0,NIFTP,classical,2,PTC,classical,True,PTC,NIFTP | PTC,T2,N1a,II,T2,,True,mixed_keep_patient_exclude_affected_event_rows
+5746,2,2,0,NIFTP,follicular,3,PTC,microcarcinoma,True,NIFTP,NIFTP | PTC,T1b,N1a,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+5768,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,II,T2,II,True,edge_no_other_path_event_but_pm_malignant
+5802,1,0,1,HÜRTHLE cell neoplasm of uncertain malignant potential,microcarcinoma,1,PTC,microcarcinoma,True,PTC,HÜRTHLE cell neoplasm of uncertain malignant potential | PTC,T1a,N1a,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+5895,1,1,0,NIFTP,classical,1,PTC,classical,True,PTC,NIFTP | PTC,T1b,N1b,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+5913,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,II,T2,,True,mixed_keep_patient_exclude_affected_event_rows
+5974,1,1,0,NIFTP,microcarcinoma,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+6002,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T1b,N1a,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+6014,1,1,0,NIFTP,,4,PTC,classical | microcarcinoma,True,NIFTP,NIFTP | PTC,T2,N1a,II,T2,,True,mixed_keep_patient_exclude_affected_event_rows
+6026,1,1,0,NIFTP,follicular,4,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+6079,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T1b,N1a,II,T1b,,True,mixed_keep_patient_exclude_affected_event_rows
+6118,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T2,N0,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+6133,1,1,0,NIFTP,microcarcinoma,2,PTC,follicular | microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T2,,True,mixed_keep_patient_exclude_affected_event_rows
+6161,1,1,0,NIFTP,follicular,3,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T1a,I,True,mixed_keep_patient_exclude_affected_event_rows
+6163,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6177,1,1,0,NIFTP,classical,1,PTC,classical,True,PTC,NIFTP | PTC,T1a,N1a,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+6189,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N1a,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+6212,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,II,T2,II,True,edge_no_other_path_event_but_pm_malignant
+6216,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,II,T2,II,True,edge_no_other_path_event_but_pm_malignant
+6273,1,1,0,NIFTP,follicular,3,PTC,follicular | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+6292,1,1,0,NIFTP,follicular,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6374,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T1a,I,True,mixed_keep_patient_exclude_affected_event_rows
+6382,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+6421,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+6425,2,2,0,NIFTP,microcarcinoma,3,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N0,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+6433,1,1,0,NIFTP,follicular,0,,,True,NIFTP,NIFTP,T1b,N1a,II,T1b,II,True,edge_no_other_path_event_but_pm_malignant
+6459,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+6490,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,II,T2,II,True,edge_no_other_path_event_but_pm_malignant
+6565,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6581,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,II,T3a,II,True,edge_no_other_path_event_but_pm_malignant
+6626,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+6635,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+6637,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6642,1,1,0,NIFTP,classical,1,PTC,classical,True,PTC,NIFTP | PTC,T3b,N0,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+6651,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+6657,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+6659,3,3,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T3b,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+6703,1,1,0,NIFTP,classical,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1b,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+6780,2,2,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6787,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+6898,1,1,0,NIFTP,classical,3,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+6939,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,II,T1b,,True,mixed_keep_patient_exclude_affected_event_rows
+6963,1,1,0,NIFTP,classical,1,PTC,classical,True,PTC,NIFTP | PTC,T3b,N1a,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+6964,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7113,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7145,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T3b,N0,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+7251,1,1,0,NIFTP,classical,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N0,II,T1a,II,True,mixed_keep_patient_exclude_affected_event_rows
+7311,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+7315,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7333,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7368,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N0,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7386,2,2,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7402,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+7464,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+7552,1,1,0,NIFTP,minimally invasive,3,PTC | follicular carcinoma,follicular | minimally invasive,True,follicular carcinoma,NIFTP | PTC | follicular carcinoma,T2,N0,I,T2,I,True,mixed_keep_patient_exclude_affected_event_rows
+7584,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7596,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N1a,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+7632,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7645,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+7697,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7812,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N0,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7827,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+7829,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7851,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+7911,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N0,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+7924,3,3,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+7926,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+7962,2,2,0,NIFTP,microcarcinoma,2,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+7963,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+7970,2,2,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,N0,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+8004,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8019,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8072,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8108,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T2,N0,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+8117,1,1,0,NIFTP,minimally invasive,1,follicular carcinoma,minimally invasive,True,follicular carcinoma,NIFTP | follicular carcinoma,T2,N1a,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8145,1,1,0,NIFTP,classical,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8186,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+8233,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+8282,1,1,0,NIFTP,oncocytic/hurthle,2,PTC | follicular carcinoma,microcarcinoma | oncocytic/hurthle,True,follicular carcinoma,NIFTP | PTC | follicular carcinoma,T3a,N0,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8307,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N0,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8323,1,1,0,NIFTP,oncocytic/hurthle,1,follicular carcinoma,oncocytic/hurthle,True,follicular carcinoma,NIFTP | follicular carcinoma,T3a,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8346,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8360,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8375,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+8553,1,1,0,NIFTP,classical,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T1a,I,True,mixed_keep_patient_exclude_affected_event_rows
+8573,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8622,1,1,0,NIFTP,follicular,2,PTC,follicular | microcarcinoma,True,PTC,NIFTP | PTC,T1b,N0,II,T1b,II,True,mixed_keep_patient_exclude_affected_event_rows
+8624,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+8648,1,1,0,NIFTP,classical,1,PTC,classical,True,PTC,NIFTP | PTC,T3a,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8651,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T3a,N0,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+8755,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+8778,1,1,0,NIFTP,follicular,2,PTC,follicular,True,PTC,NIFTP | PTC,T2,N0,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8799,1,1,0,NIFTP,microcarcinoma,2,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8877,1,1,0,NIFTP,follicular,2,PTC,follicular | microcarcinoma,True,PTC,NIFTP | PTC,T3a,N1a,II,T3a,II,True,mixed_keep_patient_exclude_affected_event_rows
+8918,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+8924,1,1,0,NIFTP,follicular,1,PTC,follicular,True,PTC,NIFTP | PTC,T3b,N1a,IVB,T3b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+8956,2,2,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+8993,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+9013,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+9163,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,IVB,T1b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+9166,1,1,0,NIFTP,minimally invasive,1,follicular carcinoma,minimally invasive,True,follicular carcinoma,NIFTP | follicular carcinoma,T2,Nx,II,T2,II,True,mixed_keep_patient_exclude_affected_event_rows
+9195,1,1,0,NIFTP,oncocytic/hurthle,2,PTC | follicular carcinoma,microcarcinoma | oncocytic/hurthle,True,follicular carcinoma,NIFTP | PTC | follicular carcinoma,T3a,N1a,IVB,T3a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+9298,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N0,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+9323,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,II,T3a,II,True,edge_no_other_path_event_but_pm_malignant
+9330,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+9345,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+9378,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,,II,T3a,II,True,edge_no_other_path_event_but_pm_malignant
+9518,1,1,0,NIFTP,microcarcinoma,2,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,IVB,T1a,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+9548,2,2,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,II,T3b,II,True,mixed_keep_patient_exclude_affected_event_rows
+9578,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N0,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+9621,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,N1a,II,T1a,II,True,edge_no_other_path_event_but_pm_malignant
+9638,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+9662,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N1a,II,T1a,II,True,mixed_keep_patient_exclude_affected_event_rows
+9726,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1b,,I,T1b,I,True,edge_no_other_path_event_but_pm_malignant
+9727,1,1,0,NIFTP,follicular,2,PTC | follicular carcinoma,follicular,True,PTC,NIFTP | PTC | follicular carcinoma,T3b,N1a,II,T3b,II,True,mixed_keep_patient_exclude_affected_event_rows
+9754,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3a,N1a,I,T3a,I,True,edge_no_other_path_event_but_pm_malignant
+9761,1,1,0,NIFTP,microcarcinoma,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T1a,N0,I,T1b,I,True,mixed_keep_patient_exclude_affected_event_rows
+9763,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T3b,N0,I,T3b,I,True,edge_no_other_path_event_but_pm_malignant
+9816,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T1a,,I,T1a,I,True,edge_no_other_path_event_but_pm_malignant
+9897,1,1,0,NIFTP,,0,,,True,NIFTP,NIFTP,T2,N1a,I,T2,I,True,edge_no_other_path_event_but_pm_malignant
+9950,1,1,0,NIFTP,,2,PTC,classical | microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,IVB,T2,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+9966,1,1,0,NIFTP,,1,PTC,microcarcinoma,True,PTC,NIFTP | PTC,T3b,N1a,IVB,T3b,IVB,True,mixed_keep_patient_exclude_affected_event_rows
+9998,1,1,0,NIFTP,,1,FTUMP,,True,FTUMP,FTUMP | NIFTP,T3b,N1a,I,T3b,I,True,mixed_keep_patient_exclude_affected_event_rows
