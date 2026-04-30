@@ -1,0 +1,10 @@
+{
+  "after_affected_cols": 38,
+  "after_closed_cols": 38,
+  "before_affected_cols": 38,
+  "before_closed_cols": 0,
+  "cpm_distinct_research_id": 10871,
+  "cpm_rows": 10871,
+  "snapshot_rows": 38,
+  "val_rows": 12
+}
