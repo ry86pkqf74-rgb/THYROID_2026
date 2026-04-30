@@ -1,0 +1,15 @@
+comparison,available,n_rows,left_non_null,right_non_null,paired_non_null,mismatches,mismatch_pct_of_paired
+ajcc8_t_stage vs dominant_tumor_ajcc8_t_stage,True,4137,4128,3994,3992,1141,28.58
+ajcc8_t_stage vs ajcc8_t_stage_with_microete_t3b_DEPRECATED,True,4137,4128,4091,4091,1,0.02
+ajcc8_t_stage vs ajcc8_t_stage_v2,True,4137,4128,4130,4128,363,8.79
+ajcc8_stage_group vs dominant_tumor_ajcc8_stage_group,True,4137,4128,3605,3600,123,3.42
+ajcc8_stage_group vs ajcc8_stage_group_corrected,True,4137,4128,4131,4125,14,0.34
+ajcc8_stage_group vs ajcc8_stage_group_v2,True,4137,4128,4127,4122,2160,52.4
+ajcc8_t_stage vs path_worst_ajcc8_t_stage,True,4137,4128,3994,3992,1141,28.58
+dominant_tumor_ajcc8_t_stage vs path_worst_ajcc8_t_stage,True,4137,3994,3994,3994,0,0.0
+ajcc8_t_stage vs path_worst_inferred_ajcc8_t_from_findings,True,4137,4128,3993,3991,428,10.72
+path_worst_ajcc8_t_stage vs path_worst_inferred_ajcc8_t_from_findings,True,4137,3994,3993,3993,1030,25.8
+ajcc8_n_stage vs path_worst_ajcc8_n_stage,True,4137,4077,4083,4077,2064,50.63
+ajcc8_m_stage vs path_worst_ajcc8_m_stage,True,4137,4137,4137,4137,0,0.0
+ajcc7_t_stage vs path_worst_ajcc7_t_stage,True,4137,4127,3994,3994,926,23.18
+ajcc7_stage_group vs path_worst_ajcc7_stage_group,True,4137,3882,3863,3863,2028,52.5

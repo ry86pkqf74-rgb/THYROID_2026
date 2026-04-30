@@ -1,0 +1,10 @@
+metric,n,denominator,pct_of_denominator
+cpm_total_rows,10871,all_cpm_rows,100.0
+cpm_malignant_rows,4137,all_cpm_rows,38.06
+malignant_with_cpm_ajcc8_t_stage,4128,cpm_malignant_rows,99.78
+malignant_with_dominant_tumor_ajcc8_t_stage,3994,cpm_malignant_rows,96.54
+malignant_with_path_event_ajcc8_t_stage,3994,cpm_malignant_rows,96.54
+malignant_cpm_vs_dominant_ajcc8_t_stage_diff,1141,cpm_malignant_rows,27.58
+malignant_cpm_vs_dominant_ajcc8_stage_group_shift,123,cpm_malignant_rows,2.97
+malignant_path_stored_vs_findings_inferred_ajcc8_t_stage_diff,1030,cpm_malignant_rows,24.9
+malignant_with_any_scoped_cross_source_stage_discordance,3275,cpm_malignant_rows,79.16

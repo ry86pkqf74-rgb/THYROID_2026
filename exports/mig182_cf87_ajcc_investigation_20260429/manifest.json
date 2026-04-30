@@ -1,0 +1,23 @@
+{
+  "csv_files": [
+    "mig182_cpm_stage_coverage.csv",
+    "mig182_fix_option_matrix.csv",
+    "mig182_manuscript_impact.csv",
+    "mig182_path_event_stage_coverage.csv",
+    "mig182_path_internal_drift.csv",
+    "mig182_path_t_stage_distribution.csv",
+    "mig182_path_t_stage_mismatch_examples.csv",
+    "mig182_patient_cross_source_drift.csv",
+    "mig182_patient_discordance_examples.csv",
+    "mig182_registry_family_summary.csv",
+    "mig182_registry_inventory.csv"
+  ],
+  "governance": "No production data mutation; Logan ratification required before R1/R2/R3 apply lane.",
+  "output_dir": "exports/mig182_cf87_ajcc_investigation_20260429",
+  "path_malignant_original_scope_mentions": 36,
+  "posture": "read_only_motherduck_local_artifacts_only",
+  "registry_mentions": 45,
+  "run_id": "mig182_cf87_ajcc_investigation_20260429",
+  "run_timestamp_utc": "2026-04-30T00:37:38.815938+00:00",
+  "target_db": "thyroid_canonical_publication_v1_0"
+}

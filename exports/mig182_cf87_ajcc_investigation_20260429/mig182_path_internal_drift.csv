@@ -1,0 +1,3 @@
+dimension,rows_total,stored_non_null,inferred_non_null,paired_non_null,paired_mismatches,paired_mismatch_pct
+ajcc8_t_stage,6689,6443,6195,6182,1781,28.81
+ajcc8_n_positive_group,6689,6298,2542,2525,92,3.64
