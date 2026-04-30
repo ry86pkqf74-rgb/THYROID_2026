@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [Lane E Round 2 TIRADS views + conflict resolution + ACR completeness doc](../qc_framework_v1/migrations/219_tirads_cohort_views_20260430.sql) — 2026-04-30: `mig_219` four `vw_us_nodule_tirads_*_VIEW_v1` cohort views on `canonical_us_nodule_v2_filtered`; `mig_220` prefer-`tirads_v2` batch fix + `tirads_conflict_resolution_source`; `mig_221` clarifies `acr2017_feature_points_complete` vs imputed `*_pts`. Memory: [feedback_acr2017_feature_points_complete_semantic.md](feedback_acr2017_feature_points_complete_semantic.md). Methods stub: `docs/methods_acr2017_feature_points_complete_20260430.md`.
 - [mig_214 molecular patient-level-only flag](../qc_framework_v1/migrations/214_molecular_patient_level_evidence_flag_20260430.sql) — 2026-04-30: `canonical_molecular_genetics_v2.is_patient_level_only_evidence`; TRUE = NULL `molecular_episode_id` (525 rows / 520 pts, script_269_backfill). Per-test/per-date analyses: `WHERE is_patient_level_only_evidence = FALSE`. Investigation: `qc_framework_v1/reports/mig_214_investigation_molecular_null_episode_20260430.md`.
 - [mig_211 deferred composites signoff](../qc_framework_v1/migrations/211_verify_10_deferred_composites_20260430.sql) — 2026-04-30: Lane A — 10 analytic tables verified (516 col-rows); pre-snapshots archive_pub_v1_0 `pre_mig211`
 - [Path rollup pair mig_120 close-out](project_path_rollup_pair_mig_120_closeout.md) — 2026-04-29: 5th–6th patient rollup (malig+benign path); Protocol v2 derivation signoff
