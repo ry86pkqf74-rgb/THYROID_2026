@@ -1,7 +1,7 @@
 # Thyroid Canonical Publication v1.0 — TODO Queue
 
-**Last updated:** 2026-04-30 (post-chain-apply at `51e201a`)
-**Current state:** 5-gate audit `172 / 0 / 0 / 0 / 6`; PM 1,596 v / 24 na / 0 not_started; 62/62 Tier-2 canonicals verified; cohort parity 10,871 / 10,871 ✓
+**Last updated:** 2026-04-30 (post-mig_203 apply)
+**Current state:** 5-gate audit **v11 `172 / 0 / 0 / 0 / 0`**; PM **~1,606 v / 24 na / 0 not_started** (registry resynced to physical cols); 62/62 Tier-2 canonicals verified; cohort parity 10,871 / 10,871 ✓
 **Manuscript readiness verdict:** ✅ **READY** for survival/recurrence/outcomes analyses; ~5% residual cleanup work remaining for "fully verified to every CF"
 
 ---
@@ -24,8 +24,8 @@
 |---|---|---:|---|---|
 | **mig_201** | Apply mig_190 disposition-C closures (4 stale CF tags) | 15 min | Queued | Append `CLOSED by mig_<N>` to CF-mig156-COHORT-UNIFORM-FALSE-prm_high_risk_marker_any (closed by 156b), CF-mig156-ANY-RECURRENCE- (closed by 163b), CF-mig134-PM-LAB-DATE-ANCHOR (closed by 160), CF-mig154-MARGIN-MM-VARCHAR-RETYPE (closed by 154). Registry-only. |
 | **mig_202** | Run all 5 mig_196 analytic templates + Table 1 + cohort flow SQLs against MD; populate CSVs | 30 min | Queued | Cowork executes the SELECTs from mig_195 + mig_196 deliverables and exports CSVs (placeholders currently). Verifies templates work end-to-end. |
-| **mig_203** | gate5 → 0: extend audit allowlist for `_built_at`/`_derived_at`/`_resolved_at` suffix patterns + `_confidence` substring | 20 min | Queued | Per CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION. Updates the audit query in v11 handoff + future runbooks. The 6 residual cols are correctly typed. |
-| **mig_204** | PM signoff registry refresh (account for ~10 new `*_resolved` cols added by mig_188b) | 15 min | Queued | Update `n_columns_total` on canonical_patient_master signoff to reflect ~1,630 (currently 1,620, drifted because mig_188b ALTER COLUMN ADD didn't bump the count). Add ~10 new col verification rows to registry, batch_id mig188b. |
+| **mig_203** | gate5 → 0: extend audit allowlist for `_built_at`/`_derived_at`/`_resolved_at` suffix patterns + `_confidence` substring | 20 min | **Applied** | Applied 2026-04-30: `203_gate5_zero_audit_allowlist_extension_20260430.sql` + `queries/cleanliness_audit_v11.sql`. CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION **CLOSED**. |
+| **mig_204** | PM signoff registry refresh (account for ~10 new `*_resolved` cols added by mig_188b) | 15 min | **Superseded** | Delivered as part of mig_203 (ten registry INSERTs + PM rollup resync). |
 
 Total Cowork-direct effort: ~80 min.
 
@@ -56,7 +56,7 @@ See §6 below.
 | **CF-mig186-WHO-2017-NIFTP-RECLASS** | 13 | OPEN by mig_186b. 220 events excluded; preserved in indeterminate landing. | Manuscript methods/limitations footnote |
 | **CF-mig186-EDGE-NO-MALIGNANT-EVENT-AFTER-EXCLUSION** | 1 | OPEN by mig_186b. ~115 patients with biopsy-only/imaging-only malignancy evidence. | Manuscript methods footnote OR sensitivity analysis |
 | **CF-mig185-EVENT-GRAIN-SOURCE-DISTINCT-PRESERVED** | — | OPEN by mig_185b. 525 source-distinct dups preserved on events; analytic SQL must use COUNT DISTINCT for tumor counts. | Manuscript methods footnote |
-| **CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION** | 6 | mig_203 (Cowork-direct) closes via audit-query update. | None — operational only |
+| **CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION** | 6 | **CLOSED** by mig_203 (2026-04-30). | None — operational only |
 | CF-117-US-GLAND-PARENCHYMA | 28 | mig_198 (mig_194 Option B apply) closes. | None if Option B; manuscript footnote if Option C |
 | CF-117-US-EXAM-ID-PORTABILITY | 53 | partially closed via mig_171b/187; remaining = US-nodule rebuild (separate lane) | Manuscript footnote: US-nodule v2 is future work |
 | CF-87-AJCC | 36 | **CLOSED** by mig_188b | — |
@@ -69,14 +69,14 @@ See §6 below.
 
 ### Already done ✅
 - [x] All 62 Tier-2 canonical tables verified (100%)
-- [x] Patient master backbone 100% verified (1,596 v / 24 na)
+- [x] Patient master backbone 100% verified (~1,606 v / 24 na post-mig_203 registry sync)
 - [x] AJCC `*_resolved` cols populated on path_malignant + PM
 - [x] T0 cohort transparently labeled (60 events; 13 no-primary + 50 ambiguous + dups)
 - [x] NIFTP/UMP exclusion with full audit trail (220 events)
 - [x] Source-distinct duplicate-grain flag on path_malignant_events
 - [x] LN-NLP exam-date integration (G9 PASS, 0 fallback IDs)
 - [x] Cohort parity 10,871 / 10,871
-- [x] PM date cols all DATE type (gate5 from 25 → 6 audit-allowlist residual)
+- [x] PM date cols all DATE type (mig_160b); gate5 v11 audit **0** (mig_203 allowlist + suffix patterns)
 - [x] Manuscript Table 1 SQL + cohort flow SQL authored (mig_195)
 - [x] 5 manuscript analytic SQL templates authored (mig_196)
 - [x] Per-canonical methods footnotes for ~83 tables (mig_197)
@@ -87,8 +87,8 @@ See §6 below.
 - [ ] mig_198 — mig_194 Option B apply (shell-only US gland v2 events/rollup; closes CF-117-US-GLAND-PARENCHYMA)
 - [ ] mig_201 — disposition-C 4-CF closure (registry-only)
 - [ ] mig_202 — populate Table 1 + cohort flow + analytic template CSVs from MD
-- [ ] mig_203 — gate5 audit allowlist extension → 0
-- [ ] mig_204 — PM signoff registry refresh for mig_188b new resolved cols
+- [x] mig_203 — gate5 audit allowlist extension → 0 + PM registry refresh (supersedes mig_204 scope)
+- [x] mig_204 — merged into mig_203
 - [ ] mig_191 dispatch — post-apply audit + v11 doc (Cursor)
 - [ ] mig_193 dispatch — r1b/r1d/r1e Logan-review CSV regen (Cline GPT-5.5)
 - [ ] r1c bucket-3 (50 events) Logan review OR ratify "leave as ambiguous_pending"
