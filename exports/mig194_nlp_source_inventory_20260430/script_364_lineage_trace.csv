@@ -1,0 +1,31 @@
+script,line,classification,text
+scripts/364_canonical_us_thyroid_gland_v2.py,4,declared_no_llm,Per-exam thyroid gland (non-nodule) findings. NO LLM in this pass. Pure regex
+scripts/364_canonical_us_thyroid_gland_v2.py,5,source_table,"+ COALESCE over ultrasound_reports. Parenchyma fields (Hashimoto pattern,"
+scripts/364_canonical_us_thyroid_gland_v2.py,7,nlp_placeholder_or_null_field,they remain NULL and the row carries nlp_backfill_pending = TRUE as a
+scripts/364_canonical_us_thyroid_gland_v2.py,13,source_table,"* ultrasound_reports — primary (6,793 reports / 4,074 patients)"
+scripts/364_canonical_us_thyroid_gland_v2.py,15,source_table,* us_nodules_tirads — fallback for patients NOT in ultrasound_reports
+scripts/364_canonical_us_thyroid_gland_v2.py,17,nlp_placeholder_or_null_field,nlp_backfill_pending=TRUE).
+scripts/364_canonical_us_thyroid_gland_v2.py,32,target,"TARGET = f""{PUBLICATION_DB}.main.canonical_us_thyroid_gland_v2"""
+scripts/364_canonical_us_thyroid_gland_v2.py,91,source_table,FROM {PUBLICATION_DB}.raw.ultrasound_reports
+scripts/364_canonical_us_thyroid_gland_v2.py,121,nlp_placeholder_or_null_field,"NULL::VARCHAR AS background_echogenicity,"
+scripts/364_canonical_us_thyroid_gland_v2.py,122,nlp_placeholder_or_null_field,"NULL::VARCHAR AS heterogeneity,"
+scripts/364_canonical_us_thyroid_gland_v2.py,123,nlp_placeholder_or_null_field,"NULL::VARCHAR AS hashimoto_pattern,"
+scripts/364_canonical_us_thyroid_gland_v2.py,124,nlp_placeholder_or_null_field,"NULL::VARCHAR AS vascularity_overall,"
+scripts/364_canonical_us_thyroid_gland_v2.py,125,nlp_placeholder_or_null_field,"NULL::VARCHAR AS calcifications_parenchymal,"
+scripts/364_canonical_us_thyroid_gland_v2.py,132,source_table,"TRUE  AS source_ultrasound_reports,"
+scripts/364_canonical_us_thyroid_gland_v2.py,133,source_table,"FALSE AS source_us_nodules_tirads,"
+scripts/364_canonical_us_thyroid_gland_v2.py,134,nlp_placeholder_or_null_field,"TRUE  AS nlp_backfill_pending,"
+scripts/364_canonical_us_thyroid_gland_v2.py,169,nlp_placeholder_or_null_field,"NULL::VARCHAR AS background_echogenicity,"
+scripts/364_canonical_us_thyroid_gland_v2.py,170,nlp_placeholder_or_null_field,"NULL::VARCHAR AS heterogeneity,"
+scripts/364_canonical_us_thyroid_gland_v2.py,171,nlp_placeholder_or_null_field,"NULL::VARCHAR AS hashimoto_pattern,"
+scripts/364_canonical_us_thyroid_gland_v2.py,172,nlp_placeholder_or_null_field,"NULL::VARCHAR AS vascularity_overall,"
+scripts/364_canonical_us_thyroid_gland_v2.py,173,nlp_placeholder_or_null_field,"NULL::VARCHAR AS calcifications_parenchymal,"
+scripts/364_canonical_us_thyroid_gland_v2.py,180,source_table,"FALSE AS source_ultrasound_reports,"
+scripts/364_canonical_us_thyroid_gland_v2.py,181,source_table,"TRUE  AS source_us_nodules_tirads,"
+scripts/364_canonical_us_thyroid_gland_v2.py,182,nlp_placeholder_or_null_field,"TRUE  AS nlp_backfill_pending,"
+scripts/364_canonical_us_thyroid_gland_v2.py,185,source_table,FROM {PUBLICATION_DB}.raw.us_nodules_tirads u
+scripts/364_canonical_us_thyroid_gland_v2.py,200,source_table,"f""from ultrasound_reports (regex parse of lobe dims + isthmus) plus """
+scripts/364_canonical_us_thyroid_gland_v2.py,201,source_table,"f""shell rows from us_nodules_tirads for patients without a structured """
+scripts/364_canonical_us_thyroid_gland_v2.py,204,nlp_placeholder_or_null_field,"f""NULL with nlp_backfill_pending = TRUE on every row.';"""
+scripts/364_canonical_us_thyroid_gland_v2.py,228,nlp_placeholder_or_null_field,"f""SELECT COUNT(*) FROM {TARGET} WHERE nlp_backfill_pending"""
+scripts/364_canonical_us_thyroid_gland_v2.py,237,source_table,"raise SystemExit(f""Expected ≥ 6,793 rows from ultrasound_reports; got {n}"")"

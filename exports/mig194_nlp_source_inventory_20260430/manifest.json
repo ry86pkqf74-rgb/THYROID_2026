@@ -1,0 +1,46 @@
+{
+  "created_at_utc": "2026-04-30T03:44:21.142119+00:00",
+  "task": "mig_194 thyroid US NLP source unblock scoping",
+  "posture": "read-only MD probes; no MotherDuck writes",
+  "database": "thyroid_canonical_publication_v1_0",
+  "outputs": {
+    "note_tables_inventory.csv": 68,
+    "focused_table_probe.csv": 8,
+    "clinical_note_ln_extracted_v1_schema.csv": 30,
+    "note_entities_llm_tables.csv": 16,
+    "script_364_lineage_trace.csv": 30
+  },
+  "key_findings": {
+    "clinical_note_thyroid_us_extracted_v1_exists": false,
+    "script_364_declares_no_llm": true,
+    "script_364_sets_nlp_backfill_pending_true": true
+  },
+  "updated_at_utc": "2026-04-30T03:46:02.635370+00:00",
+  "report": "qc_framework_v1/reports/mig_194_thyroid_us_nlp_source_unblock_20260430.md",
+  "checksums": {
+    "qc_framework_v1/reports/mig_194_thyroid_us_nlp_source_unblock_20260430.md": {
+      "sha256": "faf3faa6361fd8c3d96efee8d84d0c7439ddbf418fd9baaff177b796d128d5c4",
+      "bytes": 13839
+    },
+    "exports/mig194_nlp_source_inventory_20260430/note_tables_inventory.csv": {
+      "sha256": "86603120037f66ed4c90ae91daa6b6683427f90af5ce010821c03ad5ad1db8ce",
+      "bytes": 103454
+    },
+    "exports/mig194_nlp_source_inventory_20260430/script_364_lineage_trace.csv": {
+      "sha256": "4f8551b5b16844a0bef9fb18eadcb96f3c3ee48b20799a3e58123ff5bb11a049",
+      "bytes": 3711
+    },
+    "exports/mig194_nlp_source_inventory_20260430/focused_table_probe.csv": {
+      "sha256": "9abb25ed5def75b2efcbf3db6aa808993979b69d2528934e0685f7ab05c8a25d",
+      "bytes": 7183
+    },
+    "exports/mig194_nlp_source_inventory_20260430/clinical_note_ln_extracted_v1_schema.csv": {
+      "sha256": "59e5f63a0b0578ab150f73994b620c1a10c72664365a004634d9cade13380a40",
+      "bytes": 815
+    },
+    "exports/mig194_nlp_source_inventory_20260430/note_entities_llm_tables.csv": {
+      "sha256": "4b3bc9b44cab698118727d5a9d95b8c9b563a3b0c2add3db7a8fa878b670e775",
+      "bytes": 5392
+    }
+  }
+}
