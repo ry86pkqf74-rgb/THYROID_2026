@@ -1,0 +1,2 @@
+step,description,n_excluded,n_remaining
+PLACEHOLDER,Run cohort_flow_diagram.sql on MotherDuck and COPY result here,,,

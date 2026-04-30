@@ -1,0 +1,2 @@
+sort_key,characteristic,level,n,pct,statistic
+PLACEHOLDER,Run table_1_cohort_characteristics.sql on MotherDuck and COPY result here,,,,
