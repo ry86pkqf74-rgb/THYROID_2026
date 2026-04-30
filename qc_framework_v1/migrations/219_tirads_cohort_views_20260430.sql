@@ -112,7 +112,7 @@ SELECT
   'verified',
   CAST(CURRENT_TIMESTAMP AS TIMESTAMP),
   'qc_framework_v1/migrations/219_tirads_cohort_views_20260430.sql',
-  'tier2_canalytic',
+  'tier2_canonical_view',
   'mig_219 Lane E4: ChatGPT TIRADS Phase-1 cohort VIEW '
     || view_list.table_name
     || ' over manuscript_workspace.canonical_us_nodule_v2_filtered. '
