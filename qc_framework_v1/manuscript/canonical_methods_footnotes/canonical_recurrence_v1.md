@@ -1,0 +1,65 @@
+<!-- READY FOR LOGAN MANUSCRIPT REFINEMENT -->
+
+# `canonical_recurrence_v1`
+
+**Grain:** See table keys in data dictionary
+
+**Total rows:** `10,871`
+
+**Distinct patients:** `10,871`
+
+**Verification status:** verified
+
+**Signoff migration:** `qc_framework_v1/migrations/131_canonical_recurrence_v1_rebuild_signoff_20260429.sql`
+
+## Purpose
+
+Protocol v2 cohort-wide recurrence derivation verified (shell degenerate case). 10,871 = CPM; internal gates PASS; operative-proxy drift + TIMESTAMP fs documented as CFs. Lane 14 closes Tier-2 recurrence patient rollup prerequisite. | mig_131 (batch mig_123): Protocol v2 — Script 203b populated rebuild (confirmed TRUE ~514); replaces mig_122 degenerate-shell verification. Spot-check QA 2026-04-29; carry-forwards mig_123+mig124 path lineage.
+
+## Build pipeline
+
+Rolling signoff `qc_framework_v1/migrations/131_canonical_recurrence_v1_rebuild_signoff_20260429.sql`; Tier `tier2_canonical`. Rebuild per latest Path-C batch; derivation scripts referenced alongside column-level verification_method entries in canonical_column_verification_registry_v1.
+
+## Key columns
+
+- Column `recurrence_confirmed` — verification category `adjudicated` registry seed
+- Column `recurrence_type` — verification category `adjudicated` registry seed
+- Column `recurrence_date` — verification category `adjudicated` registry seed
+- Column `recurrence_site` — verification category `adjudicated` registry seed
+- Column `recurrence_histology` — verification category `adjudicated` registry seed
+- Column `recurrence_evidence_source` — verification category `adjudicated` registry seed
+- Column `recurrence_definition` — verification category `adjudicated` registry seed
+- Column `first_surgery_date` — verification category `adjudicated` registry seed
+- Column `time_to_recurrence_days` — verification category `derived` registry seed
+- Column `biochemical_tg_nadir` — verification category `adjudicated` registry seed
+
+## Known limitations
+
+- **`CF-100`:** carry-forward / limitation referenced in registry notes.
+- **`CF-90-DATE-FORMAT`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig122-RECURRENCE-203-REBUILD-PENDING`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig122-RECURRENCE-FIRST-SURGERY-`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig122-RECURRENCE-FIRST-SURGERY-DATE-RETYPE`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig123-LEGACY-COMPLETION-CHECK-6674`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig123-NEGATIVE-TTR-9-PATIENTS`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig123-RECURRENCE-DATE-RETYPE`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig123-UPSTREAM-DATE-202-TYPO`:** carry-forward / limitation referenced in registry notes.
+- **`CF-mig124-RECURRENCE-PATH-CANONICAL-LINEAGE`:** carry-forward / limitation referenced in registry notes.
+- **Representative excerpts (verbatim trims):**
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+  - | mig_122: cohort parity 10,871 = canonical_patient_master; uniform shell (none/no_recurrence_evidence); gates pass (FALSE ⇒ NULL recurrence_date/TTR; biochemical NULL). Proxy drift first_surgery vs canonical_operative_…
+
+
+## Verification methods used
+
+- `auto_identifier_skip`
+- `derivation_re_derivation_post_script_203b_harmonized_rebuild`
+
+---
+_Starter generated by `render_mig197_data_dictionary_readonly.py` (thyroid_canonical_publication_v1_0). Logan refines voice._
