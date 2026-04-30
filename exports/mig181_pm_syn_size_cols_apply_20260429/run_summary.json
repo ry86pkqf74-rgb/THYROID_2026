@@ -1,0 +1,113 @@
+{
+  "migration": "mig_181_pm_syn_size_cols_verify_apply_20260429",
+  "sql_path": "qc_framework_v1/migrations/181_pm_syn_size_cols_verify_apply_20260429.sql",
+  "started_at": "2026-04-30T00:25:03.174802+00:00",
+  "ended_at": "2026-04-30T00:25:04.149978+00:00",
+  "statements_executed": 10,
+  "executed": [
+    {
+      "idx": 1,
+      "first_line": "-- =============================================================================",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 2,
+      "first_line": "SELECT verification_status, COUNT(*) AS n_cols",
+      "statement_type": "SELECT",
+      "n_result_rows": 3
+    },
+    {
+      "idx": 3,
+      "first_line": "-- \u00a7A \u2014 pre-snapshot of affected mig_173 registry rows (15 in-scope + 3 legacy_raw na)",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 4,
+      "first_line": "-- \u00a7B \u2014 Path-C stamp on 15 typed/status columns",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 5,
+      "first_line": "-- \u00a7C \u2014 status flips: 15 typed/status columns -> verified",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 6,
+      "first_line": "-- \u00a7D \u2014 parse_status enum appendix for the 3 status columns",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 7,
+      "first_line": "-- \u00a7E \u2014 table-level signoff resync for canonical_patient_master",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 8,
+      "first_line": "-- \u00a7F \u2014 CPM reconciliation provenance row for registry-only closure",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 9,
+      "first_line": "-- \u00a7G \u2014 post-state verification probes",
+      "statement_type": "--",
+      "n_result_rows": 0
+    },
+    {
+      "idx": 10,
+      "first_line": "SELECT table_status, n_columns_total, n_verified, n_not_started, n_failed, n_na, signoff_migration",
+      "statement_type": "SELECT",
+      "n_result_rows": 1
+    }
+  ],
+  "post_counts": [
+    {
+      "verification_status": "na",
+      "n": 24
+    },
+    {
+      "verification_status": "not_started",
+      "n": 1
+    },
+    {
+      "verification_status": "verified",
+      "n": 1590
+    }
+  ],
+  "table_signoff": [
+    {
+      "table_status": "in_progress",
+      "n_columns_total": 1615,
+      "n_verified": 1590,
+      "n_not_started": 1,
+      "n_failed": 0,
+      "n_na": 24,
+      "signoff_migration": "qc_framework_v1/migrations/181_pm_syn_size_cols_verify_apply_20260429.sql"
+    }
+  ],
+  "scoped_registry_counts": [
+    {
+      "verification_status": "na",
+      "batch_id": "mig_173_syn_size_cm_dtype_reform_20260429",
+      "n": 3
+    },
+    {
+      "verification_status": "verified",
+      "batch_id": "mig_181_pm_syn_size_cols_verify_apply_20260429",
+      "n": 15
+    }
+  ],
+  "cpm_invariants": [
+    {
+      "cpm_rows": 10871,
+      "distinct_research_id": 10871,
+      "null_cpm_built_at": 0
+    }
+  ]
+}
