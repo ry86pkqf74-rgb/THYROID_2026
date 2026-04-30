@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [mig_214 molecular patient-level-only flag](../qc_framework_v1/migrations/214_molecular_patient_level_evidence_flag_20260430.sql) — 2026-04-30: `canonical_molecular_genetics_v2.is_patient_level_only_evidence`; TRUE = NULL `molecular_episode_id` (525 rows / 520 pts, script_269_backfill). Per-test/per-date analyses: `WHERE is_patient_level_only_evidence = FALSE`. Investigation: `qc_framework_v1/reports/mig_214_investigation_molecular_null_episode_20260430.md`.
 - [mig_211 deferred composites signoff](../qc_framework_v1/migrations/211_verify_10_deferred_composites_20260430.sql) — 2026-04-30: Lane A — 10 analytic tables verified (516 col-rows); pre-snapshots archive_pub_v1_0 `pre_mig211`
 - [Path rollup pair mig_120 close-out](project_path_rollup_pair_mig_120_closeout.md) — 2026-04-29: 5th–6th patient rollup (malig+benign path); Protocol v2 derivation signoff
 - [Frozen-section rollup mig_119 close-out](project_frozen_section_rollup_mig_119_closeout.md) — 2026-04-29: frozen-section patient rollup rebuilt + verified; 187 cols closed
