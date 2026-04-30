@@ -1,6 +1,6 @@
 # Thyroid Canonical Publication v1.0 — TODO Queue
 
-**Last updated:** 2026-04-30 (post-mig_203 apply)
+**Last updated:** 2026-04-30 (post-mig_191 audit + handoff refresh)
 **Current state:** 5-gate audit **v11 `172 / 0 / 0 / 0 / 0`**; PM **~1,606 v / 24 na / 0 not_started** (registry resynced to physical cols); 62/62 Tier-2 canonicals verified; cohort parity 10,871 / 10,871 ✓
 **Manuscript readiness verdict:** ✅ **READY** for survival/recurrence/outcomes analyses; ~5% residual cleanup work remaining for "fully verified to every CF"
 
@@ -18,27 +18,26 @@
 
 ---
 
-## §2 Cowork-direct apply queue (no ratification needed)
+**Cowork-direct apply queue (no ratification needed)**
 
 | ID | Lane | Effort | Status | Notes |
 |---|---|---:|---|---|
-| **mig_201** | Apply mig_190 disposition-C closures (4 stale CF tags) | 15 min | Queued | Append `CLOSED by mig_<N>` to CF-mig156-COHORT-UNIFORM-FALSE-prm_high_risk_marker_any (closed by 156b), CF-mig156-ANY-RECURRENCE- (closed by 163b), CF-mig134-PM-LAB-DATE-ANCHOR (closed by 160), CF-mig154-MARGIN-MM-VARCHAR-RETYPE (closed by 154). Registry-only. |
-| **mig_202** | Run all 5 mig_196 analytic templates + Table 1 + cohort flow SQLs against MD; populate CSVs | 30 min | Queued | Cowork executes the SELECTs from mig_195 + mig_196 deliverables and exports CSVs (placeholders currently). Verifies templates work end-to-end. |
-| **mig_203** | gate5 → 0: extend audit allowlist for `_built_at`/`_derived_at`/`_resolved_at` suffix patterns + `_confidence` substring | 20 min | **Applied** | Applied 2026-04-30: `203_gate5_zero_audit_allowlist_extension_20260430.sql` + `queries/cleanliness_audit_v11.sql`. CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION **CLOSED**. |
-| **mig_204** | PM signoff registry refresh (account for ~10 new `*_resolved` cols added by mig_188b) | 15 min | **Superseded** | Delivered as part of mig_203 (ten registry INSERTs + PM rollup resync). |
+| **mig_201** | Apply mig_190 disposition-C closures (4 stale CF tags) | 15 min | **Applied** | Provenance `mig_201_disposition_c_cf_closure_apply_20260430`. |
+| **mig_203** | gate5 → 0: v11 audit allowlist + PM registry refresh | 20 min | **Applied** | `203_gate5_zero_audit_allowlist_extension_20260430.sql` + `queries/cleanliness_audit_v11.sql`. |
+| **mig_204** | Populate Table 1 + cohort flow + 5 analytic template CSVs from live MD | 30 min | **Landed** | Commit **`bb6d8b6`** on `main`. |
+| **mig_202** | Script 366 Python source audit + fix (exam_date filter regression) | TBD | **Queued** | CF-mig187-SCRIPT-366-EXAM-DATE-FILTER-REGRESSION; no MD structural apply until Python fixed. |
 
-Total Cowork-direct effort: ~80 min.
+Total remaining Cowork-direct **structural** effort: primarily **mig_198** Path-C (US gland v2) after SQL lands.
 
 ---
 
 ## §3 Cursor/Cline-authored work pending dispatch
 
-These prompts were authored in prior rounds but not yet dispatched. They have conditional pre-flight gates that defer if prerequisites aren't met. **All prerequisites are now met (chain applied),** so they can be dispatched.
-
 | ID | Prompt path | Tool recommendation | Effort | What it does |
 |---|---|---|---:|---|
-| **mig_191** | `cursor_prompts/CURSOR_PROMPT_mig191_post_apply_manuscript_readiness_v11_20260430.md` | **Cursor Composer** | ~1 hr | Post-apply audit + v11 Cowork handoff doc + v1.0 manuscript readiness report. Heavy templating off existing v10 doc. |
 | **mig_193** | `cursor_prompts/CURSOR_PROMPT_mig193_r1bde_logan_review_csv_unblock_20260430.md` | **Cline + GPT-5.5** | ~2 hr | Diagnose r1b 0-row return; regenerate r1b/r1d/r1e + r1c CSVs from post-apply state. Investigation + SQL authoring. |
+
+**Completed (no longer dispatch):** **mig_191** — post-apply audit + `v1_0_manuscript_readiness_report_post_mig187_20260430.md` + `mig_191_post_apply_audit_v11_20260430.md` + `exports/mig191_post_apply_audit_20260430/*`.
 
 ---
 
@@ -81,19 +80,18 @@ See §6 below.
 - [x] 5 manuscript analytic SQL templates authored (mig_196)
 - [x] Per-canonical methods footnotes for ~83 tables (mig_197)
 - [x] Data dictionary CSV/SQL exported (mig_197)
-- [x] Cleanliness audit gates 1-4 fully clean
+- [x] Cleanliness audit gate5 = 0 under v11 template (mig_203)
 
 ### Remaining ~5% before "fully verified to every CF"
 - [ ] mig_198 — mig_194 Option B apply (shell-only US gland v2 events/rollup; closes CF-117-US-GLAND-PARENCHYMA)
-- [ ] mig_201 — disposition-C 4-CF closure (registry-only)
-- [ ] mig_202 — populate Table 1 + cohort flow + analytic template CSVs from MD
-- [x] mig_203 — gate5 audit allowlist extension → 0 + PM registry refresh (supersedes mig_204 scope)
-- [x] mig_204 — merged into mig_203
-- [ ] mig_191 dispatch — post-apply audit + v11 doc (Cursor)
+- [x] mig_201 — disposition-C 4-CF closure (registry-only) — **Applied**
+- [x] mig_203 — gate5 audit + PM registry refresh
+- [x] mig_204 — Table 1 + cohort flow + analytic CSVs from live MD (**`bb6d8b6`**)
+- [x] mig_191 — post-apply audit + v11 readiness doc (**this lane**)
 - [ ] mig_193 dispatch — r1b/r1d/r1e Logan-review CSV regen (Cline GPT-5.5)
 - [ ] r1c bucket-3 (50 events) Logan review OR ratify "leave as ambiguous_pending"
 - [ ] r1d/r1e CSVs Logan adjudication (~542 events)
-- [ ] CF-mig187-SCRIPT-366-EXAM-DATE-FILTER-REGRESSION Python source fix
+- [ ] CF-mig187-SCRIPT-366-EXAM-DATE-FILTER-REGRESSION Python source fix (prompt **mig_202** — distinct from mig_204 CSV work)
 - [ ] Methods section Logan voice pass
 
 ### Gating items for actual manuscript submission (separate from data-quality)
@@ -104,10 +102,10 @@ See §6 below.
 - [ ] Sensitivity analyses scoped (NIFTP exclusion impact, source-distinct dup impact, T0-as-T1 impact)
 
 ### Estimated time to "fully verified, statistical-analysis-ready"
-- Cowork-direct work: ~80 min (mig_201/202/203/204)
-- Cursor/Cline work: ~3 hr (mig_198 + mig_191 + mig_193)
-- Logan review work: ~4-8 hr (r1c/r1d/r1e CSVs, methods voice pass)
-- **Total: 1-2 working days of mostly automated work + Logan review time**
+- Cowork-directed apply: **mig_198** Path-C once SQL lands
+- Cursor/Cline work: **mig_193** + **mig_202** (Script 366) — parallelizable
+- Logan review work: ~4–8 hr (r1c/r1d/r1e CSVs, methods voice pass)
+- **Total:** mostly gated on Logan review + residual US-gland lane
 
 ---
 

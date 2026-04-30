@@ -1,0 +1,8 @@
+cf_tag,closed_by_migration,notes
+CF-87-AJCC,mig_188b,AJCC *_resolved lineage on events + PM
+CF-mig171b-EXAM-MASTER-REBUILD,mig_187,Script 366 R-A universe + LN replay
+CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION,mig_203,v11 audit query + stamp cols
+CF-mig156-COHORT-UNIFORM-FALSE-prm_high_risk_marker_any,mig_201,disposition-C registry hygiene
+CF-mig156-ANY-RECURRENCE-,mig_201,disposition-C registry hygiene
+CF-mig134-PM-LAB-DATE-ANCHOR,mig_201,disposition-C registry hygiene
+CF-mig154-MARGIN-MM-VARCHAR-RETYPE,mig_201,disposition-C registry hygiene

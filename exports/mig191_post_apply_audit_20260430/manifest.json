@@ -1,0 +1,15 @@
+{
+  "batch_id": "mig_191_post_apply_manuscript_readiness_v11_20260430",
+  "created_utc": "2026-04-30T04:37:39.044693+00:00",
+  "git_head": "bb6d8b67d10b97dbbdf062ae66cd7b46407bf6e0",
+  "exports": [
+    "closed_cfs_this_round.csv",
+    "post_state_metrics.csv",
+    "post_state_metrics.json"
+  ],
+  "sha256": {
+    "closed_cfs_this_round.csv": "633d085503fd6ccac7732a00fe1c6442d332a736504ed9275ab381fe2709295c",
+    "post_state_metrics.csv": "97e737a0577710539c17cfc2a394c86dd7a6803ed212564bbd55a7c1e30d11c2",
+    "post_state_metrics.json": "88b43ae1f5748df5367ce6ed34572d323f3cf32622f62850178430d9cf3f93ac"
+  }
+}

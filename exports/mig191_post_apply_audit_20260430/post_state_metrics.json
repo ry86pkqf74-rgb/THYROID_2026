@@ -1,0 +1,18 @@
+{
+  "probed_at_utc": "2026-04-30T04:35:13.975956+00:00",
+  "gates_v11": {
+    "gate1": 172,
+    "gate2": 0,
+    "gate3": 0,
+    "gate4": 0,
+    "gate5": 0
+  },
+  "registry_mig188b_rows": 46,
+  "canonical_path_indeterminate_events_v1_rows": 220,
+  "canonical_path_malignant_events_v1_rows": 6469,
+  "canonical_path_malignant_patient_rollup_v1_rows": 4022,
+  "canonical_us_exam_master_VIEW_v2_rows": 11880,
+  "cpm_pm_signoff_n_verified": 1606,
+  "cpm_pm_signoff_n_na": 24,
+  "cpm_pm_signoff_n_columns_total": 1630
+}
