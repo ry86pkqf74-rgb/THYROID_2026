@@ -38,13 +38,13 @@ FROM main.canonical_patient_master;
 
 -- =============================================================================
 -- §B Retype 4 ISO-format VARCHAR clinical dates → DATE
+-- Bare CAST(col AS DATE) fails on '' — use TRY_CAST(NULLIF(col, '') AS DATE)
+-- (see qc_framework_v1/reports/mig_160b_apply_closeout_20260430.md §7 pattern 1, §8).
 -- =============================================================================
--- Empty-string trap: `CAST(v AS DATE)` fails on '' even for ISO-shaped VARCHAR.
--- Applied pattern (matches mig_160b_apply_closeout_20260430 §2.1 / §7 / §8): TRY_CAST(NULLIF(col,'') AS DATE).
-ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_earliest_date SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_earliest_date, '') AS DATE);
-ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_img_first_date SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_img_first_date, '') AS DATE);
-ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_img_last_date SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_img_last_date, '') AS DATE);
-ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_surg_first_date SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_surg_first_date, '') AS DATE);
+ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_earliest_date     SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_earliest_date, '') AS DATE);
+ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_img_first_date    SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_img_first_date, '') AS DATE);
+ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_img_last_date     SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_img_last_date, '') AS DATE);
+ALTER TABLE main.canonical_patient_master ALTER COLUMN cnln_surg_first_date   SET DATA TYPE DATE USING TRY_CAST(NULLIF(cnln_surg_first_date, '') AS DATE);
 
 -- =============================================================================
 -- §C Retype 6 MM/DD/YYYY VARCHAR clinical dates → DATE
