@@ -16,6 +16,10 @@ Sources:
   * canonical_us_nodule_v2        (per-nodule)
   * canonical_us_thyroid_gland_v2 (per-exam, gland)
   * canonical_us_lymph_node_v2    (per-LN, US-only)
+  * canonical_us_lymph_node_events_v2 — mig_187 R-A / Logan 2026-04-30:
+    distinct (research_id, exam_date) not present in structured shell;
+    tagged exam_id_source='ln_nlp_only' with deterministic md5 matching
+    mig_171b fallback recipe.
 
 is_preop_exam comes from canonical_patient_master.first_surgery_date_v2
 (exam_date <= surg_date) — best-effort fallback to FALSE if surg_date null.
@@ -88,7 +92,8 @@ def build_sql(surg_col: str | None) -> str:
     """v2 sub-tables use independent us_exam_id hashes (cunc was hashed
     differently than my new gland/ln tables). We therefore join on
     (research_id, exam_date) and prefer the cunc-derived us_exam_id when
-    nodules exist for the exam, falling back to the gland or LN hash."""
+    nodules exist, falling back to the gland or LN hash; mig_187 adds NLP-only
+    exam dates from canonical_us_lymph_node_events_v2 with the mig_171b md5."""
     surg_join = (
         "LEFT JOIN cpm cp ON cp.research_id = exams.research_id" if surg_col
         else ""
@@ -165,19 +170,55 @@ ln_agg AS (
     FROM {PUBLICATION_DB}.main.canonical_us_lymph_node_v2
     GROUP BY 1,2
 ),
-exams AS (
-    -- universe: any (research_id, exam_date) appearing in any v2 child
+shell_exams AS (
+    -- Structured US rollup spine: nodule / gland / legacy LN shell only (unchanged).
     SELECT research_id, exam_date FROM nodule_agg
     UNION
     SELECT research_id, exam_date FROM gland_agg
     UNION
     SELECT research_id, exam_date FROM ln_agg
 ),
+ln_events_rid_date AS (
+    SELECT DISTINCT
+        TRIM(CAST(research_id AS VARCHAR)) AS rid_v,
+        exam_date
+    FROM {PUBLICATION_DB}.main.canonical_us_lymph_node_events_v2
+    WHERE exam_date IS NOT NULL
+      AND research_id IS NOT NULL
+      AND TRIM(CAST(research_id AS VARCHAR)) <> ''
+),
+ln_nlp_exam_agg AS (
+    -- mig_187 R-A — deterministic us_exam_id matches mig_171b fallback_ln_only md5 recipe.
+    SELECT
+        TRY_CAST(le.rid_v AS BIGINT) AS research_id,
+        le.exam_date,
+        md5('US_EXAM_V2|' || le.rid_v || '|' || CAST(le.exam_date AS VARCHAR))
+            AS us_exam_id_ln_nlp_fallback
+    FROM ln_events_rid_date le
+    WHERE TRY_CAST(le.rid_v AS BIGINT) IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM shell_exams s
+        WHERE s.research_id = TRY_CAST(le.rid_v AS BIGINT)
+          AND s.exam_date IS NOT DISTINCT FROM le.exam_date
+      )
+),
+exams AS (
+    SELECT research_id, exam_date FROM shell_exams
+    UNION
+    SELECT research_id, exam_date FROM ln_nlp_exam_agg
+),
 joined AS (
     SELECT
         exams.research_id,
-        COALESCE(n.us_exam_id_nodule, g.us_exam_id_gland, l.us_exam_id_ln)
-            AS us_exam_id,
+        COALESCE(
+            n.us_exam_id_nodule,
+            g.us_exam_id_gland,
+            l.us_exam_id_ln,
+            x.us_exam_id_ln_nlp_fallback
+        ) AS us_exam_id,
+        CASE WHEN x.research_id IS NOT NULL THEN 'ln_nlp_only' ELSE NULL END
+            AS exam_id_source,
         exams.exam_date,
         n.n_nodules_on_exam,
         n.largest_nodule_cm,
@@ -206,6 +247,7 @@ joined AS (
     LEFT JOIN nodule_2nd n2 USING (research_id, exam_date)
     LEFT JOIN gland_agg  g  USING (research_id, exam_date)
     LEFT JOIN ln_agg     l  USING (research_id, exam_date)
+    LEFT JOIN ln_nlp_exam_agg x USING (research_id, exam_date)
     {surg_join}
 )
 SELECT * FROM joined;
@@ -217,7 +259,9 @@ COMMENT_SQL = (
     f"'US v2 per-exam master (VIEW). Grain: one row per "
     f"(research_id, us_exam_id, exam_date). Materialized by Script 366 "
     f"as a VIEW over canonical_us_nodule_v2 + canonical_us_thyroid_gland_v2 + "
-    f"canonical_us_lymph_node_v2 (last refreshed {RUN_TS}). "
+    f"canonical_us_lymph_node_v2 + LN-NLP exam-date extension from "
+    f"canonical_us_lymph_node_events_v2 (exam_id_source ln_nlp_only; "
+    f"mig_187 R-A; last refreshed {RUN_TS}). "
     f"LN columns are US-prefixed (has_us_ln_findings, "
     f"n_us_ln_total_on_exam, n_abnormal_us_ln_on_exam) so future "
     f"CT/PET-CT/MR/nucmed exam masters slot in as ct_ln_*, etc.';"
@@ -254,16 +298,23 @@ def main() -> int:
     n_ln = con.execute(
         f"SELECT COUNT(*) FROM {TARGET} WHERE has_us_ln_findings"
     ).fetchone()[0]
-    log(f"  rows={n}  pts={n_pts}  preop={n_preop}  with_ln={n_ln}")
+    n_ln_nlp = con.execute(
+        f"SELECT COUNT(*) FROM {TARGET} WHERE exam_id_source = 'ln_nlp_only'"
+    ).fetchone()[0]
+    log(
+        f"  rows={n}  pts={n_pts}  preop={n_preop}  with_ln={n_ln}  "
+        f"ln_nlp_only_exams={n_ln_nlp}"
+    )
 
-    # Sanity: should be ≥ 13,347 (existing v1 exam count)
-    if n < 13_000:
-        raise SystemExit(f"Expected ≥ ~13,347 exams; got {n}")
+    # Post–Script-389 VIEW counts are ~11.8k before / ~11.9k after mig_187 extension.
+    if n < 11_000:
+        raise SystemExit(f"Expected plausible US exam-master row count (>= 11k); got {n}")
 
     DECISION_LOG.write_text(json.dumps({
         "script": SCRIPT_TAG, "run_ts_utc": RUN_TS, "target": TARGET,
         "rows": n, "patients": n_pts,
-        "preop_count": n_preop, "with_ln": n_ln, "surg_col": surg_col,
+        "preop_count": n_preop, "with_ln": n_ln,
+        "ln_nlp_only_exams": n_ln_nlp, "surg_col": surg_col,
     }, indent=2, default=str))
     log(f"decision log: {DECISION_LOG}")
     return 0
