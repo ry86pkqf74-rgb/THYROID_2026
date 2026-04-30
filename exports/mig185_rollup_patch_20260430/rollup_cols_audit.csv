@@ -1,0 +1,18 @@
+column_name,current_logic,inflated_yes_no,proposed_fix
+research_id,primary key from GROUP BY research_id,no,none
+any_malignant_event,constant TRUE in agg,no,none
+n_malignant_surgeries,COUNT(DISTINCT surgery_episode_id),no,none
+n_tumors_total,COUNT(*) over all event rows (Script 361),yes,"COUNT(DISTINCT (surgery_episode_id, tumor_ordinal)) per patient"
+earliest_malignant_path_date,MIN(surgery_date),no,none
+latest_malignant_path_date,MAX(surgery_date),no,none
+highest_stage_ajcc8,MAX(stage_group_ajcc8),no,none
+highest_stage_ajcc7,MAX(stage_group_ajcc7),no,none
+any_ett,BOOL_OR over ETE/gross flags,no,none
+any_metastasis,constant FALSE,no,none
+dominant_histology,mode(primary_histology) weighted by event rows,yes,"mode() after collapsing to one row per (surgery_episode_id, tumor_ordinal) via ANY_VALUE"
+bethesda_final,merged from archived path_outcome_classification_v1 into rollup; preserved from pre-snapshot join,no,copy from pre-mig185 snapshot (no live POC table)
+bethesda_final_name,same,no,copy from pre-snapshot
+regex_path_outcome,same,no,copy from pre-snapshot
+poc_tumor_1_histologic_type,same,no,copy from pre-snapshot
+build_script,provenance string,no,set to mig185 batch id on apply
+build_ts,CURRENT_TIMESTAMP,no,refresh on apply

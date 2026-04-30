@@ -1,0 +1,20 @@
+{
+  "batch_id": "mig185_apply_rollup_only_patch_20260430",
+  "ratification": "LOGAN RATIFIED 2026-04-30; option B rollup-only; events not deduped",
+  "author": "Logan Glosser <logan.glosser@gmail.com>",
+  "live_probes_run": "2026-04-30",
+  "artifacts": [
+    "rollup_cols_audit.csv",
+    "inflation_impact_per_metric.csv",
+    "n_tumors_pre_post_distribution.csv"
+  ],
+  "note": "n_tumors_pre_post_distribution.csv is the full (pre,post) patient-count histogram from live MD",
+  "evidence_summary": {
+    "canonical_patient_master_rows": 10871,
+    "malignant_rollup_rows": 4137,
+    "patients_n_tumors_inflated": 466,
+    "tumor_row_excess_across_inflated_patients": 533,
+    "event_rows_duplicate_grain_flag_expected_true": 533,
+    "patients_dominant_histology_mode_skew": 77
+  }
+}

@@ -1,0 +1,3 @@
+metric,patients_affected_pre_fix,patients_affected_post_fix_expected,aggregate_excess_pre,aggregate_excess_post_fix_expected,notes
+n_tumors_total_inflation,466,0,533,0,"Live MD probe; COUNT(*) vs DISTINCT (research_id, surgery_episode_id, tumor_ordinal)"
+dominant_histology_mode_skew,77,0,77,0,mode(primary_histology) on all rows vs after one-row-per-grain ANY_VALUE collapse
