@@ -1,0 +1,39 @@
+{
+  "artifacts": [
+    {
+      "bytes": 62351,
+      "path": "qc_framework_v1/reports/mig_190_smaller_cf_triage_sweep_20260430.md",
+      "sha256": "f2700c3c38142e63c8300aefc0af3e466fefd021847a88f859201894126c1410"
+    },
+    {
+      "bytes": 11479,
+      "path": "exports/mig190_cf_triage_20260430/per_cf_inventory.csv",
+      "sha256": "301b2ba8f18b43bee82b6b1a7074898773acc81e8c5ebfcdb15d2cdfc5474957"
+    },
+    {
+      "bytes": 3096,
+      "path": "exports/mig190_cf_triage_20260430/manuscript_appendix_candidates.csv",
+      "sha256": "775e03bf6bf5d4734c8077673fc548a37ad0b0433572ec80ea160817efa89c63"
+    },
+    {
+      "bytes": 1366,
+      "note": "manifest self-checksum intentionally omitted to avoid self-referential drift",
+      "path": "exports/mig190_cf_triage_20260430/manifest.json",
+      "sha256": null
+    }
+  ],
+  "author": "Logan Glosser <logan.glosser@gmail.com>",
+  "batch": "mig_190_smaller_cf_triage_sweep_20260430",
+  "cf_count": 11,
+  "created_at_utc": "2026-04-30T03:31:48.237110+00:00",
+  "disposition_a_count": 0,
+  "disposition_counts": {
+    "B": 7,
+    "C": 4
+  },
+  "mini_lane_prompts_authored": 0,
+  "posture": "read_only_scoping_select_only_no_registry_mutation",
+  "ratification_header": "-- LOGAN RATIFIED 2026-04-30; READY FOR COWORK PATH-C APPLY",
+  "run_id": "mig_190_smaller_cf_triage_sweep_20260430",
+  "target_db": "thyroid_canonical_publication_v1_0"
+}
