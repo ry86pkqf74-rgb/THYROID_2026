@@ -1,0 +1,178 @@
+{
+  "adjudication_counts": {
+    "r1b_n1_unspecified_pm_grain.csv": 0,
+    "r1d_t4_invasion_evidence_review.csv": 374,
+    "r1e_mixed_histology_stage_group.csv": 168
+  },
+  "deliverables": {
+    "csvs": [
+      "exports/mig184_r1_adjudication_20260430/r1b_n1_unspecified_pm_grain.csv",
+      "exports/mig184_r1_adjudication_20260430/r1d_t4_invasion_evidence_review.csv",
+      "exports/mig184_r1_adjudication_20260430/r1e_mixed_histology_stage_group.csv"
+    ],
+    "report": "qc_framework_v1/reports/mig_184_v2_r1_ajcc_derivation_ratified_20260430.md",
+    "sql": "qc_framework_v1/migrations/184_v2_r1_ajcc_derivation_ratified_20260430.sql"
+  },
+  "event_shift": [
+    {
+      "legacy_column": "t_stage_ajcc8",
+      "legacy_non_null": 6443,
+      "paired_change_pct": 23.14,
+      "paired_changes": 1434,
+      "paired_non_null": 6197,
+      "resolved_column": "t_stage_ajcc8_resolved",
+      "resolved_non_null": 6394,
+      "resolved_null": 295,
+      "rows_total": 6689
+    },
+    {
+      "legacy_column": "n_stage_ajcc8",
+      "legacy_non_null": 6632,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6632,
+      "resolved_column": "n_stage_ajcc8_resolved",
+      "resolved_non_null": 6632,
+      "resolved_null": 57,
+      "rows_total": 6689
+    },
+    {
+      "legacy_column": "m_stage_ajcc8",
+      "legacy_non_null": 6689,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6689,
+      "resolved_column": "m_stage_ajcc8_resolved",
+      "resolved_non_null": 6689,
+      "resolved_null": 0,
+      "rows_total": 6689
+    },
+    {
+      "legacy_column": "t_stage_ajcc7",
+      "legacy_non_null": 6443,
+      "paired_change_pct": 26.17,
+      "paired_changes": 1622,
+      "paired_non_null": 6197,
+      "resolved_column": "t_stage_ajcc7_resolved",
+      "resolved_non_null": 6394,
+      "resolved_null": 295,
+      "rows_total": 6689
+    },
+    {
+      "legacy_column": "n_stage_ajcc7",
+      "legacy_non_null": 6632,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6632,
+      "resolved_column": "n_stage_ajcc7_resolved",
+      "resolved_non_null": 6632,
+      "resolved_null": 57,
+      "rows_total": 6689
+    },
+    {
+      "legacy_column": "m_stage_ajcc7",
+      "legacy_non_null": 6689,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6689,
+      "resolved_column": "m_stage_ajcc7_resolved",
+      "resolved_non_null": 6689,
+      "resolved_null": 0,
+      "rows_total": 6689
+    }
+  ],
+  "patient_shift": [
+    {
+      "legacy_column": "ajcc8_t_stage",
+      "legacy_non_null": 4128,
+      "paired_change_pct": 14.77,
+      "paired_changes": 588,
+      "paired_non_null": 3981,
+      "resolved_column": "t_stage_ajcc8_resolved",
+      "resolved_non_null": 3983,
+      "resolved_null": 154,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc8_n_stage",
+      "legacy_non_null": 4077,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 4077,
+      "resolved_column": "n_stage_ajcc8_resolved",
+      "resolved_non_null": 4077,
+      "resolved_null": 60,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc8_m_stage",
+      "legacy_non_null": 4137,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 4137,
+      "resolved_column": "m_stage_ajcc8_resolved",
+      "resolved_non_null": 4137,
+      "resolved_null": 0,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc8_stage_group",
+      "legacy_non_null": 4128,
+      "paired_change_pct": 4.17,
+      "paired_changes": 166,
+      "paired_non_null": 3977,
+      "resolved_column": "stage_group_ajcc8_resolved",
+      "resolved_non_null": 3981,
+      "resolved_null": 156,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc7_t_stage",
+      "legacy_non_null": 4127,
+      "paired_change_pct": 23.22,
+      "paired_changes": 924,
+      "paired_non_null": 3980,
+      "resolved_column": "t_stage_ajcc7_resolved",
+      "resolved_non_null": 3983,
+      "resolved_null": 154,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc7_n_stage",
+      "legacy_non_null": 4137,
+      "paired_change_pct": 50.4,
+      "paired_changes": 2055,
+      "paired_non_null": 4077,
+      "resolved_column": "n_stage_ajcc7_resolved",
+      "resolved_non_null": 4077,
+      "resolved_null": 60,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc7_m_stage",
+      "legacy_non_null": 4137,
+      "paired_change_pct": 43.46,
+      "paired_changes": 1798,
+      "paired_non_null": 4137,
+      "resolved_column": "m_stage_ajcc7_resolved",
+      "resolved_non_null": 4137,
+      "resolved_null": 0,
+      "rows_total": 4137
+    },
+    {
+      "legacy_column": "ajcc7_stage_group",
+      "legacy_non_null": 3882,
+      "paired_change_pct": 58.82,
+      "paired_changes": 2137,
+      "paired_non_null": 3633,
+      "resolved_column": "stage_group_ajcc7_resolved",
+      "resolved_non_null": 3869,
+      "resolved_null": 268,
+      "rows_total": 4137
+    }
+  ],
+  "posture": "read_only_motherduck_selects_local_artifacts_only",
+  "run_id": "mig_184_v2_r1_ajcc_derivation_ratified_20260430",
+  "supersedes_commit": "17b5d8a",
+  "timestamp_utc": "2026-04-30T01:55:11.898781+00:00"
+}
