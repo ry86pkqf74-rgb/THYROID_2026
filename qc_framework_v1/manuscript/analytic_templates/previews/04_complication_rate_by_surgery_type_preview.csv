@@ -1,0 +1,2 @@
+surgery_type_label,complication_category,analysis_window,n_with_complication,n_patients_in_surgery_bucket,proportion,ci95_lower_wald,ci95_upper_wald
+"[PLACEHOLDER — run 04_complication_rate_by_surgery_type.sql on MotherDuck; COPY result here]",,,,,,,
