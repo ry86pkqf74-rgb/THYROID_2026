@@ -11,12 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
-- [canonical_patient_master pathology cluster mig_132 (Lane 23)](project_patient_master_pathology_cluster_mig_132_closeout.md) — 2026-04-29: 106 cols verified (path/bethesda/AJCC/tumor/synoptic NLP); 2 recurrence_* deferred; CPM 339 verified / 1255 not_started; table `in_progress`
-- [canonical_patient_master operative cluster mig_130 (first PM slice)](project_patient_master_operative_cluster_mig_130_closeout.md) — 2026-04-29: Lane 22; 233 cols verified (op_/ops_/nsqip_/surg_/surgery spine); CPM table stays `in_progress` (1,365 cols remain)
-- [molecular genetics from notes v2 mig_124 close-out](project_molecular_genetics_from_notes_v2_mig_124_closeout.md) — 2026-04-29: 1,738×605 mentions layer; 0 drift vs molecular_legacy note_entities_genetics; 372/605 pts overlap master (233 mentions-only expected); Lane 16 closes molecular family with mig_116
-- [canonical_survival_followup_v1 mig_123 close-out](project_canonical_survival_followup_v1_mig_123_closeout.md) — 2026-04-29: Script 364B derivation replay (staged LLM parquet); 8 cols 0 drift; last_followup_source ANY_VALUE tie (2 rids); Lane 13 ete survival method flip
-- [canonical_recurrence_v1 mig_122 close-out](project_canonical_recurrence_v1_mig_122_closeout.md) — 2026-04-29: cohort-wide recurrence shell verified Protocol v2; TIMESTAMP/fs CFs; Lane 13 recurrence-note follow-through
-- [ETE event resolved + inline adjudication mig_121 close-out](project_ete_event_resolved_mig_121_closeout.md) — 2026-04-29: Tier-2 `canonical_ete_event_resolved_v1` 62 cols + inline table; first full multi-source Tier-2 enrichment sign-off
+- [mig_211 deferred composites signoff](../qc_framework_v1/migrations/211_verify_10_deferred_composites_20260430.sql) — 2026-04-30: Lane A — 10 analytic tables verified (516 col-rows); pre-snapshots archive_pub_v1_0 `pre_mig211`
 - [Path rollup pair mig_120 close-out](project_path_rollup_pair_mig_120_closeout.md) — 2026-04-29: 5th–6th patient rollup (malig+benign path); Protocol v2 derivation signoff
 - [Frozen-section rollup mig_119 close-out](project_frozen_section_rollup_mig_119_closeout.md) — 2026-04-29: frozen-section patient rollup rebuilt + verified; 187 cols closed
 - [US v2 imaging family mig_117 close-out](project_us_v2_family_mig_117_closeout.md) — 2026-04-29: 3 US v2 canonicals verified; exam-id portability CF documented
