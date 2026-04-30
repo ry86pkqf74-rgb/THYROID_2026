@@ -1,0 +1,17 @@
+Wrote qc_framework_v1/reports/mig_184_r1_ajcc_derivation_scoping_20260430.md
+Wrote qc_framework_v1/migrations/184_r1_ajcc_derivation_skeleton_20260430.sql
+Wrote exports/mig184_r1_adjudication_20260430/r1b_n1_unspecified_no_location.csv: 2,378 rows
+Wrote exports/mig184_r1_adjudication_20260430/r1c_size_unavailable_t_uncalculable.csv: 601 rows
+Wrote exports/mig184_r1_adjudication_20260430/r1d_t4_invasion_evidence_review.csv: 1,385 rows
+Wrote exports/mig184_r1_adjudication_20260430/r1e_stage_group_age_cutoff_review.csv: 1,255 rows
+Wrote exports/mig184_r1_ajcc_derivation_scoping_20260430/manifest.json
+Patient shift summary:
+                       component    current_column  rows_total  current_non_null  draft_non_null  paired_non_null  paired_changes  paired_change_pct  draft_uncalculable
+    t_stage_ajcc8_resolved_draft     ajcc8_t_stage        4137              4128            3993             3991             428              10.72                 144
+   n_stage_resolved_coarse_draft     ajcc8_n_stage        4137              4077            2363             2363            1165              49.30                1774
+          m_stage_resolved_draft     ajcc8_m_stage        4137              4137            4137             4137               0               0.00                   0
+stage_group_ajcc8_resolved_draft ajcc8_stage_group        4137              4128            3835             3833             366               9.55                 302
+    t_stage_ajcc7_resolved_draft     ajcc7_t_stage        4137              4127            4106             4099            2514              61.33                  31
+   n_stage_resolved_coarse_draft     ajcc7_n_stage        4137              4137            2363             2363            1218              51.54                1774
+          m_stage_resolved_draft     ajcc7_m_stage        4137              4137            4137             4137            1798              43.46                   0
+stage_group_ajcc7_resolved_draft ajcc7_stage_group        4137              3882            3944             3740            2456              65.67                 193

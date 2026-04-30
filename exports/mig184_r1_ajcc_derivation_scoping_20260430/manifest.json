@@ -1,0 +1,176 @@
+{
+  "adjudication_counts": {
+    "r1b_n1_unspecified_no_location.csv": 2378,
+    "r1c_size_unavailable_t_uncalculable.csv": 601,
+    "r1d_t4_invasion_evidence_review.csv": 1385,
+    "r1e_stage_group_age_cutoff_review.csv": 1255
+  },
+  "deliverables": {
+    "adjudication_csv_dir": "exports/mig184_r1_adjudication_20260430",
+    "report": "qc_framework_v1/reports/mig_184_r1_ajcc_derivation_scoping_20260430.md",
+    "skeleton_sql": "qc_framework_v1/migrations/184_r1_ajcc_derivation_skeleton_20260430.sql"
+  },
+  "event_shift_summary": [
+    {
+      "component": "t_stage_ajcc8_resolved_draft",
+      "current_column": "t_stage_ajcc8",
+      "current_non_null": 6443,
+      "draft_non_null": 6195,
+      "draft_uncalculable": 494,
+      "paired_change_pct": 28.81,
+      "paired_changes": 1781,
+      "paired_non_null": 6182,
+      "rows_total": 6689
+    },
+    {
+      "component": "n_stage_resolved_coarse_draft",
+      "current_column": "n_stage_ajcc8",
+      "current_non_null": 6632,
+      "draft_non_null": 3666,
+      "draft_uncalculable": 3023,
+      "paired_change_pct": 53.66,
+      "paired_changes": 1967,
+      "paired_non_null": 3666,
+      "rows_total": 6689
+    },
+    {
+      "component": "m_stage_resolved_draft",
+      "current_column": "m_stage_ajcc8",
+      "current_non_null": 6689,
+      "draft_non_null": 6689,
+      "draft_uncalculable": 0,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6689,
+      "rows_total": 6689
+    },
+    {
+      "component": "t_stage_ajcc7_resolved_draft",
+      "current_column": "t_stage_ajcc7",
+      "current_non_null": 6443,
+      "draft_non_null": 6606,
+      "draft_uncalculable": 83,
+      "paired_change_pct": 81.0,
+      "paired_changes": 5189,
+      "paired_non_null": 6406,
+      "rows_total": 6689
+    },
+    {
+      "component": "n_stage_resolved_coarse_draft",
+      "current_column": "n_stage_ajcc7",
+      "current_non_null": 6632,
+      "draft_non_null": 3666,
+      "draft_uncalculable": 3023,
+      "paired_change_pct": 53.66,
+      "paired_changes": 1967,
+      "paired_non_null": 3666,
+      "rows_total": 6689
+    },
+    {
+      "component": "m_stage_resolved_draft",
+      "current_column": "m_stage_ajcc7",
+      "current_non_null": 6689,
+      "draft_non_null": 6689,
+      "draft_uncalculable": 0,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 6689,
+      "rows_total": 6689
+    }
+  ],
+  "governance": "No production DDL/DML executed; Logan ratification required before apply lane.",
+  "patient_shift_summary": [
+    {
+      "component": "t_stage_ajcc8_resolved_draft",
+      "current_column": "ajcc8_t_stage",
+      "current_non_null": 4128,
+      "draft_non_null": 3993,
+      "draft_uncalculable": 144,
+      "paired_change_pct": 10.72,
+      "paired_changes": 428,
+      "paired_non_null": 3991,
+      "rows_total": 4137
+    },
+    {
+      "component": "n_stage_resolved_coarse_draft",
+      "current_column": "ajcc8_n_stage",
+      "current_non_null": 4077,
+      "draft_non_null": 2363,
+      "draft_uncalculable": 1774,
+      "paired_change_pct": 49.3,
+      "paired_changes": 1165,
+      "paired_non_null": 2363,
+      "rows_total": 4137
+    },
+    {
+      "component": "m_stage_resolved_draft",
+      "current_column": "ajcc8_m_stage",
+      "current_non_null": 4137,
+      "draft_non_null": 4137,
+      "draft_uncalculable": 0,
+      "paired_change_pct": 0.0,
+      "paired_changes": 0,
+      "paired_non_null": 4137,
+      "rows_total": 4137
+    },
+    {
+      "component": "stage_group_ajcc8_resolved_draft",
+      "current_column": "ajcc8_stage_group",
+      "current_non_null": 4128,
+      "draft_non_null": 3835,
+      "draft_uncalculable": 302,
+      "paired_change_pct": 9.55,
+      "paired_changes": 366,
+      "paired_non_null": 3833,
+      "rows_total": 4137
+    },
+    {
+      "component": "t_stage_ajcc7_resolved_draft",
+      "current_column": "ajcc7_t_stage",
+      "current_non_null": 4127,
+      "draft_non_null": 4106,
+      "draft_uncalculable": 31,
+      "paired_change_pct": 61.33,
+      "paired_changes": 2514,
+      "paired_non_null": 4099,
+      "rows_total": 4137
+    },
+    {
+      "component": "n_stage_resolved_coarse_draft",
+      "current_column": "ajcc7_n_stage",
+      "current_non_null": 4137,
+      "draft_non_null": 2363,
+      "draft_uncalculable": 1774,
+      "paired_change_pct": 51.54,
+      "paired_changes": 1218,
+      "paired_non_null": 2363,
+      "rows_total": 4137
+    },
+    {
+      "component": "m_stage_resolved_draft",
+      "current_column": "ajcc7_m_stage",
+      "current_non_null": 4137,
+      "draft_non_null": 4137,
+      "draft_uncalculable": 0,
+      "paired_change_pct": 43.46,
+      "paired_changes": 1798,
+      "paired_non_null": 4137,
+      "rows_total": 4137
+    },
+    {
+      "component": "stage_group_ajcc7_resolved_draft",
+      "current_column": "ajcc7_stage_group",
+      "current_non_null": 3882,
+      "draft_non_null": 3944,
+      "draft_uncalculable": 193,
+      "paired_change_pct": 65.67,
+      "paired_changes": 2456,
+      "paired_non_null": 3740,
+      "rows_total": 4137
+    }
+  ],
+  "posture": "read_only_motherduck_local_artifacts_only",
+  "run_id": "mig184_r1_ajcc_derivation_scoping_20260430",
+  "run_timestamp_utc": "2026-04-30T01:15:12.419752+00:00",
+  "target_db": "thyroid_canonical_publication_v1_0"
+}
