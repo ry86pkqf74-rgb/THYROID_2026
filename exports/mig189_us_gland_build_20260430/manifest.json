@@ -1,0 +1,39 @@
+{
+  "batch_id": "mig189_us_gland_build_ratified_20260430",
+  "author": "Logan Glosser <logan.glosser@gmail.com>",
+  "ratification_date": "2026-04-30",
+  "database": "thyroid_canonical_publication_v1_0",
+  "posture": "READ_ONLY_AUTHORING_REPO_ARTIFACT_PATH_C_EXECUTE_DDL_ONLY_ON_APPROVAL",
+  "deliverables": [
+    {
+      "path": "qc_framework_v1/migrations/189_canonical_us_thyroid_gland_v2_build_20260430.sql",
+      "role": "primary_migration_skeleton"
+    },
+    {
+      "path": "qc_framework_v1/reports/mig_189_canonical_us_thyroid_gland_v2_build_ratified_20260430.md",
+      "role": "scoping_and_apply_runbook"
+    },
+    {
+      "path": "exports/mig189_us_gland_build_20260430/nlp_supplemental_inventory.csv",
+      "role": "NLP_inventory_placeholder_requires_path_C_probe"
+    }
+  ],
+  "pattern_reference": "qc_framework_v1/migrations/171b_canonical_us_lymph_node_v2_build_20260429.sql",
+  "carries_forward_CF": ["CF-117-US-GLAND-PARENCHYMA"],
+  "prerequisites": [
+    "Materialize main.clinical_note_thyroid_us_extracted_v1 (mirror clinical_note_ln_extracted_v1 for thyroid/US parenchyma domains; US regex gate identical to mig_171b).",
+    "Run §0d supplemental-pair COUNT; abort if <100 distinct NLP-only dated pairs vs gland_v2.",
+    "Prefer canonical_us_exam_master_VIEW_v2 extended per mig_187 R-A before expecting G8 WARN=0.",
+    "USE thyroid_canonical_publication_v1_0; archive snapshots to Thyroid 2026 UPdated.archive_pub_v1_0."
+  ],
+  "targets_created_by_migration": [
+    "main.canonical_us_thyroid_gland_events_v2",
+    "main.canonical_us_thyroid_gland_patient_rollup_v2",
+    "main.val_mig189_canonical_us_thyroid_gland_build_v1"
+  ],
+  "governance_notes": [
+    "No BEGIN TRANSACTION.",
+    "All build_ts use CAST(CURRENT_TIMESTAMP AS TIMESTAMP).",
+    "Does not REPLACE main.canonical_us_thyroid_gland_v2."
+  ]
+}
