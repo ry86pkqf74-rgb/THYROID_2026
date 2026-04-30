@@ -1,0 +1,11 @@
+{
+  "script": "Script 366",
+  "run_ts_utc": "20260430T042214Z",
+  "target": "thyroid_canonical_publication_v1_0.main.canonical_us_exam_master_VIEW_v2",
+  "rows": 11880,
+  "patients": 4385,
+  "preop_count": 7933,
+  "with_ln": 6801,
+  "ln_nlp_only_exams": 121,
+  "surg_col": "first_surgery_date_v2"
+}

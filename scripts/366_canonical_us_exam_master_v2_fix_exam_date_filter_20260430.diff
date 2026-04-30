@@ -1,0 +1,37 @@
+# READY FOR LOGAN/COWORK APPLY; FIXES CF-mig187-SCRIPT-366-EXAM-DATE-FILTER-REGRESSION
+diff --git a/scripts/366_canonical_us_exam_master_v2.py b/scripts/366_canonical_us_exam_master_v2.py
+index c6fd71f..8e74e28 100644
+--- a/scripts/366_canonical_us_exam_master_v2.py
++++ b/scripts/366_canonical_us_exam_master_v2.py
+@@ -135,6 +135,7 @@ nodule_agg AS (
+         BOOL_OR(nlp_backfill_pending)              AS any_nodule_pending_on_exam
+     FROM {PUBLICATION_DB}.main.canonical_us_nodule_v2
+     WHERE is_aggregate_row IS NOT TRUE
++      AND exam_date IS NOT NULL
+     GROUP BY 1,2
+ ),
+ nodule_2nd AS (
+@@ -146,6 +147,7 @@ nodule_2nd AS (
+            ) AS second_largest_nodule_cm
+     FROM {PUBLICATION_DB}.main.canonical_us_nodule_v2
+     WHERE is_aggregate_row IS NOT TRUE
++      AND exam_date IS NOT NULL
+     QUALIFY ROW_NUMBER() OVER (
+         PARTITION BY research_id, exam_date
+     ) = 1
+@@ -156,6 +158,7 @@ gland_agg AS (
+            TRUE                              AS has_gland_findings,
+            BOOL_OR(nlp_backfill_pending)     AS any_gland_pending_on_exam
+     FROM {PUBLICATION_DB}.main.canonical_us_thyroid_gland_v2
++    WHERE exam_date IS NOT NULL
+     GROUP BY 1,2
+ ),
+ ln_agg AS (
+@@ -168,6 +171,7 @@ ln_agg AS (
+                                                    AS n_abnormal_us_ln_on_exam,
+         BOOL_OR(nlp_backfill_pending)              AS any_us_ln_pending_on_exam
+     FROM {PUBLICATION_DB}.main.canonical_us_lymph_node_v2
++    WHERE exam_date IS NOT NULL
+     GROUP BY 1,2
+ ),
+ shell_exams AS (

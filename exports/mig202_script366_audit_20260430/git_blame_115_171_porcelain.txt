@@ -1,0 +1,695 @@
+aea40436a854ca8ba8c91018747f10616a48d64d 83 115 12
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	nodule_agg AS (
+aea40436a854ca8ba8c91018747f10616a48d64d 84 116
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    SELECT
+aea40436a854ca8ba8c91018747f10616a48d64d 85 117
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        research_id, exam_date,
+aea40436a854ca8ba8c91018747f10616a48d64d 86 118
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        ANY_VALUE(us_exam_id)                      AS us_exam_id_nodule,
+aea40436a854ca8ba8c91018747f10616a48d64d 87 119
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        COUNT(*)                                   AS n_nodules_on_exam,
+aea40436a854ca8ba8c91018747f10616a48d64d 88 120
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        MAX(size_cm_max)                           AS largest_nodule_cm,
+aea40436a854ca8ba8c91018747f10616a48d64d 89 121
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        BOOL_OR(LOWER(COALESCE(laterality,'')) = 'right')
+aea40436a854ca8ba8c91018747f10616a48d64d 90 122
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	            AND BOOL_OR(LOWER(COALESCE(laterality,'')) = 'left')
+aea40436a854ca8ba8c91018747f10616a48d64d 91 123
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	            AS bilateral_flag,
+aea40436a854ca8ba8c91018747f10616a48d64d 92 124
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        BOOL_OR(LOWER(COALESCE(laterality,'')) = 'isthmus')
+aea40436a854ca8ba8c91018747f10616a48d64d 93 125
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	            OR BOOL_OR(LOWER(COALESCE(location_raw,'')) LIKE '%isthmus%')
+aea40436a854ca8ba8c91018747f10616a48d64d 94 126
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	            AS isthmus_nodule_flag,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 122 127 8
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        MAX(acr2017_tirads_category)               AS worst_tirads_category_this_exam,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 123 128
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        MAX(acr2017_tirads_points)                 AS worst_tirads_points_this_exam,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 124 129
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        MIN(acr2017_tirads_category)               AS best_tirads_category_this_exam,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 125 130
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR5' THEN 1 ELSE 0 END) AS count_tr5,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 126 131
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR4' THEN 1 ELSE 0 END) AS count_tr4,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 127 132
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR3' THEN 1 ELSE 0 END) AS count_tr3,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 128 133
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR2' THEN 1 ELSE 0 END) AS count_tr2,
+dab2f7ec6a69be77aa68926a74cf37e406f707a9 129 134
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776804902
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776804902
+committer-tz -0400
+summary US schema hygiene: rollups → views, raw feeds → raw schema
+previous 97ed4955e90ea17f8ca511fb8bd09b634bcfda25 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN UPPER(acr2017_tirads_category) = 'TR1' THEN 1 ELSE 0 END) AS count_tr1,
+aea40436a854ca8ba8c91018747f10616a48d64d 103 135 3
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        BOOL_OR(nlp_backfill_pending)              AS any_nodule_pending_on_exam
+aea40436a854ca8ba8c91018747f10616a48d64d 104 136
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    FROM {PUBLICATION_DB}.main.canonical_us_nodule_v2
+aea40436a854ca8ba8c91018747f10616a48d64d 105 137
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    WHERE is_aggregate_row IS NOT TRUE
+0000000000000000000000000000000000000000 138 138 1
+author Not Committed Yet
+author-mail <not.committed.yet>
+author-time 1777522994
+author-tz -0400
+committer Not Committed Yet
+committer-mail <not.committed.yet>
+committer-time 1777522994
+committer-tz -0400
+summary Version of scripts/366_canonical_us_exam_master_v2.py from scripts/366_canonical_us_exam_master_v2.py
+previous 38172c0478d8b8091039742a2193dddf8391ad23 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	      AND exam_date IS NOT NULL
+aea40436a854ca8ba8c91018747f10616a48d64d 106 139 11
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    GROUP BY 1,2
+aea40436a854ca8ba8c91018747f10616a48d64d 107 140
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	),
+aea40436a854ca8ba8c91018747f10616a48d64d 108 141
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	nodule_2nd AS (
+aea40436a854ca8ba8c91018747f10616a48d64d 109 142
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    SELECT research_id, exam_date,
+aea40436a854ca8ba8c91018747f10616a48d64d 110 143
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	           NTH_VALUE(size_cm_max, 2) OVER (
+aea40436a854ca8ba8c91018747f10616a48d64d 111 144
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	              PARTITION BY research_id, exam_date
+aea40436a854ca8ba8c91018747f10616a48d64d 112 145
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	              ORDER BY size_cm_max DESC NULLS LAST
+aea40436a854ca8ba8c91018747f10616a48d64d 113 146
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	              ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+aea40436a854ca8ba8c91018747f10616a48d64d 114 147
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	           ) AS second_largest_nodule_cm
+aea40436a854ca8ba8c91018747f10616a48d64d 115 148
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    FROM {PUBLICATION_DB}.main.canonical_us_nodule_v2
+aea40436a854ca8ba8c91018747f10616a48d64d 116 149
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    WHERE is_aggregate_row IS NOT TRUE
+0000000000000000000000000000000000000000 150 150 1
+author Not Committed Yet
+author-mail <not.committed.yet>
+author-time 1777522994
+author-tz -0400
+committer Not Committed Yet
+committer-mail <not.committed.yet>
+committer-time 1777522994
+committer-tz -0400
+summary Version of scripts/366_canonical_us_exam_master_v2.py from scripts/366_canonical_us_exam_master_v2.py
+previous 38172c0478d8b8091039742a2193dddf8391ad23 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	      AND exam_date IS NOT NULL
+aea40436a854ca8ba8c91018747f10616a48d64d 117 151 10
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    QUALIFY ROW_NUMBER() OVER (
+aea40436a854ca8ba8c91018747f10616a48d64d 118 152
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        PARTITION BY research_id, exam_date
+aea40436a854ca8ba8c91018747f10616a48d64d 119 153
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    ) = 1
+aea40436a854ca8ba8c91018747f10616a48d64d 120 154
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	),
+aea40436a854ca8ba8c91018747f10616a48d64d 121 155
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	gland_agg AS (
+aea40436a854ca8ba8c91018747f10616a48d64d 122 156
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    SELECT research_id, exam_date,
+aea40436a854ca8ba8c91018747f10616a48d64d 123 157
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	           ANY_VALUE(us_exam_id)             AS us_exam_id_gland,
+aea40436a854ca8ba8c91018747f10616a48d64d 124 158
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	           TRUE                              AS has_gland_findings,
+aea40436a854ca8ba8c91018747f10616a48d64d 125 159
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	           BOOL_OR(nlp_backfill_pending)     AS any_gland_pending_on_exam
+aea40436a854ca8ba8c91018747f10616a48d64d 126 160
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    FROM {PUBLICATION_DB}.main.canonical_us_thyroid_gland_v2
+0000000000000000000000000000000000000000 161 161 1
+author Not Committed Yet
+author-mail <not.committed.yet>
+author-time 1777522994
+author-tz -0400
+committer Not Committed Yet
+committer-mail <not.committed.yet>
+committer-time 1777522994
+committer-tz -0400
+summary Version of scripts/366_canonical_us_exam_master_v2.py from scripts/366_canonical_us_exam_master_v2.py
+previous 38172c0478d8b8091039742a2193dddf8391ad23 scripts/366_canonical_us_exam_master_v2.py
+filename scripts/366_canonical_us_exam_master_v2.py
+	    WHERE exam_date IS NOT NULL
+aea40436a854ca8ba8c91018747f10616a48d64d 127 162 10
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    GROUP BY 1,2
+aea40436a854ca8ba8c91018747f10616a48d64d 128 163
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	),
+aea40436a854ca8ba8c91018747f10616a48d64d 129 164
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	ln_agg AS (
+aea40436a854ca8ba8c91018747f10616a48d64d 130 165
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	    SELECT
+aea40436a854ca8ba8c91018747f10616a48d64d 131 166
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        research_id, exam_date,
+aea40436a854ca8ba8c91018747f10616a48d64d 132 167
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        ANY_VALUE(us_exam_id)                      AS us_exam_id_ln,
+aea40436a854ca8ba8c91018747f10616a48d64d 133 168
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        TRUE                                       AS has_us_ln_findings,
+aea40436a854ca8ba8c91018747f10616a48d64d 134 169
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        COUNT(*)                                   AS n_us_ln_total_on_exam,
+aea40436a854ca8ba8c91018747f10616a48d64d 135 170
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	        SUM(CASE WHEN suspicious_flag IS TRUE THEN 1 ELSE 0 END)
+aea40436a854ca8ba8c91018747f10616a48d64d 136 171
+author ry86pkqf74-rgb
+author-mail <Logan.glosser@gmail.com>
+author-time 1776792823
+author-tz -0400
+committer ry86pkqf74-rgb
+committer-mail <Logan.glosser@gmail.com>
+committer-time 1776792823
+committer-tz -0400
+summary feat(us-v2): Phase 6-7 — exam/patient masters + CPM cutover + wide views/registry
+filename scripts/366_canonical_us_exam_master_v2.py
+	                                                   AS n_abnormal_us_ln_on_exam,
