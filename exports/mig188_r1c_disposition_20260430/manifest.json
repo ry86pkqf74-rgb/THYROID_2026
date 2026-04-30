@@ -1,0 +1,31 @@
+{
+  "artifact_family": "mig188_r1c_ln_only_stage_rule_ratified",
+  "batch_id": "mig_188_mig184_v2_plus_r1c_ln_only_stage_rule_apply_20260430",
+  "author": "Logan Glosser <logan.glosser@gmail.com>",
+  "generated_utc": "2026-04-30",
+  "posture": "Cursor_lane_no_motherduck_execution_csv_headers_only",
+  "expected_bucket_counts_head_commit": {
+    "prior_thy_recurrence_T_from_prior_path_events": "~41",
+    "no_primary_at_this_surgery_pT0_unstaged_events": "~6",
+    "ambiguous_pm_size_only_logan_pending_events": "~25",
+    "reference_residual": "review_size_unavailable slice ~85 events / ~72 patients vs mig184_v2 HEAD"
+  },
+  "csv_files": [
+    {
+      "path": "exports/mig188_r1c_disposition_20260430/r1c_disposition_strong_prior_thy.csv",
+      "purpose": "Bucket 1 — strong prior-thy evidence (pshx OR other sized path event); populate via §K SELECT post-apply",
+      "data_rows": 0
+    },
+    {
+      "path": "exports/mig188_r1c_disposition_20260430/r1c_disposition_weak_or_none.csv",
+      "purpose": "Bucket 2 — no prior-thy evidence AND PM path_tumor_size_cm NULL",
+      "data_rows": 0
+    },
+    {
+      "path": "exports/mig188_r1c_disposition_20260430/r1c_disposition_ambiguous_pm_only.csv",
+      "purpose": "Bucket 3 — PM path_tumor_size_cm only (no other sized event, no pshx); Logan fills review columns",
+      "data_rows": 0
+    }
+  ],
+  "populate_instructions": "After Path-C applies qc_framework_v1/migrations/188_mig184_v2_plus_r1c_ln_only_stage_rule_apply_20260430.sql, run SELECTs filtering canonical_path_malignant_events_v1.ajcc_resolution_source plus PM rollup stage columns (join qc_framework_v1/reports mig_188 §K templates)."
+}
