@@ -1,0 +1,8 @@
+family,event_type,finding_status,n_patients,n_events,source_kinds_seen,source_tables_seen
+lvi,lymphatic_microscopic,<NO_EVENT>,2,0,<NULL>,<NULL>
+lvi,lymphatic_microscopic,absent,2500,3102,structured,main.canonical_path_malignant_events_v1
+lvi,lymphatic_microscopic,indeterminate,10,20,structured,main.canonical_path_malignant_events_v1
+lvi,lymphatic_microscopic,suspected,1,1,structured,main.canonical_path_malignant_events_v1
+vi,vascular_microscopic,absent,2580,7277,llm | structured,main.canonical_path_malignant_events_v1 | main.note_entities_llm_vascular_invasion
+vi,vascular_microscopic,indeterminate,12,22,llm | structured,main.canonical_path_malignant_events_v1 | main.note_entities_llm_vascular_invasion
+vi,vascular_microscopic,suspected,9,10,llm,main.note_entities_llm_vascular_invasion

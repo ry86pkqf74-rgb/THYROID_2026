@@ -1,0 +1,3 @@
+family,event_type,pre_true,post_true,true_to_false_flippers,expected_true_to_false,false_or_null_to_true_flippers,stable_true,stable_false_or_null,derivative_columns_scoped,option_a_clear_cells_non_null_on_true_to_false,option_a_clear_cells_non_zero_or_non_blank_on_true_to_false,option_b_requires_grade_count_lineage
+lvi,lymphatic_microscopic,3392,989,2502,2502,99,890,7380,3,7464,7464,True
+vi,vascular_microscopic,3698,1178,2580,2580,60,1118,7113,12,20635,20634,True

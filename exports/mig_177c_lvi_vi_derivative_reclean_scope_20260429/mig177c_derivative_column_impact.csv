@@ -1,0 +1,16 @@
+family,column_name,true_to_false_flippers,current_non_null_on_flippers,current_non_zero_or_non_blank_on_flippers,option_a_clear_target,top_current_values_on_flippers
+lvi,lvi_grade,2502,2460,2460,set_to_null,x=2453; <NULL>=42; indeterminate=5; c/a=2
+lvi,lvi_ordinal_worst,2502,2502,2502,set_to_null,2=2502
+lvi,n_tumors_lvi_present,2502,2502,2502,set_to_zero,1=2130; 2=311; 3=42; 4=17; 5=2
+vi,vasc_grade,2580,2580,2579,set_to_null,present_ungraded=2575; indeterminate=4; =1
+vi,vasc_grade_final_v13,2580,2579,2579,set_to_null,present_ungraded=2575; indeterminate=4; <NULL>=1
+vi,vascular_invasion_final,2580,2579,2579,set_to_null,present_ungraded=2575; indeterminate=4; <NULL>=1
+vi,vascular_invasion_grade,2580,2579,2579,set_to_null,present_ungraded=2575; indeterminate=4; <NULL>=1
+vi,vascular_who_2022_grade,2580,0,0,set_to_null,<NULL>=2580
+vi,vi_ordinal_worst,2580,2580,2580,set_to_null,2=2580
+vi,vasc_vessel_count_v13,2580,0,0,set_to_null,<NULL>=2580
+vi,vascular_vessel_count,2580,0,0,set_to_null,<NULL>=2580
+vi,vi_vessels_max,2580,0,0,set_to_null,<NULL>=2580
+vi,vasc_confidence_final_v13,2580,2579,2579,set_to_null,0.75=2575; 0.5=4; <NULL>=1
+vi,vasc_source_final_v13,2580,2579,2579,set_to_null,path_synoptic_text=2579; <NULL>=1
+vi,n_tumors_vi_present,2580,2580,2580,set_to_zero,1=2202; 2=314; 3=47; 4=14; 5=3

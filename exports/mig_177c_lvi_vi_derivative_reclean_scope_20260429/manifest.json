@@ -1,0 +1,46 @@
+{
+  "csv_files": [
+    "mig177c_current_true_derivative_coverage.csv",
+    "mig177c_derivative_column_impact.csv",
+    "mig177c_event_context.csv",
+    "mig177c_flipper_summary.csv",
+    "mig177c_option_matrix.csv"
+  ],
+  "governance": "Logan ratification required before apply; no production data mutation in mig_177c.",
+  "output_dir": "exports/mig_177c_lvi_vi_derivative_reclean_scope_20260429",
+  "posture": "read_only_motherduck_local_artifacts_only",
+  "run_id": "mig_177c_lvi_vi_derivative_reclean_scope_20260429",
+  "run_timestamp_utc": "2026-04-30T00:30:29.930075+00:00",
+  "summary": [
+    {
+      "derivative_columns_scoped": 3,
+      "event_type": "lymphatic_microscopic",
+      "expected_true_to_false": 2502,
+      "false_or_null_to_true_flippers": 99,
+      "family": "lvi",
+      "option_a_clear_cells_non_null_on_true_to_false": 7464,
+      "option_a_clear_cells_non_zero_or_non_blank_on_true_to_false": 7464,
+      "option_b_requires_grade_count_lineage": true,
+      "post_true": 989,
+      "pre_true": 3392,
+      "stable_false_or_null": 7380,
+      "stable_true": 890,
+      "true_to_false_flippers": 2502
+    },
+    {
+      "derivative_columns_scoped": 12,
+      "event_type": "vascular_microscopic",
+      "expected_true_to_false": 2580,
+      "false_or_null_to_true_flippers": 60,
+      "family": "vi",
+      "option_a_clear_cells_non_null_on_true_to_false": 20635,
+      "option_a_clear_cells_non_zero_or_non_blank_on_true_to_false": 20634,
+      "option_b_requires_grade_count_lineage": true,
+      "post_true": 1178,
+      "pre_true": 3698,
+      "stable_false_or_null": 7113,
+      "stable_true": 1118,
+      "true_to_false_flippers": 2580
+    }
+  ]
+}
