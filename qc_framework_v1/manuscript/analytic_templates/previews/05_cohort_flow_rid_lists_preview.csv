@@ -1,2 +1,7 @@
-step_key,pool_kind,research_id
-"[PLACEHOLDER — run QUERY B of 05_cohort_flow_and_exclusions.sql on MotherDuck; COPY result here]",,
+step,description,n_excluded,n_remaining
+1,Total distinct patients in canonical_patient_master,0,10871
+2,Excluded: not malignant (is_malignant=FALSE or NULL),6734,4137
+3,"Excluded: NIFTP/UMP-only (indeterminate events, no remaining malignant event) [mig_186b]",115,4022
+4,Excluded: no histology + no AJCC8 T-stage resolved (both NULL),0,4022
+5,Excluded: no last_contact_date,0,4022
+6,Analytic cohort — intersection: malignant CPM + ≥1 canonical_path_malignant_events_v1 row (cross-check),,4022

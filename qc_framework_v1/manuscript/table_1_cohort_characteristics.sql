@@ -110,18 +110,16 @@ FROM base CROSS JOIN denom
 UNION ALL
 SELECT 20, 'Sex', 'Female',
        CAST(COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('female', 'f')) AS VARCHAR),
-       CAST(ROUND(100.0 * COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('female', 'f')) / NULLIF(d.n, 0), 1) AS VARCHAR),
+       CAST(ROUND(100.0 * COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('female', 'f')) / NULLIF((SELECT n FROM denom), 0), 1) AS VARCHAR),
        'categorical'
-FROM base CROSS JOIN denom
-GROUP BY d.n
+FROM base
 
 UNION ALL
 SELECT 21, 'Sex', 'Male',
        CAST(COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('male', 'm')) AS VARCHAR),
-       CAST(ROUND(100.0 * COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('male', 'm')) / NULLIF(d.n, 0), 1) AS VARCHAR),
+       CAST(ROUND(100.0 * COUNT(*) FILTER (WHERE LOWER(COALESCE(sex, '')) IN ('male', 'm')) / NULLIF((SELECT n FROM denom), 0), 1) AS VARCHAR),
        'categorical'
-FROM base CROSS JOIN denom
-GROUP BY d.n
+FROM base
 
 UNION ALL
 SELECT 25, 'Race / ethnicity', COALESCE(NULLIF(TRIM(CAST(race AS VARCHAR)), ''), 'unknown'),

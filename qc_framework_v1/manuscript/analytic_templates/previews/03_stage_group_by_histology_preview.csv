@@ -1,2 +1,25 @@
 histology_bucket,stage_group_resolved,n_patients,pct_within_histology,histology_row_total
-"[PLACEHOLDER — run 03_stage_group_by_histology.sql on MotherDuck; COPY result here]",,,,
+ATC,IVA,12,63.16,19
+ATC,IVB,7,36.84,19
+FTC,I,111,26.81,414
+FTC,II,176,42.51,414
+FTC,IVB,120,28.99,414
+FTC,IVC,1,0.24,414
+FTC,T0_or_unstaged,6,1.45,414
+MTC,I,28,21.88,128
+MTC,II,7,5.47,128
+MTC,III,46,35.94,128
+MTC,IVA,1,0.78,128
+MTC,IVC,42,32.81,128
+MTC,T0_or_unstaged,4,3.13,128
+PTC,I,1270,37.59,3379
+PTC,II,1435,42.47,3379
+PTC,III,10,0.3,3379
+PTC,IVA,4,0.12,3379
+PTC,IVB,580,17.16,3379
+PTC,IVC,20,0.59,3379
+PTC,T0_or_unstaged,60,1.78,3379
+other_or_mixed,I,31,37.8,82
+other_or_mixed,II,26,31.71,82
+other_or_mixed,IVB,21,25.61,82
+other_or_mixed,T0_or_unstaged,4,4.88,82
