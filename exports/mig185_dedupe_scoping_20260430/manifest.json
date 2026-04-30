@@ -1,0 +1,20 @@
+{
+  "run_id": "mig185_dedupe_scoping_20260430",
+  "generated_at": "2026-04-30T02:02:29.085030+00:00",
+  "posture": "read_only_scoping_no_motherduck_writes",
+  "target_table": "main.canonical_path_malignant_events_v1",
+  "row_counts": {
+    "total_rows": 6689,
+    "distinct_grains": 6156,
+    "duplicate_excess_rows": 533,
+    "duplicate_grains": 491
+  },
+  "outputs": [
+    "qc_framework_v1/reports/mig_185_path_malignant_duplicate_scoping_20260430.md",
+    "qc_framework_v1/migrations/185_path_malignant_dedupe_TBD_20260430.sql",
+    "exports/mig185_dedupe_scoping_20260430/duplicate_examples.csv",
+    "exports/mig185_dedupe_scoping_20260430/duplicate_grain_classification.csv",
+    "exports/mig185_dedupe_scoping_20260430/lineage_duplicate_counts.csv",
+    "exports/mig185_dedupe_scoping_20260430/downstream_impact_metrics.csv"
+  ]
+}

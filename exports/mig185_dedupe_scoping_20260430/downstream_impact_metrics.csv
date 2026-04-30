@@ -1,0 +1,15 @@
+domain,metric,value,note
+path_malignant_events,total_rows,6689,
+path_malignant_events,distinct_key_grains,6156,
+path_malignant_events,duplicate_excess_rows,533,
+path_malignant_events,duplicate_grains,491,
+canonical_path_malignant_patient_rollup_v1,patients_compared,4137,n_tumors_total uses COUNT(*) over event rows
+canonical_path_malignant_patient_rollup_v1,patients_inflated,466,n_tumors_total uses COUNT(*) over event rows
+canonical_path_malignant_patient_rollup_v1,tumor_count_excess,533,n_tumors_total uses COUNT(*) over event rows
+canonical_invasion_events_v1,columns,invasion_event_id;research_id;invasion_type;finding_status;source_modality;source_kind;source_table;source_row_id;finding_date;linked_surgery_episode_id;linked_path_malignant_event_id;linkage_method;n_candidate_episodes;linkage_ambiguous_multi_finding;confidence;evidence_span_hash;evidence_qualifier;extraction_run_id;build_script;build_ts,schema inventory
+canonical_invasion_events_v1,invasion_rows_total,58582,Joinable at patient+surgery only; no tumor_ordinal in invasion table
+canonical_invasion_events_v1,invasion_rows_on_duplicate_surgery_grains,0,Joinable at patient+surgery only; no tumor_ordinal in invasion table
+canonical_invasion_events_v1,patients_with_invasion_on_duplicate_surgery_grains,0,Joinable at patient+surgery only; no tumor_ordinal in invasion table
+canonical_us_lymph_node_patient_rollup_v2,rows,10871,patient-grain rollup; not joined at path-event key
+canonical_us_lymph_node_patient_rollup_v2,distinct_patients,10871,patient-grain rollup; not joined at path-event key
+canonical_us_lymph_node_patient_rollup_v2,duplicate_patient_rows,0,patient-grain rollup; not joined at path-event key

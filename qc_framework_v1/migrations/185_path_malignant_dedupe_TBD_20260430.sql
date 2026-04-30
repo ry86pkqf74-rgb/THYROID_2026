@@ -1,0 +1,122 @@
+-- mig_185 — canonical_path_malignant_events_v1 duplicate dedupe skeleton
+-- Date: 2026-04-30
+-- Posture: PLACEHOLDER ONLY. DO NOT EXECUTE until Logan ratifies a rule.
+-- Target DB: thyroid_canonical_publication_v1_0
+-- Author: Logan Glosser <logan.glosser@gmail.com>
+--
+-- Scoping summary from read-only report:
+--   total rows: 6,689
+--   distinct (research_id, surgery_episode_id, tumor_ordinal): 6,156
+--   excess duplicate rows: 533
+--
+-- LOGAN MUST RATIFY RULE BEFORE EXECUTION.
+
+USE thyroid_canonical_publication_v1_0;
+USE thyroid_canonical_publication_v1_0.main;
+
+-- --------------------------------------------------------------------------
+-- §A. Pre-snapshot (required before any future apply)
+-- --------------------------------------------------------------------------
+-- CREATE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_path_malignant_events_v1_pre_mig185_<UTC> AS
+-- SELECT * FROM main.canonical_path_malignant_events_v1;
+--
+-- CREATE TABLE manuscript_workspace.mig185_path_malignant_duplicate_pre_snapshot_<UTC> AS
+-- WITH grain_counts AS (
+--   SELECT research_id, surgery_episode_id, tumor_ordinal, COUNT(*) AS n_rows
+--   FROM main.canonical_path_malignant_events_v1
+--   GROUP BY 1,2,3
+--   HAVING COUNT(*) > 1
+-- )
+-- SELECT * FROM grain_counts;
+
+-- --------------------------------------------------------------------------
+-- §B1. R-A candidate: drop fully-identical duplicate rows only
+-- Safest/lossless. Requires implementation using a stable full-row partition
+-- over all columns plus ROW_NUMBER within identical row partitions.
+-- Scoping result: no-op on current live data (0 excess fully-identical rows).
+-- --------------------------------------------------------------------------
+-- LOGAN MUST RATIFY R-A BEFORE EXECUTION.
+-- CREATE OR REPLACE TABLE main.canonical_path_malignant_events_v1_mig185_ra AS
+-- SELECT * EXCLUDE (mig185_rn)
+-- FROM (
+--   SELECT *,
+--          ROW_NUMBER() OVER (
+--            PARTITION BY
+--              research_id, surgery_episode_id, tumor_ordinal,
+--              surgery_date, path_surgery_id, specimen_id, synoptic_row_ix,
+--              laterality, site, size_greatest_dimension_cm,
+--              tumor_size_cm_per_surgery, primary_histology, histology_variant,
+--              histology_source, extrathyroidal_extension, gross_ete,
+--              lymphatic_invasion, vascular_invasion, angioinvasion_quantify,
+--              perineural_invasion, capsular_invasion, margin_status,
+--              ln_examined, ln_involved, nodal_disease_positive_count,
+--              nodal_disease_total_count, extranodal_extension, number_of_tumors,
+--              multifocality_flag, source_tables, resolution_rule,
+--              data_completeness_pct, t_stage_ajcc7, n_stage_ajcc7,
+--              m_stage_ajcc7, overall_stage_ajcc7, stage_group_ajcc7,
+--              t_stage_ajcc8, n_stage_ajcc8, m_stage_ajcc8,
+--              overall_stage_ajcc8, stage_group_ajcc8,
+--              ajcc7_stage_calculable_flag, ajcc8_stage_calculable_flag,
+--              staging_source_note, stage_migration_7_to_8,
+--              discordance_histology_flag, discordance_t_stage_flag,
+--              discordance_laterality_flag, discordance_notes,
+--              specimen_focus_id, linkage_confidence_tier, linkage_score,
+--              build_script, build_ts, consolidation_source
+--            ORDER BY research_id
+--          ) AS mig185_rn
+--   FROM main.canonical_path_malignant_events_v1
+-- )
+-- WHERE mig185_rn = 1;
+
+-- --------------------------------------------------------------------------
+-- §B2. R-B candidate: dedupe build-copy duplicates within synoptic source row
+-- Scoping result: near no-op on current live data (3 excess rows).
+-- --------------------------------------------------------------------------
+-- LOGAN MUST RATIFY R-B BEFORE EXECUTION.
+-- CREATE OR REPLACE TABLE main.canonical_path_malignant_events_v1_mig185_rb AS
+-- SELECT * EXCLUDE (mig185_rn)
+-- FROM (
+--   SELECT *,
+--          ROW_NUMBER() OVER (
+--            PARTITION BY research_id, surgery_episode_id, tumor_ordinal, synoptic_row_ix
+--            ORDER BY build_ts DESC NULLS LAST, data_completeness_pct DESC NULLS LAST
+--          ) AS mig185_rn
+--   FROM main.canonical_path_malignant_events_v1
+-- )
+-- WHERE mig185_rn = 1;
+
+-- --------------------------------------------------------------------------
+-- §B3. R-C candidate: one row per logical event grain by completeness score
+-- Aggressive; can discard clinically/source-distinct evidence.
+-- --------------------------------------------------------------------------
+-- LOGAN MUST RATIFY R-C BEFORE EXECUTION.
+-- CREATE OR REPLACE TABLE main.canonical_path_malignant_events_v1_mig185_rc AS
+-- SELECT * EXCLUDE (mig185_rn)
+-- FROM (
+--   SELECT *,
+--          ROW_NUMBER() OVER (
+--            PARTITION BY research_id, surgery_episode_id, tumor_ordinal
+--            ORDER BY
+--              data_completeness_pct DESC NULLS LAST,
+--              (CASE WHEN size_greatest_dimension_cm IS NOT NULL THEN 1 ELSE 0 END
+--               + CASE WHEN primary_histology IS NOT NULL THEN 1 ELSE 0 END
+--               + CASE WHEN extrathyroidal_extension IS NOT NULL THEN 1 ELSE 0 END
+--               + CASE WHEN t_stage_ajcc8 IS NOT NULL THEN 1 ELSE 0 END
+--               + CASE WHEN n_stage_ajcc8 IS NOT NULL THEN 1 ELSE 0 END
+--               + CASE WHEN stage_group_ajcc8 IS NOT NULL THEN 1 ELSE 0 END) DESC,
+--              build_ts DESC NULLS LAST,
+--              synoptic_row_ix ASC NULLS LAST
+--          ) AS mig185_rn
+--   FROM main.canonical_path_malignant_events_v1
+-- )
+-- WHERE mig185_rn = 1;
+
+-- --------------------------------------------------------------------------
+-- §C. Registry/provenance notes for future apply
+-- --------------------------------------------------------------------------
+-- Future apply must:
+--   1. archive the pre-image to archive_pub_v1_0;
+--   2. rebuild canonical_path_malignant_patient_rollup_v1 from deduped events;
+--   3. refresh any md_ mirrors/readable views if applicable;
+--   4. insert a per-phase row into manuscript_workspace.cpm_reconciliation_provenance_v1;
+--   5. document affected tier-2 AJCC/invasion columns in canonical_column_verification_registry_v1.
