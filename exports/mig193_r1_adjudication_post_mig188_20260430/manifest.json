@@ -1,0 +1,81 @@
+{
+  "csv_counts": {
+    "r1b_n1_unspecified_pm_grain_post_mig188.csv": 0,
+    "r1c_disposition_ambiguous_pm_only.csv": 50,
+    "r1c_disposition_strong_prior_thy.csv": 54,
+    "r1c_disposition_weak_or_none.csv": 13,
+    "r1d_t4_invasion_post_mig188.csv": 387,
+    "r1e_mixed_histology_post_mig188.csv": 168
+  },
+  "diagnostics": {
+    "legacy_like_n1_rows": 2645,
+    "legacy_n_stage_distribution": [
+      {
+        "n": 5381,
+        "n_stage": "NULL"
+      },
+      {
+        "n": 2640,
+        "n_stage": "N0"
+      },
+      {
+        "n": 2562,
+        "n_stage": "N1a"
+      },
+      {
+        "n": 205,
+        "n_stage": "Nx"
+      },
+      {
+        "n": 83,
+        "n_stage": "N1b"
+      }
+    ],
+    "original_r1b_exact_filter_rows": 0,
+    "post_mig188b_still_n1_rows": 0,
+    "resolved_n_stage_distribution": [
+      {
+        "n": 5375,
+        "n_stage": "NULL"
+      },
+      {
+        "n": 2640,
+        "n_stage": "N0"
+      },
+      {
+        "n": 2562,
+        "n_stage": "N1a"
+      },
+      {
+        "n": 205,
+        "n_stage": "Nx"
+      },
+      {
+        "n": 83,
+        "n_stage": "N1b"
+      },
+      {
+        "n": 6,
+        "n_stage": "NX"
+      }
+    ]
+  },
+  "files": [
+    "r1b_n1_unspecified_pm_grain_post_mig188.csv",
+    "r1c_disposition_ambiguous_pm_only.csv",
+    "r1c_disposition_strong_prior_thy.csv",
+    "r1c_disposition_weak_or_none.csv",
+    "r1d_t4_invasion_post_mig188.csv",
+    "r1e_mixed_histology_post_mig188.csv",
+    "manifest.json"
+  ],
+  "generated_at_utc": "2026-04-30T04:40:23.914300+00:00",
+  "posture": "read_only_motherduck_selects_local_csv_authoring_only",
+  "preflight": {
+    "path_events_t_resolved_nonnull": 6467,
+    "pm_t_resolved_nonnull": 4021,
+    "registry_mig188b_rows": 46
+  },
+  "run_id": "mig_193_r1bde_logan_review_csv_unblock_20260430",
+  "target_db": "thyroid_canonical_publication_v1_0"
+}
