@@ -1,0 +1,35 @@
+{
+  "batch_id": "mig187_apply_RA_script366_extension_ratified_20260430",
+  "ratified_lane": "mig_187_apply_RA_script366_extension_RATIFIED",
+  "ratified_rule": "R-A extend Script 366 exams UNION with canonical_us_lymph_node_events_v2 ln_nlp_only spine + deterministic md5 matching mig_171b fallback",
+  "database": "thyroid_canonical_publication_v1_0",
+  "generated_at": "2026-04-30",
+  "author_email": "logan.glosser@gmail.com",
+  "git_branch_at_authoring": "main",
+  "deliverables_sha256": [
+    {
+      "path": "scripts/366_canonical_us_exam_master_v2_patch_mig187_RA.diff",
+      "sha256": "875e66baa9a96ec7483f18debd0a50df2ac301cd067ea310e4312ae254f4e683"
+    },
+    {
+      "path": "qc_framework_v1/migrations/187_apply_RA_script366_extension_ratified_20260430.sql",
+      "sha256": "2f7eae4dc973ba6a5c3de2fbdd4e77cf93e0c6caf78d2e8d90c65855e63503cb"
+    },
+    {
+      "path": "qc_framework_v1/reports/mig_187_apply_RA_script366_extension_ratified_20260430.md",
+      "sha256": "e0f8bdcc8351c0081351eaba25c79bca45a50d726c5924bcb144d42acdbbd112"
+    },
+    {
+      "path": "exports/mig187_apply_RA_20260430/dependent_view_scan.csv",
+      "sha256": "89c51d2df03c0de89d7345a48bf46b39a468c407592d84e22c058e3f8325abf2"
+    }
+  ],
+  "ssot_references": [
+    "qc_framework_v1/migrations/171b_canonical_us_lymph_node_v2_build_20260429.sql",
+    "qc_framework_v1/reports/mig_187_canonical_us_exam_master_rebuild_scoping_20260430.md"
+  ],
+  "notes": [
+    "Lane A (this commit) is read-only authoring; Path-C Cowork runs Script 366 --commit + 171b Sections B,C,D.",
+    "SECTION GFE in 187 SQL is block-commented until after 171b replay; uncomment before registry/provenance finish."
+  ]
+}
