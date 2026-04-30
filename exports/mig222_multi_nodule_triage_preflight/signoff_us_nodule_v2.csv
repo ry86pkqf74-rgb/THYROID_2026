@@ -1,0 +1,2 @@
+table_name,n_verified,n_na,n_not_started,n_columns_total,table_status,signoff_migration
+canonical_us_nodule_v2,54,4,0,58,verified,qc_framework_v1/migrations/215_tirads_outliers_acr_band_fix_20260430.sql

@@ -1,0 +1,4 @@
+column_name,data_type
+source_tirads_llm,BOOLEAN
+source_dynamics_llm,BOOLEAN
+nlp_backfill_pending,BOOLEAN

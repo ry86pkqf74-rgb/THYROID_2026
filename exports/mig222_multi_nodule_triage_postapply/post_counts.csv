@@ -1,0 +1,7 @@
+metric,n
+triage_total,1273
+triage_candidate_exam_rows,448
+triage_deferred_patient_rows,825
+qc_tir03_remaining,0
+deferred_remaining,0
+canonical_flagged_rows,10570

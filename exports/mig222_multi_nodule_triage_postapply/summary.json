@@ -1,0 +1,79 @@
+{
+  "post_counts": {
+    "rows": 6,
+    "cols": [
+      "metric",
+      "n"
+    ]
+  },
+  "priority_tier": {
+    "rows": 10,
+    "cols": [
+      "triage_priority_tier",
+      "source_queue",
+      "triage_decision",
+      "absorption_status",
+      "n"
+    ]
+  },
+  "us_nodule_signoff": {
+    "rows": 1,
+    "cols": [
+      "table_name",
+      "n_verified",
+      "n_na",
+      "n_not_started",
+      "n_columns_total",
+      "table_status",
+      "signoff_migration"
+    ]
+  },
+  "new_col_registry": {
+    "rows": 1,
+    "cols": [
+      "schema_name",
+      "table_name",
+      "column_name",
+      "data_type",
+      "verification_status",
+      "verified_by",
+      "batch_id",
+      "verification_method"
+    ]
+  },
+  "provenance": {
+    "rows": 1,
+    "cols": [
+      "run_id",
+      "phases_applied",
+      "high_findings_cleared",
+      "med_findings_cleared",
+      "held_for_adjudication"
+    ]
+  },
+  "five_gate": {
+    "rows": 1,
+    "cols": [
+      "gate1",
+      "gate2",
+      "gate3",
+      "gate4",
+      "gate5"
+    ]
+  },
+  "governance_gap": {
+    "rows": 0,
+    "cols": [
+      "ungoverned_table"
+    ]
+  },
+  "clinical_date_violations": {
+    "rows": 0,
+    "cols": [
+      "table_schema",
+      "table_name",
+      "column_name",
+      "data_type"
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+table_name,n_verified,n_na,n_not_started,n_columns_total,table_status,signoff_migration
+canonical_us_nodule_v2,55,4,0,59,verified,qc_framework_v1/migrations/222_multi_nodule_under_explosion_triage_20260430.sql

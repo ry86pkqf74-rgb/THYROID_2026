@@ -1,0 +1,11 @@
+column_name,data_type
+us_exam_id,VARCHAR
+research_id,INTEGER
+exam_date,DATE
+n_current_nodules,BIGINT
+n_reported_tirads,BIGINT
+n_acr_cats,BIGINT
+resolution_rules,VARCHAR
+reported_tirads_list,VARCHAR
+acr_cats_list,VARCHAR
+candidate_built_at,TIMESTAMP

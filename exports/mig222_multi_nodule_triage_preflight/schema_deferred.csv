@@ -1,0 +1,5 @@
+column_name,data_type
+research_id,INTEGER
+n_llm_entities,BIGINT
+n_v2_rows,BIGINT
+deferred_at,TIMESTAMP WITH TIME ZONE
