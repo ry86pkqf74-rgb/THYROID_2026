@@ -1,6 +1,11 @@
 # Cowork Verification Suite — thyroid_canonical_publication_v1_0
-**Last updated:** 2026-04-30 (post-mig_206 close-out, HEAD `8e8642b` or later)
+**Last updated:** 2026-04-30 v2 (post-mig_207 + mig_208 close-out; allowlist extended; §14 scoped to canonical_*; HEAD `5734328` or later)
 **Purpose:** Standalone series of MotherDuck queries any future Cowork session can run to verify publication state + surface any drift or new issues. Each query has an expected result and a pass/fail criterion. **Read-only — no `query_rw` calls.**
+
+**v2 changes (2026-04-30):**
+- §1 gate5 audit_allowlist extended with `pre_mig186b_snapshot_ts` (mig_207 added canonical_path_indeterminate_events_v1 with this provenance col).
+- §14 scoped to `canonical_*` only (raw upstream tier3-extraction mirrors are governance-registered but not subject to `feedback_clinical_dates_calendar_only.md` Logan rule); allowlist extended with `date_confidence`/`date_source_keyword`/`date_status`/`date_traceability_status`/`sm_n_specimens_for_date` false positives.
+- Closes `CF-mig160b-AUDIT-ALLOWLIST-PATTERN-EXTENSION` carry-forward.
 
 ---
 
@@ -23,7 +28,8 @@ audit_allowlist AS (
     ('verified_ts'),('signed_off_ts'),('registered_ts'),('updated_at'),('created_at'),
     ('promoted_at'),('completed_at'),('started_at'),('ended_at'),('ingested_at_utc'),
     ('ingestion_date'),('lab_datetime'),
-    ('cpm_built_at'),('rollup_built_at'),('resolved_at'),('reclassified_at')
+    ('cpm_built_at'),('rollup_built_at'),('resolved_at'),('reclassified_at'),
+    ('pre_mig186b_snapshot_ts')
   ) v(col_name)
 )
 SELECT
@@ -48,8 +54,9 @@ SELECT
   ) AS gate5;
 ```
 
-**EXPECTED:** `gate1=174, gate2=0, gate3=0, gate4=0, gate5=0`
+**EXPECTED:** `gate1=175, gate2=0, gate3=0, gate4=0, gate5=0`
 **FAIL CRITERIA:** Any value ≠ expected. gate1 may grow if new canonicals were verified post-handoff (+ is OK; -2 is a regression).
+**v2 note:** gate1 went 174→175 on 2026-04-30 with mig_207 retro-signoff for canonical_path_indeterminate_events_v1.
 
 ---
 
@@ -282,16 +289,26 @@ FROM information_schema.columns c
 JOIN main.canonical_table_signoff_registry_v1 t USING (table_name)
 WHERE c.table_catalog='thyroid_canonical_publication_v1_0' AND c.table_schema='main'
   AND t.table_status='verified'
+  AND c.table_name LIKE 'canonical_%'  -- v2: scope to canonicals only; raw upstream registered for governance only
   AND c.column_name SIMILAR TO '(.+_date|date_.+|surgery_date|fna_date|path_date|exam_date|finding_date|first_.+_date|last_.+_date|recurrence_date|first_followup_date|last_followup_date)'
   AND c.data_type NOT IN ('DATE')
-  AND c.column_name NOT IN ('build_ts','build_migration','extracted_at','llm_extracted_at','registered_ts','signed_off_ts','verified_ts','ingestion_date','validated_at')
+  AND c.column_name NOT IN (
+    'build_ts','build_migration','extracted_at','llm_extracted_at','registered_ts','signed_off_ts','verified_ts','ingestion_date','validated_at',
+    -- v2: false-positive non-date cols caught by the regex
+    'date_confidence','date_source_keyword','date_status','date_traceability_status','sm_n_specimens_for_date'
+  )
   AND NOT regexp_matches(c.column_name, '_at$')
   AND NOT regexp_matches(c.column_name, '_ts$')
+  -- v2: regex-suffix exclusions for false-positive families
+  AND NOT regexp_matches(c.column_name, '_confidence$')
+  AND NOT regexp_matches(c.column_name, '_source_keyword$')
+  AND NOT regexp_matches(c.column_name, '_status$')
 ORDER BY c.table_name, c.column_name LIMIT 30;
 ```
 
 **EXPECTED:** 0 rows — all clinical date cols on verified canonicals are DATE-typed
-**FAIL CRITERIA:** Any rows = a TIMESTAMP/VARCHAR clinical date col slipped in. mig_160 / mig_160b retyped these; new ones need same treatment.
+**FAIL CRITERIA:** Any rows = a TIMESTAMP/VARCHAR clinical date col slipped in. mig_160 / mig_160b / mig_208 retyped these; new ones need same treatment.
+**v2 history:** Original v1 query returned 30 rows (LIMIT) — mix of false positives (date_confidence/date_source_keyword/etc.) and 3 genuine canonical `note_date` VARCHAR cols (cervical_ln_clinical, pathology_clinical, molecular_from_notes). mig_208 (2026-04-30) retyped all 3 to DATE; v2 query exclusions trim the false positives + scope to canonical_* (raw upstream registered for governance is excluded since `feedback_clinical_dates_calendar_only.md` only applies to canonicals).
 
 ---
 
