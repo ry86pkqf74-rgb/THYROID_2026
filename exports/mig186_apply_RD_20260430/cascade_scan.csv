@@ -1,0 +1,10 @@
+consumer,row_count_for_affected_pts,requires_rebuild_y_n,proposed_action
+main.canonical_path_malignant_events_v1 (affected subset),220,y (DELETE),Archive §A; DELETE §C
+main.canonical_path_malignant_patient_rollup_v1,202 (affected pts in rollup pre-apply); full rollup baseline 4137 rows,y,Pre-snapshot §D1; CREATE OR REPLACE §D2 per Script 361 Step 5a (no POC join — path_outcome_classification_v1 absent); expect ~4022 rows post
+main.canonical_path_indeterminate_events_v1,0 pre-apply,y (CREATE),§B landing from archive snapshot
+main.canonical_invasion_events_v1,1845,n,Patient+surgery grain; no DELETE from this mig
+main.canonical_patient_master,10871,n (CF only),CF-mig186-EDGE for 115 pts; do not auto-flip is_malignant
+views_readable.path_malignant_events_VIEW_v1,,n,Rebinds to post-DELETE events
+views_readable.path_malignant_patient_rollup_VIEW_v1,,n,Rebinds to rebuilt rollup
+manuscript_workspace.detail_table_registry_v1,,n,Append build_notes §E
+main.canonical_column_verification_registry_v1,,n,Append notes; §F §G CF opens

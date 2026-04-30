@@ -1,0 +1,11 @@
+research_id,surgery_episode_id,tumor_ordinal,surgery_date,primary_histology,histology_variant
+1732,3,1,2011-09-27,Atypical hurthle cell neoplasm,oncocytic/hurthle
+5151,1,2,2015-12-09,NIFTP,follicular
+5209,1,1,2016-01-13,NIFTP,
+5327,1,1,2016-03-31,NIFTP,
+5465,1,1,2016-07-22,NIFTP,
+5466,1,1,2016-07-25,NIFTP,
+5500,1,1,2016-08-17,NIFTP,
+5515,1,1,2016-08-25,NIFTP,follicular
+5532,1,1,2016-09-08,NIFTP,
+5538,1,1,2016-09-09,NIFTP,

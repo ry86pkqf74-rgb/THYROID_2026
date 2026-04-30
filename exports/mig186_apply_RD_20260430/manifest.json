@@ -1,0 +1,23 @@
+{
+  "batch": "mig_186_apply_RD_niftp_exclusion_ratified_20260430",
+  "database": "thyroid_canonical_publication_v1_0",
+  "pre_flight_n_affected_events": 220,
+  "pre_flight_n_affected_pts": 202,
+  "cpm_rows": 10871,
+  "invasion_rows_for_affected_pts": 1845,
+  "rollup_rows_for_affected_pts": 202,
+  "rollup_total_rows_baseline_live_md": 4137,
+  "rollup_expected_post_apply_approx": 4022,
+  "rollup_post_note": "4137 - 115 edge (NIFTP/UMP-only) patients; verify on Path-C apply",
+  "cohort_mixed_pts": 87,
+  "cohort_edge_pts_only_aff_events": 115,
+  "scoping_baseline_events": 220,
+  "scoping_baseline_pts": 202,
+  "delta_events_vs_baseline": 0,
+  "delta_pts_vs_baseline": 0,
+  "exports": [
+    "exports/mig186_apply_RD_20260430/affected_event_sample.csv",
+    "exports/mig186_apply_RD_20260430/cascade_scan.csv"
+  ],
+  "author": "Logan Glosser <logan.glosser@gmail.com>"
+}
