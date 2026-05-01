@@ -1,0 +1,13 @@
+mig_254b apply started utc (local wall from DB below)
+snapshot "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig254b_20260501 n=1
+POST UPDATE rid9600: ('9600', 'T1b', 'N0', 'M1', 'IVB', True)
+VERIFY malignant + M1 by hist x ajcc8_stage_group:
+  ('MTC', 'IVB', 60)
+  ('OTHER', 'II', 1018)
+  ('OTHER', 'IVB', 740)
+VERIFY MTC+medullary + M1 + IVB count = 60 (expected 60)
+VERIFY D1 residual (MTC/medullary/ATC/PDTC + M1 + NULL stage_group) = 0 (expect 0) PASS
+VERIFY D2 mig_254 §3c violation (age>=55 + PTC/FTC + M1 + II) = 0 (expect 0) PASS
+VERIFY DTC<55 + PTC/follicular + M1 + II = 981 (mig_254 non-regression; unchanged by 254b) PASS
+INSERT main.signoff_migration mig_254b OK
+mig_254b PASS (IVB on rid 9600, D1=0, D2=0)
