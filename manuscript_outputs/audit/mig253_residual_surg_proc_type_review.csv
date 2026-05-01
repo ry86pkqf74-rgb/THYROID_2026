@@ -1,0 +1,3 @@
+research_id,first_surgery_date,n_surgeries,gland_weight_final_g,histology_final,nsqip_cpt_code,nsqip_cpt_description,resolution_source,src_has_total,src_has_hemi,src_has_isthmus,src_has_other,chosen_evidence_rows,chosen_evidence_values,n_distinct_hemi_episodes,n_hemi_mentions,proposed_surg_procedure_type,proposed_surg_total_thyroidectomy,proposed_surg_hemithyroidectomy
+10162,2023-04-04,1,,,,,unresolved,,,,,0,,0,0,,,
+10175,2023-09-12,1,,,,,unresolved,,,,,0,,0,0,,,

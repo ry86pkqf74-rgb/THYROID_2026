@@ -1,0 +1,10 @@
+resolution_source,proposed_surg_procedure_type,proposed_surg_total_thyroidectomy,proposed_surg_hemithyroidectomy,n_patients
+canonical_operative_procedure_codes_v1,total_thyroidectomy,true,false,1066
+canonical_operative_procedure_codes_v1,hemithyroidectomy,false,true,586
+nsqip_cpt,total_thyroidectomy,true,false,348
+path_synoptics,other,false,false,46
+path_synoptics,hemithyroidectomy,false,true,37
+path_synoptics,total_thyroidectomy,true,false,24
+canonical_operative_procedure_codes_v1,other,false,false,22
+path_synoptics,isthmusectomy,false,false,7
+unresolved,,,,2

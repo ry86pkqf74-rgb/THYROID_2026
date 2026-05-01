@@ -1,0 +1,165 @@
+{
+  "run_id": "mig_253_surg_procedure_type_fill_20260501",
+  "run_timestamp_utc": "20260501T103539Z",
+  "migration_path": "qc_framework_v1/migrations/253_surg_procedure_type_fill_20260501.sql",
+  "database": "thyroid_canonical_publication_v1_0",
+  "dry_run_only": true,
+  "summaries": {
+    "baseline_gap": [
+      {
+        "n_total": 10871,
+        "null_proc_type": 2138,
+        "null_all_three": 2138
+      }
+    ],
+    "resolution_by_source": [
+      {
+        "resolution_source": "canonical_operative_procedure_codes_v1",
+        "proposed_surg_procedure_type": "total_thyroidectomy",
+        "proposed_surg_total_thyroidectomy": true,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 1066
+      },
+      {
+        "resolution_source": "canonical_operative_procedure_codes_v1",
+        "proposed_surg_procedure_type": "hemithyroidectomy",
+        "proposed_surg_total_thyroidectomy": false,
+        "proposed_surg_hemithyroidectomy": true,
+        "n_patients": 586
+      },
+      {
+        "resolution_source": "nsqip_cpt",
+        "proposed_surg_procedure_type": "total_thyroidectomy",
+        "proposed_surg_total_thyroidectomy": true,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 348
+      },
+      {
+        "resolution_source": "path_synoptics",
+        "proposed_surg_procedure_type": "other",
+        "proposed_surg_total_thyroidectomy": false,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 46
+      },
+      {
+        "resolution_source": "path_synoptics",
+        "proposed_surg_procedure_type": "hemithyroidectomy",
+        "proposed_surg_total_thyroidectomy": false,
+        "proposed_surg_hemithyroidectomy": true,
+        "n_patients": 37
+      },
+      {
+        "resolution_source": "path_synoptics",
+        "proposed_surg_procedure_type": "total_thyroidectomy",
+        "proposed_surg_total_thyroidectomy": true,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 24
+      },
+      {
+        "resolution_source": "canonical_operative_procedure_codes_v1",
+        "proposed_surg_procedure_type": "other",
+        "proposed_surg_total_thyroidectomy": false,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 22
+      },
+      {
+        "resolution_source": "path_synoptics",
+        "proposed_surg_procedure_type": "isthmusectomy",
+        "proposed_surg_total_thyroidectomy": false,
+        "proposed_surg_hemithyroidectomy": false,
+        "n_patients": 7
+      },
+      {
+        "resolution_source": "unresolved",
+        "proposed_surg_procedure_type": null,
+        "proposed_surg_total_thyroidectomy": null,
+        "proposed_surg_hemithyroidectomy": null,
+        "n_patients": 2
+      }
+    ],
+    "proposed_distribution": [
+      {
+        "proposed_surg_procedure_type": "total_thyroidectomy",
+        "n_pts_resolved": 1438
+      },
+      {
+        "proposed_surg_procedure_type": "hemithyroidectomy",
+        "n_pts_resolved": 623
+      },
+      {
+        "proposed_surg_procedure_type": "other",
+        "n_pts_resolved": 68
+      },
+      {
+        "proposed_surg_procedure_type": "isthmusectomy",
+        "n_pts_resolved": 7
+      },
+      {
+        "proposed_surg_procedure_type": null,
+        "n_pts_resolved": 2
+      }
+    ],
+    "post_gap_simulation": [
+      {
+        "cpm_rows": 10871,
+        "simulated_null_proc_type": 2,
+        "simulated_null_all_three": 2
+      }
+    ],
+    "m038_simulation": [
+      {
+        "surg_procedure_type": "total_thyroidectomy",
+        "surg_total_thyroidectomy": true,
+        "surg_hemithyroidectomy": false,
+        "n": 400
+      },
+      {
+        "surg_procedure_type": "hemithyroidectomy",
+        "surg_total_thyroidectomy": false,
+        "surg_hemithyroidectomy": true,
+        "n": 74
+      },
+      {
+        "surg_procedure_type": "other",
+        "surg_total_thyroidectomy": false,
+        "surg_hemithyroidectomy": false,
+        "n": 1
+      }
+    ],
+    "consistency_checks": [
+      {
+        "total_type_but_total_flag_not_true": 0,
+        "hemi_type_but_hemi_flag_not_true": 0,
+        "both_total_and_hemi_true": 0,
+        "resolved_type_null_total_flag": 0,
+        "resolved_type_null_hemi_flag": 0
+      }
+    ],
+    "source_coverage": [
+      {
+        "null_patients": 2138,
+        "has_first_surgery_date": 2138,
+        "has_n_surgeries": 2138,
+        "has_gland_weight": 1595,
+        "has_histology": 916,
+        "has_nsqip_cpt": 348
+      }
+    ],
+    "qc_pre": [
+      {
+        "gate1_verified_tables": 218,
+        "gate2_missing_signoff": 0,
+        "gate3_count_mismatch": 0,
+        "gate4_verified_cols_missing_metadata": 0,
+        "gate5_clinical_date_violations": 0,
+        "cohort_parity_ok": true
+      }
+    ]
+  },
+  "artifacts": {
+    "export_dir": "exports/mig253_surg_proc_type_dryrun_20260501T103539Z",
+    "resolution_csv": "exports/mig253_surg_proc_type_dryrun_20260501T103539Z/mig253_resolution.csv",
+    "residual_review_csv": "exports/mig253_surg_proc_type_dryrun_20260501T103539Z/mig253_residual_review.csv",
+    "audit_residual_review_csv": "manuscript_outputs/audit/mig253_residual_surg_proc_type_review.csv"
+  }
+}

@@ -1,0 +1,4 @@
+surg_procedure_type,surg_total_thyroidectomy,surg_hemithyroidectomy,n
+total_thyroidectomy,true,false,400
+hemithyroidectomy,false,true,74
+other,false,false,1
