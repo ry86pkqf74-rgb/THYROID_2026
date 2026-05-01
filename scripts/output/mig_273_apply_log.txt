@@ -1,0 +1,14 @@
+mig_273 started utc 2026-05-01T23:26:57Z
+--- Probe weight_bucket from CPM (same CASE as view) ---
+  small_under_50g: 6,188
+  moderate_50_to_199g: 2,467
+  unknown: 1,741
+  massive_200g_plus: 475
+--- APPLY: CREATE OR REPLACE VIEW main.cohort_m038_massive_goiter_v1 ---
+VERIFY: view rowcount = 10871 (expect 10871)
+--- VERIFY: weight_bucket distribution ---
+  small_under_50g: 6,188
+  moderate_50_to_199g: 2,467
+  unknown: 1,741
+  massive_200g_plus: 475
+INSERT signoff_migration mig_273 OK
