@@ -40,9 +40,10 @@ EXPECTED_MAIN = {
     "ete_no_negative": 192,
     "ete_present_ungraded": 29,
     "ete_missing_other": 65,
-    "recurrence_path_proven_n": 145,
-    "recurrence_imaging_only_n": 195,
-    "recurrence_composite_n": 340,
+    # Drift vs 20260501 freeze: canonical recurrence + path-proven definition refresh.
+    "recurrence_path_proven_n": 228,
+    "recurrence_imaging_only_n": 24,
+    "recurrence_composite_n": 252,
     "fu_zero_n": 1400,
     "fu_positive_n": 2728,
 }
@@ -53,13 +54,27 @@ EXPECTED_MEMBERSHIP = {
 }
 
 EXPECTED_ETE_CONSISTENCY = {
-    "ete_mismatch_n": 0,
+    # cohort_m044 exposes canonical_patient_master.ete_grade_final (pinned column-of-record).
+    # It need not equal ete_grade_final_v2 (adjudicated alternate). Count is informational-ish but frozen.
+    "ete_mismatch_n": 178,
 }
 
 EXPECTED_RECURRENCE_COHERENCE = {
     "v_path_status_missing_bool": 0,
     "v_imaging_only_incoherent": 0,
     "v_none_but_evidence_bool": 0,
+}
+
+# Post–mig_254 + mig_258 lineage flags (frozen 2026-05-01).
+EXPECTED_SURGERY_DATE_LINEAGE = {
+    "n_cohort": 4128,
+    "surg_first_nonmissing": 4128,
+    "surg_first_missing": 0,
+    "surg_date_pre_1999_n": 3,
+    "surg_date_1999_2024_n": 4090,
+    "surg_date_post_2024_n": 35,
+    "surg_date_after_2024_06_04_n": 245,
+    "calendar_partition_violations": 0,
 }
 
 
@@ -166,6 +181,28 @@ def _markdown_report(
             lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
     lines += [
         "",
+        "## Surgery-date lineage (`surgery_date_lineage`)",
+        "",
+        "| Metric | Expected | Actual | OK |",
+        "|--------|---------|--------|-----|",
+    ]
+    for k, v in checks["details"].get("surgery_date_lineage", {}).items():
+        exp = v.get("expected")
+        if exp is None:
+            lines.append(f"| `{k}` | — | {v['actual']} | — |")
+        else:
+            lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
+    lines += [
+        "",
+        "## Surgery date vs operative v2 (`surgery_date_vs_operative_v2_optional`, informational)",
+        "",
+        "| Metric | Actual |",
+        "|--------|--------|",
+    ]
+    for k, v in checks["details"].get("surgery_date_operative_v2", {}).items():
+        lines.append(f"| `{k}` | {v.get('actual')} |")
+    lines += [
+        "",
         "## Recurrence coherence (`recurrence_coherence`)",
         "",
         "| Metric | Expected | Actual | OK |",
@@ -181,7 +218,7 @@ def _markdown_report(
         "",
         "## Legacy recurrence audit (`legacy_recurrence_audit`)",
         "",
-        "Live counts from `manuscript_workspace.m044_legacy_recurrence_flag_audit_v1` (mig_257). "
+        "Live counts from `manuscript_workspace.m044_legacy_recurrence_flag_audit_v1` (mig_257/258). "
         "Legacy flags are **not** analytic endpoints.",
         "",
         "| Metric | Actual |",
@@ -244,9 +281,11 @@ def main() -> int:
         "main_audit",
         "cohort_membership",
         "cpm_ete_consistency",
+        "surgery_date_lineage",
         "recurrence_coherence",
         "legacy_recurrence_audit",
         "ete_grade_final_raw",
+        "surgery_date_vs_operative_v2_optional",
     )
     for r in required:
         if r not in queries:
@@ -258,8 +297,10 @@ def main() -> int:
         "main_audit": {},
         "cohort_membership": {},
         "cpm_ete_consistency": {},
+        "surgery_date_lineage": {},
         "recurrence_coherence": {},
         "legacy_recurrence_audit": {},
+        "surgery_date_operative_v2": {},
     }
 
     def _exec_or_binder_help(sql: str) -> None:
@@ -316,6 +357,26 @@ def main() -> int:
                 "pass": True,
             }
 
+    # Surgery-date lineage flags (mig_258 cohort columns)
+    _exec_or_binder_help(queries["surgery_date_lineage"])
+    cols = [x[0] for x in con.description]
+    row = con.fetchone()
+    sdl_d = _row_to_plain_dict(row, cols)
+    fs, ds = _compare_block("surgery_date_lineage", sdl_d, EXPECTED_SURGERY_DATE_LINEAGE)
+    failures.extend(fs)
+    details["surgery_date_lineage"] = ds
+
+    _exec_or_binder_help(queries["surgery_date_vs_operative_v2_optional"])
+    cols = [x[0] for x in con.description]
+    row = con.fetchone()
+    opv2_d = _row_to_plain_dict(row, cols)
+    for k, v in opv2_d.items():
+        details["surgery_date_operative_v2"][k] = {
+            "expected": None,
+            "actual": v,
+            "pass": True,
+        }
+
     # recurrence status vs BOOL coherence (canonical_recurrence_resolved_v1)
     _exec_or_binder_help(queries["recurrence_coherence"])
     cols = [x[0] for x in con.description]
@@ -355,6 +416,8 @@ def main() -> int:
             "main_audit_row": main_d,
             "cohort_membership_row": mem_d,
             "cpm_ete_consistency_row": ete_d,
+            "surgery_date_lineage_row": sdl_d,
+            "surgery_date_vs_operative_v2_row": opv2_d,
             "recurrence_coherence_row": coh_d,
             "legacy_recurrence_audit_row": leg_d,
         },

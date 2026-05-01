@@ -93,6 +93,12 @@ SELECT
   c.age_at_surgery, c.sex, c.histology_final, c.tumor_size_cm,
   c.ajcc8_t_stage, c.ajcc8_n_stage, c.ajcc8_stage_group,
   c.surg_first_date,
+  c.surg_first_date_lineage_note,
+  c.surg_date_missing,
+  c.surg_date_pre_1999,
+  c.surg_date_1999_2024,
+  c.surg_date_post_2024,
+  c.surg_date_after_2024_06_04,
   c.followup_years, c.overall_survival_years, c.death_occurred,
   c.lvi_clean, c.vasc_clean, c.lvi_grade,
   ln.ln_lateral_left_positive, ln.ln_lateral_right_positive, ln.ln_bilateral_lateral_positive,
@@ -672,10 +678,21 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     }
 
     sfd = pd.to_datetime(dm_strict["surg_first_date"], errors="coerce")
-    win = (
-        (sfd >= pd.Timestamp("1999-01-01"))
-        & (sfd <= pd.Timestamp("2024-12-31"))
-    ).fillna(False)
+    if "surg_date_1999_2024" in dm_strict.columns:
+        cohort_win = dm_strict["surg_date_1999_2024"].fillna(False).eq(True)
+        py_win = (
+            (sfd >= pd.Timestamp("1999-01-01")) & (sfd <= pd.Timestamp("2024-12-31"))
+        ).fillna(False)
+        if not cohort_win.eq(py_win).all():
+            raise SystemExit(
+                "cohort_view.surg_date_1999_2024 disagrees with calendar window on strict-DTC frame"
+            )
+        win = cohort_win
+    else:
+        win = (
+            (sfd >= pd.Timestamp("1999-01-01"))
+            & (sfd <= pd.Timestamp("2024-12-31"))
+        ).fillna(False)
     d_s2 = dm_strict.loc[win].copy()
     m_s2 = smf.glm(f_strict_no_rai, data=d_s2, family=sm.families.Binomial()).fit()
     out["S2_surgery_date_1999_2024"] = {

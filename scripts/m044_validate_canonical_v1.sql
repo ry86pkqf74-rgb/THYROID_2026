@@ -100,6 +100,44 @@ FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 AS c
 INNER JOIN main.canonical_patient_master AS p
   ON CAST(c.research_id AS VARCHAR) = CAST(p.research_id AS VARCHAR);
 
+-- QUERY: surgery_date_lineage
+-- SSOT = CPM surg_first_date (DATE); mig_254 filled NULL gaps from first_surgery_date_v2.
+-- Window flags support manuscript S2 (1999–2024) vs post-2024 and data-freeze sentinel 2024-06-04.
+SELECT
+  COUNT(*) AS n_cohort,
+  SUM(CASE WHEN surg_first_date IS NOT NULL THEN 1 ELSE 0 END) AS surg_first_nonmissing,
+  SUM(CASE WHEN surg_date_missing IS TRUE THEN 1 ELSE 0 END) AS surg_first_missing,
+  SUM(CASE WHEN surg_date_pre_1999 IS TRUE THEN 1 ELSE 0 END) AS surg_date_pre_1999_n,
+  SUM(CASE WHEN surg_date_1999_2024 IS TRUE THEN 1 ELSE 0 END) AS surg_date_1999_2024_n,
+  SUM(CASE WHEN surg_date_post_2024 IS TRUE THEN 1 ELSE 0 END) AS surg_date_post_2024_n,
+  SUM(CASE WHEN surg_date_after_2024_06_04 IS TRUE THEN 1 ELSE 0 END)
+    AS surg_date_after_2024_06_04_n,
+  SUM(
+    CASE
+      WHEN COALESCE(surg_date_missing, TRUE) IS NOT TRUE
+        AND (
+          CAST(surg_date_pre_1999 AS INTEGER)
+          + CAST(surg_date_1999_2024 AS INTEGER)
+          + CAST(surg_date_post_2024 AS INTEGER)
+        ) <> 1
+      THEN 1 ELSE 0 END
+  ) AS calendar_partition_violations
+FROM manuscript_workspace.cohort_m044_ajcc_ete_v1;
+
+-- QUERY: surgery_date_vs_operative_v2_optional
+-- Informational — expect 0 if CPM earliest surgery aligns with operative v2 DATE for cohort.
+SELECT
+  COUNT(*) AS n_compared,
+  SUM(
+    CASE
+      WHEN CAST(c.surg_first_date AS DATE) IS DISTINCT FROM CAST(p.first_surgery_date_v2 AS DATE)
+      THEN 1 ELSE 0 END
+  ) AS n_mismatch_vs_first_surgery_date_v2,
+  SUM(CASE WHEN p.first_surgery_date_v2 IS NULL THEN 1 ELSE 0 END) AS cohort_rows_with_null_first_surgery_date_v2
+FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 AS c
+INNER JOIN main.canonical_patient_master AS p
+  ON CAST(c.research_id AS VARCHAR) = CAST(p.research_id AS VARCHAR);
+
 -- QUERY: recurrence_coherence
 -- main.canonical_recurrence_resolved_v1: status-final must agree with BOOLEAN evidence flags
 -- (builder SSOT: qc_framework_v1/migrations/62_canonical_recurrence_resolved_v1.sql).

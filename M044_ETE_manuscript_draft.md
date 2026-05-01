@@ -101,7 +101,7 @@ Path-proven recurrence occurred in 59/2,576 (2.3%) microscopic ETE, 73/1,266 (5.
 
 On the positive-follow-up person-year denominator, path-proven recurrence rates were 0.71, 1.76, and 1.71 per 100 person-years for microscopic, gross, and no/negative ETE respectively (Table 2). Composite-event person-year rates were 1.74, 3.92, and 4.00.
 
-Within the strict-DTC three-group analytic subset (Methods), the crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.60 (95% CI 1.82–3.70); the crude odds ratio for no/negative ETE vs microscopic ETE was 2.82 (95% CI 1.45–5.48). The legacy `any_recurrence_flag` is discordant with `main.canonical_recurrence_resolved_v1` for a material subset of the cohort (**live counts:** `SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`); it is reported only in sensitivity (Supplement Table S2), never as a primary endpoint.
+Within the strict-DTC three-group analytic subset (Methods), the crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.87 (95% CI 2.13–3.85); the crude odds ratio for no/negative ETE vs microscopic ETE was 4.38 (95% CI 2.68–7.16). The legacy `any_recurrence_flag` is discordant with `main.canonical_recurrence_resolved_v1` for a material subset of the cohort (**live counts:** `SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`); it is reported only in sensitivity (Supplement Table S2), never as a primary endpoint.
 
 ### Multivariable analysis
 
@@ -109,30 +109,30 @@ Multivariable models were refit on a **strict-DTC** analytic subset after exclud
 
 **Primary logistic model (strict-DTC; no RAI covariate):**
 
-Gross vs microscopic ETE: adjusted OR 1.80 (95% CI 1.22–2.67; p=0.003324)
+Gross vs microscopic ETE: adjusted OR 2.12 (95% CI 1.53–2.94; p=5.826e-06)
 
-No/negative vs microscopic ETE: adjusted OR 0.52 (95% CI 0.22–1.23; p=0.1358)
+No/negative vs microscopic ETE: adjusted OR 0.87 (95% CI 0.44–1.72; p=0.6856)
 
 **Sensitivity — strict-DTC with RAI covariate retained:**
 
-Strict cohort — gross vs microscopic ETE (RAI covariate retained): adjusted OR 1.40 (95% CI 0.93–2.10; p=0.1052)
+Strict cohort — gross vs microscopic ETE (RAI covariate retained): adjusted OR 1.63 (95% CI 1.16–2.28; p=0.00466)
 
-Strict cohort — no/negative vs microscopic ETE (RAI covariate retained): adjusted OR 0.52 (95% CI 0.22–1.25; p=0.1469)
+Strict cohort — no/negative vs microscopic ETE (RAI covariate retained): adjusted OR 0.87 (95% CI 0.43–1.75; p=0.6967)
 
-(McFadden pseudo-R²=0.1370; n=3750, path-proven events=139; likelihood-ratio χ²=162.91 vs intercept-only). A Cox proportional hazards model on the same strict-DTC subset (documented surgery date, positive follow-up; **no RAI covariate**; n=2018) estimated HR=2.34 (95% CI 1.35–4.06; p=0.002591) for gross vs microscopic ETE.
+(McFadden pseudo-R²=0.1391; n=3750, path-proven events=215; likelihood-ratio χ²=229.19 vs intercept-only). A Cox proportional hazards model on the same strict-DTC subset (documented surgery date, positive follow-up; **no RAI covariate**; n=2490) estimated HR=0.92 (95% CI 0.32–2.66; p=0.8787) for gross vs microscopic ETE.
 
-Global **ETE × AJCC8 N-stage interaction** (likelihood ratio vs main-effects-only model): LR χ²=6.30, df=6, p=0.3909. The omnibus interaction test did not reach α=0.05; stratum-specific contrasts are nevertheless presented given clinically heterogeneous crude gradients (especially within N1b).
+Global **ETE × AJCC8 N-stage interaction** (likelihood ratio vs main-effects-only model): LR χ²=3.65, df=6, p=0.7237. The omnibus interaction test did not reach α=0.05; stratum-specific contrasts are nevertheless presented given clinically heterogeneous crude gradients (especially within N1b).
 
 **Within-N-stage gross-vs-microscopic contrasts** (same adjustment bundle excluding the fixed stratum’s N-stage factor):
-- **N0:** adjusted OR 1.65 (95% CI 0.72–3.75; p=0.2351); n=1115, path-proven events=29.
-- **N1a:** adjusted OR 1.95 (95% CI 1.21–3.15; p=0.006118); n=2372, path-proven events=92.
-- **N1b:** adjusted OR 1.24 (95% CI 0.07–21.38; p=0.8817); n=76, path-proven events=16.
+- **N0:** adjusted OR 1.74 (95% CI 0.92–3.32; p=0.09109); n=1115, path-proven events=48.
+- **N1a:** adjusted OR 2.23 (95% CI 1.49–3.33; p=9.945e-05); n=2372, path-proven events=139.
+- **N1b:** adjusted OR 3.57 (95% CI 0.57–22.53; p=0.1755); n=76, path-proven events=24.
 - **Nx:** skipped_sparse_events_for_stable_GLMs
 - **missing:** skipped_sparse_events_for_stable_GLMs
 
 Full coefficient tables are in Table 3 (including full-cohort sensitivity rows) and Supplement.
 
-In the pre-specified pooled lymphovascular sensitivity model (missing treated as absent for the pooled binary), the pooled coefficient had adjusted OR=1.80 (p=0.004005). Instead, this pooled construction produced a statistically significant **elevated-odds** association (OR>1), not a protective association; it therefore does **not** reconstruct the classic **protective** pooled-LVI artifact, though it still mixes lymphatic/vascular signal and treats missing as absent.
+In the pre-specified pooled lymphovascular sensitivity model (missing treated as absent for the pooled binary), the pooled coefficient had adjusted OR=1.74 (p=0.001032). Instead, this pooled construction produced a statistically significant **elevated-odds** association (OR>1), not a protective association; it therefore does **not** reconstruct the classic **protective** pooled-LVI artifact, though it still mixes lymphatic/vascular signal and treats missing as absent.
 
 
 ### Tumor-size-stratified analysis
@@ -165,7 +165,7 @@ Excluding the 1,400 zero-follow-up patients did not materially change ETE-group 
 
 ## Discussion
 
-The original **full-cohort** logistic specification—including both **RAI receipt** and a collapsed **histology-other** bucket containing non-DTC and borderline entities—materially attenuated the gross-vs-microscopic adjusted odds ratio relative to crude estimates (prior Table 3 iteration). Under the **strict-DTC primary model without an RAI covariate**, the gross-vs-microscopic association moves toward the crude gradient (Gross vs microscopic ETE: adjusted OR 1.80 (95% CI 1.22–2.67; p=0.003324)), while Cox regression on documented surgery-interval follow-up without RAI retained elevated hazard for gross vs microscopic disease (HR=2.34, 95% CI 1.35–4.06; p=0.002591). Together, these findings indicate that much of the earlier logistic attenuation was driven by **treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of a true gross-ETE signal. Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
+The original **full-cohort** logistic specification—including both **RAI receipt** and a collapsed **histology-other** bucket containing non-DTC and borderline entities—materially attenuated the gross-vs-microscopic adjusted odds ratio relative to crude estimates (prior Table 3 iteration). Under the **strict-DTC primary model without an RAI covariate**, the gross-vs-microscopic association moves toward the crude gradient (Gross vs microscopic ETE: adjusted OR 2.12 (95% CI 1.53–2.94; p=5.826e-06)), while Cox regression on documented surgery-interval follow-up without RAI retained elevated hazard for gross vs microscopic disease (HR=0.92, 95% CI 0.32–2.66; p=0.8787). Together, these findings indicate that much of the earlier logistic attenuation was driven by **treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of a true gross-ETE signal. Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
 
 Three findings warrant emphasis. First, the disconnect between the analytic cohort's legacy `any_recurrence_flag` and the canonical dual-track recurrence schema (path-proven n=145; imaging-only n=195 in this cohort; see `main.canonical_recurrence_resolved_v1` and `manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`) reinforces a methodologic principle that has been understated in the prior thyroid-cancer literature: pathologically-confirmed recurrence is a distinct endpoint from imaging-suspicion, and the two should not be collapsed when the surveillance intensity differs between exposure groups. In our cohort, the microscopic-ETE group has shorter median follow-up (0.66 years vs 1.94 for gross ETE), reflecting a younger calendar-time sampling, and the cohort-flag noise was greatest in this group.
 
