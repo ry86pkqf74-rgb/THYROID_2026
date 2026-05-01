@@ -61,7 +61,9 @@ If a confirmed case is neither transient nor permanent (`AND NOT _transient AND 
 
 ## Cohort-view exposure note
 
-**Update 2026-05-02:** `mig_255` (`qc_framework_v1/migrations/255_cohort_m038_complication_temporality_columns_20260502.sql`) extends `manuscript_workspace.cohort_m038_massive_goiter_v1` with the temporality/preop-aligned columns passthrough listed below (`comp_hypoparathyroidism_transient`, `comp_hypocalcemia_timing_window`, RLN/VC `timing_window`, etc.). **Other manuscript cohort views:** `manuscript_workspace.cohort_m038_massive_goiter_v1` is the only cohort view amended by `mig_255`; for analyses that use another `cohort_*` projection but need the Table 4 temporality split from this rule — **Option:** join `canonical_patient_master`, or replicate `mig_255` passthrough logic in a sibling migration for those views.
+**Update 2026-05-02 (`mig_255`):** `qc_framework_v1/migrations/255_cohort_m038_complication_temporality_columns_20260502.sql` extends `manuscript_workspace.cohort_m038_massive_goiter_v1` with temporality/preop-aligned CPM passthroughs (`comp_hypoparathyroidism_transient`, `comp_hypocalcemia_timing_window`, RLN/VC `timing_window`, etc.).
+
+**Update 2026-05-02 (`mig_256`):** `qc_framework_v1/migrations/256_cohort_complication_temporality_propagation_20260502.sql` propagates the same **12-column** passthrough bundle to the manuscript spine and parathyroid-heavy cohort views: `cohort_descriptive_full_cohort_v1`, `cohort_m009_parathyroid_final_path_v1`, `cohort_m017_eucalcemic_hypopara_v1`, `cohort_m032_descriptive_25yr_v1` (also fixes `tumor_size_cm` / `multifocal_flag` to `path_tumor_size_cm AS tumor_size_cm` and `multifocal_flag_path AS multifocal_flag` for live CPM), `cohort_m039_pth_calcium_v1`, `cohort_m040_reoperative_v1` (`tumor_size_cm` alias), `cohort_m042_incidental_parathyroid_v1`, `cohort_m066_parathyroid_id_v1` (thin projection from descriptive — column list extended), `cohort_m079_eucalcemic_outcomes_v1`, `cohort_m082_parathyroid_tumors_v1`.
 
 ## Underlying definition (per Logan)
 
@@ -80,7 +82,7 @@ Does not apply to: registry-tier or governance-tier objects, or to non-complicat
 
 - **`CF-RLN-PREOP-FLAG`** — extract preop RLN injury status into a structured column on `canonical_patient_master`. Candidate sources: preop laryngoscopy free-text (`ops_preop_laryngoscopy`), `pmhx_nlp_*` fields (none currently encode prior RLN injury — would need a new NLP target).
 - **`CF-VC-PARALYSIS-PREOP-FLAG`** — extract preop VC paralysis / paresis status. Candidate sources: preop laryngoscopy text, voice-clinic notes, MRI vocal-cord findings (`mri_vocal_cords_normal` is an outcome flag and would need a preop-restricted re-derivation).
-- **`CF-COHORT-VIEW-COMPLICATION-TEMPORALITY-COLUMNS`** — **PARTIAL CLOSE (2026-05-02):** `mig_255` adds temporality/preop-aligned complication columns to `manuscript_workspace.cohort_m038_massive_goiter_v1` only. Extending **all** cohort views remains open if manuscripts beyond M038 require the same passthrough without a CPM join.
+- **`CF-COHORT-VIEW-COMPLICATION-TEMPORALITY-COLUMNS`** — **CLOSED for complication-exposed spine + parathyroid/readout cohorts (2026-05-02):** `mig_255` (M038 massive) + `mig_256` (descriptive spine + cohorts listed above). Remaining `cohort_*` views that omit complications entirely do not require this bundle; join `canonical_patient_master` or descriptive spine if a new manuscript needs passthrough elsewhere.
 
 ## Trigger to revisit
 
