@@ -54,12 +54,16 @@ The validation pattern — Snowflake validates → Cursor fixes → Snowflake re
 |---|---|---|---|---|
 | 1 (Demographics) | 4 "metastatic PTC*" AI mis-classifications; rid 1568 age=17 borderline | LOW | — | Documented |
 | 2 (Molecular) | Era-driven adoption 1.1% → 22.1%; 49 BRAF/RAS double-positives | LOW | — | Clean |
-| 3 (Survival) | **740 recur=FALSE + TTR not null; 6 benign+recur; 100 fu>survival** | HIGH | mig_255, 256, 257 | 255 ✅; 256 disposition; 257 ready |
+| 3 (Survival) | **740 recur=FALSE + TTR not null; 6 benign+recur; 100 fu>survival** | HIGH | mig_255, 256, 257 | 255 ✅; 256 disposition; 257 ✅ |
 | 4 (RAI/Tg) | RAI receivers 22 Tg results vs 8.5 non-receivers; AI 29/30 Concordant | LOW | — | Clean |
 | 5 (Staging) | **1,058 M1+Stage II miscoded** (40 actually buggy: MTC/ATC/PDTC) | HIGH | mig_254, 254b, 259 | 254/254b ✅; 259 architectural |
 | 6 (Invasion) | ETE labels need normalization ("true"/"absent"/"present_ungraded") | LOW | mig_261 candidate | Documented |
 | 7 (TIRADS/Bethesda) | **Bethesda 2 ROM 18.9% (expected 0-3%); 385 false-negatives** | HIGH | mig_260 candidate | Documented |
 | 8 (Complications) | **Confirmed mig_252 audit: chyle_leak 1576/3, seroma 871/39, etc** | HIGH | mig_252 (your existing) | In flight |
+| 9 (NLP) | **NLP-vasc-inv under-fires by 749 pts vs canonical_invasion (post-mig_179); 1,105-pt LN-positive discordance; 8 pts with negative recur days** | MED | mig_260b/c/d candidates | Documented (MD-direct) |
+| 10 (Imaging) | **2,050 NULL exam_dates + 2 extreme YY-typo dates in raw_imaging_12_slots; live CPM lost 28+ TIRADS cols vs Snowflake mirror; any_suspicious_us_ln flag fires for only 8 pts** | HIGH | mig_260e/f/g candidates | Documented (MD-direct) |
+| 11 (Comorbidity) | **9 PMH conditions have _definitive=0 for all rows; smoking 0.25% (vs ~70% expected); family-hx 0.4% (vs 5–15% expected); HTN 16% (vs ~47% adult expected)** | MED | mig_261b/c/d/e candidates | Documented (MD-direct) |
+| 12 (Synoptic) | **CAP-template label drift across ETE/LVI/focality/histology (case + whitespace + 6 typos); path_synoptics.surg_date is TIMESTAMP not DATE** | LOW | mig_262b/c/d/e/f candidates | Documented (MD-direct) |
 
 ### Reports
 
@@ -72,6 +76,10 @@ All in `snowflake_trial/reports/`:
 - `06_invasion_validation.md` (2.0 KB)
 - `07_tirads_bethesda_validation.md` (2.2 KB)
 - `08_complications_validation.md` (2.5 KB)
+- `09_nlp_validation.md` — Tier-1 NLP flag coverage + cross-validation (MD-direct round 6)
+- `10_imaging_validation.md` — Imaging master / US exam coverage + date sanity (MD-direct round 6)
+- `11_comorbidity_validation.md` — PMH/PSH coverage; M004 cohort cross-check (MD-direct round 6)
+- `12_synoptic_validation.md` — CAP-template label drift + LVI cross-validation (MD-direct round 6)
 - `m037_table1.md` (3.7 KB) — publication-ready Mann-Whitney + chi-square table
 
 ---
@@ -255,11 +263,38 @@ Round-trip latency: ~70s. Reusable for every future canonical change.
 You're walking away from this break with:
 - **A working Snowflake Cortex sidecar** that re-validates the canonical in 70s
 - **4 migrations applied & verified** (254, 254b, 255, 258 → 259 file)
-- **2 migrations dispatched in Cursor, awaiting your final apply** (256 + 257)
-- **3 architectural migrations queued** (former-259 / mig_263 overlay; mig_260 Bethesda; mig_261 ETE labels; mig_262 TIRADS)
+- **mig_257 also landed** during the break (commit `a25b539`)
+- **Validation Round 6 complete (Cowork-autonomous)** — Prompts 9–12 run MD-direct via MCP; 16 net-new CFs surfaced (NLP under-firing, imaging date-quality, CPM TIRADS migration drift, PMH definitive blackout, smoking/family-hx coverage gaps, CAP-template label drift)
 - **A publication-ready M037 Table 1** with documented manuscript footnotes
 - **A reusable validation→fix→re-validate ratchet** for every future change
 
-Total git commits this session: 6. Total Cursor commits Logan landed: 4. Net new findings: 7. Net validated fixes: 4.
+Total git commits this session (pre + Round-6): 7+. Net findings catalog: 23 across 12 prompts. Net validated fixes: 5 (254, 254b, 255, 257, 258→259file).
 
 Calendar: PAT expires 2026-05-08, trial converts 2026-05-29.
+
+---
+
+## Round 6 — Validation Prompts 9–12 (Cowork-autonomous, 2026-05-01 post-handoff)
+
+Run while Logan was on break. Source = MD-direct via Cowork's MCP (`thyroid_canonical_publication_v1_0`). Snowflake-form mirror scripts authored at `scripts/15_prompt9_nlp.py` through `18_prompt12_synoptic.py` for re-run after Logan re-exports.
+
+**Net new CFs (16):**
+- CF-mig260b-NLP-VASCINV-UNDERFIRE — NLP misses 749 canonical-confirmed vasc-positive pts
+- CF-mig260c-NLP-LN-DISCORDANCE — 1,105-pt LN-positive disagreement vs canonical
+- CF-mig260d-NLP-REC-PRESURGERY — 8 pts with negative `nlp_rec_earliest_days_from_surg`
+- CF-mig260e-IMAGING-12SLOTS-DATE-QUALITY — 2,050 NULL dates + 2 YY-typo extremes in raw_imaging_12_slots_v1
+- CF-mig260f-CPM-TIRADS-MIGRATION-DRIFT — live CPM has 5 NLP TIRADS cols; Snowflake mirror has 28+ from pre-mig_265 export
+- CF-mig260g-US-LN-SUSPICIOUS-FLAG-UNDERFIRE — `any_suspicious_us_ln_ever` fires for 8/4,077 patients
+- CF-mig261b-PMH-DEFINITIVE-COL-DEAD — 9 conditions have `_any_evidence>0 AND _definitive=0`
+- CF-mig261c-SMOKING-COVERAGE-GAP — 27 pts (0.25%) have any smoking-status extraction
+- CF-mig261d-FAMILY-HX-COVERAGE-GAP — fam_hx_thyroid 30 + fam_hx_cancer 16 vs expected ~10%
+- CF-mig261e-HYPERTENSION-UNDERCOUNT — 16% extracted vs ~47% US adult expected
+- CF-mig262b-CAP-LABEL-DRIFT-FOCALITY — ≥7 case/whitespace/typo variants
+- CF-mig262c-CAP-LABEL-DRIFT-LVI — ≥6 typos × 1–3 each
+- CF-mig262d-CAP-LABEL-DRIFT-ETE — ≥20 values incl. typos & free-text fallback (aligns with mig_261 candidate)
+- CF-mig262e-PATH-SYNOPTICS-SURG_DATE-TIMESTAMP — surg_date is TIMESTAMP not DATE
+- CF-mig262f-CAP-MULTI-TUMOR-CONFIRM — confirm canonical_path_malignant absorbs all T2-T5
+
+Plus reaffirmed: M004 cohort (57 Graves + 94 Hashimoto in malignant) reconciles cleanly via `syn_graves`/`syn_hashimoto`; LVI rebuild post-mig_179 captures 231 patients tumor_1 alone misses.
+
+**Reports** in `snowflake_trial/reports/09_*.md` through `12_*.md`. Snowflake-form scripts deferred until Logan re-exports (`scripts/15_*.py` through `18_*.py`).
