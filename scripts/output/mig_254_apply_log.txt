@@ -1,0 +1,9 @@
+mig_254 apply started utc=2026-05-01T15:09:46Z
+pre_target=40
+snapshot="Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig254_20260501 n=40
+UPDATE executed (MTC/medullary/ATC/PDTC flip II→IVB)
+VERIFY D1 residual (MTC/medullary/ATC/PDTC + M1 + II)=0 PASS
+VERIFY D2 DTC<55 + M1 + II=981 PASS
+VERIFY M1 + II overall=1018 (1058-40)
+main.signoff_migration: table created IF NOT EXISTS (ledger was absent on publication DB); INSERT mig_254 OK
+cpm_built_at stamped via JOIN to snapshot for 40 flipped research_ids

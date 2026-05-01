@@ -1,0 +1,7 @@
+mig_254 connect_locked ok db=thyroid_canonical_publication_v1_0 utc=2026-05-01T15:09:46Z
+PRE_SNAPSHOT_TABLE="Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig254_20260501
+PROBE A: wrote scripts/output/mig_254_other_histology_probe.csv (4 histology groups)
+PROBE A: total patients in OTHER probe = 37
+PRE_SNAPSHOT: rows matching UPDATE predicate = 40
+SNAPSHOT: "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig254_20260501 rows = 40
+NOTE: MotherDuck has no archive_pub_v1_0 schema on publication DB alone; snapshot targets "Thyroid 2026 UPdated".archive_pub_v1_0 per house archive convention.
