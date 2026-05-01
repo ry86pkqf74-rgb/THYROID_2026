@@ -248,6 +248,7 @@ jobs:
             tests/test_validation_engine_import_contracts_offline.py \
             tests/test_lab_canonical_contract_offline.py \
             tests/test_linkage_confidence.py \
+            tests/test_m044_stale_manuscript_guard.py \
             -v --tb=short
 
   # ── Data contract gate (145) — offline fixtures only; no MotherDuck ───────

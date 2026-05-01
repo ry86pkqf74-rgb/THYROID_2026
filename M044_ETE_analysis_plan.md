@@ -50,7 +50,7 @@ Primary contrasts of interest:
 
 **Path-proven recurrence** as defined by `recurrence_path_proven = TRUE` in `canonical_recurrence_resolved_v1`. This corresponds to biopsy-proven, op-pathology-proven, FNA-Bethesda-5/6 (>30 days post-op), or LLM-extracted entity with explicit pathology keyword evidence.
 
-Justification: the canonical convention prohibits collapsing path-proven and imaging-suspicious into a single any_recurrence variable; the cohort view's `any_recurrence_flag` (n=503) and `structural_recurrence_flag` (n=1,819) include large subsets without canonical evidence and are therefore unreliable as primary endpoints (see Validation Report §3.2).
+Justification: the canonical convention prohibits collapsing path-proven and imaging-suspicious into a single `any_recurrence` variable; the cohort view's legacy `any_recurrence_flag` and `structural_recurrence_flag` (audit-only; summarized in **`manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`**) disagree with **`canonical_recurrence_resolved_v1`** for large subsets and must not anchor the primary endpoint (see Validation Report §3.2).
 
 Pre-specified secondary endpoints:
 
@@ -89,7 +89,7 @@ Pre-specified alternative model uses central-LN-positive flag and lateral-LN-pos
 - Continuous variables: mean (SD) and median (IQR), reported by ETE group.
 - Categorical variables: n (%), reported by ETE group.
 - Follow-up reported in two ways: all-row median (IQR) including zeros, and positive-FU-only median (IQR). Maximum and zero-FU count reported in text.
-- Surgery-date window: 1999–2024 among the 3,212 patients with non-missing dates; 914 patients (22.1%) have missing surgery date and 2 have pre-1999 dates that will be flagged in the cohort flow diagram.
+- Surgery-date lineage is reported per **`scripts/m044_validate_canonical_v1_runner.py`** QUERY `surgery_date_lineage` / **`studies/m044_validation/m044_canonical_audit.md`** (frozen expect: **`surg_date_1999_2024_n` = 4,090**, **`surg_first_missing` = 0** among 4,128, pre-1999 outliers **3**). **Obsolete** scaffolding from the earliest extract referenced “914 missing / 3,212 in-window”; do not resurrect those denominators outside historical documentation tabs.
 
 ### 6.2 Unadjusted recurrence comparisons
 
@@ -99,14 +99,14 @@ For each ETE group: n, path-proven n (rate), imaging-only n (rate), composite n 
 
 **Primary model.** Logistic regression of path-proven recurrence (binary) on `ete_group` + covariates listed in §5. Reported as adjusted odds ratios with 95% CI and likelihood-ratio p-values.
 
-**Time-to-event sensitivity model.** If `days_to_path_proven` is reliably populated for the path-proven subset and surgery-date data are sufficient to compute time-zero, fit a Cox proportional-hazards model with `Surv(followup_years, recurrence_path_proven)` as outcome. This is pre-specified as a sensitivity model because the cohort view does not currently expose a unified time-zero, and 22% of surgery dates are missing. The Cox model will be run on the surgery-date-known subset.
+**Time-to-event sensitivity model.** If `days_to_path_proven` is reliably populated for the path-proven subset and **`surg_first_date`** supports time-zero for the Cox frame, fit a Cox proportional-hazards model with path-proven TTE aligned to analytic follow-up. See **`data/m044/m044_inclusion_flow_qc.csv`** (`scripts/m044_ete_fit_models.py` QA sheet) for the strict-DTC + positive-FU + known-size + finite-time row count (**CI default ~2,490** as of mig_258 lineage).
 
 **Secondary models.** Repeat the primary logistic regression with the imaging-only-unconfirmed and composite endpoints.
 
 ### 6.4 Sensitivity analyses (pre-specified)
 
 S1. Exclude the 1,400 zero-follow-up patients and refit.
-S2. Restrict to patients with surgery dates in 1999–2024 (n=3,212).
+S2. Restrict to **`surg_date_1999_2024 = TRUE`** (calendar-flag subset on `canonical_patient_master.surg_first_date`; expect **≈4,090** patients per frozen lineage audit — superseded early-extract **n = 3,212** tabulation must not regress into Methods text).
 S3. Exclude `Present ungraded` and `Missing/other` (already absent from primary).
 S4. Lymphatic and vascular invasion modeled as separate categorical variables (already in primary; this is the explicit sensitivity check that the prior "protective LVI" association does not reappear).
 S5. Vascular invasion as ordinal: missing < indeterminate < focal < present_ungraded < extensive.
@@ -148,7 +148,7 @@ R or Python; primary modeling fits in `statsmodels` (Python) or `survival`/`glm`
 
 ## 8. Pre-specified figures
 
-1. Cohort flow diagram (n=4,128 final; flag missing surgery dates 914 and 2 pre-1999 outliers).
+1. Cohort flow diagram (final n per `m044_validate_canonical_v1_runner` `main_audit`; first-surgery calendar lineage in QA — **obsolete** scaffold was “914 missing calendar dates”; current extract has intact `surg_first_date` for 4128/4128 with partition counts in **`studies/m044_validation/m044_canonical_audit.md`** §Surgery-date lineage).
 2. ETE group distribution bar chart (5 categories, with primary 3 highlighted).
 3. Path-proven recurrence rate by ETE group with 95% CI bars.
 4. Path-proven recurrence per 100 person-years by ETE group.
