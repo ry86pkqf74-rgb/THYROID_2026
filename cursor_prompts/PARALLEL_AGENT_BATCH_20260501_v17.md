@@ -1,5 +1,9 @@
 # Parallel Agent Batch — v17 Round (Wave 2 + Wave 3 cleanup)
 
+> **STATUS: ROUND CLOSED 2026-05-01.** All 6 lanes (mig_236 / mig_237 / mig_238 / mig_239 / mig_240 / mig_241 / mig_242 / mig_243 / mig_244) verified clean. Final state: `gate1=218`, gates 2–5 = 0/0/0/0, cohort_parity TRUE, governance gap = 0. Tip of `origin/main` at closeout: `273eb75` — `feat(qc): mig_244 — semantic_publication.vw_patient_domain_wide_safe_VIEW_v1`. Round retrospective: [`qc_framework_v1/COWORK_SESSION_SUMMARY_2026-05-01_v17.md`](../qc_framework_v1/COWORK_SESSION_SUMMARY_2026-05-01_v17.md). Next-chat handoff: [`qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v19.md`](../qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v19.md).
+>
+> Prompts below are preserved verbatim as the historical record of dispatch — do not re-run them.
+
 **Generated:** 2026-05-01 by Cowork (post Wave 1 Cowork-direct close: mig_236 + mig_237 + mig_238 landed at HEAD `b08432b`)
 **For:** Logan to dispatch in parallel across 4 agents
 **Working dir:** `/Users/loganglosser/THYROID_2026` (note: previous batch docs reference `/Users/ros/THyroid 2026` — that path is stale; use this one)
@@ -430,3 +434,31 @@ If any check fails, surface to Logan with hypothesis + propose remediation mig.
 3. After mig_240 commits, dispatch **mig_241** (LN promotion)
 4. After mig_242 + mig_239 commit, dispatch **mig_244** (curated bridge — depends on type-stable semantic layer)
 5. Cowork verifies each landing via Path-C using `semantic_publication.vw_publication_qc_status_VIEW_v1`.
+
+---
+
+## §∞ — Closeout 2026-05-01 (post-hoc)
+
+All 6 lanes landed and Path-C verified per the recommended order above. Final commit ledger:
+
+| Mig | Commit | When (UTC-4) | Lane outcome |
+|---|---|---|---|
+| mig_236 | `e9a1e02` | 01:55:52 | dedup VIEW 65→66 cols ✓ |
+| mig_237 | `9b584b9` | 01:56:04 | 28 missing + 2 stale comments closed ✓ |
+| mig_238 | `b08432b` | 01:56:18 | publication QC status superset live ✓ |
+| mig_239 | `6fc6f89` | 02:10:39 | research_id VARCHAR + 166 dup keys removed ✓ |
+| mig_240 | `e0d3471` | 02:16:30 | `vw_us_exam_safe_VIEW_v1` (25 cols, 11,880 rows) ✓ |
+| mig_242 | `c2a7b5f` | 02:20:39 | `vw_frozen_section_safe_VIEW_v1` (10 cols, 4,116 rows) ✓ |
+| mig_243 | `9cf03cd` | 02:28:42 | `vw_snake_case_aliases_VIEW_v1` (16 patient-grain aliases + 2 keys, 10,871 rows) ✓ |
+| mig_241 | `35f29d3` | 02:36:00 | 3 LN safe views promoted to `semantic_publication` ✓ |
+| mig_244 | `273eb75` | 02:44:43 | `vw_patient_domain_wide_safe_VIEW_v1` (46 cols, 10,871 rows) ✓ |
+
+Round wall-clock: ~49 min from first commit to final commit.
+
+**Final state at closeout:** gate1 = 218, gates 2–5 = 0, cohort_parity_ok = TRUE (10871×3), `verified_main_objects_missing_comment` = 0. All targets predicted in v18 §1 hit exactly.
+
+**Spec-to-shipped reconciliation for mig_243:** v17 batch §5 listed 17 nonstandard cols, of which line 299 explicitly deferred 1 (events-grain `intact_pth_value_ngL`) and line 313 acceptance set the bar at "16 patient-grain aliases queryable." Agent shipped exactly 16 patient-grain aliases — perfect spec match, zero gaps.
+
+**Carry-forward to v19:** events-grain `intact_pth_value_ngL` would land cleanly in a future `semantic_publication.vw_parathyroid_event_safe_VIEW_v1` if Logan needs per-event PTH access for Methods. Not blocking; not in scope for this round.
+
+For full retrospective, see [`qc_framework_v1/COWORK_SESSION_SUMMARY_2026-05-01_v17.md`](../qc_framework_v1/COWORK_SESSION_SUMMARY_2026-05-01_v17.md).
