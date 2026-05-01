@@ -77,6 +77,8 @@
 |   False | 942 (83.7%) | 2687 (89.2%) |  |
 |   True | 184 (16.3%) | 324 (10.8%) |  |
 
+**Footnote (mig_265).** NLP-derived smoking, family history, and related PMH covariates were not emphasized in this table for a reason: extraction coverage for social and family history in the canonical PMH layer remains far below expected community rates (see `mig_265` / `CF-mig265-NLP-SOCHX-FAMHX-REFRESH-SCOPE`). Stratified analyses by those factors would be underpowered.
+
 ---
 
 _Generated from THYROID_VALIDATION.PUBLIC.COHORT_M037_LN_PREDICTORS via Snowflake Cortex trial pipeline._

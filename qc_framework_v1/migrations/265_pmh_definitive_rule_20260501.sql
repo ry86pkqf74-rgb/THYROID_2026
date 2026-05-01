@@ -1,0 +1,26 @@
+-- mig_265 — PMH phenotype rollup: *_definitive BOOL aligns with probable+literal-definitive evidence (2026-05-01)
+--
+-- Root cause: per-phenotype triad column <domain>_<phenotype>_definitive used
+--   evidence_strength = 'definitive' only. LLM-sourced PMH events almost never
+--   receive literal 'definitive' (that tier is reserved for legacy rows with
+--   finding_value_norm). Present findings with strength 'probable' therefore
+--   had *_any_evidence = TRUE and *_definitive = FALSE for all patients.
+--
+-- Fix: scripts/365_psh_pmh_meds_consolidation.py `_build_rollup_sql_for_domain`:
+--   definitive tier filter → evidence_strength IN ('definitive','probable').
+--   probable_or_better unchanged. Rebuild: `365_psh_pmh_meds_consolidation.py --commit --phase 2`.
+--
+-- Post-verify (example):
+--   SELECT COUNT_IF(pmh_autoimmune_thyroid_hx_any_evidence),
+--          COUNT_IF(pmh_autoimmune_thyroid_hx_definitive)
+--   FROM main.canonical_pmh_patient_rollup_v1;
+--   -- expect counts match when all evidence is probable-or-better.
+--
+-- Signoff (apply once):
+-- INSERT INTO main.signoff_migration (mig_id, signed_off_at, by_actor, summary)
+-- VALUES (
+--   'mig_265',
+--   CAST(CURRENT_TIMESTAMP AS TIMESTAMP),
+--   'cursor_composer_mig265',
+--   'PMH rollup: phenotype definitive tier includes probable+definitive (script 365 step 2). Manuscript footnotes M032/M037/M044 for NLP coverage caveat. CF-mig261b closed; CF-mig265-NLP-SOCHX-FAMHX-REFRESH-SCOPE for future extraction.'
+-- );

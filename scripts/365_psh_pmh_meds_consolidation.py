@@ -1206,8 +1206,12 @@ def _build_rollup_sql_for_domain(domain: str) -> str:
     for ph_name, ph_spec in phenos.items():
         match_expr = _phenotype_match_sql(ph_spec)
         for tier_name, tier_filter in [
+            # mig_265 / CF-mig261b: LLM/PSH phenotypes almost never get literal
+            # evidence_strength='definitive' (only legacy+value_norm does).
+            # Per-phenotype *_definitive BOOLs must include 'probable' or the tier
+            # stays FALSE for every patient despite *_any_evidence=TRUE.
             ("definitive",
-             "evidence_strength = 'definitive'"),
+             "evidence_strength IN ('definitive','probable')"),
             ("probable_or_better",
              "evidence_strength IN ('definitive','probable')"),
             ("any_evidence",
@@ -1599,7 +1603,8 @@ def step_2_build_rollups(
                 f"by {SCRIPT_TAG} on {RUN_DATE} "
                 f"({CANONICAL_VERSION}). LEFT JOIN FROM canonical_patient_"
                 f"master = 10,871 rows. Phenotype BOOL triads "
-                f"(definitive/probable_or_better/any_evidence) per CHANGE K; "
+                f"(definitive=def+prob literal strengths / probable_or_better / "
+                f"any_evidence) per CHANGE K + mig_265; "
                 f"PMH smoking_status uses 3 plain BOOLs (Q-smoking=3). "
                 f"anchor_source carried for cohort filtering.'"
             )

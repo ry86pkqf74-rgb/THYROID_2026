@@ -69,6 +69,8 @@ The **primary** multivariable model is a logistic regression of path-proven recu
 
 Missing covariates were retained as explicit categories, never recoded as absent. Six microscopic-ETE rows have unknown tumor size and were excluded from size-stratified analyses. Three patients with surgery dates pre-1999 (earliest 1945-07-13) were retained in the primary cohort and excluded in a sensitivity analysis. Two-sided p-values are reported; α = 0.05. Analyses were performed in Python (statsmodels logistic regression and lifelines Cox PH) driven by reproducible extracts from `scripts/m044_ete_fit_models.py` and SQL package `M044_ETE_analysis.sql`.
 
+**NLP comorbidity and social history.** Smoking status, family history of thyroid malignancy, family history of other cancers, and osteoporosis were not used as primary covariates in this manuscript. Where such fields are drawn from the canonical PMH rollup, note that NLP extraction of preoperative notes recovers these signals at documented cohort coverage well below expected community rates for an operative population (sub‑percent for smoking and family history in the validation round underlying migration `mig_265`). Subgroup or stratified analyses by smoking, family history, or bone health would therefore be underpowered and were not pursued. Future structured social-history and family-history extraction is tracked as `CF-mig265-NLP-SOCHX-FAMHX-REFRESH-SCOPE`.
+
 ### Ethics
 
 This analysis used a de-identified institutional dataset under [IRB protocol number, VERIFY]; informed-consent waiver and data-protection arrangements are described in the manuscript-workflow README of the `thyroid-2026-analysis` repository.

@@ -1,0 +1,33 @@
+{
+  "build_ts": "20260501_220835",
+  "do_writes": true,
+  "phases": [
+    "2"
+  ],
+  "domains": [
+    "psh",
+    "pmh",
+    "meds"
+  ],
+  "canonical_version": "v1_0_script365_remediated",
+  "step_2": {
+    "psh": {
+      "created": true,
+      "rows": 10871,
+      "patients": 10871,
+      "n_cols": 28
+    },
+    "pmh": {
+      "created": true,
+      "rows": 10871,
+      "patients": 10871,
+      "n_cols": 79
+    },
+    "meds": {
+      "created": true,
+      "rows": 10871,
+      "patients": 10871,
+      "n_cols": 28
+    }
+  }
+}
