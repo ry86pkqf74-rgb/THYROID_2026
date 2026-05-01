@@ -4,6 +4,15 @@
 Executes scripts/m044_validate_canonical_v1.sql (query blocks) and compares
 metrics to the manuscript-frozen snapshot. Writes Markdown + JSON.
 
+After this reports **PASS**, regenerate manuscript outputs (tables, figures,
+per-patient workbook, package sync, validation summary) with::
+
+  .venv/bin/python scripts/m044_regenerate_outputs.py --skip-validation
+
+Or run validation + full regeneration in one step::
+
+  .venv/bin/python scripts/m044_regenerate_outputs.py
+
 Usage:
   .venv/bin/python scripts/m044_validate_canonical_v1_runner.py --md
   .venv/bin/python scripts/m044_validate_canonical_v1_runner.py --local

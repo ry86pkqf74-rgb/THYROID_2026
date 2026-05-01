@@ -3,7 +3,7 @@
 M044 — Build comprehensive 1-row-per-research_id analytic table with explicit
 column-level source map.
 
-Output: /sessions/wonderful-trusting-babbage/mnt/THyroid 2026/M044_per_patient_with_sources.xlsx
+Default output: M044_submission_package_v1_0/05b_per_patient_with_sources.xlsx
 
 Sheets:
   1. Per-patient master  (n=4128 × ~150 cols)
@@ -16,17 +16,23 @@ Sheets:
   8. README
 """
 from __future__ import annotations
-import os, sys, json
+import argparse
+import os
+import sys
 from datetime import datetime
 from pathlib import Path
-import duckdb, pandas as pd
+
+import duckdb
+import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
+REPO = Path(__file__).resolve().parents[1]
+SCRIPTS = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPTS))
 DB = "thyroid_canonical_publication_v1_0"
-OUT = Path("/sessions/wonderful-trusting-babbage/mnt/THyroid 2026/M044_per_patient_with_sources.xlsx")
-OUT.parent.mkdir(parents=True, exist_ok=True)
+DEFAULT_OUT = REPO / "M044_submission_package_v1_0" / "05b_per_patient_with_sources.xlsx"
 
 HF = PatternFill("solid", fgColor="1F4E78"); HFONT = Font(bold=True, color="FFFFFF", size=11)
 TF = Font(bold=True, size=14, color="1F4E78"); SF = Font(bold=True, size=11, color="404040")
@@ -594,15 +600,53 @@ def write_df(ws, df):
 
 
 # ---------------------------------------------------------------------------
-def main():
-    tok = os.environ['MDT']
-    print(f"-> Connecting to {DB}", flush=True)
-    con = duckdb.connect(f"md:{DB}?motherduck_token={tok}")
+def _connect(args: argparse.Namespace) -> duckdb.DuckDBPyConnection:
+    if args.local:
+        dbp = os.environ.get("LOCAL_DB_PATH", str(REPO / "thyroid_master.duckdb"))
+        con = duckdb.connect(dbp)
+        con.execute(f'USE "{DB}"')
+        con.execute(f'USE "{DB}".main')
+        return con
+    from _md_connect import connect_locked  # noqa: E402
+
+    return connect_locked()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--md",
+        action="store_true",
+        help="MotherDuck publication DB via _md_connect (default if neither flag set)",
+    )
+    parser.add_argument(
+        "--local",
+        action="store_true",
+        help="LOCAL_DB_PATH or ./thyroid_master.duckdb with USE publication main",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="Output xlsx path (default: submission package 05b_per_patient_with_sources.xlsx)",
+    )
+    args = parser.parse_args()
+    if not args.md and not args.local:
+        args.md = True
+
+    out_path = args.out or DEFAULT_OUT
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    print(f"-> Connecting ({'local' if args.local else 'md'})", flush=True)
+    con = _connect(args)
 
     print("-> Pulling per-patient master ...", flush=True)
     pm = con.execute(ANALYTIC_SQL).fetchdf()
     print(f"   shape = {pm.shape}", flush=True)
-    assert len(pm) == 4128, f"got {len(pm)} rows, expected 4128"
+    from m044_validate_canonical_v1_runner import EXPECTED_MAIN  # noqa: E402
+
+    exp_n = int(EXPECTED_MAIN["n_rows"])
+    assert len(pm) == exp_n, f"got {len(pm)} rows, expected {exp_n} (EXPECTED_MAIN)"
 
     smap = pd.DataFrame(SOURCE_MAP, columns=[
         "column_name", "source_database", "source_object", "source_column",
@@ -663,9 +707,10 @@ def main():
     ws = wb.create_sheet("Audit (gaps)")
     write_df(ws, audit_df if len(audit_df) else pd.DataFrame({"column_name":["(none)"], "status":["clean"]}))
 
-    print(f"-> Save -> {OUT}")
-    wb.save(OUT)
-    print(f"OK {OUT.stat().st_size:,} bytes")
+    print(f"-> Save -> {out_path}")
+    wb.save(out_path)
+    print(f"OK {out_path.stat().st_size:,} bytes")
+
 
 if __name__ == "__main__":
     main()

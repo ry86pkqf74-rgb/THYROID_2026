@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -587,7 +588,10 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
         ]
     )
     body = pd.DataFrame(rows)
-    return pd.concat([header, body, footer], ignore_index=True)
+    out_qc = pd.concat([header, body, footer], ignore_index=True)
+    return out_qc.drop_duplicates(subset=["step_order"], keep="last").sort_values(
+        "step_order"
+    )
 
 
 def crude_pairwise(d_model: pd.DataFrame) -> dict[str, Any]:
@@ -1488,6 +1492,19 @@ def _append_coef_block(
     return r + 1
 
 
+def _qa_clear_dynamic_append_block(qa_ws: Any) -> None:
+    """Drop rows from a prior run's appended QA block (avoids duplicate blocks on re-save)."""
+    marker = "S4 pooled-LVI artifact check"
+    first: int | None = None
+    for r in range(1, qa_ws.max_row + 1):
+        v = qa_ws.cell(row=r, column=1).value
+        if v is not None and str(v).strip() == marker:
+            first = r
+            break
+    if first is not None and first <= qa_ws.max_row:
+        qa_ws.delete_rows(int(first), int(qa_ws.max_row - first + 1))
+
+
 def update_workbook(bundle: dict[str, Any]) -> None:
     from openpyxl.styles import Font
 
@@ -1637,6 +1654,7 @@ def update_workbook(bundle: dict[str, Any]) -> None:
     wfig.cell(row=4, column=1, value="figures/m044_forest_primary_broad_data.csv")
 
     qa = wb["QA"]
+    _qa_clear_dynamic_append_block(qa)
     nxt = qa.max_row + 2
     proto = bundle["S4_pooled_lvi_collapsed_missing_as_absent"]
     qa.cell(row=nxt, column=1, value="S4 pooled-LVI artifact check")
@@ -2114,6 +2132,43 @@ def main() -> None:
     print(f"[figures] wrote {fb_png} {fb_csv}")
 
     update_workbook(bundle)
+
+    def _coef_snapshot(row: pd.Series | None) -> dict[str, Any] | None:
+        if row is None:
+            return None
+        return {
+            "or": float(row["or"]),
+            "or_ci_low": float(row["or_ci_low"]),
+            "or_ci_high": float(row["or_ci_high"]),
+            "pvalue": float(row["pvalue"]),
+        }
+
+    snap = {
+        "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "cohort_parquet_rows": cohort_n,
+        "crude_path_proven_or": bundle["crude"],
+        "primary_strict_no_rai": {
+            "n_obs": bundle["primary"]["metrics"].get("n_obs"),
+            "n_events": bundle["primary"]["metrics"].get("n_events"),
+            "pseudo_r2_mcfadden": bundle["primary"]["metrics"].get("pseudo_r2_mcfadden"),
+            "lr_vs_null_chi2": bundle["primary"]["metrics"].get("lr_vs_null_chi2"),
+            "gross_vs_microscopic": _coef_snapshot(
+                _coef_one(bundle["primary"]["coef"], "ete_group", "Gross")
+            ),
+            "noneg_vs_microscopic": _coef_snapshot(
+                _coef_one(bundle["primary"]["coef"], "ete_group", "No/negative")
+            ),
+        },
+        "cox_strict_no_rai": {
+            k: v
+            for k, v in bundle["Cox_surgery_date_known_positive_fu"].items()
+            if k != "summary"
+        },
+    }
+    snap_path = DATA_DIR / "m044_run_snapshot.json"
+    snap_path.write_text(json.dumps(snap, indent=2, default=str), encoding="utf-8")
+    print(f"[snapshot] wrote {snap_path}")
+
     patch_manuscript_md(bundle, df)
     print("[done]")
 
