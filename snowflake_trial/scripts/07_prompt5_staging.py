@@ -1,12 +1,14 @@
 """Prompt 5: AJCC 8th edition staging consistency check via AI_COMPLETE."""
-import sys, time, json
+import sys
+import time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from _sf_client import get_cursor, md_table
+from _sf_client import deploy_histology_lookup_ssot, get_cursor, md_table
 
 OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/05_staging_validation.md")
 
 ctx, cur = get_cursor()
+deploy_histology_lookup_ssot(cur)
 report = ["# Snowflake Cortex Validation — Prompt 5: AJCC 8 Staging Consistency\n",
           f"**Generated:** {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
           "**Source:** CANONICAL_PATIENT_MASTER_FLAT (malignant subset)\n\n---\n"]
@@ -39,11 +41,13 @@ report.append(md_table(rows, cols) + "\n")
 # 3. Age-based stage rule: differentiated thyroid CA, age <55, can only be I or II
 print("=== Age <55 + DTC stage rule ===")
 cur.execute("""
-SELECT AJCC8_STAGE_GROUP, COUNT(*) AS n
-FROM CANONICAL_PATIENT_MASTER_FLAT
-WHERE IS_MALIGNANT = TRUE
-  AND AGE_AT_SURGERY < 55
-  AND HISTOLOGY_FINAL ILIKE 'PTC%'
+SELECT cp.AJCC8_STAGE_GROUP, COUNT(*) AS n
+FROM CANONICAL_PATIENT_MASTER_FLAT cp
+LEFT JOIN CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+  ON cp.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
+WHERE cp.IS_MALIGNANT = TRUE
+  AND cp.AGE_AT_SURGERY < 55
+  AND lu.HISTOLOGY_GROUP = 'PTC'
 GROUP BY 1 ORDER BY 2 DESC
 """)
 rows = cur.fetchall(); cols = [c[0] for c in cur.description]

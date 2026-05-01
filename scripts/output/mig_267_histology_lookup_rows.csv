@@ -1,0 +1,39 @@
+histology_final_raw,histology_normalized,histology_group,histology_group_semantic,is_metastatic,is_recurrent,ratified_by,notes
+PTC,Papillary thyroid carcinoma,PTC,PTC,False,False,logan_via_cursor_dispatch_20260502,
+follicular carcinoma,Follicular thyroid carcinoma,FTC,FTC,False,False,logan_via_cursor_dispatch_20260502,
+MTC,Medullary thyroid carcinoma,MTC,MTC,False,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC,Papillary thyroid carcinoma,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+NIFTP,Non-invasive follicular thyroid neoplasm with papillary-like features,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+poorly differentiated thyroid carcinoma,Poorly differentiated thyroid carcinoma,PDTC,PDTC,False,False,logan_via_cursor_dispatch_20260502,
+FTUMP,Follicular tumor of uncertain malignant potential,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+anaplastic carcinoma,Anaplastic thyroid carcinoma,ATC,ATC,False,False,logan_via_cursor_dispatch_20260502,
+differentiated high grade thyroid carcinoma,Differentiated high-grade thyroid carcinoma,PDTC,PDTC,False,False,logan_via_cursor_dispatch_20260502,Logan 20260502 §3 DHGTC→PDTC
+metastatic MTC,Medullary thyroid carcinoma,MTC,MTC,True,False,logan_via_cursor_dispatch_20260502,
+recurrent/metastatic PTC,Papillary thyroid carcinoma,PTC,PTC,True,True,logan_via_cursor_dispatch_20260502,
+follicular adenoma,Follicular adenoma,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,Benign label on malignant-flag rows — cohort artifact
+metastatic PTC tall cell variant,PTC tall cell variant,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC with tall cell features,PTC with tall cell features,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC classical,PTC classical,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic thyroid carcinoma,Metastatic thyroid carcinoma — lineage unspecified,Other,Other malignant,True,False,logan_via_cursor_dispatch_20260502,Ambiguous primary lineage
+metastatic follicular carcinoma,Metastatic follicular carcinoma,FTC,FTC,True,False,logan_via_cursor_dispatch_20260502,
+recurrent/metastatic follicular carcinoma,Metastatic follicular carcinoma,FTC,FTC,True,True,logan_via_cursor_dispatch_20260502,
+metastatic PTC follicular,PTC follicular variant,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC classical with focal tall cell features,PTC classical with focal tall cell features,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC/anaplastic carcinoma,Dedifferentiated PTC/anaplastic composite,ATC,ATC,True,False,logan_via_cursor_dispatch_20260502,Worst-grade reporting bucket
+adenoid cystic carcinoma,Adenoid cystic carcinoma,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+differentiated thyroid carcinoma,Differentiated thyroid carcinoma — papillary lineage default,PTC,PTC,False,False,logan_via_cursor_dispatch_20260502,
+angiosarcoma of the thyroid,Angiosarcoma,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+Atypical hurthle cell neoplasm,Atypical Hürthle cell neoplasm,Hurthle,Hurthle,False,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC classical with extensive follicular growth pattern & oncocytic & focal tall cell features <5%,PTC composite variant description,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+recurrent MTC,Medullary thyroid carcinoma,MTC,MTC,False,True,logan_via_cursor_dispatch_20260502,
+infiltrating carcinoma with thymus-like differentiation,CASTLE / thyroid carcinoma with thymus-like differentiation,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+high-grade PTC with thymic-like features,High-grade PTC with thymic-like features,PTC,PTC,False,False,logan_via_cursor_dispatch_20260502,
+MTC/PTC mixed composite,Mixed medullary-papillary composite,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,Logan 20260502 §3→Other
+poorly differentiated carcinoma with neuroendocrine differntiation,Poorly differentiated with neuroendocrine features,PDTC,PDTC,False,False,logan_via_cursor_dispatch_20260502,Synoptic typo differntiation
+high grade carcinoma with focal squamous features,High-grade carcinoma with squamous differentiation,PDTC,PDTC,False,False,logan_via_cursor_dispatch_20260502,
+atypical follicular adenoma,Atypical follicular adenoma,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,
+metastatic thyroid carcinoma with hurthle cell and paillary features,Metastatic Hürthle-papillary composite,Hurthle,Hurthle,True,False,logan_via_cursor_dispatch_20260502,
+NUT carcinoma,NUT carcinoma,Other,Other malignant,False,False,logan_via_cursor_dispatch_20260502,Logan 20260502 §3→Other malignant bucket
+poorly differentiated PTC,Poorly differentiated papillary carcinoma,PDTC,PDTC,False,False,logan_via_cursor_dispatch_20260502,
+metastatic PTC with focal tall cell features,PTC with focal tall cell features,PTC,PTC,True,False,logan_via_cursor_dispatch_20260502,
+metastatic anaplastic carcinoma,Metastatic anaplastic carcinoma,ATC,ATC,True,False,logan_via_cursor_dispatch_20260502,

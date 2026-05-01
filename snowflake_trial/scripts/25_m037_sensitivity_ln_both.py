@@ -8,21 +8,17 @@ analyses. This sensitivity check re-fits the Table 2 logreg on the 'both' subset
 import sys, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from _sf_client import get_cursor
+from _sf_client import deploy_histology_lookup_ssot, get_cursor
 
 OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/m037_sensitivity_ln_both.md")
 ctx, cur = get_cursor()
+deploy_histology_lookup_ssot(cur)
 
 print("=== Pulling M037 cohort restricted to ln_status_source='both' ===")
 cur.execute("""
 SELECT
   cpm.RESEARCH_ID, cpm.AGE_AT_SURGERY, cpm.SEX, cpm.RACE,
-  CASE WHEN cpm.HISTOLOGY_FINAL ILIKE 'PTC%' THEN 'PTC'
-       WHEN cpm.HISTOLOGY_FINAL ILIKE '%follicular%' THEN 'FTC'
-       WHEN cpm.HISTOLOGY_FINAL ILIKE 'MTC%' OR cpm.HISTOLOGY_FINAL ILIKE '%medullary%' THEN 'MTC'
-       WHEN cpm.HISTOLOGY_FINAL ILIKE '%anaplastic%' THEN 'ATC'
-       WHEN cpm.HISTOLOGY_FINAL ILIKE '%poorly differentiated%' THEN 'PDTC'
-       ELSE 'Other' END AS HISTOLOGY_GROUP,
+  COALESCE(lu.HISTOLOGY_GROUP, 'Other') AS HISTOLOGY_GROUP,
   cpm.AJCC8_T_STAGE, cpm.AJCC8_N_STAGE, cpm.AJCC8_M_STAGE,
   cpm.TUMOR_SIZE_CM_MAX, cpm.ETE_GRADE,
   cpm.LN_TOTAL_EXAMINED, cpm.LN_TOTAL_POSITIVE,
@@ -30,6 +26,8 @@ SELECT
   cpm.SURG_PROCEDURE_TYPE, cpm.BRAF_POSITIVE_FINAL,
   cpm.LN_STATUS_SOURCE
 FROM CANONICAL_PATIENT_MASTER_FLAT cpm
+LEFT JOIN CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+  ON cpm.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
 WHERE cpm.IS_MALIGNANT = TRUE
   -- Exclude staging-only LN+ patients (AJCC N1 with no structured count) to remove
   -- the disagreement set surfaced by mig_258. Keeps 'both' (1,126), 'count'-only (0),

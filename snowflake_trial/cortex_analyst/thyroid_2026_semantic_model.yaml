@@ -32,15 +32,15 @@ tables:
         description: Final histological diagnosis (raw string)
       - name: histology_group
         expr: |
-          CASE WHEN histology_final ILIKE 'PTC%' THEN 'PTC'
-               WHEN histology_final ILIKE '%follicular%' THEN 'FTC'
-               WHEN histology_final ILIKE 'MTC%' OR histology_final ILIKE '%medullary%' THEN 'MTC'
-               WHEN histology_final ILIKE '%anaplastic%' THEN 'ATC'
-               WHEN histology_final ILIKE '%poorly differentiated%' THEN 'PDTC'
-               WHEN histology_final ILIKE '%hurthle%' OR histology_final ILIKE '%oncocytic%' THEN 'Hurthle'
-               WHEN histology_final IS NOT NULL THEN 'Other malignant'
-               ELSE 'Benign' END
-        description: Histology grouped (PTC/FTC/MTC/ATC/PDTC/Hurthle/Other/Benign)
+          COALESCE(
+            (
+              SELECT lu.histology_group_semantic
+              FROM THYROID_VALIDATION.PUBLIC.CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+              WHERE lu.histology_final_raw = canonical_patient_master_flat.histology_final
+            ),
+            CASE WHEN histology_final IS NOT NULL THEN 'Other malignant' ELSE 'Benign' END
+          )
+        description: Histology grouped via mig_267 SSOT (semantic bucket mirrors legacy CASE incl. Hurthle branch)
       - name: is_malignant
         expr: is_malignant
         description: TRUE if final pathology malignant
@@ -170,8 +170,10 @@ verified_queries:
   - question: How many Graves patients had papillary cancer?
     sql: |
       SELECT COUNT(*) AS n_graves_with_ptc
-      FROM THYROID_VALIDATION.PUBLIC.COHORT_M004_AUTOIMMUNE_CARCINOMA
-      WHERE has_graves = TRUE AND histology_final ILIKE 'PTC%'
+      FROM THYROID_VALIDATION.PUBLIC.COHORT_M004_AUTOIMMUNE_CARCINOMA m
+      INNER JOIN THYROID_VALIDATION.PUBLIC.CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+        ON m.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
+      WHERE m.HAS_GRAVES = TRUE AND lu.HISTOLOGY_GROUP = 'PTC'
 
   - question: Show recurrence rates by ETE group, stratified by surgery type
     sql: |

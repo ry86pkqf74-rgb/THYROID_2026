@@ -1,0 +1,15 @@
+-- mig_267 — canonical_histology_lookup_v1 (histology_final SSOT)
+--
+-- APPLY via Python (MotherDuck RW): scripts/mig_267_canonical_histology_lookup.py --apply
+-- Re-run emits Snowflake mirror: snowflake_trial/sql/canonical_histology_lookup_v1_seed.sql
+--
+-- Objects:
+--   main.canonical_histology_lookup_v1
+--   archive: "Thyroid 2026 UPdated".archive_pub_v1_0.histology_distinct_pre_mig267_20260502
+--   signoff_migration.mig_id = 'mig_267'
+--
+-- Downstream: snowflake_trial/scripts/{07,08,10,19,25}_*.py join CANONICAL_HISTOLOGY_LOOKUP_V1;
+-- cortex_analyst/thyroid_2026_semantic_model.yaml histology_group dimension uses SSOT.
+--
+-- Closes carry-forwards (dispatch): CF-mig260-OTHER-HISTOLOGY-TRIAGE,
+-- CF-mig263-HIST-MAPPING-DRIFT (see cursor_prompts/CURSOR_PROMPT_MIG_267_* ).

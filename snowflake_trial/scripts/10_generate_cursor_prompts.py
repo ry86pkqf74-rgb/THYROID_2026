@@ -11,10 +11,10 @@ Routes each finding to:
   - Chat-then-Composer = needs clinical reasoning before edit (use Claude Sonnet
     or GPT-5.x in Cursor Chat / VSC Copilot Chat first, then Composer applies)
 """
-import sys, time
+import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from _sf_client import get_cursor
+from _sf_client import deploy_histology_lookup_ssot, get_cursor
 
 OUT_DIR = Path("/Users/ros/THyroid 2026/cursor_prompts")
 OUT_DIR.mkdir(exist_ok=True)
@@ -22,6 +22,7 @@ TODAY = "20260501"
 HEAD_NOTE = "post-mig_253 (Snowflake trial round 2 findings)"
 
 ctx, cur = get_cursor()
+deploy_histology_lookup_ssot(cur)
 
 
 def query(sql):
@@ -57,16 +58,13 @@ ORDER BY n DESC LIMIT 15
 """)
 hist_breakdown, _ = query("""
 SELECT
-  CASE WHEN HISTOLOGY_FINAL ILIKE 'PTC%' THEN 'PTC'
-       WHEN HISTOLOGY_FINAL ILIKE '%follicular%' THEN 'FTC'
-       WHEN HISTOLOGY_FINAL ILIKE 'MTC%' THEN 'MTC'
-       WHEN HISTOLOGY_FINAL ILIKE '%anaplastic%' THEN 'ATC'
-       ELSE 'Other'
-  END AS hist_group,
+  COALESCE(lu.HISTOLOGY_GROUP, 'Other') AS hist_group,
   COUNT(*) AS n,
-  COUNT_IF(AGE_AT_SURGERY < 55) AS n_under55
-FROM CANONICAL_PATIENT_MASTER_FLAT
-WHERE IS_MALIGNANT = TRUE AND AJCC8_M_STAGE = 'M1' AND AJCC8_STAGE_GROUP = 'II'
+  COUNT_IF(cp.AGE_AT_SURGERY < 55) AS n_under55
+FROM CANONICAL_PATIENT_MASTER_FLAT cp
+LEFT JOIN CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+  ON cp.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
+WHERE cp.IS_MALIGNANT = TRUE AND cp.AJCC8_M_STAGE = 'M1' AND cp.AJCC8_STAGE_GROUP = 'II'
 GROUP BY 1 ORDER BY n DESC
 """)
 
@@ -102,7 +100,7 @@ Snowflake validation against `CANONICAL_PATIENT_MASTER_FLAT` flagged 1,058 patie
 
 ### By histology group
 
-{md_table(hist_breakdown, ['hist_group','n','n_age_under_55'])}
+{md_table(hist_breakdown, ['hist_group','n','n_under55'])}
 
 The mean age within this 1,058-patient cohort and the histology distribution will drive the disposition — see §2.
 
@@ -111,16 +109,17 @@ The mean age within this 1,058-patient cohort and the histology distribution wil
 ## §2 — Pre-task probes (run via MotherDuck MCP `query_rw` is NOT needed; use `query`)
 
 ```sql
--- Probe 1: age cutoff distribution among the 1,058
+-- Probe 1: age cutoff distribution among the 1,058 (mig_267 SSOT histology join)
 SELECT
   CASE WHEN age_at_surgery < 55 THEN 'under_55' WHEN age_at_surgery >= 55 THEN '55_plus' ELSE 'unknown' END AS age_bucket,
-  CASE WHEN histology_final ILIKE 'PTC%' OR histology_final ILIKE '%follicular%' THEN 'DTC'
-       WHEN histology_final ILIKE 'MTC%' THEN 'MTC'
-       WHEN histology_final ILIKE '%anaplastic%' THEN 'ATC'
+  CASE WHEN lu.histology_group IN ('PTC','FTC') THEN 'DTC'
+       WHEN lu.histology_group = 'MTC' THEN 'MTC'
+       WHEN lu.histology_group = 'ATC' THEN 'ATC'
        ELSE 'OTHER' END AS hist_group,
   COUNT(*) AS n
-FROM main.canonical_patient_master
-WHERE is_malignant = TRUE AND ajcc8_m_stage = 'M1' AND ajcc8_stage_group = 'II'
+FROM main.canonical_patient_master cp
+LEFT JOIN main.canonical_histology_lookup_v1 lu ON lu.histology_final_raw = cp.histology_final
+WHERE cp.is_malignant = TRUE AND cp.ajcc8_m_stage = 'M1' AND cp.ajcc8_stage_group = 'II'
 GROUP BY 1, 2 ORDER BY 1, 2;
 
 -- Probe 2: surgery year (legacy AJCC7 hypothesis)
@@ -133,14 +132,21 @@ FROM main.canonical_patient_master
 WHERE is_malignant = TRUE AND ajcc8_m_stage = 'M1' AND ajcc8_stage_group = 'II'
 GROUP BY 1 ORDER BY 1;
 
--- Probe 3: trace stage_group provenance (which mig set it?)
--- Look at the registry for stage_group lineage:
+-- Probe 3: sharpened DTC filter count (papillary + follicular carcinoma lineage via SSOT)
+SELECT COUNT(*) AS n
+FROM main.canonical_patient_master cp
+LEFT JOIN main.canonical_histology_lookup_v1 lu ON lu.histology_final_raw = cp.histology_final
+WHERE cp.is_malignant = TRUE AND cp.ajcc8_m_stage = 'M1' AND cp.ajcc8_stage_group = 'II'
+  AND cp.age_at_surgery >= 55
+  AND lu.histology_group IN ('PTC','FTC');
+
+-- Probe 4: trace stage_group provenance (which mig set it?)
 SELECT *
 FROM main.canonical_column_verification_registry_v1
 WHERE table_name = 'canonical_patient_master' AND column_name = 'ajcc8_stage_group';
 ```
 
-Surface results from probes 1–3 to Logan in a single concise message. **Wait for Logan to ratify the disposition rule** before §3.
+Surface results from probes 1–4 to Logan in a single concise message. **Wait for Logan to ratify the disposition rule** before §3.
 
 ---
 
@@ -157,23 +163,31 @@ WHERE is_malignant = TRUE AND ajcc8_m_stage = 'M1';
 ### 3b. Apply rule (placeholder — fill in after §2 disposition)
 ```sql
 -- Example: if rule = "age >=55 + DTC + M1 + II  ->  flip to IVB"
-UPDATE main.canonical_patient_master
+UPDATE main.canonical_patient_master cp
 SET ajcc8_stage_group = 'IVB'
-WHERE is_malignant = TRUE
-  AND ajcc8_m_stage = 'M1'
-  AND ajcc8_stage_group = 'II'
-  AND age_at_surgery >= 55
-  AND (histology_final ILIKE 'PTC%' OR histology_final ILIKE '%follicular%');
+WHERE cp.is_malignant = TRUE
+  AND cp.ajcc8_m_stage = 'M1'
+  AND cp.ajcc8_stage_group = 'II'
+  AND cp.age_at_surgery >= 55
+  AND EXISTS (
+    SELECT 1 FROM main.canonical_histology_lookup_v1 lu
+    WHERE lu.histology_final_raw = cp.histology_final
+      AND lu.histology_group IN ('PTC','FTC')
+  );
 ```
 
 ### 3c. Verify
 ```sql
 -- Should be 0 (or whatever the disposition allows)
 SELECT COUNT(*)
-FROM main.canonical_patient_master
-WHERE is_malignant = TRUE AND ajcc8_m_stage = 'M1' AND ajcc8_stage_group = 'II'
-  AND age_at_surgery >= 55
-  AND (histology_final ILIKE 'PTC%' OR histology_final ILIKE '%follicular%');
+FROM main.canonical_patient_master cp
+WHERE cp.is_malignant = TRUE AND cp.ajcc8_m_stage = 'M1' AND cp.ajcc8_stage_group = 'II'
+  AND cp.age_at_surgery >= 55
+  AND EXISTS (
+    SELECT 1 FROM main.canonical_histology_lookup_v1 lu
+    WHERE lu.histology_final_raw = cp.histology_final
+      AND lu.histology_group IN ('PTC','FTC')
+  );
 ```
 
 ### 3d. Registry signoff
@@ -670,8 +684,8 @@ For your workflow, Cursor Composer wins on every mig because it has direct acces
 """
 
 (OUT_DIR / f"SNOWFLAKE_ROUND2_CURSOR_ROUTING_{TODAY}.md").write_text(summary)
-print(f"\n  saved routing summary")
+print("\n  saved routing summary")
 
 ctx.close()
 print("\n=== done ===")
-print(f"Five mig prompts + routing summary in cursor_prompts/")
+print("Five mig prompts + routing summary in cursor_prompts/")

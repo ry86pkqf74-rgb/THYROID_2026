@@ -8,35 +8,32 @@ P-values via Kruskal-Wallis (3-group continuous) + chi-square (categorical).
 import sys, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from _sf_client import get_cursor
+from _sf_client import deploy_histology_lookup_ssot, get_cursor
 
 OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/m044_table1.md")
 ctx, cur = get_cursor()
+deploy_histology_lookup_ssot(cur)
 
 # Pull cohort: malignant patients with non-NULL ETE grade
 print("=== Pulling M044 cohort ===")
 cur.execute("""
 SELECT
-  RESEARCH_ID, AGE_AT_SURGERY, SEX, RACE, BMI_COMBINED,
-  HISTOLOGY_FINAL,
-  CASE WHEN HISTOLOGY_FINAL ILIKE 'PTC%' THEN 'PTC'
-       WHEN HISTOLOGY_FINAL ILIKE '%follicular%' THEN 'FTC'
-       WHEN HISTOLOGY_FINAL ILIKE 'MTC%' OR HISTOLOGY_FINAL ILIKE '%medullary%' THEN 'MTC'
-       WHEN HISTOLOGY_FINAL ILIKE '%anaplastic%' THEN 'ATC'
-       WHEN HISTOLOGY_FINAL ILIKE '%poorly differentiated%' THEN 'PDTC'
-       ELSE 'Other'
-  END AS HISTOLOGY_GROUP,
-  AJCC8_T_STAGE, AJCC8_N_STAGE, AJCC8_M_STAGE, AJCC8_STAGE_GROUP,
-  TUMOR_SIZE_CM_MAX, ETE_GRADE,
-  LN_TOTAL_EXAMINED, LN_TOTAL_POSITIVE, LN_POSITIVE_FLAG,
-  SURG_PROCEDURE_TYPE, RAI_RECEIVED_FLAG,
-  MOLECULAR_TESTED_CONFIRMED, BRAF_POSITIVE_FINAL, RAS_POSITIVE_FINAL,
-  ANY_RECURRENCE_FLAG, TIME_TO_RECURRENCE_DAYS,
-  OVERALL_SURVIVAL_YEARS, FOLLOWUP_YEARS,
-  FIRST_SURGERY_DATE
-FROM CANONICAL_PATIENT_MASTER_FLAT
-WHERE IS_MALIGNANT = TRUE AND ETE_GRADE IS NOT NULL
-  AND ETE_GRADE IN ('none','microscopic','gross')
+  cp.RESEARCH_ID, cp.AGE_AT_SURGERY, cp.SEX, cp.RACE, cp.BMI_COMBINED,
+  cp.HISTOLOGY_FINAL,
+  COALESCE(lu.HISTOLOGY_GROUP, 'Other') AS HISTOLOGY_GROUP,
+  cp.AJCC8_T_STAGE, cp.AJCC8_N_STAGE, cp.AJCC8_M_STAGE, cp.AJCC8_STAGE_GROUP,
+  cp.TUMOR_SIZE_CM_MAX, cp.ETE_GRADE,
+  cp.LN_TOTAL_EXAMINED, cp.LN_TOTAL_POSITIVE, cp.LN_POSITIVE_FLAG,
+  cp.SURG_PROCEDURE_TYPE, cp.RAI_RECEIVED_FLAG,
+  cp.MOLECULAR_TESTED_CONFIRMED, cp.BRAF_POSITIVE_FINAL, cp.RAS_POSITIVE_FINAL,
+  cp.ANY_RECURRENCE_FLAG, cp.TIME_TO_RECURRENCE_DAYS,
+  cp.OVERALL_SURVIVAL_YEARS, cp.FOLLOWUP_YEARS,
+  cp.FIRST_SURGERY_DATE
+FROM CANONICAL_PATIENT_MASTER_FLAT cp
+LEFT JOIN CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+  ON cp.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
+WHERE cp.IS_MALIGNANT = TRUE AND cp.ETE_GRADE IS NOT NULL
+  AND cp.ETE_GRADE IN ('none','microscopic','gross')
 """)
 rows = cur.fetchall()
 cols = [c[0] for c in cur.description]

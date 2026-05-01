@@ -1,0 +1,10 @@
+mig_267 started utc 2026-05-01T22:30:52Z
+Wrote probe /Users/ros/THyroid 2026/scripts/output/mig_267_histology_distinct_probe.csv (n_distinct=38)
+Wrote Snowflake seed /Users/ros/THyroid 2026/snowflake_trial/sql/canonical_histology_lookup_v1_seed.sql
+Wrote /Users/ros/THyroid 2026/scripts/output/mig_267_histology_lookup_rows.csv
+Creating archive "Thyroid 2026 UPdated".archive_pub_v1_0.histology_distinct_pre_mig267_20260502
+CREATE OR REPLACE TABLE main.canonical_histology_lookup_v1
+Inserted 38 lookup rows
+{'n_distinct_in_cpm': 38, 'n_joined': 38, 'n_uncovered': 0}
+INSERT signoff_migration mig_267 OK
+mig_267 PASS

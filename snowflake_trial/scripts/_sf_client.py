@@ -1,5 +1,7 @@
 """Shared Snowflake client with PAT auth workaround for connector v4.4.0."""
 import os, json
+from pathlib import Path
+
 import snowflake.connector
 import snowflake.connector.network as _net
 
@@ -29,6 +31,14 @@ def get_cursor():
         warehouse="COMPUTE_WH", database="THYROID_VALIDATION",
         schema="PUBLIC", role="ACCOUNTADMIN")
     return ctx, ctx.cursor()
+
+
+def deploy_histology_lookup_ssot(cur) -> None:
+    """Deploy mig_267 mirror table (idempotent CREATE OR REPLACE)."""
+    seed = Path(__file__).resolve().parent.parent / "sql" / "canonical_histology_lookup_v1_seed.sql"
+    if not seed.is_file():
+        return
+    cur.execute(seed.read_text(encoding="utf-8"))
 
 
 def md_table(rows, cols, max_rows=None):
