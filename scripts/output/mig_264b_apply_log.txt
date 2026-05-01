@@ -1,0 +1,5 @@
+mig_264b started utc 2026-05-01T22:24:41Z
+PRE  Bethesda-2 + malignant: 360 ; Bethesda-2 all: 2032
+SKIP APPLY: mig_264b already in signoff_migration — post-state probes only:
+POST Bethesda-2 + malig n=360; ROM among B2(all)≈17.7%
+(skip/no DML)

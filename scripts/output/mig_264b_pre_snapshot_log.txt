@@ -1,0 +1,7 @@
+mig_264b started utc 2026-05-01T22:24:03Z
+PRE  Bethesda-2 + malignant: 385 ; Bethesda-2 all: 2033
+PRE  NIFTP∩B2∩malig: 22 (expected 22)
+PRE  follicular adenoma∩B2∩malig: 2 (expected 2)
+PRE  neg-FNA-day cohort: 19 (expected 19)
+     neg_rid sample (all): '10401','11238','1216','2001','3037','4564','475','4936','5100','5187','5197','5271','5805','5839','6214','628','734','768','7742'
+Dry-run OK — no writes.
