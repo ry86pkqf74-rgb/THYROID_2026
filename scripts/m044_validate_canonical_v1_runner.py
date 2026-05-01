@@ -56,6 +56,12 @@ EXPECTED_ETE_CONSISTENCY = {
     "ete_mismatch_n": 0,
 }
 
+EXPECTED_RECURRENCE_COHERENCE = {
+    "v_path_status_missing_bool": 0,
+    "v_imaging_only_incoherent": 0,
+    "v_none_but_evidence_bool": 0,
+}
+
 
 def _split_queries(sql_text: str) -> dict[str, str]:
     # Line-start markers: -- QUERY: block_name
@@ -158,6 +164,19 @@ def _markdown_report(
             lines.append(f"| `{k}` | — | {v['actual']} | — |")
         else:
             lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
+    lines += [
+        "",
+        "## Recurrence coherence (`recurrence_coherence`)",
+        "",
+        "| Metric | Expected | Actual | OK |",
+        "|--------|---------|--------|-----|",
+    ]
+    for k, v in checks["details"].get("recurrence_coherence", {}).items():
+        exp = v.get("expected")
+        if exp is None:
+            lines.append(f"| `{k}` | — | {v['actual']} | — |")
+        else:
+            lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
     if checks["failures"]:
         lines += ["", "## Failures", ""]
         for f in checks["failures"]:
@@ -208,14 +227,25 @@ def main() -> int:
 
     sql_text = SQL_PATH.read_text(encoding="utf-8")
     queries = _split_queries(sql_text)
-    required = ("main_audit", "cohort_membership", "cpm_ete_consistency", "ete_grade_final_raw")
+    required = (
+        "main_audit",
+        "cohort_membership",
+        "cpm_ete_consistency",
+        "recurrence_coherence",
+        "ete_grade_final_raw",
+    )
     for r in required:
         if r not in queries:
             print(f"Missing QUERY block: {r}", file=sys.stderr)
             return 2
 
     failures: list[str] = []
-    details: dict[str, Any] = {"main_audit": {}, "cohort_membership": {}, "cpm_ete_consistency": {}}
+    details: dict[str, Any] = {
+        "main_audit": {},
+        "cohort_membership": {},
+        "cpm_ete_consistency": {},
+        "recurrence_coherence": {},
+    }
 
     def _exec_or_binder_help(sql: str) -> None:
         try:
@@ -271,6 +301,15 @@ def main() -> int:
                 "pass": True,
             }
 
+    # recurrence status vs BOOL coherence (canonical_recurrence_resolved_v1)
+    _exec_or_binder_help(queries["recurrence_coherence"])
+    cols = [x[0] for x in con.description]
+    row = con.fetchone()
+    coh_d = _row_to_plain_dict(row, cols)
+    fc, dc = _compare_block("recurrence_coherence", coh_d, EXPECTED_RECURRENCE_COHERENCE)
+    failures.extend(fc)
+    details["recurrence_coherence"] = dc
+
     # raw distribution
     _exec_or_binder_help(queries["ete_grade_final_raw"])
     cols = [x[0] for x in con.description]
@@ -289,6 +328,7 @@ def main() -> int:
             "main_audit_row": main_d,
             "cohort_membership_row": mem_d,
             "cpm_ete_consistency_row": ete_d,
+            "recurrence_coherence_row": coh_d,
         },
         "ete_grade_final_distribution": raw_rows,
     }

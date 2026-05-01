@@ -100,6 +100,30 @@ FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 AS c
 INNER JOIN main.canonical_patient_master AS p
   ON CAST(c.research_id AS VARCHAR) = CAST(p.research_id AS VARCHAR);
 
+-- QUERY: recurrence_coherence
+-- main.canonical_recurrence_resolved_v1: status-final must agree with BOOLEAN evidence flags
+-- (builder SSOT: qc_framework_v1/migrations/62_canonical_recurrence_resolved_v1.sql).
+-- Dual-track retained: path_proven rows may still have recurrence_imaging_suspicious=TRUE.
+SELECT
+  SUM(
+    CASE
+      WHEN recurrence_status_final = 'path_proven' AND recurrence_path_proven IS NOT TRUE
+      THEN 1 ELSE 0 END
+  ) AS v_path_status_missing_bool,
+  SUM(
+    CASE
+      WHEN recurrence_status_final = 'imaging_only_unconfirmed'
+        AND (recurrence_path_proven IS TRUE OR recurrence_imaging_suspicious IS NOT TRUE)
+      THEN 1 ELSE 0 END
+  ) AS v_imaging_only_incoherent,
+  SUM(
+    CASE
+      WHEN recurrence_status_final = 'none'
+        AND (recurrence_path_proven IS TRUE OR recurrence_imaging_suspicious IS TRUE)
+      THEN 1 ELSE 0 END
+  ) AS v_none_but_evidence_bool
+FROM main.canonical_recurrence_resolved_v1;
+
 -- QUERY: ete_grade_final_raw
 -- Drift diagnostics: raw ete_grade_final distribution (not used for pass/fail).
 SELECT

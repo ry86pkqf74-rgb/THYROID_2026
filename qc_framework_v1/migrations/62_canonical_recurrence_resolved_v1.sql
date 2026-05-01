@@ -53,14 +53,21 @@
 --          manuscript_workspace.ete_manuscript_analytic_v7 (view layered on v6)
 --          main.canonical_ete_event_resolved_v1 (refreshed to add recurrence cols)
 -- ----------------------------------------------------------------------------
+-- Coherence (single evidence spine — 20260501): recurrence_status_final CASE uses the same
+--   has_path_proven_evidence / has_imaging_suspicious_evidence flags as the BOOLEAN columns.
+--   LLM imaging/path arms CAST research_id to VARCHAR so patient joins match canonical_patient_master.
+-- Post-rebuild note: ALTER-only columns layered after mig_62 (e.g. mig_213
+--   is_implausible_date_quarantine) must be reapplied after CREATE OR REPLACE of this table.
+--
 -- Acceptance probes:
 --   SELECT recurrence_status_final, COUNT(*) FROM main.canonical_recurrence_resolved_v1 GROUP BY 1;
---     -- path_proven=191, imaging_only_unconfirmed=701, none=9979
 --   SELECT COUNT(*) FROM main.canonical_recurrence_resolved_v1
---     WHERE recurrence_imaging_then_path_confirmed; -- 33
+--     WHERE recurrence_imaging_then_path_confirmed;
 --   SELECT recurrence_status_final, COUNT(*) FROM main.canonical_ete_event_resolved_v1
 --     WHERE cohort_ptc AND analytic_eligible GROUP BY 1;
---     -- path_proven=98 events, imaging_only_unconfirmed=120, none=3836
+--
+-- Logical-coherence probes (each must return n_violations=0):
+--   SELECT match_group, SUM(n) FROM ( ... UNION ALL ... ) g GROUP BY 1;  -- see m044_validate_canonical_v1.sql recurrence_coherence
 -- ============================================================================
 
 -- 1. Path-proven candidate pool ---------------------------------------------
@@ -92,7 +99,7 @@ post_op_fna_b56 AS (
   GROUP BY 1
 ),
 llm_path AS (
-  SELECT r.research_id AS rid,
+  SELECT CAST(r.research_id AS VARCHAR) AS rid,
          MIN(TRY_CAST(json_extract_string(e.value,'$.entity_date') AS DATE)) AS rec_date,
          MIN(LEFT(json_extract_string(e.value,'$.evidence_text'), 300)) AS evidence
   FROM main.note_entities_llm_recurrence r,
@@ -111,7 +118,7 @@ llm_path AS (
          OR LOWER(json_extract_string(e.value,'$.evidence_text')) LIKE '%pathology%'
          OR LOWER(json_extract_string(e.value,'$.evidence_text')) LIKE '%lobectomy%'
          OR LOWER(json_extract_string(e.value,'$.evidence_text')) LIKE '%thyroidectomy%')
-  GROUP BY r.research_id
+  GROUP BY 1
 ),
 unioned AS (
   SELECT rid, 'multi_malignant_surgery' AS source, rec_date, NULL::VARCHAR AS evidence, 1 AS priority FROM multi_surg
@@ -133,7 +140,7 @@ WITH first_surg AS (
 ),
 llm_img AS (
   SELECT
-    r.research_id AS rid, 'llm_imaging_keyword' AS img_source,
+    CAST(r.research_id AS VARCHAR) AS rid, 'llm_imaging_keyword' AS img_source,
     TRY_CAST(json_extract_string(e.value,'$.entity_date') AS DATE) AS img_date,
     LEFT(json_extract_string(e.value,'$.evidence_text'), 400) AS img_finding,
     CASE
@@ -206,6 +213,9 @@ UNION ALL SELECT rid, img_source, img_date, img_finding, modality, 3 FROM mri_su
 UNION ALL SELECT rid, img_source, img_date, img_finding, modality, 4 FROM nm_susp;
 
 -- 3. Patient-grain canonical_recurrence_resolved_v1 --------------------------
+--    recurrence_path_proven, recurrence_imaging_suspicious, and recurrence_status_final
+--    are derived from ONE evidence spine (dual-track: imaging may remain TRUE when path
+--    is TRUE; status prioritizes path_proven for categorical reporting).
 
 CREATE OR REPLACE TABLE main.canonical_recurrence_resolved_v1 AS
 WITH first_surg AS (
@@ -213,51 +223,68 @@ WITH first_surg AS (
   FROM main.canonical_path_malignant_events_v1 WHERE primary_histology IS NOT NULL GROUP BY 1
 ),
 pp AS (
-  SELECT research_id AS rid, MIN(path_proven_date) AS path_date,
+  SELECT CAST(research_id AS VARCHAR) AS rid, MIN(path_proven_date) AS path_date,
          STRING_AGG(DISTINCT path_proven_source, ',' ORDER BY path_proven_source) AS path_sources,
          STRING_AGG(DISTINCT NULLIF(path_proven_evidence,''), ' | ') AS path_evidence
   FROM manuscript_workspace.recurrence_path_proven_candidates_v1 GROUP BY 1
 ),
 imgp AS (
-  SELECT research_id AS rid, MIN(img_date) AS img_date,
+  SELECT CAST(research_id AS VARCHAR) AS rid, MIN(img_date) AS img_date,
          STRING_AGG(DISTINCT modality, ',' ORDER BY modality) AS modalities,
          STRING_AGG(DISTINCT img_source, ',' ORDER BY img_source) AS img_sources,
          STRING_AGG(DISTINCT NULLIF(img_finding,''), ' | ') AS img_findings,
          COUNT(*) AS n_imaging_events
   FROM manuscript_workspace.recurrence_imaging_suspicious_candidates_v1 GROUP BY 1
 ),
-all_pts AS (SELECT DISTINCT CAST(research_id AS VARCHAR) AS rid FROM main.canonical_patient_master)
+all_pts AS (SELECT DISTINCT CAST(research_id AS VARCHAR) AS rid FROM main.canonical_patient_master),
+recurrence_evidence_v1 AS (
+  SELECT
+    ap.rid AS research_id,
+    fs.first_surg_date,
+    (pp.rid IS NOT NULL) AS has_path_proven_evidence,
+    (imgp.rid IS NOT NULL) AS has_imaging_suspicious_evidence,
+    pp.path_date,
+    pp.path_sources,
+    pp.path_evidence,
+    imgp.img_date,
+    imgp.modalities,
+    imgp.img_sources,
+    imgp.img_findings,
+    imgp.n_imaging_events
+  FROM all_pts ap
+  LEFT JOIN first_surg fs ON fs.rid = ap.rid
+  LEFT JOIN pp ON pp.rid = ap.rid
+  LEFT JOIN imgp ON imgp.rid = ap.rid
+)
 SELECT
-  ap.rid AS research_id, fs.first_surg_date,
-  (pp.rid IS NOT NULL) AS recurrence_path_proven,
-  pp.path_date AS recurrence_path_proven_date,
-  pp.path_sources AS recurrence_path_proven_source,
-  pp.path_evidence AS recurrence_path_proven_evidence,
-  CASE WHEN pp.path_date IS NOT NULL AND fs.first_surg_date IS NOT NULL
-       THEN date_diff('day', fs.first_surg_date, pp.path_date) ELSE NULL END AS days_to_path_proven,
-  (imgp.rid IS NOT NULL) AS recurrence_imaging_suspicious,
-  imgp.img_date AS recurrence_imaging_suspicious_date,
-  imgp.modalities AS recurrence_imaging_modality,
-  CASE WHEN imgp.modalities LIKE '%,%' THEN 'multiple' ELSE imgp.modalities END AS recurrence_imaging_modality_summary,
-  imgp.img_sources AS recurrence_imaging_source,
-  imgp.img_findings AS recurrence_imaging_finding_text,
-  imgp.n_imaging_events AS recurrence_imaging_n_events,
-  CASE WHEN imgp.img_date IS NOT NULL AND fs.first_surg_date IS NOT NULL
-       THEN date_diff('day', fs.first_surg_date, imgp.img_date) ELSE NULL END AS days_to_imaging_suspicious,
-  CASE WHEN pp.path_date IS NOT NULL AND imgp.img_date IS NOT NULL
-            AND imgp.img_date < pp.path_date - INTERVAL '7 days'
+  e.research_id,
+  e.first_surg_date,
+  e.has_path_proven_evidence AS recurrence_path_proven,
+  e.path_date AS recurrence_path_proven_date,
+  e.path_sources AS recurrence_path_proven_source,
+  e.path_evidence AS recurrence_path_proven_evidence,
+  CASE WHEN e.path_date IS NOT NULL AND e.first_surg_date IS NOT NULL
+       THEN date_diff('day', e.first_surg_date, e.path_date) ELSE NULL END AS days_to_path_proven,
+  e.has_imaging_suspicious_evidence AS recurrence_imaging_suspicious,
+  e.img_date AS recurrence_imaging_suspicious_date,
+  e.modalities AS recurrence_imaging_modality,
+  CASE WHEN e.modalities LIKE '%,%' THEN 'multiple' ELSE e.modalities END AS recurrence_imaging_modality_summary,
+  e.img_sources AS recurrence_imaging_source,
+  e.img_findings AS recurrence_imaging_finding_text,
+  e.n_imaging_events AS recurrence_imaging_n_events,
+  CASE WHEN e.img_date IS NOT NULL AND e.first_surg_date IS NOT NULL
+       THEN date_diff('day', e.first_surg_date, e.img_date) ELSE NULL END AS days_to_imaging_suspicious,
+  CASE WHEN e.path_date IS NOT NULL AND e.img_date IS NOT NULL
+            AND e.img_date < e.path_date - INTERVAL '7 days'
        THEN TRUE ELSE FALSE END AS recurrence_imaging_then_path_confirmed,
   CASE
-    WHEN pp.rid IS NOT NULL                       THEN 'path_proven'
-    WHEN imgp.rid IS NOT NULL                     THEN 'imaging_only_unconfirmed'
+    WHEN e.has_path_proven_evidence              THEN 'path_proven'
+    WHEN e.has_imaging_suspicious_evidence       THEN 'imaging_only_unconfirmed'
     ELSE 'none'
   END AS recurrence_status_final,
-  'mig_62_canonical_recurrence_resolved_v1_20260427' AS build_script,
+  'mig_62_canonical_recurrence_resolved_v1_20260501_coherence' AS build_script,
   CURRENT_TIMESTAMP AS build_ts
-FROM all_pts ap
-LEFT JOIN first_surg fs ON fs.rid = ap.rid
-LEFT JOIN pp ON pp.rid = ap.rid
-LEFT JOIN imgp ON imgp.rid = ap.rid;
+FROM recurrence_evidence_v1 e;
 
 -- 4. Layer recurrence into ETE manuscript view (v7) --------------------------
 -- See repo: see also refresh of main.canonical_ete_event_resolved_v1 to add
