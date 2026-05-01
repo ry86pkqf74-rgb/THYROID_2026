@@ -1,0 +1,32 @@
+{
+  "row_counts": {
+    "release_manifest_v1": 1,
+    "vw_patient_master_safe_VIEW_v1": 10871,
+    "vw_path_malignant_tumor_safe_VIEW_v1": 5944,
+    "vw_recurrence_safe_VIEW_v1": 10739,
+    "vw_molecular_safe_VIEW_v1": 1384,
+    "vw_fna_safe_VIEW_v1": 8050,
+    "vw_us_nodule_safe_VIEW_v1": 29504,
+    "vw_labs_long_safe_VIEW_v1": 44124,
+    "vw_cohort_membership_safe_VIEW_v1": 10871
+  },
+  "gate": [
+    208,
+    0,
+    0,
+    0,
+    0
+  ],
+  "metrics": {
+    "n_patients": 10871,
+    "n_surgeries": 4022,
+    "n_malignant_patients": 4022,
+    "n_pathology_events": 5944,
+    "n_fna_events": 8050,
+    "n_molecular_events": 1384,
+    "n_us_exams": 8843,
+    "n_recurrence_path_proven": 143,
+    "n_recurrence_imaging_only": 585,
+    "qc_open_issue_count": 0
+  }
+}
