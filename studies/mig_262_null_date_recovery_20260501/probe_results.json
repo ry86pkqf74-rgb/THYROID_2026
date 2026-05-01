@@ -1,0 +1,16 @@
+{
+  "probed_at_utc": "2026-05-01T22:04:34.648084+00:00",
+  "db": "thyroid_canonical_publication_v1_0",
+  "raw_imaging_12_slots_v1_exists": false,
+  "imaging_exam_master_v1": {
+    "null_exam_date": 2050,
+    "total": 13347,
+    "distinct_rid_exam_id_null": 2050
+  },
+  "legacy_join_null_exam_to_dated_nodule_same_exam_id": 0,
+  "null_exam_same_rid_any_dated_legacy_nodule": 6,
+  "canonical_us_nodule_v2_non_aggregate": {
+    "null_exam_date": 2231,
+    "null_exam_text_digit_date_hits": 0
+  }
+}

@@ -24,7 +24,8 @@ Usage::
   .venv/bin/python scripts/mig_262_imaging_date_ln_flag.py --apply --ln-only
   .venv/bin/python scripts/mig_262_imaging_date_ln_flag.py --apply-imaging-only
 
-Closes: CF-mig260e (imaging dates), CF-mig260g (LN rollup); CF-mig262-NULL-DATE-RECOVERY open.
+Closes: CF-mig260e (imaging dates), CF-mig260g (LN rollup).
+Open: CF-mig262-NULL-DATE-RECOVERY — see studies/mig_262_null_date_recovery_20260501/.
 """
 
 from __future__ import annotations

@@ -13,6 +13,8 @@
 --   Archive on ...raw_imaging_12_slots_v1_pre_mig262_20260501 + UPDATE that table
 --   if main.raw_imaging_12_slots_v1 exists (multimodule script 50).
 --
--- NULL bulk recovery (~2k rows): CF-mig262-NULL-DATE-RECOVERY remains open.
+-- NULL bulk recovery (~2,050 rows on main.imaging_exam_master_v1): CF-mig262-NULL-DATE-RECOVERY
+-- remains open — publication DB has no main.raw_imaging_12_slots_v1; legacy exam_id join recovers 0.
+-- See studies/mig_262_null_date_recovery_20260501/README.md and scripts/mig_262_null_date_probe.py.
 
 SELECT 1 WHERE FALSE;
