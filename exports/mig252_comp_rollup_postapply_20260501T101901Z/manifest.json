@@ -1,0 +1,19 @@
+{
+  "run_id": "mig_252_comp_confirmed_rollup_fix_20260501",
+  "run_ts": "20260501T101901Z",
+  "database": "thyroid_canonical_publication_v1_0",
+  "token_mode": "env:MOTHERDUCK_TOKEN",
+  "out_dir": "exports/mig252_comp_rollup_postapply_20260501T101901Z",
+  "target_columns": 54,
+  "main_mutations": 0,
+  "temp_table": "_mig252_corrected_rollup",
+  "summary": [
+    {
+      "n_patients": 10871,
+      "current_any_confirmed": 400,
+      "proposed_any_confirmed": 400,
+      "proposed_n_confirmed_sum": 460
+    }
+  ],
+  "vocal_paresis_policy": "source-strict FALSE because canonical_complications_events_v1 has no vc_paresis complication_type"
+}

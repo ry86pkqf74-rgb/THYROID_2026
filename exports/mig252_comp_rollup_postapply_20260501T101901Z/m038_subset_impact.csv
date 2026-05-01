@@ -1,0 +1,4 @@
+subset,n,current_any_confirmed,proposed_any_confirmed
+ge_200g,475,10,10
+lt_200g,8655,307,307
+weight_null,1741,83,83

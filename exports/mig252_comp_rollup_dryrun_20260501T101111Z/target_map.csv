@@ -1,0 +1,58 @@
+column_name,event_type,flavor,predicate
+any_confirmed_complication_flag,any,confirmed,any present definitive/probable event
+any_confirmed_complication,any,confirmed,any present definitive/probable event
+n_confirmed_complications,any,confirmed,count distinct complication_type with present definitive/probable event
+comp_airway_complication_any_evidence,airway_complication,any_evidence,LOWER(e.complication_type) = 'airway_complication' AND e.finding_status = 'present'
+comp_airway_complication_definitive,airway_complication,definitive,LOWER(e.complication_type) = 'airway_complication' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_airway_complication_probable_or_better,airway_complication,probable_or_better,"LOWER(e.complication_type) = 'airway_complication' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_chyle_leak_any_evidence,chyle_leak,any_evidence,LOWER(e.complication_type) = 'chyle_leak' AND e.finding_status = 'present'
+comp_chyle_leak_confirmed,chyle_leak,confirmed,"LOWER(e.complication_type) = 'chyle_leak' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_chyle_leak_definitive,chyle_leak,definitive,LOWER(e.complication_type) = 'chyle_leak' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_chyle_leak_probable_or_better,chyle_leak,probable_or_better,"LOWER(e.complication_type) = 'chyle_leak' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_chyle_leak_suspected,chyle_leak,suspected,LOWER(e.complication_type) = 'chyle_leak' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_hematoma_any_evidence,hematoma,any_evidence,LOWER(e.complication_type) = 'hematoma' AND e.finding_status = 'present'
+comp_hematoma_confirmed,hematoma,confirmed,"LOWER(e.complication_type) = 'hematoma' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hematoma_definitive,hematoma,definitive,LOWER(e.complication_type) = 'hematoma' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_hematoma_probable_or_better,hematoma,probable_or_better,"LOWER(e.complication_type) = 'hematoma' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hematoma_suspected,hematoma,suspected,LOWER(e.complication_type) = 'hematoma' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_hypocalcemia_clinical_any_evidence,hypocalcemia_clinical,any_evidence,LOWER(e.complication_type) = 'hypocalcemia_clinical' AND e.finding_status = 'present'
+comp_hypocalcemia_clinical_definitive,hypocalcemia_clinical,definitive,LOWER(e.complication_type) = 'hypocalcemia_clinical' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_hypocalcemia_clinical_probable_or_better,hypocalcemia_clinical,probable_or_better,"LOWER(e.complication_type) = 'hypocalcemia_clinical' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hypocalcemia_confirmed,hypocalcemia_clinical,confirmed,"LOWER(e.complication_type) = 'hypocalcemia_clinical' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hypocalcemia_suspected,hypocalcemia_clinical,suspected,LOWER(e.complication_type) = 'hypocalcemia_clinical' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_hypoparathyroidism_any_evidence,hypoparathyroidism,any_evidence,LOWER(e.complication_type) = 'hypoparathyroidism' AND e.finding_status = 'present'
+comp_hypoparathyroidism_confirmed,hypoparathyroidism,confirmed,"LOWER(e.complication_type) = 'hypoparathyroidism' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hypoparathyroidism_definitive,hypoparathyroidism,definitive,LOWER(e.complication_type) = 'hypoparathyroidism' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_hypoparathyroidism_probable_or_better,hypoparathyroidism,probable_or_better,"LOWER(e.complication_type) = 'hypoparathyroidism' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_hypoparathyroidism_suspected,hypoparathyroidism,suspected,LOWER(e.complication_type) = 'hypoparathyroidism' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_mortality_any_evidence,mortality,any_evidence,LOWER(e.complication_type) = 'mortality' AND e.finding_status = 'present'
+comp_mortality_definitive,mortality,definitive,LOWER(e.complication_type) = 'mortality' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_mortality_probable_or_better,mortality,probable_or_better,"LOWER(e.complication_type) = 'mortality' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_pneumothorax_any_evidence,pneumothorax,any_evidence,LOWER(e.complication_type) = 'pneumothorax' AND e.finding_status = 'present'
+comp_pneumothorax_definitive,pneumothorax,definitive,LOWER(e.complication_type) = 'pneumothorax' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_pneumothorax_probable_or_better,pneumothorax,probable_or_better,"LOWER(e.complication_type) = 'pneumothorax' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_rln_injury_any_evidence,rln_injury,any_evidence,LOWER(e.complication_type) = 'rln_injury' AND e.finding_status = 'present'
+comp_rln_injury_confirmed,rln_injury,confirmed,"LOWER(e.complication_type) = 'rln_injury' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_rln_injury_definitive,rln_injury,definitive,LOWER(e.complication_type) = 'rln_injury' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_rln_injury_probable_or_better,rln_injury,probable_or_better,"LOWER(e.complication_type) = 'rln_injury' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_rln_injury_suspected,rln_injury,suspected,LOWER(e.complication_type) = 'rln_injury' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_seroma_any_evidence,seroma,any_evidence,LOWER(e.complication_type) = 'seroma' AND e.finding_status = 'present'
+comp_seroma_confirmed,seroma,confirmed,"LOWER(e.complication_type) = 'seroma' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_seroma_definitive,seroma,definitive,LOWER(e.complication_type) = 'seroma' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_seroma_probable_or_better,seroma,probable_or_better,"LOWER(e.complication_type) = 'seroma' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_seroma_suspected,seroma,suspected,LOWER(e.complication_type) = 'seroma' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_vc_paralysis_confirmed,vocal_cord_paralysis,confirmed,"LOWER(e.complication_type) = 'vocal_cord_paralysis' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_vc_paralysis_suspected,vocal_cord_paralysis,suspected,LOWER(e.complication_type) = 'vocal_cord_paralysis' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
+comp_vc_paresis_confirmed,vc_paresis_source_absent_in_canonical_events,source_absent_false,FALSE because canonical source type is absent
+comp_vc_paresis_suspected,vc_paresis_source_absent_in_canonical_events,source_absent_false,FALSE because canonical source type is absent
+comp_vocal_cord_paralysis_any_evidence,vocal_cord_paralysis,any_evidence,LOWER(e.complication_type) = 'vocal_cord_paralysis' AND e.finding_status = 'present'
+comp_vocal_cord_paralysis_definitive,vocal_cord_paralysis,definitive,LOWER(e.complication_type) = 'vocal_cord_paralysis' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_vocal_cord_paralysis_probable_or_better,vocal_cord_paralysis,probable_or_better,"LOWER(e.complication_type) = 'vocal_cord_paralysis' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_wound_dehiscence_any_evidence,wound_dehiscence,any_evidence,LOWER(e.complication_type) = 'wound_dehiscence' AND e.finding_status = 'present'
+comp_wound_dehiscence_definitive,wound_dehiscence,definitive,LOWER(e.complication_type) = 'wound_dehiscence' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_wound_dehiscence_probable_or_better,wound_dehiscence,probable_or_better,"LOWER(e.complication_type) = 'wound_dehiscence' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_wound_infection_any_evidence,wound_infection,any_evidence,LOWER(e.complication_type) = 'wound_infection' AND e.finding_status = 'present'
+comp_wound_infection_confirmed,wound_infection,confirmed,"LOWER(e.complication_type) = 'wound_infection' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_wound_infection_definitive,wound_infection,definitive,LOWER(e.complication_type) = 'wound_infection' AND e.finding_status = 'present' AND e.evidence_strength = 'definitive'
+comp_wound_infection_probable_or_better,wound_infection,probable_or_better,"LOWER(e.complication_type) = 'wound_infection' AND e.finding_status = 'present' AND e.evidence_strength IN ('definitive','probable')"
+comp_wound_infection_suspected,wound_infection,suspected,LOWER(e.complication_type) = 'wound_infection' AND e.finding_status = 'present' AND e.evidence_strength = 'possible'
