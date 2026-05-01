@@ -167,6 +167,43 @@ FROM main.canonical_recurrence_resolved_v1;
 -- Live metrics; not pass/fail — see manuscript_workspace.m044_legacy_recurrence_flag_audit_v1 (mig_257).
 SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1;
 
+-- QUERY: table1b_tt_ete_audit
+-- Table 1B — Among M044-eligible patients with total thyroidectomy (canonical surgical-extent union).
+-- SSOT extent rule: `surg_total_thyroidectomy IS TRUE` OR normalized procedure_type = total_thyroidectomy.
+-- ETE buckets align with primary Table 1 / main_audit CASE logic (short labels).
+WITH base AS (
+  SELECT
+    p.research_id,
+    p.ete_grade_final,
+    p.surg_total_thyroidectomy,
+    p.surg_procedure_type
+  FROM main.canonical_patient_master AS p
+  WHERE p.is_malignant IS TRUE
+    AND p.ajcc8_stage_group IS NOT NULL
+),
+tt AS (
+  SELECT
+    research_id,
+    CASE
+      WHEN ete_grade_final IN ('false', 'absent') THEN 'No/negative'
+      WHEN ete_grade_final = 'microscopic' THEN 'Microscopic'
+      WHEN ete_grade_final = 'gross' THEN 'Gross'
+      WHEN ete_grade_final = 'present_ungraded' THEN 'Present-ungraded'
+      ELSE 'Missing/other'
+    END AS ete_bucket
+  FROM base
+  WHERE surg_total_thyroidectomy IS TRUE
+    OR LOWER(TRIM(COALESCE(CAST(surg_procedure_type AS VARCHAR), ''))) = 'total_thyroidectomy'
+)
+SELECT
+  COUNT(*) AS tt_n_total,
+  SUM(CASE WHEN ete_bucket = 'No/negative' THEN 1 ELSE 0 END) AS tt_n_noneg,
+  SUM(CASE WHEN ete_bucket = 'Microscopic' THEN 1 ELSE 0 END) AS tt_n_microscopic,
+  SUM(CASE WHEN ete_bucket = 'Gross' THEN 1 ELSE 0 END) AS tt_n_gross,
+  SUM(CASE WHEN ete_bucket = 'Present-ungraded' THEN 1 ELSE 0 END) AS tt_n_present_ungraded,
+  SUM(CASE WHEN ete_bucket = 'Missing/other' THEN 1 ELSE 0 END) AS tt_n_missing_other
+FROM tt;
+
 -- QUERY: ete_grade_final_raw
 -- Drift diagnostics: raw ete_grade_final distribution (not used for pass/fail).
 SELECT

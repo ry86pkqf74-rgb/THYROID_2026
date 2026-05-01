@@ -77,6 +77,17 @@ EXPECTED_SURGERY_DATE_LINEAGE = {
     "calendar_partition_violations": 0,
 }
 
+# Table 1B — total thyroidectomy subset × ETE (canonical union: BOOLEAN OR procedure_type).
+# Frozen with publication v1.0 CPM + mig_253 procedure harmonization (2026-05-01).
+EXPECTED_TABLE1B_TT_ETE = {
+    "tt_n_total": 2798,
+    "tt_n_noneg": 59,
+    "tt_n_microscopic": 1732,
+    "tt_n_gross": 956,
+    "tt_n_present_ungraded": 23,
+    "tt_n_missing_other": 28,
+}
+
 
 def _split_queries(sql_text: str) -> dict[str, str]:
     # Line-start markers: -- QUERY: block_name
@@ -194,6 +205,22 @@ def _markdown_report(
             lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
     lines += [
         "",
+        "## Table 1B — total thyroidectomy × ETE (`table1b_tt_ete_audit`)",
+        "",
+        "Union rule: `surg_total_thyroidectomy IS TRUE` OR `surg_procedure_type` normalized to "
+        "`total_thyroidectomy` on `main.canonical_patient_master` (M044 eligibility filter).",
+        "",
+        "| Metric | Expected | Actual | OK |",
+        "|--------|---------|--------|-----|",
+    ]
+    for k, v in checks["details"].get("table1b_tt_ete", {}).items():
+        exp = v.get("expected")
+        if exp is None:
+            lines.append(f"| `{k}` | — | {v['actual']} | — |")
+        else:
+            lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
+    lines += [
+        "",
         "## Surgery date vs operative v2 (`surgery_date_vs_operative_v2_optional`, informational)",
         "",
         "| Metric | Actual |",
@@ -284,6 +311,7 @@ def main() -> int:
         "surgery_date_lineage",
         "recurrence_coherence",
         "legacy_recurrence_audit",
+        "table1b_tt_ete_audit",
         "ete_grade_final_raw",
         "surgery_date_vs_operative_v2_optional",
     )
@@ -300,6 +328,7 @@ def main() -> int:
         "surgery_date_lineage": {},
         "recurrence_coherence": {},
         "legacy_recurrence_audit": {},
+        "table1b_tt_ete": {},
         "surgery_date_operative_v2": {},
     }
 
@@ -366,6 +395,14 @@ def main() -> int:
     failures.extend(fs)
     details["surgery_date_lineage"] = ds
 
+    _exec_or_binder_help(queries["table1b_tt_ete_audit"])
+    cols = [x[0] for x in con.description]
+    row = con.fetchone()
+    t1b_d = _row_to_plain_dict(row, cols)
+    ft1b, dt1b = _compare_block("table1b_tt_ete_audit", t1b_d, EXPECTED_TABLE1B_TT_ETE)
+    failures.extend(ft1b)
+    details["table1b_tt_ete"] = dt1b
+
     _exec_or_binder_help(queries["surgery_date_vs_operative_v2_optional"])
     cols = [x[0] for x in con.description]
     row = con.fetchone()
@@ -417,6 +454,7 @@ def main() -> int:
             "cohort_membership_row": mem_d,
             "cpm_ete_consistency_row": ete_d,
             "surgery_date_lineage_row": sdl_d,
+            "table1b_tt_ete_audit_row": t1b_d,
             "surgery_date_vs_operative_v2_row": opv2_d,
             "recurrence_coherence_row": coh_d,
             "legacy_recurrence_audit_row": leg_d,

@@ -175,6 +175,46 @@ FROM cohort GROUP BY ete_group ORDER BY n DESC;
 
 
 -- ---------------------------------------------------------------------
+-- 2b. Table 1B — Total thyroidectomy subset: ETE distribution (demographics / surgical extent)
+-- ---------------------------------------------------------------------
+-- Canonical total-thyroidectomy patient: union of CPM BOOLEAN and harmonized procedure type
+-- (mig_253 lineage). `cohort_m044_ajcc_ete_v1` exposes `surg_procedure_type` only — do not use
+-- procedure_type alone for this table; join to `main.canonical_patient_master` for the BOOLEAN
+-- OR use this self-contained CPM slice (same WHERE as M044 cohort).
+WITH m044_elig AS (
+  SELECT
+    p.research_id,
+    p.ete_grade_final,
+    p.surg_total_thyroidectomy,
+    p.surg_procedure_type
+  FROM main.canonical_patient_master AS p
+  WHERE p.is_malignant IS TRUE
+    AND p.ajcc8_stage_group IS NOT NULL
+),
+tt AS (
+  SELECT
+    research_id,
+    ete_grade_final,
+    CASE
+      WHEN ete_grade_final IN ('false', 'absent') THEN 'No/negative ETE'
+      WHEN ete_grade_final = 'microscopic' THEN 'Microscopic ETE'
+      WHEN ete_grade_final = 'gross' THEN 'Gross ETE'
+      WHEN ete_grade_final = 'present_ungraded' THEN 'Present ungraded'
+      ELSE 'Missing/other'
+    END AS ete_group
+  FROM m044_elig
+  WHERE surg_total_thyroidectomy IS TRUE
+    OR LOWER(TRIM(COALESCE(CAST(surg_procedure_type AS VARCHAR), ''))) = 'total_thyroidectomy'
+)
+SELECT ete_group,
+  COUNT(*) AS n,
+  ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS pct_of_tt_cohort
+FROM tt
+GROUP BY ete_group
+ORDER BY n DESC;
+
+
+-- ---------------------------------------------------------------------
 -- 3. Table 2 — Recurrence outcomes by ETE group (DUAL-TRACK)
 -- ---------------------------------------------------------------------
 WITH cohort AS (

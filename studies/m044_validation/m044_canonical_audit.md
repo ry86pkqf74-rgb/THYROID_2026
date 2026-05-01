@@ -1,6 +1,6 @@
 # M044 canonical cohort validation
 
-- **Generated (UTC):** 2026-05-01T13:54:37Z
+- **Generated (UTC):** 2026-05-01T14:06:17Z
 - **Cohort:** `manuscript_workspace.cohort_m044_ajcc_ete_v1`
 - **SQL:** `scripts/m044_validate_canonical_v1.sql`
 
@@ -56,6 +56,19 @@
 | `surg_date_post_2024_n` | 35 | 35 | yes |
 | `surg_date_after_2024_06_04_n` | 245 | 245 | yes |
 | `calendar_partition_violations` | 0 | 0 | yes |
+
+## Table 1B — total thyroidectomy × ETE (`table1b_tt_ete_audit`)
+
+Union rule: `surg_total_thyroidectomy IS TRUE` OR `surg_procedure_type` normalized to `total_thyroidectomy` on `main.canonical_patient_master` (M044 eligibility filter).
+
+| Metric | Expected | Actual | OK |
+|--------|---------|--------|-----|
+| `tt_n_total` | 2798 | 2798 | yes |
+| `tt_n_noneg` | 59 | 59 | yes |
+| `tt_n_microscopic` | 1732 | 1732 | yes |
+| `tt_n_gross` | 956 | 956 | yes |
+| `tt_n_present_ungraded` | 23 | 23 | yes |
+| `tt_n_missing_other` | 28 | 28 | yes |
 
 ## Surgery date vs operative v2 (`surgery_date_vs_operative_v2_optional`, informational)
 

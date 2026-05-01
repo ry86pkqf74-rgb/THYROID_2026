@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-01T13:54:37Z",
+  "generated_at_utc": "2026-05-01T14:06:17Z",
   "cohort_object": "manuscript_workspace.cohort_m044_ajcc_ete_v1",
   "sql_path": "scripts/m044_validate_canonical_v1.sql",
   "overall_status": "PASS",
@@ -202,6 +202,38 @@
         "pass": true
       }
     },
+    "table1b_tt_ete": {
+      "tt_n_total": {
+        "expected": 2798,
+        "actual": 2798,
+        "pass": true
+      },
+      "tt_n_noneg": {
+        "expected": 59,
+        "actual": 59,
+        "pass": true
+      },
+      "tt_n_microscopic": {
+        "expected": 1732,
+        "actual": 1732,
+        "pass": true
+      },
+      "tt_n_gross": {
+        "expected": 956,
+        "actual": 956,
+        "pass": true
+      },
+      "tt_n_present_ungraded": {
+        "expected": 23,
+        "actual": 23,
+        "pass": true
+      },
+      "tt_n_missing_other": {
+        "expected": 28,
+        "actual": 28,
+        "pass": true
+      }
+    },
     "surgery_date_operative_v2": {
       "n_compared": {
         "expected": null,
@@ -256,6 +288,14 @@
       "surg_date_post_2024_n": 35,
       "surg_date_after_2024_06_04_n": 245,
       "calendar_partition_violations": 0
+    },
+    "table1b_tt_ete_audit_row": {
+      "tt_n_total": 2798,
+      "tt_n_noneg": 59,
+      "tt_n_microscopic": 1732,
+      "tt_n_gross": 956,
+      "tt_n_present_ungraded": 23,
+      "tt_n_missing_other": 28
     },
     "surgery_date_vs_operative_v2_row": {
       "n_compared": 4128,
