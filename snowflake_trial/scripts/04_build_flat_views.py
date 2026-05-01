@@ -46,6 +46,8 @@ TABLES = [
     "CANONICAL_PATH_GLAND_EVENTS_V1",
     "CANONICAL_PATH_MALIGNANT_EVENTS_V1",
     "CANONICAL_COMPLICATIONS_EVENTS_V1",
+    # mig_260: flat TIRADS rollup for Prompt 7 / imaging validators (post-CPM TIRADS prune)
+    "CANONICAL_US_PATIENT_MASTER_VIEW_V2",
 ]
 
 # Map Parquet types -> Snowflake cast targets

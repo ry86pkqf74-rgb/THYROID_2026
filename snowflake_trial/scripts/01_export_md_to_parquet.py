@@ -7,7 +7,7 @@ Run from /Users/ros/THyroid 2026/ with .venv activated:
 Reads from: md:thyroid_canonical_publication_v1_0
 Writes to:  /Users/ros/THyroid 2026/snowflake_trial/parquet/<table>.parquet
 """
-import duckdb, os, sys, time
+import duckdb, time
 from pathlib import Path
 
 OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/parquet")
@@ -28,15 +28,30 @@ TABLES = [
     "canonical_us_exam_events_v1",
     "canonical_recurrence_events_v1",
     "canonical_invasion_events_v1",
+    # mig_260 / CF-mig260f: live CPM no longer carries v12/imaging/preop TIRADS cols;
+    # Snowflake Prompt 7 joins this rollup for max_tirads_category_ever.
+    "canonical_us_patient_master_VIEW_v2",
 ]
 
 con = duckdb.connect("md:thyroid_canonical_publication_v1_0")
 
-# Discover which of these actually exist
-existing = {r[0] for r in con.sql(
-    "SELECT table_name FROM duckdb_tables() "
-    "WHERE database_name='thyroid_canonical_publication_v1_0' AND schema_name='main'"
-).fetchall()}
+# Discover which of these actually exist (tables + views — cupm_v2 is a VIEW)
+existing_tables = {
+    r[0]
+    for r in con.sql(
+        "SELECT table_name FROM duckdb_tables() "
+        "WHERE database_name='thyroid_canonical_publication_v1_0' AND schema_name='main'"
+    ).fetchall()
+}
+existing_views = {
+    r[0]
+    for r in con.sql(
+        "SELECT DISTINCT table_name FROM information_schema.views "
+        "WHERE table_catalog = 'thyroid_canonical_publication_v1_0' "
+        "AND table_schema = 'main'"
+    ).fetchall()
+}
+existing = existing_tables | existing_views
 
 print(f"=== {len(existing)} main tables in publication DB ===")
 
