@@ -124,6 +124,11 @@ SELECT
   ) AS v_none_but_evidence_bool
 FROM main.canonical_recurrence_resolved_v1;
 
+-- QUERY: legacy_recurrence_audit
+-- Legacy CPM flags vs canonical_recurrence_resolved_v1 (M044 cohort only).
+-- Live metrics; not pass/fail — see manuscript_workspace.m044_legacy_recurrence_flag_audit_v1 (mig_257).
+SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1;
+
 -- QUERY: ete_grade_final_raw
 -- Drift diagnostics: raw ete_grade_final distribution (not used for pass/fail).
 SELECT

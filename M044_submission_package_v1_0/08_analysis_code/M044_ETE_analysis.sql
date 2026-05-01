@@ -9,14 +9,17 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 0. Spot-check (matches ChatGPT handoff)
+-- 0. Spot-check (matches ChatGPT handoff) + legacy-vs-canonical QC row
 -- ---------------------------------------------------------------------
 SELECT
   COUNT(*)                                                AS n,
   SUM(CASE WHEN any_recurrence_flag THEN 1 ELSE 0 END)    AS any_recurrence_n,
   ROUND(MEDIAN(followup_years), 3)                        AS median_followup_years
 FROM manuscript_workspace.cohort_m044_ajcc_ete_v1;
--- Expected: n=4128, any_recurrence_n=503, median_followup_years=1.002
+-- Cohort row counts / median FU drift with data refreshes.
+-- Legacy-vs-canonical headline metrics (do not use legacy flags as endpoints):
+SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1;
+-- Deploy: qc_framework_v1/migrations/257_m044_legacy_recurrence_flag_audit_20260501.sql
 
 
 -- ---------------------------------------------------------------------

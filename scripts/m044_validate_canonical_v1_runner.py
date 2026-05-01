@@ -177,6 +177,19 @@ def _markdown_report(
             lines.append(f"| `{k}` | — | {v['actual']} | — |")
         else:
             lines.append(f"| `{k}` | {exp} | {v['actual']} | {'yes' if v['pass'] else 'no'} |")
+    lines += [
+        "",
+        "## Legacy recurrence audit (`legacy_recurrence_audit`)",
+        "",
+        "Live counts from `manuscript_workspace.m044_legacy_recurrence_flag_audit_v1` (mig_257). "
+        "Legacy flags are **not** analytic endpoints.",
+        "",
+        "| Metric | Actual |",
+        "|--------|--------|",
+    ]
+    for k, v in checks["details"].get("legacy_recurrence_audit", {}).items():
+        lines.append(f"| `{k}` | {v.get('actual')} |")
+    lines.append("")
     if checks["failures"]:
         lines += ["", "## Failures", ""]
         for f in checks["failures"]:
@@ -232,6 +245,7 @@ def main() -> int:
         "cohort_membership",
         "cpm_ete_consistency",
         "recurrence_coherence",
+        "legacy_recurrence_audit",
         "ete_grade_final_raw",
     )
     for r in required:
@@ -245,6 +259,7 @@ def main() -> int:
         "cohort_membership": {},
         "cpm_ete_consistency": {},
         "recurrence_coherence": {},
+        "legacy_recurrence_audit": {},
     }
 
     def _exec_or_binder_help(sql: str) -> None:
@@ -310,6 +325,18 @@ def main() -> int:
     failures.extend(fc)
     details["recurrence_coherence"] = dc
 
+    # Legacy recurrence flags vs canonical (informational; no frozen expected counts)
+    _exec_or_binder_help(queries["legacy_recurrence_audit"])
+    cols = [x[0] for x in con.description]
+    row = con.fetchone()
+    leg_d = _row_to_plain_dict(row, cols)
+    for k, v in leg_d.items():
+        details["legacy_recurrence_audit"][k] = {
+            "expected": None,
+            "actual": v,
+            "pass": True,
+        }
+
     # raw distribution
     _exec_or_binder_help(queries["ete_grade_final_raw"])
     cols = [x[0] for x in con.description]
@@ -329,6 +356,7 @@ def main() -> int:
             "cohort_membership_row": mem_d,
             "cpm_ete_consistency_row": ete_d,
             "recurrence_coherence_row": coh_d,
+            "legacy_recurrence_audit_row": leg_d,
         },
         "ete_grade_final_distribution": raw_rows,
     }

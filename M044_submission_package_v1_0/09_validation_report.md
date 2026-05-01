@@ -12,7 +12,7 @@
 
 **Go for manuscript drafting**, with two material modifications to ChatGPT's plan:
 
-1. **Switch the primary recurrence endpoint** from the cohort view's `any_recurrence_flag` to the canonical dual-track schema in `main.canonical_recurrence_resolved_v1`. The legacy `any_recurrence_flag` (n=503) and `structural_recurrence_flag` (n=1,819) are not consistent with the canonical resolution and include a large block of patients with no traceable recurrence evidence (see §4 below). The canonical convention explicitly states these tracks must NOT be collapsed.
+1. **Switch the primary recurrence endpoint** from the cohort view's `any_recurrence_flag` to the canonical dual-track schema in `main.canonical_recurrence_resolved_v1`. The legacy `any_recurrence_flag` and `structural_recurrence_flag` on `canonical_patient_master` are not consistent with the canonical resolution and include a large block of patients with no traceable recurrence evidence under `recurrence_status_final='none'` (headline M044-cohort metrics: `SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`; deploy `qc_framework_v1/migrations/257_m044_legacy_recurrence_flag_audit_20260501.sql`). The canonical convention explicitly states these tracks must NOT be collapsed.
 2. **Treat the no/negative ETE recurrence signal as a confounded subgroup, not as evidence against AJCC 8.** When recurrence is restricted to pathology-proven events, the no/negative ETE rate (12/192 = 6.25%) is small in absolute terms and is concentrated in patients with second surgery / completion-thyroidectomy ascertainment (10/29 recurred patients had ≥2 surgeries; median first→second surgery interval 680 days).
 
 The cohort spot-check from the ChatGPT handoff is **fully reproduced**:
@@ -20,7 +20,7 @@ The cohort spot-check from the ChatGPT handoff is **fully reproduced**:
 | Metric | Expected (ChatGPT) | Reproduced (Claude) | Status |
 |---|---|---|---|
 | n | 4128 | 4128 | ✓ |
-| any_recurrence_n | 503 | 503 | ✓ |
+| any_recurrence_n | `m044_legacy_recurrence_flag_audit_v1.legacy_any_recurrence_true_n` | matches `SUM(any_recurrence_flag)` on cohort | ✓ |
 | median_followup_years | 1.002 | 1.002 | ✓ |
 
 ---
@@ -76,11 +76,7 @@ ChatGPT counted only `ete_grade_final = 'gross'` as Gross ETE (n=1,266) and plac
 
 ### 3.2 Recurrence endpoint definition (large effect — must be addressed)
 
-ChatGPT used `cohort_m044_ajcc_ete_v1.any_recurrence_flag` (n=503) as the recurrence endpoint and noted that `structural_recurrence_flag` (n=1,819) appears unexpectedly high. Our investigation against `main.canonical_recurrence_resolved_v1` (the column-of-record per the table comment, built by `mig_62` 2026-04-27) shows:
-
-- 318 of the 503 patients flagged `any_recurrence_flag = true` have `recurrence_status_final = 'none'` and **no path-proven or imaging-suspicious evidence** in the canonical resolved table.
-- 1,467 of the 1,819 `structural_recurrence_flag = true` patients also have `recurrence_status_final = 'none'`.
-- The canonical convention explicitly states: "STRICT DUAL-TRACK — recurrence_path_proven and recurrence_imaging_suspicious are SEPARATE flags that must NOT be collapsed into a single any_recurrence variable."
+ChatGPT used `cohort_m044_ajcc_ete_v1.any_recurrence_flag` as the recurrence endpoint and noted that `structural_recurrence_flag` appears unexpectedly high. **Live reconciliation** against `main.canonical_recurrence_resolved_v1` for the M044 cohort is summarized in **`manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`** (one row: `legacy_any_recurrence_true_n`, `legacy_any_true_canonical_status_none_n`, `legacy_structural_recurrence_true_n`, `legacy_structural_true_canonical_status_none_n`, etc.). Example verification after mig_257 signing (2026-05-01): 503 / 318 / 1817 / 1588 for those four counts respectively — drift if CPM or recurrence layers change.
 
 **Recommended fix:** The manuscript primary endpoint should be **path-proven recurrence** (`recurrence_path_proven = TRUE`, n=145 across the analytic cohort), with **imaging-only-unconfirmed recurrence** (n=195) and the **composite (status ∈ {path_proven, imaging_only_unconfirmed})** (n=340) as secondary endpoints. This matches the user's request to confirm recurrence by pathology from op reports/biopsy versus imaging-suspicious features.
 
@@ -90,7 +86,9 @@ The legacy `any_recurrence_flag` should not appear in the manuscript without an 
 
 ## 4. Path-proven vs imaging-suspicious recurrence (per user request)
 
-Cross-tab between cohort flags and canonical resolved fields, all 4,128 patients:
+**Headline legacy-vs-canonical counts (M044 cohort):** `SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1`.
+
+Cross-tab between cohort flags and canonical resolved fields (detail cells drift with registry refreshes; retained below as **historical** snapshot at validation time):
 
 | any_recurrence_flag | recurrence_status_final | path_proven | imaging_susp | n |
 |---|---|---|---|---:|
@@ -240,7 +238,7 @@ Items still missing or under-populated (smoking, family history, childhood radia
 
 ## 9. Audit trail
 
-- Spot-check query reproduced; n=4128, any_recurrence_n=503, median_followup_years=1.002 (cohort_m044_ajcc_ete_v1).
+- Spot-check query reproduced; n=4128, median_followup_years=1.002 (`cohort_m044_ajcc_ete_v1`); legacy flag headline counts from `m044_legacy_recurrence_flag_audit_v1`.
 - ETE group counts reproduced under ChatGPT's exact definition.
 - All Tables 1–4 source SQL is captured in `M044_ETE_analysis.sql`.
 - Canonical recurrence convention from `main.canonical_recurrence_resolved_v1` table comment, build_script `mig_62_canonical_recurrence_resolved_v1_20260427`.

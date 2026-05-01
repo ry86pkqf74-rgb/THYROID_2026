@@ -281,6 +281,7 @@ def build_primary_prep(df: pd.DataFrame, *, strict_dtc: bool = False) -> pd.Data
     d["y_comp"] = d["recurrence_status_final"].isin(
         ["path_proven", "imaging_only_unconfirmed"]
     ).astype(int)
+    # Sensitivity only; legacy flag vs canonical: manuscript_workspace.m044_legacy_recurrence_flag_audit_v1
     d["y_any"] = d["any_recurrence_flag"].astype(bool).astype(int)
 
     d["ete_group"] = pd.Categorical(
