@@ -401,4 +401,62 @@ Each edit replaces a single literal string with another single literal string an
 
 ---
 
-**Audit complete.** Reproducibility anchors: `release_id='pub_v1_0_20260430'`; `signoff_registry` most-recent = `mig_253` (2026-05-01 06:41:00 UTC); cohort view `manuscript_workspace.cohort_m038_massive_goiter_v1` (~117 columns, post-mig_251). Companion deliverable: `M038_v2_DATA_AND_SOURCES.xlsx` (this directory).
+## Addendum 2026-05-01 — Standing rule on complication temporality (`feedback_complications_transient_vs_permanent.md`)
+
+After the initial audit completed, Logan set a standing rule that supersedes the v2 Table 4 layout for hypoparathyroidism, hypocalcemia, RLN injury, and VC paralysis. The full rule lives at `memory/feedback_complications_transient_vs_permanent.md`. Summary as it applies to M038:
+
+- **Hypoparathyroidism** must be split into two rows: postop transient (<6mo) and postop permanent (>6mo). The `comp_hypoparathyroidism_transient` and `comp_hypoparathyroidism_permanent` BOOLEANs on `main.canonical_patient_master` partition the confirmed set cleanly with zero unclassified. These columns are not exposed on `cohort_m038_massive_goiter_v1` and were joined from CPM for the re-derivation below.
+- **Hypocalcemia** must add a "present preop" flag row using `comp_hypocalcemia_timing_window = 'pre_surgery'` (the broader signal; `comp_hypocalcemia_clinical_preexisting` is empty in M038).
+- **RLN injury** and **VC paralysis** must add a "present preop" flag row, but the underlying preop encoding does not currently exist in `canonical_patient_master`. These rows must footnote the gap and the manuscript should reference the `CF-RLN-PREOP-FLAG` and `CF-VC-PARALYSIS-PREOP-FLAG` carry-forwards.
+
+### §3.5b — Re-derivation under the standing rule
+
+Joined query used:
+
+```sql
+WITH base AS (
+  SELECT research_id,
+    (COALESCE(gland_weight_final_g >= 100, FALSE)
+     OR COALESCE(ct_substernal_extension_any, FALSE) OR COALESCE(mri_substernal_any, FALSE)
+     OR COALESCE(ct_tracheal_deviation_any, FALSE) OR COALESCE(ct_tracheal_narrowing_any, FALSE) OR COALESCE(ct_airway_compromise_any, FALSE)) AS is_massive
+  FROM manuscript_workspace.cohort_m038_massive_goiter_v1
+)
+SELECT
+  is_massive,
+  COUNT(*) FILTER (WHERE cpm.comp_hypoparathyroidism_confirmed AND cpm.comp_hypoparathyroidism_transient) AS hpt_transient,
+  COUNT(*) FILTER (WHERE cpm.comp_hypoparathyroidism_confirmed AND cpm.comp_hypoparathyroidism_permanent) AS hpt_permanent,
+  COUNT(*) FILTER (WHERE cpm.comp_hypoparathyroidism_confirmed AND NOT cpm.comp_hypoparathyroidism_transient AND NOT cpm.comp_hypoparathyroidism_permanent) AS hpt_unclassified,
+  COUNT(*) FILTER (WHERE cpm.comp_hypocalcemia_timing_window = 'pre_surgery') AS hca_preop,
+  COUNT(*) FILTER (WHERE cpm.comp_hypoparathyroidism_preexisting) AS hpt_preop_fyi
+FROM base b
+JOIN main.canonical_patient_master cpm USING (research_id)
+GROUP BY is_massive;
+```
+
+Live results (M038 cohort, 2026-05-01):
+
+| Section (revised Table 4) | Cell description | Value | Live SQL ref | Notes |
+|---|---|---:|---|---|
+| §3.5b | Hypoparathyroidism — postop transient (<6mo), massive (n=2,501) | 83 (3.32%) | as above | Replaces the single "hypoparathyroidism 87 (3.48%)" row. RR vs non-massive: (83/2,501) / (197/8,370) = 1.41 |
+| §3.5b | Hypoparathyroidism — postop transient (<6mo), non-massive (n=8,370) | 197 (2.35%) | as above | |
+| §3.5b | Hypoparathyroidism — postop permanent (>6mo), massive (n=2,501) | 4 (0.16%) | as above | RR vs non-massive: (4/2,501) / (12/8,370) = 1.12 (small counts; CI will be wide) |
+| §3.5b | Hypoparathyroidism — postop permanent (>6mo), non-massive (n=8,370) | 12 (0.14%) | as above | |
+| §3.5b | Hypoparathyroidism — postop unclassified, massive | 0 | as above | Zero unclassified; partition is clean |
+| §3.5b | Hypoparathyroidism — postop unclassified, non-massive | 0 | as above | Zero unclassified; partition is clean |
+| §3.5b | Hypocalcemia — present preop, massive (n=2,501) | 7 (0.28%) | `comp_hypocalcemia_timing_window = 'pre_surgery'` | Distinct from postop confirmed (1) |
+| §3.5b | Hypocalcemia — present preop, non-massive (n=8,370) | 46 (0.55%) | as above | Distinct from postop confirmed (8) |
+| §3.5b | RLN injury — present preop, massive (n=2,501) | not encoded | — | Carry-forward `CF-RLN-PREOP-FLAG`; postop confirmed row unchanged at 14 (0.56%) |
+| §3.5b | RLN injury — present preop, non-massive (n=8,370) | not encoded | — | Carry-forward `CF-RLN-PREOP-FLAG`; postop confirmed row unchanged at 7 (0.084%) |
+| §3.5b | VC paralysis — present preop, massive (n=2,501) | not encoded | — | Carry-forward `CF-VC-PARALYSIS-PREOP-FLAG`; postop confirmed row unchanged at 19 (0.76%) |
+| §3.5b | VC paralysis — present preop, non-massive (n=8,370) | not encoded | — | Carry-forward `CF-VC-PARALYSIS-PREOP-FLAG`; postop confirmed row unchanged at 4 (0.048%) |
+| §3.5b | VC paresis — present preop, both arms | not encoded | — | Same gap as VC paralysis; postop confirmed remains 0 / 0 |
+
+**Reconciliation with original Table 4 row "Confirmed hypoparathyroidism":** original 87 / 209 (massive / non-massive). Under the standing rule: 83 (transient) + 4 (permanent) = 87 ✓ for massive; 197 (transient) + 12 (permanent) = 209 ✓ for non-massive. The split is arithmetically conservative (no cases gained or lost).
+
+**Cohort-wide validation (FYI, all-CPM):** 296 confirmed → 280 transient (94.6%) + 16 permanent (5.4%); zero unclassified. Limitation notes flagged on 14 cases (`followup_too_short_for_permanence_classification`, `reset_20260417:confirmed_duration_unknown`, `confirmed_hypopara_no_persistent_biochem_evidence_followup_gt_6mo`); 87% of confirmed cases have `timing_window='unknown'` — the trans/perm assignment uses additional signals (treatment_req, biochem persistence, NSQIP recovered_flag) beyond pure timing.
+
+The Excel deliverable's `05_Table4_Complications` tab has been updated to reflect the new layout. The v2.1 Cursor patch (originally 4 edits) is extended below to include the Table 4 restructuring and a Methods §2.4 / Limitations §5 cite of the standing rule.
+
+---
+
+**Audit complete.** Reproducibility anchors: `release_id='pub_v1_0_20260430'`; `signoff_registry` most-recent = `mig_253` (2026-05-01 06:41:00 UTC); cohort view `manuscript_workspace.cohort_m038_massive_goiter_v1` (~117 columns, post-mig_251); standing-rule reference `memory/feedback_complications_transient_vs_permanent.md`. Companion deliverable: `M038_v2_DATA_AND_SOURCES.xlsx` (this directory).
