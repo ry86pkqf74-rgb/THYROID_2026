@@ -1,0 +1,14 @@
+mig_268 started utc 2026-05-01T22:33:38Z
+Residual focality probe:
+tumor_focality  n
+     unifocal*  2
+CREATE OR REPLACE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.path_synoptics_pre_mig268_20260502
+UPDATE main.path_synoptics (strip *, CHR(10), LOWER, TRIM)
+Top focality values post-fix:
+       tumor_focality    n
+             unifocal 2583
+           multifocal 1410
+                  c/a    3
+        indeterminate    1
+multifocal, bilateral    1
+INSERT signoff_migration mig_268 OK
