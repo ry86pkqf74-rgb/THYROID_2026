@@ -16,16 +16,23 @@
 
 > Please read `/Users/loganglosser/THYROID_2026/qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v23.md` end-to-end before any tool use.
 >
-> **Standing context:** I'm Logan Glosser, Emory thyroid-cancer surgery researcher. The v22 → v23 session (2026-05-01) verified that mig_252 and mig_253 landed cleanly via Cursor Composer dispatch (acceptance criteria met), rebuilt the M038 descriptive manuscript into v2 against the corrected rollups + the standing demographics-Table-1 rule, and closed the M032 complications-rebuild carry-forward as not-applicable. The v23 chat starts with both upstream fixes verified and M038 v2 ready for PI review.
+> **Standing context:** I'm Logan Glosser, Emory thyroid-cancer surgery researcher. The v22 → v23 session (2026-05-01) verified that mig_252 and mig_253 landed cleanly via Cursor Composer dispatch (acceptance criteria met), rebuilt the M038 descriptive manuscript into v2 against the corrected rollups + the standing demographics-Table-1 rule, and closed the M032 complications-rebuild carry-forward as not-applicable. The v23 chat starts with both upstream fixes verified and M038 v2 ready for **data-validity audit + Excel deliverable build**.
+>
+> **Your two-step assignment for this chat (do these in order, before any other work):**
+>
+> 1. **Verify the M038 v2 descriptive manuscript's data validity, accuracy, and logic for every single data point.** Read `manuscript_outputs/v1_0_20260501/M038_massive_goiter_DRAFT_v2_post_mig_252_253.md` end-to-end, then for each numeric cell, percentage, count, denominator, ratio, and derived statistic in the abstract, results, and tables: re-run the underlying SQL against `thyroid_canonical_publication_v1_0` and confirm the manuscript number matches. Flag any discrepancy, any percentage that doesn't sum to 100% within rounding, any inclusion-exclusion check that doesn't reconcile, any RR computation error, and any number cited in the abstract that isn't reproduced in the body. Produce an audit report at `manuscript_outputs/v1_0_20260501/M038_v2_DATA_VALIDITY_AUDIT_20260501.md` showing every data point, the executable SQL that reproduces it, the live result, and a PASS / DIFF / FAIL flag.
+> 2. **Then build the Excel deliverable** at `manuscript_outputs/v1_0_20260501/M038_v2_DATA_AND_SOURCES.xlsx` containing every data point used in the manuscript across structured tabs, plus the executable source SQL for each table as a separate "source" tab so the manuscript is fully reproducible from the spreadsheet alone. Use the xlsx skill (`/var/folders/.../skills/xlsx/SKILL.md`).
+>
+> Only after these two steps clear should you propose moving on to M038-B or any other manuscript work.
 >
 > **Tooling on this machine:**
 > - **Desktop Commander MCP** for git/shell. Always use Desktop Commander rather than the bash sandbox for git ops — bash sandbox can't unlink `.git/index.lock` (FileVault). `feedback_use_desktop_commander_first.md`.
 > - **MotherDuck MCP** authed to `logan.glosser.eras@gmail.com`. Master canonical pub V1.0 DB is `thyroid_canonical_publication_v1_0`.
 > - **GitHub repo** at `/Users/loganglosser/THYROID_2026`. `origin/main` is canonical. Surgical git add per `feedback_surgical_git_add.md`.
 >
-> **Run the §3 first-action checklist before any new analytical work.**
+> **Run the §3 first-action checklist (gates + DB context) before starting the audit.**
 >
-> **HARD CONSTRAINT (carry-over from v21/v22):** I'm working on the **ETE manuscript (M044)** in ChatGPT. **Do NOT touch M044 or M051** here — they're owned by the ChatGPT lane. Note: a parallel session committed `a953ae1 manuscript(M044): ...` on `origin/main` during this round; Cowork did not touch it.
+> **HARD CONSTRAINT (carry-over from v21/v22):** I'm working on the **ETE manuscript (M044)** in ChatGPT. **Do NOT touch M044 or M051** here — they're owned by the ChatGPT lane. Note: parallel sessions committed `a953ae1`, `e17d62b`, `7a21306` on `origin/main` during the v22→v23 round; Cowork did not touch them.
 
 ---
 
@@ -98,19 +105,37 @@ SELECT * FROM semantic_publication.vw_publication_qc_status_VIEW_v1;
 -- gate1=218, gates 2-5=0, cohort_parity TRUE, most-recent signoff=mig_253
 ```
 
-### Step 3.4 — Pick a manuscript
+### Step 3.4 — Required first work: M038 v2 data-validity audit + Excel deliverable
 
-The M038 reconciliation is now resolved (sequenced two-paper plan, v2 done). Candidates ordered by readiness:
+Before any other manuscript work, complete the two-step assignment from §0:
+
+**Step 3.4.1 — Data-validity audit of M038 v2.** Re-run every numeric cell, percentage, count, denominator, ratio, and derived statistic against the live database and produce `manuscript_outputs/v1_0_20260501/M038_v2_DATA_VALIDITY_AUDIT_20260501.md`. Specific check-points (non-exhaustive — audit every number you see in the draft):
+
+| Section | Data points to re-derive |
+|---|---|
+| Abstract | n=10,871; n=2,501 (23.0%); 1,429 (57.1%); 1,047 (41.9%); 1,440 (57.6%); median age 56 [IQR 45–66] vs 50 [39–62]; 70.8% / 79.9% female; 62.2% / 31.2% Black or AA; 28.5% / 54.4% White; 25.8% / 41.7% malignant; 64.6% / 80.9% PTC; 1,672/2,501 (66.9%) vs 4,327/8,370 (51.7%) total thyroidectomy; 5.28% / 3.20% any-comp (RR ≈ 1.65); RLN 14 (0.56%) vs 7 (0.084%); hematoma 23 (0.92%) vs 45 (0.54%); mortality 2.36% vs 1.59%; era prevalences 12% / 24.9% / 28.5% |
+| §3.1 cohort assembly | All 10 component-overlap counts; inclusion-exclusion sum to 2,501 |
+| §3.2 Table 1 | All 30+ rows (age, sex, race, BMI, NLP comorbidities, thyroid-specific history, ASA, era, pathology, follow-up) |
+| §3.3 Table 2 | 11 histology counts + percentages |
+| §3.4 Table 3 | 5 procedure-type rows + 11 operative-context rows; 100% / 99.98% completeness claim |
+| §3.5 Table 4 | 10 complication outcomes × 2 arms × counts/percents/RR; verify each RR computation |
+| §3.6 era stratification | 6 era rows × total / massive / % massive |
+
+For each row, the audit doc should record: SQL query, live result, manuscript value, PASS/DIFF/FAIL.
+
+**Step 3.4.2 — Excel deliverable.** Build `manuscript_outputs/v1_0_20260501/M038_v2_DATA_AND_SOURCES.xlsx` per the structure in §8(A) below. **Use the xlsx skill** before authoring the file — read `/var/folders/x8/nj9jzq591439vh50w8wtznh80000gn/T/claude-hostloop-plugins/59d1345f5677e124/skills/xlsx/SKILL.md` first.
+
+Only after both deliverables clear, propose advancing to M038-B or other manuscript work.
+
+### Step 3.5 — After the audit/Excel work, candidate next manuscripts
 
 | Candidate | Status | Blockers |
 |---|---|---|
-| **M038-A descriptive (v2)** | Ready for PI review | None (post-mig_252/253) |
+| **M038-A descriptive (v2)** | Ready for PI review (after audit clears) | None (post-mig_252/253) |
 | **M038-B definition paper** | Planning doc only (`6fd1710`) | Decide: build out or wait until M038-A clears review |
 | **M039 PTH/Calcium** | READY_TO_DRAFT (per v21 §5); never drafted | None known |
 | **M025 TIRADS** | YELLOW post-mig_249 | Verify feasibility row freshness |
 | **M046 NIFTP / M047 Frozen Section** | CAVEATS_BUT_ACTIVE | Verify feasibility row |
-
-Recommended next step is **M038-B definition paper buildout** (the focal-cohort head-to-head exposure analysis described in `M038_definition_paper_PLANNING_v1.md`). The descriptive paper is now a citable foundation for it.
 
 ---
 
@@ -205,15 +230,55 @@ e821e97     docs(qc): v21 handoff — post-mig_250, M044 ETE work moves to ChatG
 
 ## §8 — Decision menu for the v24 chat
 
-In recommendation order:
+**REQUIRED FIRST WORK (in order, before anything else):**
 
-- **(A) Build out M038-B definition paper (Recommended).** The descriptive paper (M038 v2) now serves as a citable foundation. M038-B's planning doc at `M038_definition_paper_PLANNING_v1.md` defines three exposure operationalizations head-to-head; the focal ≥200g cohort has 10 strict-definition complication events (post-mig_252) which will require careful interaction-model power discussion. Apply the standing demographics + column-review rule to the M038-B cohort scope.
-- **(B) M039 PTH/Calcium.** READY_TO_DRAFT, never drafted. Apply standing rule + check for parathyroid event-grain safe view (CF-PARATHYROID-EVENT-SAFE).
-- **(C) Address CF-COMP-CONFIRMED-VARIANTS-AUDIT** by running the mig_252 §3.3 audit against the post-apply state. ~15 min. Confirms that the `_definitive` / `_probable_or_better` / `_any_evidence` family flags are also strict-rolled.
-- **(D) Address CF-COHORT-VIEW-DUPLICATE-COLUMNS** by auditing the cohort-view DDLs. ~30 min. May affect any manuscript that selects `*` from a cohort view.
-- **(E) Methods doc addendum.** Roll v17/v20/v21/v22/v23 round notes into `docs/Methods_thyroid_canonical_pub_v1_0_20260501.md`. ~10 min.
+### (A) M038 v2 data-validity audit + Excel deliverable
 
-**Cowork's recommendation:** (A) is the natural next analytical step. (C) and (D) are housekeeping that can be done opportunistically.
+This is the explicit first assignment from Logan for the v24 chat.
+
+**(A.1) Data-validity audit.** Produce `manuscript_outputs/v1_0_20260501/M038_v2_DATA_VALIDITY_AUDIT_20260501.md`. For every numeric cell, percentage, count, denominator, ratio, and derived statistic in `M038_massive_goiter_DRAFT_v2_post_mig_252_253.md` (abstract + §3.1 + §3.2 Table 1 + §3.3 Table 2 + §3.4 Table 3 + §3.5 Table 4 + §3.6 era table + §4 discussion + §5 limitations footnotes), re-derive the value via live SQL against `thyroid_canonical_publication_v1_0` and record:
+
+```
+| Section | Cell description | Manuscript value | Live SQL | Live result | Status |
+```
+
+Status is one of `PASS` (matches within rounding tolerance), `DIFF` (numeric mismatch — surface it; recommend a manuscript edit), or `FAIL` (the underlying query errors or the column doesn't exist). Flag any percentage that doesn't sum to 100% within rounding, any inclusion-exclusion check that doesn't reconcile (the §3.1 sum-to-2,501 check is the most important), any RR computation that doesn't match the cited counts, any number cited in the abstract that isn't reproduced in the body, and any claimed coverage rate (e.g., "100% completeness in massive") that the live data doesn't support.
+
+If everything PASSES, the audit doc should still record every check, since the audit IS the deliverable. If anything DIFFs, surface it to Logan via AskUserQuestion before editing the manuscript.
+
+**(A.2) Excel deliverable.** Build `manuscript_outputs/v1_0_20260501/M038_v2_DATA_AND_SOURCES.xlsx`. **Use the xlsx skill — `Read` `/var/folders/x8/nj9jzq591439vh50w8wtznh80000gn/T/claude-hostloop-plugins/59d1345f5677e124/skills/xlsx/SKILL.md` before authoring the file.**
+
+Tab structure:
+
+| # | Tab name | Contents |
+|---:|---|---|
+| 1 | `00_Cover` | Manuscript metadata: title, authors, target journal, release_id, mig_252/253 references, Cowork commit `4b48107`, generation date, point-of-contact |
+| 2 | `01_Cohort_Assembly` | §3.1 cohort assembly — denominator counts, component-overlap class table, inclusion-exclusion check |
+| 3 | `02_Table1_Demographics` | §3.2 Table 1 — every row, both arms, counts + percentages, coverage notes |
+| 4 | `03_Table2_Histology` | §3.3 Table 2 — malignant subset histology distribution |
+| 5 | `04_Table3_Procedure_OpContext` | §3.4 Table 3 (procedure type) + the operative-context block (CND/LND/op duration/LOS/transfusion/tracheostomy/readmission) |
+| 6 | `05_Table4_Complications` | §3.5 Table 4 — 10 complication outcomes × counts × percentages × RR. Include a footer with the strict-definition mig_252 spec |
+| 7 | `06_Era_Stratification` | §3.6 era table — six era rows |
+| 8 | `07_Component_Coverage` | Per-era and per-arm coverage of `gland_weight_final_g`, `ct_substernal_extension_any`, `mri_substernal_any`, `ct_tracheal_*` columns (supports the §5 limitations claim) |
+| 9 | `08_Race_Detail` | Full race breakdown (9 categories per arm) |
+| 10 | `09_ASA_Detail` | Full ASA-class breakdown |
+| 11 | `10_Source_SQL` | One row per query: `[query_id, target_section, sql_text, source_view, last_run_ts, n_rows]`. Every number in tabs 1–9 must trace back to a query_id here |
+| 12 | `11_Column_Inventory` | The Column Inventory section from the manuscript, materialized as a row-per-column table with `[column_name, data_type, source_view, included_in_M038, rationale]` |
+| 13 | `12_Reproducibility` | release_id, signoff_registry timestamp, mig_252/253 acceptance summary, gate1=218 attestation, cohort_parity attestation, the upstream Cursor dispatch commit SHAs (32beb7b, 0143539), the Cowork v23 commit (4b48107) |
+
+Format conventions: header row in bold; counts as integers; percentages as proper percent-formatted cells (not text); RR values to 2 decimal places; null/missing as empty cell, not the literal string "NULL"; freeze the header row on every tab; every tab gets a one-line description in cell A1 above the data block; cell A2 is blank; data block starts at A3.
+
+After both deliverables are produced, surgical-git-add + commit + push them in a single commit titled along the lines of `qa(M038): v2 data-validity audit + Excel deliverable`.
+
+### (B–E) Subsequent options (after A clears)
+
+- **(B) Build out M038-B definition paper.** The descriptive paper (M038 v2, post-audit) becomes a citable foundation. M038-B's planning doc at `M038_definition_paper_PLANNING_v1.md` defines three exposure operationalizations head-to-head; the focal ≥200g cohort has 10 strict-definition complication events (post-mig_252) which will require careful interaction-model power discussion. Apply the standing demographics + column-review rule to the M038-B cohort scope.
+- **(C) M039 PTH/Calcium.** READY_TO_DRAFT, never drafted. Apply standing rule + check for parathyroid event-grain safe view (CF-PARATHYROID-EVENT-SAFE).
+- **(D) Address CF-COMP-CONFIRMED-VARIANTS-AUDIT** by running the mig_252 §3.3 audit against the post-apply state. ~15 min. Confirms that the `_definitive` / `_probable_or_better` / `_any_evidence` family flags are also strict-rolled.
+- **(E) Address CF-COHORT-VIEW-DUPLICATE-COLUMNS** by auditing the cohort-view DDLs. ~30 min. May affect any manuscript that selects `*` from a cohort view.
+- **(F) Methods doc addendum.** Roll v17/v20/v21/v22/v23 round notes into `docs/Methods_thyroid_canonical_pub_v1_0_20260501.md`. ~10 min.
+
+**Cowork's recommendation:** Complete (A) before anything else. Then surface the audit results to Logan and let him pick from B–F.
 
 ---
 
@@ -222,11 +287,13 @@ In recommendation order:
 Before any analytical work:
 
 1. **Run the §3 first-action checklist.** Confirm gate health, DB context, HEAD position.
-2. **Read the M038 v2 draft** if working on M038-B; it documents the strict-definition complication outcomes that M038-B will reanalyze with the head-to-head exposure operationalizations.
-3. **Apply `feedback_manuscript_demographics_and_full_column_review.md`** for any new manuscript work.
-4. **Use `AskUserQuestion`** before substantial analytical choices.
-5. **For git ops always use Desktop Commander.** Bash sandbox cannot remove `.git/index.lock` files due to FileVault.
+2. **Required first work** is the M038 v2 data-validity audit + Excel deliverable per §0 / §3.4 / §8(A). Do this BEFORE M038-B or any other manuscript.
+3. **Read the xlsx SKILL.md** before authoring the Excel file.
+4. **Read the M038 v2 draft end-to-end** before re-deriving any data point — every number in the abstract should appear somewhere in §3 or §4 with the supporting count, and the audit should confirm both occurrences match the live SQL.
+5. **Apply `feedback_manuscript_demographics_and_full_column_review.md`** for any new manuscript work after the audit clears.
+6. **Use `AskUserQuestion`** before substantial analytical choices, and especially if any audit row returns DIFF or FAIL.
+7. **For git ops always use Desktop Commander.** Bash sandbox cannot remove `.git/index.lock` files due to FileVault.
 
 ---
 
-**End of v23 handoff.** Most likely first action: M038-B definition-paper buildout (or any of B–E from §8 per Logan's preference). HARD: do not touch M044 / M051 (ChatGPT lane).
+**End of v23 handoff.** **Required first action: M038 v2 data-validity audit (`M038_v2_DATA_VALIDITY_AUDIT_20260501.md`) + Excel deliverable (`M038_v2_DATA_AND_SOURCES.xlsx`).** Then the v24 chat picks from §8(B–F) per Logan's preference. HARD: do not touch M044 / M051 (ChatGPT lane).
