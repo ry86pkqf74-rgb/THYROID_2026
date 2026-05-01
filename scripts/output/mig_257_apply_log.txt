@@ -1,0 +1,8 @@
+mig_257 started utc 2026-05-01T19:51:57Z
+PRE  deceased followup_years > overall_survival_years: 100
+Archive snapshot "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig257_20260501 n=100
+UPDATE canonical_patient_master: followup_years clamped to overall_survival_years
+POST deceased followup > survival (expect 0): 0
+CPM rows/distinct_rid: 10871 / 10871
+INSERT signoff_migration mig_257 OK
+mig_257 PASS — re-run Snowflake: COUNT(*) FROM CANONICAL_PATIENT_MASTER_FLAT WHERE DEATH_OCCURRED AND FOLLOWUP_YEARS > OVERALL_SURVIVAL_YEARS (expect 0)
