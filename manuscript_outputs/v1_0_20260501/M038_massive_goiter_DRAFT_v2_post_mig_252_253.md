@@ -102,8 +102,8 @@ Of 10,871 patients, 2,501 (23.0%) met the composite massive criterion. Component
 | Substernal ∩ Airway | 884 |
 | All three | 386 |
 | Weight only | 898 |
-| Substernal only | 114 |
-| Airway only | 309 |
+| Substernal only | 145 |
+| Airway only | 429 |
 
 Inclusion-exclusion check: 1,429 + 1,047 + 1,440 − 404 − 513 − 884 + 386 = 2,501 (consistent with the cohort flag).
 
@@ -197,20 +197,24 @@ The mean operative duration is approximately 9.5 minutes longer in the massive c
 
 ### 3.5 Perioperative complications under the strict-definition rollup (Table 4)
 
-This section reports complication outcomes under the **strict** confirmation rollup applied in mig_252 (`finding_status = 'present'` AND `evidence_strength IN ('definitive','probable')`). The v1 draft of this manuscript reported a buggy any-complication rate of 35.5% (massive) vs 19.1% (non-massive); those numbers are obsolete. Strict-definition results:
+This section reports complication outcomes under the **strict** confirmation rollup applied in mig_252 (`finding_status = 'present'` AND `evidence_strength IN ('definitive','probable')`). Per the standing rule (`memory/feedback_complications_transient_vs_permanent.md`), hypoparathyroidism is reported as two distinct rows (postop transient (<6 months) vs postop permanent (>6 months)); hypocalcemia, RLN injury, VC paresis, and VC paralysis are reported as postop confirmed plus a preop yes/no flag where the underlying encoding supports it. The v1 draft of this manuscript reported a buggy any-complication rate of 35.5% (massive) vs 19.1% (non-massive); those numbers are obsolete. Strict-definition results:
 
 | Outcome | Massive (n=2,501) | Non-massive (n=8,370) | Approx RR |
 |---|---:|---:|---:|
 | Any confirmed complication flag | 132 (5.28%) | 268 (3.20%) | 1.65 |
-| Confirmed RLN injury | 14 (0.56%) | 7 (0.084%) | 6.7 |
+| Confirmed RLN injury (postop) † | 14 (0.56%) | 7 (0.084%) | 6.7 |
 | Confirmed hematoma | 23 (0.92%) | 45 (0.54%) | 1.7 |
 | Confirmed seroma | 12 (0.48%) | 27 (0.32%) | 1.5 |
 | Confirmed chyle leak | 2 (0.08%) | 1 (0.01%) | 6.7 |
-| Confirmed VC paresis | 0 | 0 | — |
-| Confirmed VC paralysis | 19 (0.76%) | 4 (0.048%) | 15.9 |
-| Confirmed hypocalcemia | 1 (0.04%) | 8 (0.10%) | 0.4 |
-| Confirmed hypoparathyroidism | 87 (3.48%) | 209 (2.50%) | 1.4 |
+| Confirmed VC paresis (postop) † | 0 | 0 | — |
+| Confirmed VC paralysis (postop) † | 19 (0.76%) | 4 (0.048%) | 15.9 |
+| Confirmed hypocalcemia (postop) | 1 (0.04%) | 8 (0.10%) | 0.4 |
+| Hypocalcemia — present preop | 7 (0.28%) | 46 (0.55%) | — |
+| Confirmed hypoparathyroidism — postop transient (<6mo) | 83 (3.32%) | 197 (2.35%) | 1.4 |
+| Confirmed hypoparathyroidism — postop permanent (>6mo) | 4 (0.16%) | 12 (0.14%) | 1.1 |
 | All-cause in-record mortality | 59 (2.36%) | 133 (1.59%) | 1.5 |
+
+† Preop status for RLN injury, VC paresis, and VC paralysis is not currently encoded in `canonical_patient_master`; these rows reflect postop confirmed cases only (carry-forwards `CF-RLN-PREOP-FLAG` and `CF-VC-PARALYSIS-PREOP-FLAG`).
 
 Three observations. First, the strict any-complication rate (5.28% massive, 3.20% non-massive) sits within the range commonly reported in single-institution surgical thyroidectomy series, supporting the canonicalization repair: the prior-draft rate of 35.5% was an artifact of negation-evidence inclusion. Second, the relative-risk pattern is preserved across most complication families, with the largest between-arm differences in confirmed VC paralysis (RR ≈ 15.9), confirmed RLN injury (RR ≈ 6.7), and confirmed chyle leak (RR ≈ 6.7); confirmed hypocalcemia is the only family showing an inverted (massive < non-massive) point estimate, and the absolute counts are small (1 vs 8). Third, absolute event counts remain small for several specific complications (e.g., RLN injury 14/7, chyle leak 2/1), so confidence intervals on the relative-risk estimates will be wide; we present these point estimates as descriptive only and reserve formal inferential testing for a follow-on definition-paper companion analysis (M038-B; see §6).
 
@@ -231,7 +235,7 @@ The roughly two-fold rise in measured massive-flag prevalence from the pre-2015 
 
 ## 4. Discussion
 
-This descriptive analysis documents that under a transparent composite anatomic-imaging definition, "massive goiter" accounts for nearly a quarter of all thyroid surgical volume at a single tertiary referral center over a 25-year span (n=2,501 of 10,871). The composite definition deliberately spans three complementary axes — gland weight, substernal extension, and imaging-confirmed airway compromise — to avoid the misclassification risk inherent in single-axis literature definitions. The component overlap pattern is informative: of the 2,501 massive cases, 386 (15.4%) carry all three flags (the "anatomically complete" massive-goiter phenotype), while substantial single-flag subsets exist (898 weight-only, 114 substernal-only, 309 airway-only), each of which would be missed by alternative single-axis screens. This argues for a composite definition as the more clinically inclusive baseline for surgical-cohort epidemiology.
+This descriptive analysis documents that under a transparent composite anatomic-imaging definition, "massive goiter" accounts for nearly a quarter of all thyroid surgical volume at a single tertiary referral center over a 25-year span (n=2,501 of 10,871). The composite definition deliberately spans three complementary axes — gland weight, substernal extension, and imaging-confirmed airway compromise — to avoid the misclassification risk inherent in single-axis literature definitions. The component overlap pattern is informative: of the 2,501 massive cases, 386 (15.4%) carry all three flags (the "anatomically complete" massive-goiter phenotype), while substantial single-flag subsets exist (898 weight-only, 145 substernal-only, 429 airway-only), each of which would be missed by alternative single-axis screens. This argues for a composite definition as the more clinically inclusive baseline for surgical-cohort epidemiology.
 
 Three demographic and pathologic patterns deserve emphasis. First, the male enrichment of the massive cohort (29.2% vs 20.1%) replicates prior surgical-series findings and is biologically consistent with the longer disease duration that anatomically expansive nodular disease often requires. Second, the marked over-representation of Black or African American patients in the massive cohort (62.2% vs 31.2% of non-massive surgical patients at the same institution) is a striking and previously underreported referral-pattern signal in the U.S. South tertiary surgical context. While our data cannot disentangle access-to-care, primary-care surveillance, surgical-referral-threshold, and biological factors, the observation merits further investigation as a candidate driver of advanced-disease surgical disparity. Third, the histologic profile of the malignant subset within the massive cohort is shifted away from PTC dominance and toward follicular, medullary, and aggressive variants — consistent with the inferior-pole-extending, multinodular, and anatomically infiltrating phenotype that often co-occurs with non-PTC histologies.
 
@@ -241,7 +245,7 @@ The era-stratified rise in measured massive prevalence is most plausibly explain
 
 ## 5. Limitations
 
-1. **Composite-definition ascertainment asymmetry.** The three component flags rely on different underlying documentation streams: gland weight on synoptic pathology, substernal extension on CT/MRI structured extraction, and airway compromise on CT-derived imaging features. Coverage is heterogeneous across eras (gland weight 86.3% known in massive cohort; surgical date 69.6% known cohort-wide), and a sensitivity analysis restricted to complete-data sub-cohorts is recommended at peer review.
+1. **Composite-definition ascertainment asymmetry.** The three component flags rely on different underlying documentation streams: gland weight on synoptic pathology, substernal extension on CT/MRI structured extraction, and airway compromise on CT-derived imaging features. Coverage is heterogeneous across eras (gland weight 86.3% known in massive cohort; surgical date 69.6% known in massive cohort, 80.3% known cohort-wide), and a sensitivity analysis restricted to complete-data sub-cohorts is recommended at peer review.
 
 2. **Era confounding with documentation expansion.** The pre-2015 vs post-2015 rise in measured massive prevalence is partially attributable to the introduction of structured NLP airway extraction and increased CT/MRI documentation in the institutional workflow rather than to true clinical incidence change.
 
@@ -256,6 +260,8 @@ The era-stratified rise in measured massive prevalence is most plausibly explain
 7. **No safe-view recurrence/survival join in the present draft.** The cohort view does not currently expose `canonical_recurrence_resolved_v1`-derived recurrence flags or detailed `canonical_survival_followup_v1` fields beyond aggregate `followup_years` and `death_occurred`; downstream survival substudies must explicitly join through the publication-tier safe views.
 
 8. **Strict-definition complication rollup applies only post-mig_252.** Prior versions of `any_confirmed_complication_flag` and `comp_*_confirmed` columns counted negation evidence as confirmation. This v2 draft uses the corrected rollup throughout. Any prior literature comparison or pooled-analysis effort that uses thyroid-canonical-publication exports from before 2026-05-01 should be re-derived against the corrected definition.
+
+9. **Complication temporality reporting (standing rule).** Per `memory/feedback_complications_transient_vs_permanent.md`, hypoparathyroidism is reported as postop transient (<6 months) vs postop permanent (>6 months); the trans/perm classification leans on supporting signals (treatment_req, biochem persistence, NSQIP recovered_flag) where direct timing (>180 days from surgery) is not available, since 87% of confirmed cases carry `timing_window='unknown'`. 14 confirmed cases (cohort-wide) carry an explicit permanence-classification limitation note. Hypocalcemia adds a "present preop" flag row using `comp_hypocalcemia_timing_window='pre_surgery'`. RLN injury and VC paralysis preop status are not currently encoded; carry-forwards `CF-RLN-PREOP-FLAG` and `CF-VC-PARALYSIS-PREOP-FLAG` are open.
 
 ## 6. Conclusions and follow-on lane
 
@@ -279,10 +285,10 @@ A companion analytical manuscript (**M038-B**, currently in planning at `manuscr
 
 ## Reproducibility
 
-Cohort view: `manuscript_workspace.cohort_m038_massive_goiter_v1` (post-mig_251 extension, ~117 columns)
+Cohort view: `manuscript_workspace.cohort_m038_massive_goiter_v1` (post-mig_251 extension, mig_255 temporality columns, ~129 columns)
 Underlying database: MotherDuck `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`)
-Most recent applied migration: `mig_253_surg_procedure_type_fill_20260501` (signoff_registry timestamp 2026-05-01 06:41:00 UTC)
-Preceding migration: `mig_252` (`32beb7b fix(mig252): repair CPM complication confirmed rollups`)
+Latest cohort-view DDL: `mig_255` (`255_cohort_m038_complication_temporality_columns_20260502.sql`, 2026-05-02 — view-only temporality column passthrough).
+Latest canonical CPM migrations in this manuscript's chain: `mig_253_surg_procedure_type_fill_20260501` (signoff_registry timestamp 2026-05-01 06:41:00 UTC); `mig_252` (`32beb7b fix(mig252): repair CPM complication confirmed rollups`).
 Composite exposure SQL (executable): see Methods §2.3
 Methods boilerplate: `docs/Methods_thyroid_canonical_pub_v1_0_20260501.md` (Section 1–2 + Section 9 limitations)
 Cowork reference commit at v2 generation: HEAD `0143539` (`fix: fill CPM surgical procedure types`)
@@ -299,7 +305,7 @@ Per `feedback_manuscript_demographics_and_full_column_review.md`, this manuscrip
 - **Surgical context**: `surg_first_date`, `surg_procedure_type`, `surg_total_thyroidectomy`, `surg_hemithyroidectomy`, `surg_n_procedures`, `nsqip_central_neck_dissection`, `nsqip_lateral_neck_dissection`, `nsqip_operative_approach`, `nsqip_operative_duration_min`, `nsqip_drain_usage`, `nsqip_vessel_sealant`, `nsqip_rln_monitoring`, `ops_difficult_airway`, `ops_surgeon`, `ops_surg_date`, `nsqip_inpatient_outpatient`, `nsqip_same_day_discharge_flag`, `nsqip_primary_indication`.
 - **Anatomy/pathology**: `gland_weight_final_g`, `gland_weight_total_reported_g`, `ct_substernal_extension_any`, `mri_substernal_any`, `ct_tracheal_deviation_any`, `ct_tracheal_narrowing_any`, `ct_airway_compromise_any`, `ct_goiter_present_any`, `nlp_airway_has_data`, `nlp_airway_key_finding`, `histology_final`, `is_malignant`, `op_findings_summary`, `syn_isthmus_height_cm`, `syn_left_lobe_height_cm`, `syn_right_lobe_height_cm`, `bilateral_disease_flag`, `bilateral_path_flag`, `closest_margin_mm`.
 - **Length of stay & disposition**: `nsqip_hospital_los_days`, `nsqip_length_of_stay_days`, `nsqip_surgical_los_days`, `nsqip_admission_date`, `nsqip_discharge_date`, `nsqip_discharge_destination`.
-- **Complications (strict, post-mig_252)**: `any_confirmed_complication_flag`, `comp_hematoma_confirmed`, `comp_rln_injury_confirmed`, `comp_seroma_confirmed`, `comp_chyle_leak_confirmed`, `comp_vc_paresis_confirmed`, `comp_vc_paresis_permanent`, `comp_vc_paralysis_confirmed`, `comp_vc_paralysis_permanent`, `comp_hypocalcemia_confirmed`, `comp_hypocalcemia_permanent`, `comp_hypoparathyroidism_confirmed`, `comp_hypoparathyroidism_permanent`, `comp_airway_complication_definitive`, `comp_pneumothorax_definitive`, `comp_mortality_definitive`.
+- **Complications (strict, post-mig_252 + temporality passthrough mig_255 on this cohort view):** `any_confirmed_complication_flag`, `comp_hematoma_confirmed`, `comp_rln_injury_confirmed`, `comp_seroma_confirmed`, `comp_chyle_leak_confirmed`, `comp_vc_paresis_confirmed`, `comp_vc_paresis_permanent`, `comp_vc_paralysis_confirmed`, `comp_vc_paralysis_permanent`, `comp_hypocalcemia_confirmed`, `comp_hypocalcemia_permanent`, `comp_hypoparathyroidism_confirmed`, `comp_hypoparathyroidism_permanent`, `comp_airway_complication_definitive`, `comp_pneumothorax_definitive`, `comp_mortality_definitive`, plus **mig_255** fields: `comp_hypoparathyroidism_transient`, `comp_hypopara_permanent_limitation_note`, `comp_hypoparathyroidism_timing_window`, `comp_hypoparathyroidism_preexisting`, `comp_hypoparathyroidism_new_postop`, `comp_hypocalcemia_timing_window`, `comp_hypocalcemia_transient`, `comp_hypocalcemia_clinical_preexisting`, `comp_rln_injury_timing_window`, `comp_rln_injury_transient`, `comp_vc_paralysis_timing_window`, `comp_vc_paresis_timing_window`.
 - **NSQIP perioperative outcomes**: `nsqip_transfusion`, `nsqip_neck_hematoma`, `nsqip_hematoma_flag`, `nsqip_rln_injury_flag`, `nsqip_hypocalcemia_flag`, `nsqip_unplanned_intubation`, `nsqip_unplanned_return_or`, `nsqip_readmission_30d_flag`, `nsqip_readmission_count`, `nsqip_death_30d`, `nsqip_pneumonia`, `nsqip_dvt`, `nsqip_pe`, `nsqip_sepsis`, `nsqip_superficial_ssi`, `nsqip_deep_ssi`, `nsqip_organ_space_ssi`.
 - **Tracheostomy & recurrence**: `proc_nlp_tracheostomy`, `proc_nlp_tracheostomy_date`, `proc_nlp_tracheostomy_days_from_surg`, `proc_nlp_tracheostomy_n_mentions`, `any_recurrence_flag`, `biochemical_recurrence_flag`.
 - **Follow-up**: `followup_years`, `death_occurred`.

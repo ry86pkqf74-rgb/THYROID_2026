@@ -61,10 +61,7 @@ If a confirmed case is neither transient nor permanent (`AND NOT _transient AND 
 
 ## Cohort-view exposure note
 
-The current `manuscript_workspace.cohort_m038_massive_goiter_v1` (and analogous cohort views built before 2026-05-01) exposes only `comp_*_confirmed` and `comp_*_permanent` for the relevant complication families — not `_transient`, `_preexisting`, `_timing_window`, or `_new_postop`. To apply this rule, manuscripts must either:
-
-- **Option A (preferred):** Extend the cohort view in a small mig (`mig_25X_cohort_complication_temporality_columns`) to add `comp_hypoparathyroidism_transient`, `comp_hypoparathyroidism_permanent`, `comp_hypopara_permanent_limitation_note`, `comp_hypocalcemia_clinical_preexisting`, `comp_hypocalcemia_timing_window`, `comp_hypoparathyroidism_timing_window`, `comp_hypoparathyroidism_preexisting`, `comp_hypoparathyroidism_new_postop`, and the analogous RLN / VC columns. Then re-run the column-review pass.
-- **Option B (interim):** Join `main.canonical_patient_master` directly in the manuscript-tier query, as M038's audit doc does for the v2 Table 4 update.
+**Update 2026-05-02:** `mig_255` (`qc_framework_v1/migrations/255_cohort_m038_complication_temporality_columns_20260502.sql`) extends `manuscript_workspace.cohort_m038_massive_goiter_v1` with the temporality/preop-aligned columns passthrough listed below (`comp_hypoparathyroidism_transient`, `comp_hypocalcemia_timing_window`, RLN/VC `timing_window`, etc.). **Other manuscript cohort views:** `manuscript_workspace.cohort_m038_massive_goiter_v1` is the only cohort view amended by `mig_255`; for analyses that use another `cohort_*` projection but need the Table 4 temporality split from this rule — **Option:** join `canonical_patient_master`, or replicate `mig_255` passthrough logic in a sibling migration for those views.
 
 ## Underlying definition (per Logan)
 
@@ -83,7 +80,7 @@ Does not apply to: registry-tier or governance-tier objects, or to non-complicat
 
 - **`CF-RLN-PREOP-FLAG`** — extract preop RLN injury status into a structured column on `canonical_patient_master`. Candidate sources: preop laryngoscopy free-text (`ops_preop_laryngoscopy`), `pmhx_nlp_*` fields (none currently encode prior RLN injury — would need a new NLP target).
 - **`CF-VC-PARALYSIS-PREOP-FLAG`** — extract preop VC paralysis / paresis status. Candidate sources: preop laryngoscopy text, voice-clinic notes, MRI vocal-cord findings (`mri_vocal_cords_normal` is an outcome flag and would need a preop-restricted re-derivation).
-- **`CF-COHORT-VIEW-COMPLICATION-TEMPORALITY-COLUMNS`** — small `mig_25X` to add the temporality columns enumerated under Option A above to every existing `manuscript_workspace.cohort_M0XX_*` view, so manuscripts can apply this rule without joining CPM directly.
+- **`CF-COHORT-VIEW-COMPLICATION-TEMPORALITY-COLUMNS`** — **PARTIAL CLOSE (2026-05-02):** `mig_255` adds temporality/preop-aligned complication columns to `manuscript_workspace.cohort_m038_massive_goiter_v1` only. Extending **all** cohort views remains open if manuscripts beyond M038 require the same passthrough without a CPM join.
 
 ## Trigger to revisit
 
