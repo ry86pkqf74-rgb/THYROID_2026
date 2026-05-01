@@ -51,7 +51,7 @@ supported by the frozen, verified dataset.
 
 | Variable | N available | Coverage | Source |
 |----------|----------:|---------|--------|
-| Histology type | 4,137 | 38.1%* | `path_synoptics` |
+| Histology type | 4,113 | 37.8%* | `path_synoptics` |
 | Tumor size (cm) | 4,130 | 38.0%* | `tumor_pathology` / `path_synoptics` |
 | AJCC 8th Ed stage | 4,083 | 37.6%* | `thyroid_scoring_py_v1` (calculated) |
 | ATA 2015 risk | 3,144 | 28.9%* | `thyroid_scoring_py_v1` (calculated) |

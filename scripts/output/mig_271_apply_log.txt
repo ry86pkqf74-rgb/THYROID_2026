@@ -1,0 +1,12 @@
+mig_271 started utc 2026-05-01T23:25:24Z
+Probe: NIFTP/FA + is_malignant=FALSE + ajcc8_stage_group NOT NULL → 24
+Cohort malignancy: n_total=10871, n_malig=4113, pct≈37.8% (1 dp) / 37.83% (2 dp)
+Cohort check main.cohort_m037_ln_predictors: SKIP (CatalogException)
+Cohort check m037 metastasis cohort: SKIP (BinderException)
+CREATE OR REPLACE "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig271_20260502
+Archive rows: 24
+UPDATE canonical_patient_master (NULL AJCC8 T/N/M/stage for NIFTP/FA non-malignant) complete
+Post-apply probe (expect 0): 0
+Post-apply malignancy: n_malig=4113, pct≈37.8% (1 dp)
+INSERT cpm_reconciliation_provenance_v1 mig_271 OK
+INSERT signoff_migration mig_271 OK

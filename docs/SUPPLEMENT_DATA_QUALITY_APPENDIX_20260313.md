@@ -153,7 +153,7 @@ post-surgery) but not for precise postoperative-day analyses.
 | Demographics | Age | 11,585 / 11,673 | 99.2% | Structured | Cross-source harmonized from 7 tables |
 | Demographics | Sex | 10,880 / 11,673 | 93.2% | Structured | |
 | Demographics | Race | 10,870 / 11,673 | 93.1% | Structured | 25+ raw categories normalized to 6 analytic groups |
-| Pathology | Histology type | 4,137 / 10,871 | 38.1% | Structured | NA for benign-only patients |
+| Pathology | Histology type | 4,113 / 10,871 | 37.8% | Structured | NA for benign-only patients; post-mig_264b/271 NIFTP/FA spine |
 | Pathology | Tumor size | 4,130 / 10,871 | 38.0% | Structured | |
 | Pathology | AJCC8 T stage | 4,083 / 10,871 | 37.6% | Calculated | Derived from tumor size + ETE |
 | Pathology | Vascular invasion | 3,846 / 10,871 | 35.4% | Structured | 87% present but ungraded (synoptic 'x' placeholder) |

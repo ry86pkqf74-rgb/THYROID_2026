@@ -63,14 +63,14 @@ preserve source-native values, and do not fabricate dates.
 |--------|--------|------|-----------|----------|
 | **Surgery date** | 100% (`source_script`) | 100% (`first_surgery_date`) | N/A | 80.3% (`surg_procedure_type`) |
 | **Demographics** | 100% (`demo_source`) | N/A | 100% (`demo_confidence`) | N/A |
-| **Pathology histology** | 100% (`histology_source`) | Via surgery_date | N/A | 38.1% (`path_histology_raw`) |
+| **Pathology histology** | 100% (`histology_source`) | Via surgery_date | N/A | 37.8% (`path_histology_raw`) |
 | **Pathology ETE** | 100% (`ete_grade_source`) | Via surgery_date | N/A | 37.5% (`path_ete_raw`) |
 | **Provenance meta** | 100% (`source_script`) | 100% (`date_traceability_status`) | 100% (`provenance_confidence`) | 100% (`resolved_layer_version`) |
 | **Lineage audit** | 100% (10,871 rows) | 100% (`date_traceability_status`) | 100% (`date_confidence`) | 71% (`evidence_span`) |
 | **Survival cohort** | 100% (`source_table`) | 100% (`date_source`) | 100% (`date_confidence`) | 100% (`lineage_version`) |
 | **BRAF source** | 92.2% (`braf_source`) | Via mol_test_date | N/A | 3.5% (`braf_detection_method`) |
 
-**Notes on partial raw_evidence fill rates (30–40%):** These are NOT provenance gaps. Only ~4,200 of
+**Notes on partial raw_evidence fill rates (30–40%):** These are NOT provenance gaps. Only ~4,100 of
 10,871 patients are cancer patients with full synoptic pathology. The ~6,600 benign/non-cancer patients
 correctly have NULL raw pathology fields. Effective fill rate among cancer patients is ≥95%.
 
