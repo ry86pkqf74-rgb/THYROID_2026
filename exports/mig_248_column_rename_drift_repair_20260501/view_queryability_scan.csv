@@ -1,0 +1,158 @@
+schema_name,view_name,view_group,status,row_count,error
+manuscript_workspace,cohort_m001_indeterminate_genetics_v1,cohort_m0,ok,1266,
+manuscript_workspace,cohort_m004_graves_hashimoto_cancer_v1,cohort_m0,ok,1761,
+manuscript_workspace,cohort_m006_molecular_surg_decision_v1,cohort_m0,ok,1286,
+manuscript_workspace,cohort_m007_rss_reclassification_v1,cohort_m0,ok,3144,
+manuscript_workspace,cohort_m009_parathyroid_final_path_v1,cohort_m0,ok,1409,
+manuscript_workspace,cohort_m011_tirads_fna_genetics_v1,cohort_m0,ok,3282,
+manuscript_workspace,cohort_m016_graves_carcinoma_v1,cohort_m0,ok,574,
+manuscript_workspace,cohort_m017_eucalcemic_hypopara_v1,cohort_m0,ok,66,
+manuscript_workspace,cohort_m018_molecular_beth56_v1,cohort_m0,ok,1494,
+manuscript_workspace,cohort_m019_rai_outcomes_v1,cohort_m0,ok,862,
+manuscript_workspace,cohort_m023_preop_genetics_v1,cohort_m0,ok,1286,
+manuscript_workspace,cohort_m025_tirads_performance_v1,cohort_m0,ok,3375,
+manuscript_workspace,cohort_m025_tirads_performance_v1,cohort_m0,ok,3375,
+manuscript_workspace,cohort_m028_bethesda_iii_iv_v1,cohort_m0,ok,1266,
+manuscript_workspace,cohort_m028_bethesda_iii_iv_v1,cohort_m0,ok,1266,
+manuscript_workspace,cohort_m029_fna_concordance_v1,cohort_m0,ok,2401,
+manuscript_workspace,cohort_m029_fna_concordance_v1,cohort_m0,ok,2401,
+manuscript_workspace,cohort_m030_genetic_predictive_v1,cohort_m0,ok,1286,
+manuscript_workspace,cohort_m030_genetic_predictive_v1,cohort_m0,ok,1286,
+manuscript_workspace,cohort_m031_nuclear_medicine_v1,cohort_m0,ok,1148,
+manuscript_workspace,cohort_m031_nuclear_medicine_v1,cohort_m0,ok,1148,
+manuscript_workspace,cohort_m032_descriptive_25yr_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m032_descriptive_25yr_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m033_afirma_thyroseq_v1,cohort_m0,ok,969,
+manuscript_workspace,cohort_m033_afirma_thyroseq_v1,cohort_m0,ok,969,
+manuscript_workspace,cohort_m035_bethesda_v_v1,cohort_m0,ok,273,
+manuscript_workspace,cohort_m035_bethesda_v_v1,cohort_m0,ok,273,
+manuscript_workspace,cohort_m036_ata_risk_comparison_v1,cohort_m0,ok,4137,
+manuscript_workspace,cohort_m036_ata_risk_comparison_v1,cohort_m0,ok,4137,
+manuscript_workspace,cohort_m037_ln_metastasis_v1,cohort_m0,ok,2271,
+manuscript_workspace,cohort_m037_ln_metastasis_v1,cohort_m0,ok,2271,
+manuscript_workspace,cohort_m038_massive_goiter_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m038_massive_goiter_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m039_pth_calcium_v1,cohort_m0,ok,4561,
+manuscript_workspace,cohort_m039_pth_calcium_v1,cohort_m0,ok,4561,
+manuscript_workspace,cohort_m040_reoperative_v1,cohort_m0,ok,1470,
+manuscript_workspace,cohort_m040_reoperative_v1,cohort_m0,ok,1470,
+manuscript_workspace,cohort_m042_incidental_parathyroid_v1,cohort_m0,ok,4798,
+manuscript_workspace,cohort_m042_incidental_parathyroid_v1,cohort_m0,ok,4798,
+manuscript_workspace,cohort_m043_ln_predictors_v1,cohort_m0,ok,4137,
+manuscript_workspace,cohort_m043_ln_predictors_v1,cohort_m0,ok,4137,
+manuscript_workspace,cohort_m044_ajcc_ete_v1,cohort_m0,ok,4128,
+manuscript_workspace,cohort_m044_ajcc_ete_v1,cohort_m0,ok,4128,
+manuscript_workspace,cohort_m045_multimodal_risk_v1,cohort_m0,ok,1165,
+manuscript_workspace,cohort_m045_multimodal_risk_v1,cohort_m0,ok,1165,
+manuscript_workspace,cohort_m046_niftp_era_bethesda_v1,cohort_m0,ok,5026,
+manuscript_workspace,cohort_m046_niftp_era_bethesda_v1,cohort_m0,ok,5026,
+manuscript_workspace,cohort_m047_frozen_section_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m047_frozen_section_v1,cohort_m0,ok,10871,
+manuscript_workspace,cohort_m048_tnm_multifocal_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m049_pyramidal_lobe_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m050_tumor_size_volume_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m051_ete_ln_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m052_mrlnd_ln_count_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m053_nondiagnostic_fna_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m054_niftp_reclass_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m055_recurrence_rai_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m056_age_epidemiology_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m057_risk_stratification_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m058_thyroid_size_weight_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m059_prognostic_scoring_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m060_adenoma_ftump_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m061_thyroiditis_outcomes_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m062_incidental_frozen_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m063_frozen_false_neg_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m064_frozen_decision_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m065_frozen_tt_vs_lob_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m066_parathyroid_id_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m067_tsh_tg_tumorigenesis_v1,cohort_m0,ok,2567,
+manuscript_workspace,cohort_m068_mutation_labs_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m069_graves_hashimoto_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m070_hereditary_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m071_immunologic_meds_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m072_molecular_surg_impact_v1,cohort_m0,ok,1286,
+manuscript_workspace,cohort_m073_tg_lob_vs_tt_v1,cohort_m0,ok,2567,
+manuscript_workspace,cohort_m075_tirads_multi_nodule_v1,cohort_m0,ok,3282,
+manuscript_workspace,cohort_m076_ln_surveillance_v1,cohort_m0,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,cohort_m078_graves_survival_v1,cohort_m0,ok,1530,
+manuscript_workspace,cohort_m079_eucalcemic_outcomes_v1,cohort_m0,ok,66,
+manuscript_workspace,cohort_m080_molecular_beth56_v1,cohort_m0,ok,306,
+manuscript_workspace,cohort_m081_rai_resistant_v1,cohort_m0,ok,862,
+manuscript_workspace,cohort_m082_parathyroid_tumors_v1,cohort_m0,ok,1399,
+manuscript_workspace,canonical_detail_pointer_v1,adjacent,error,,"Binder Error: Referenced column ""feeds_master_columns_normalized"" not found in FROM clause! | Candidate bindings: ""feeds_master_columns_secondary"", ""feeds_master_columns"", ""feeds_master_columns_array"", ""needs_manual_review"", ""domain"""
+manuscript_workspace,canonical_fna_events_v1_date_clean,adjacent,ok,8050,
+manuscript_workspace,canonical_fna_events_v1_dedup,adjacent,ok,8050,
+manuscript_workspace,canonical_fna_events_v1_dts_clean,adjacent,ok,8050,
+manuscript_workspace,canonical_fna_events_v1_temporal,adjacent,ok,8050,
+manuscript_workspace,canonical_fna_patient_rollup_v1_clean,adjacent,ok,5266,
+manuscript_workspace,canonical_molecular_genetics_v2_braf_variant,adjacent,ok,1384,
+manuscript_workspace,canonical_molecular_genetics_v2_date_clean,adjacent,ok,1384,
+manuscript_workspace,canonical_molecular_genetics_v2_fna_rebind,adjacent,ok,1384,
+manuscript_workspace,canonical_molecular_genetics_v2_platform_clean,adjacent,ok,1384,
+manuscript_workspace,canonical_molecular_genetics_v2_status_clean,adjacent,ok,1384,
+manuscript_workspace,canonical_operative_events_v1_rule_clean,adjacent,ok,11773,
+manuscript_workspace,canonical_operative_procedure_codes_v1_relinked,adjacent,ok,21691,
+manuscript_workspace,canonical_path_malignant_events_v1_ajcc_flag,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_dedup_flag,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_ete_clean,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_global_epi,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_histology_clean,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_invasion_clean,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_keyed,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_laterality_clean,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_ln_denominator_flag,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_size_flag,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_variant_clean,adjacent,ok,6469,
+manuscript_workspace,canonical_path_malignant_events_v1_weak_linkage_flag,adjacent,ok,6469,
+manuscript_workspace,canonical_us_nodule_v2_filtered,adjacent,ok,37579,
+manuscript_workspace,canonical_us_nodule_v2_tirads_guard,adjacent,ok,37579,
+manuscript_workspace,canonical_us_thyroid_gland_v2_shape,adjacent,ok,13578,
+manuscript_workspace,cohort_descriptive_full_cohort_v1,adjacent,error,,"Binder Error: Table ""p"" does not have a column named ""syn_isthmus_size_cm"" |  | Candidate bindings: : ""syn_isthmus_size_cm_legacy_raw"", ""syn_isthmus_size_parse_status"""
+manuscript_workspace,ct_imaging_clean,adjacent,ok,7701,
+manuscript_workspace,dim_histology_standardized_VIEW_v1,adjacent,ok,13,
+manuscript_workspace,dim_histology_variant_v1,adjacent,ok,36,
+manuscript_workspace,ete_llm_fresh_subgrade_patient_v1,adjacent,ok,151,
+manuscript_workspace,ete_llm_grade_patient_v1,adjacent,ok,561,
+manuscript_workspace,ete_manuscript_analytic_v1,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,ete_manuscript_analytic_v2,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,ete_manuscript_analytic_v3,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,ete_manuscript_analytic_v4,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,ete_manuscript_analytic_v6,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,ete_manuscript_analytic_v7,adjacent,error,,"Catalog Error: Table with name path_malignant_event_fingerprint_v1 does not exist! | Did you mean ""path_tumor_size_invariant_v1""?"
+manuscript_workspace,first_surgery_date_v1,adjacent,ok,10871,
+manuscript_workspace,imaging_exam_master_v1_count_clean,adjacent,ok,13347,
+manuscript_workspace,imaging_exam_master_v1_datecheck,adjacent,ok,13347,
+manuscript_workspace,imaging_exam_master_v1_size_clean,adjacent,ok,13347,
+manuscript_workspace,ln_per_patient_multisource_v1,adjacent,ok,6979,
+manuscript_workspace,manuscript_cohort_v1_histology_clean,adjacent,ok,10871,
+manuscript_workspace,manuscript_cohort_v1_recurrence_clean,adjacent,ok,10871,
+manuscript_workspace,manuscript_cohort_v1_surgery_reconciled,adjacent,ok,10871,
+manuscript_workspace,manuscript_dashboard_VIEW_v1,adjacent,ok,63,
+manuscript_workspace,molecular_episode_uid_v1,adjacent,ok,1384,
+manuscript_workspace,molecular_mentions_from_notes_v2,adjacent,ok,1738,
+manuscript_workspace,mri_imaging_clean,adjacent,ok,715,
+manuscript_workspace,nuclear_med_clean,adjacent,ok,2220,
+manuscript_workspace,path_episode_multifocality_v1,adjacent,ok,4087,
+manuscript_workspace,path_event_discordance_v1,adjacent,ok,6469,
+manuscript_workspace,path_focus_link_v1,adjacent,ok,6469,
+manuscript_workspace,path_tumor_size_invariant_v1,adjacent,ok,80,
+manuscript_workspace,qc_audit_dashboard_VIEW_v1,adjacent,ok,1,
+manuscript_workspace,qc_cohort_exclusion_attribution_v1,adjacent,ok,7,
+manuscript_workspace,qc_cohort_flow_v1_to_v2,adjacent,ok,1,
+manuscript_workspace,qc_critical_excluded_patients_v1,adjacent,ok,667,
+manuscript_workspace,qc_manuscript_cohort_v2,adjacent,ok,10204,
+manuscript_workspace,qc_manuscript_cohort_v2_ptc,adjacent,ok,2710,
+manuscript_workspace,qc_violations_summary_v1,adjacent,ok,20,
+manuscript_workspace,recurrence_event_clean_v1_first_surg_flag,adjacent,ok,1946,
+manuscript_workspace,specimen_genomic_assay_v1_rebound,adjacent,ok,10370,
+manuscript_workspace,specimen_genomic_assay_v1_relinked,adjacent,ok,10370,
+manuscript_workspace,vw_ln_histology_attribution_VIEW_v1,adjacent,ok,5918,
+manuscript_workspace,vw_ln_patient_publication_safe_VIEW_v1,adjacent,ok,4008,
+manuscript_workspace,vw_ln_surgery_publication_safe_VIEW_v1,adjacent,ok,4008,
+manuscript_workspace,vw_us_nodule_tirads_any_reported_VIEW_v1,adjacent,ok,29504,
+manuscript_workspace,vw_us_nodule_tirads_derived_acr_missing_VIEW_v1,adjacent,ok,7270,
+manuscript_workspace,vw_us_nodule_tirads_reported_not_fully_parsed_VIEW_v1,adjacent,ok,24371,
+manuscript_workspace,vw_us_nodule_tirads_strict_acr2017_VIEW_v1,adjacent,ok,5120,
+manuscript_workspace,vw_us_nodule_tirads_unresolved_or_excluded_VIEW_v1,adjacent,ok,3366,
