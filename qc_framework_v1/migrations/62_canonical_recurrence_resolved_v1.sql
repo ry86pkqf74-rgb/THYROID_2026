@@ -89,7 +89,7 @@ struct_confirmed AS (
 post_op_fna_b56 AS (
   SELECT CAST(fr.research_id AS VARCHAR) AS rid,
          MIN(fr.fna_date_resolved) AS rec_date,
-         MIN(LEFT(COALESCE(fr.pathology_diagnosis, fr.bethesda_2023_name, fr.bethesda_2015_name, ''), 200)) AS evidence
+         MIN(LEFT(COALESCE(fr.fna_pathology_report, fr.bethesda_2023_name, fr.bethesda_2015_name, ''), 200)) AS evidence
   FROM main.canonical_fna_events_v1 fr
   JOIN (SELECT CAST(research_id AS VARCHAR) AS rid, MIN(CAST(surgery_date AS DATE)) AS first_surg
         FROM main.canonical_path_malignant_events_v1 WHERE primary_histology IS NOT NULL GROUP BY 1) fs
