@@ -6,7 +6,7 @@
 
 ## LN status source (F1 — mig_258 / CF-mig258-MANUSCRIPT-FILTER-UPDATE)
 
-Lymph-node positivity in analyses that require numeric concordance between AJCC N-stage and structured metastatic counts is sourced from `ln_status_source ∈ {'staging','count','both',NULL}` on `canonical_patient_master`, where `staging` indicates AJCC 8 N-stage assertion only, `count` indicates `ln_total_positive > 0`, and `both` indicates concordance. For regressions treating LN positivity as a count-based burden (e.g., sensitivity Table 2 refits), restrict to `ln_status_source = 'both'` (n=1,126 of 4,137 malignant patients) to avoid mixing N-stage-only positivity with unevaluated LN counts.
+Lymph-node positivity in analyses that require numeric concordance between AJCC N-stage and structured metastatic counts is sourced from `ln_status_source ∈ {'staging','count','both',NULL}` on `canonical_patient_master`, where `staging` indicates AJCC 8 N-stage assertion only, `count` indicates `ln_total_positive > 0`, and `both` indicates concordance. For regressions treating LN positivity as a count-based burden (e.g., Table 2 sensitivity refits), restrict to malignant patients with `ln_status_source = 'both'` (**n=2,628**; **1,126** LN-positive, 42.8%) versus the full malignant analytic spine (**n=4,137**; 1,126 LN-positive, 27.2%) (`snowflake_trial/reports/m037_sensitivity_ln_both.md`), to avoid mixing N-stage-only positivity with unevaluated LN counts.
 
 ## AJCC stage rollup (F2 — mig_263 Option B)
 
