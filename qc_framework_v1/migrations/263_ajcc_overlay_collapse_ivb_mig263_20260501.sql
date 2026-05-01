@@ -1,0 +1,23 @@
+-- mig_263 — AJCC8 stage_group overlay (Option B): IVA/IVC → IVB at CPM boundary
+--
+-- Executable companion to scripts/mig_263_ajcc_overlay_collapse.py (--apply uses
+-- MotherDuck via _md_connect). This file documents the ratified SQL for review
+-- and reproducibility.
+--
+-- Source: canonical_patient_master.ajcc8_stage_group_resolved (mig_184_v2 / mig_188b)
+-- Target: canonical_patient_master.ajcc8_stage_group ({I, II, III, IVB})
+--
+-- Rule:
+--   1) When resolved IN ('IVA','IVC'), set ajcc8_stage_group = 'IVB'
+--   2) When resolved = 'IVB' and CPM is NULL or 'II', set ajcc8_stage_group = 'IVB'
+--
+-- Scope: COALESCE(is_malignant,FALSE)=TRUE AND ajcc8_stage_group_resolved IS NOT NULL
+--
+-- Archive (pre malignant snapshot):
+--   "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig263_20260501
+--
+-- Closes CF-mig254-MIG266B-OVERLAY-RE-DERIVE.
+
+-- VERIFY (expect 0 after apply for well-formed M1 advanced cohort — see mig dispatch):
+-- SELECT COUNT(*) FROM main.canonical_patient_master
+-- WHERE COALESCE(is_malignant,FALSE) AND ajcc8_m_stage = 'M1' AND ajcc8_stage_group IS NULL;

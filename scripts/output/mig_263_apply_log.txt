@@ -1,0 +1,9 @@
+mig_263 started utc 2026-05-01T21:49:50Z
+PRE  update_candidates (narrow Option B): 0
+PRE  malignant M1 + ajcc8_stage_group NULL: 0
+RECOVERY: signoff present; inserting missing provenance row only.
+POST malignant M1 + ajcc8_stage_group NULL: 0
+CPM rows/distinct_rid: 10871 / 10871
+INSERT cpm_reconciliation_provenance_v1 mig_263 OK
+signoff_migration mig_263 already present — skip duplicate INSERT
+mig_263 PASS
