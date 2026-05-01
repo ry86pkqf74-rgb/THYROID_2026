@@ -12,22 +12,57 @@
 --   Do **not** use legacy flags as manuscript endpoints; primary = path-proven /
 --   dual-track fields on canonical_recurrence_resolved_v1 (see M044 methods).
 --
--- PREREQ: `manuscript_workspace.cohort_m044_ajcc_ete_v1` must compile. If MotherDuck
---   raises BinderException (TIMESTAMP vs DATE) when selecting the cohort view, rebuild
---   dependent manuscript_workspace views per clinical_date_retype / gate5 playbook before
---   applying this migration.
+-- §0 Rebind `cohort_m044_ajcc_ete_v1` (required after mig_160b PM clinical DATE retype).
+--   Stale view catalog expected TIMESTAMP for `surg_first_date`; CPM column is DATE →
+--   BinderException "types don't match ... TIMESTAMP ... DATE". Drop + recreate cohort,
+--   then build the audit view.
 --
+-- POST-APPLY:
+--   SELECT COUNT(*) FROM manuscript_workspace.cohort_m044_ajcc_ete_v1;  -- expect 4128
 --   SELECT * FROM manuscript_workspace.m044_legacy_recurrence_flag_audit_v1;
---   Example row observed 2026-05-01: legacy_any_recurrence_true_n = 503,
---   legacy_any_true_canonical_status_none_n = 318,
---   legacy_structural_recurrence_true_n = 1817,
---   legacy_structural_true_canonical_status_none_n = 1588.
+--   (Live legacy_* counts drift with CPM / canonical_recurrence_resolved_v1; not frozen.)
 --
 -- =============================================================================
 
 USE thyroid_canonical_publication_v1_0;
 
 DROP VIEW IF EXISTS manuscript_workspace.m044_legacy_recurrence_flag_audit_v1;
+DROP VIEW IF EXISTS manuscript_workspace.cohort_m044_ajcc_ete_v1;
+
+CREATE VIEW manuscript_workspace.cohort_m044_ajcc_ete_v1 AS
+SELECT
+  p.research_id,
+  p.age_at_surgery,
+  p.sex,
+  p.histology_final,
+  p.path_tumor_size_cm AS tumor_size_cm,
+  p.ete_grade_final,
+  p.ete_grade,
+  p.ete_grade_source,
+  p.gross_ete_flag,
+  p.path_gross_ete_flag,
+  p.ete_op_note_grade,
+  p.ete_original_grade,
+  p.ajcc8_t_stage,
+  p.ajcc8_n_stage,
+  p.ajcc8_m_stage,
+  p.ajcc8_stage_group,
+  p.ln_positive_flag,
+  p.ln_total_positive,
+  p.lvi_grade,
+  p.vascular_invasion_final,
+  p.ata_risk_category,
+  p.rai_received_reconciled AS rai_received_flag,
+  p.any_recurrence_flag,
+  p.structural_recurrence_flag,
+  p.followup_years,
+  p.overall_survival_years,
+  p.death_occurred,
+  p.surg_procedure_type,
+  CAST(p.surg_first_date AS DATE) AS surg_first_date
+FROM main.canonical_patient_master AS p
+WHERE p.is_malignant IS TRUE
+  AND p.ajcc8_stage_group IS NOT NULL;
 
 CREATE VIEW manuscript_workspace.m044_legacy_recurrence_flag_audit_v1 AS
 WITH base AS (
