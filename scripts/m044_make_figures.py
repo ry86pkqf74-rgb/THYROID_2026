@@ -36,7 +36,9 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "scripts"))
 from m044_ete_fit_models import (
     EXCLUDE_HISTOLOGIES_STRICT_DTC,
+    add_endpoint_flags,
     build_cox_analytic_frame,
+    bool_series,
     model_frame_for_primary,
     _histology_str_raw,
 )
@@ -175,12 +177,13 @@ def fig2_ete_distribution(df: pd.DataFrame):
 
 def fig3_pp_rate(df: pd.DataFrame):
     """Figure 3 - Path-proven recurrence rate by ETE group with 95% Wilson CI (strict-DTC)."""
+    df = add_endpoint_flags(df)
     hs = df["histology_final"].map(_histology_str_raw)
     strict = df.loc[~hs.isin(EXCLUDE_HISTOLOGIES_STRICT_DTC)]
     rows = []
     for g in ORDER:
         sub = strict[strict['ete_group']==g]
-        n = len(sub); k = int(sub['recurrence_path_proven'].sum())
+        n = len(sub); k = int(bool_series(sub['path_proven_primary']).sum())
         rate = k/n if n else 0
         lo, hi = wilson_ci(k, n)
         rows.append({"ete_group": g, "n": n, "events": k, "rate": rate*100,
@@ -214,6 +217,7 @@ def fig4_pp_per_100py(df: pd.DataFrame):
     Cohort matches M044 Table 2 (full analytic file / cohort view). Numerator and
     denominator include only rows with follow-up years > 0.
     """
+    df = add_endpoint_flags(df)
     fu = pd.to_numeric(df["followup_years"], errors="coerce").fillna(0.0)
     work = df.assign(_fu=fu)
     pos = work[work["_fu"] > 0]
@@ -221,7 +225,7 @@ def fig4_pp_per_100py(df: pd.DataFrame):
     for g in ORDER:
         sub = pos[pos["ete_group"] == g]
         py = float(sub["_fu"].sum())
-        events = int(sub["recurrence_path_proven"].fillna(False).astype(bool).sum())
+        events = int(bool_series(sub["path_proven_primary"]).sum())
         rate = (events / py * 100) if py else 0
         lo, hi = poisson_ci(events, py)
         rows.append({"ete_group": g, "n": len(sub), "events": events, "person_years": round(py,1),
@@ -328,8 +332,9 @@ def fig6_km(df: pd.DataFrame):
 
 def fig7_noneg_panel(df: pd.DataFrame):
     """Figure 7 - No/negative ETE explanatory panel."""
+    df = add_endpoint_flags(df)
     sub = df[df['ete_group']=='No/negative ETE'].copy()
-    sub['recurred'] = sub['recurrence_status_final'].isin(['path_proven', 'imaging_only_unconfirmed'])
+    sub['recurred'] = bool_series(sub['composite_primary'])
     rec = sub[sub['recurred']]; nor = sub[~sub['recurred']]
 
     fig, axes = plt.subplots(2, 2, figsize=(11, 8))

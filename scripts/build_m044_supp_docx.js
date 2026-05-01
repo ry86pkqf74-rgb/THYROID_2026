@@ -6,7 +6,7 @@ const {
   WidthType
 } = require('/tmp/node_modules/docx');
 
-const REPO = '/sessions/wonderful-trusting-babbage/mnt/THyroid 2026';
+const REPO = path.resolve(__dirname, '..');
 const MD = path.join(REPO, 'M044_ETE_supplement.md');
 const OUT = path.join(REPO, 'M044_ETE_supplement_v1_0.docx');
 const md = fs.readFileSync(MD, 'utf8');

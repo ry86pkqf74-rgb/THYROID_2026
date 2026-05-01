@@ -1,0 +1,49 @@
+{
+  "generated_at_utc": "2026-05-01T14:46:13Z",
+  "cohort_parquet_rows": 4128,
+  "crude_path_proven_or": {
+    "crude_pp_gross_vs_microscopic_or": 2.7918353576181385,
+    "crude_pp_gross_vs_microscopic_ci_low": 2.054194316632797,
+    "crude_pp_gross_vs_microscopic_ci_high": 3.7943560650207457,
+    "crude_pp_noneg_vs_microscopic_or": 3.3654306220015022,
+    "crude_pp_noneg_vs_microscopic_ci_low": 1.9405979868845002,
+    "crude_pp_noneg_vs_microscopic_ci_high": 5.836408853380678
+  },
+  "primary_strict_no_rai": {
+    "n_obs": 3750,
+    "n_events": 193,
+    "pseudo_r2_mcfadden": 0.14040257814284918,
+    "lr_vs_null_chi2": 213.65318930815624,
+    "gross_vs_microscopic": {
+      "or": 2.076021874744788,
+      "or_ci_low": 1.4785836095356497,
+      "or_ci_high": 2.914861761366597,
+      "pvalue": 2.4582090879533184e-05
+    },
+    "noneg_vs_microscopic": {
+      "or": 0.6669255032178935,
+      "or_ci_low": 0.3177659954934816,
+      "or_ci_high": 1.3997395352252677,
+      "pvalue": 0.28420806003042576
+    }
+  },
+  "cox_strict_no_rai": {
+    "n": 2511,
+    "events": 178,
+    "coef_table_path": "/Users/ros/THyroid 2026/data/m044/m044_cox_primary_summary.csv",
+    "gross_vs_microscopic_hr": {
+      "hr": 0.9102808635560813,
+      "hr_ci_low": 0.47913333888681914,
+      "hr_ci_high": 1.7293959390960676,
+      "p": 0.7740508906797761,
+      "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.Gross ETE]"
+    },
+    "noneg_vs_microscopic_hr": {
+      "hr": 2.443225068198415,
+      "hr_ci_low": 0.6478494195146004,
+      "hr_ci_high": 9.214099070036475,
+      "p": 0.18716625998772768,
+      "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.No/negative ETE]"
+    }
+  }
+}

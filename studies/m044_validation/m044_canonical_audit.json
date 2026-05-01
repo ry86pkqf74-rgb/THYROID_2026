@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-01T14:06:17Z",
+  "generated_at_utc": "2026-05-01T15:00:14Z",
   "cohort_object": "manuscript_workspace.cohort_m044_ajcc_ete_v1",
   "sql_path": "scripts/m044_validate_canonical_v1.sql",
   "overall_status": "PASS",
@@ -46,9 +46,19 @@
         "actual": 65,
         "pass": true
       },
-      "recurrence_path_proven_n": {
+      "recurrence_path_proven_raw_n": {
         "expected": 228,
         "actual": 228,
+        "pass": true
+      },
+      "recurrence_path_proven_quarantined_n": {
+        "expected": 24,
+        "actual": 24,
+        "pass": true
+      },
+      "recurrence_path_proven_n": {
+        "expected": 204,
+        "actual": 204,
         "pass": true
       },
       "recurrence_imaging_only_n": {
@@ -57,8 +67,28 @@
         "pass": true
       },
       "recurrence_composite_n": {
-        "expected": 252,
-        "actual": 252,
+        "expected": 228,
+        "actual": 228,
+        "pass": true
+      },
+      "primary_quarantined_n": {
+        "expected": 0,
+        "actual": 0,
+        "pass": true
+      },
+      "primary_negative_days_n": {
+        "expected": 0,
+        "actual": 0,
+        "pass": true
+      },
+      "recurrence_path_proven_positive_fu_n": {
+        "expected": 199,
+        "actual": 199,
+        "pass": true
+      },
+      "recurrence_path_proven_zero_fu_n": {
+        "expected": 5,
+        "actual": 5,
         "pass": true
       },
       "fu_zero_n": {
@@ -262,9 +292,15 @@
       "ete_no_negative": 192,
       "ete_present_ungraded": 29,
       "ete_missing_other": 65,
-      "recurrence_path_proven_n": 228,
+      "recurrence_path_proven_raw_n": 228,
+      "recurrence_path_proven_quarantined_n": 24,
+      "recurrence_path_proven_n": 204,
       "recurrence_imaging_only_n": 24,
-      "recurrence_composite_n": 252,
+      "recurrence_composite_n": 228,
+      "primary_quarantined_n": 0,
+      "primary_negative_days_n": 0,
+      "recurrence_path_proven_positive_fu_n": 199,
+      "recurrence_path_proven_zero_fu_n": 5,
       "fu_zero_n": 1400,
       "fu_positive_n": 2728
     },

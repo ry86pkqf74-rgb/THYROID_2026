@@ -5,7 +5,7 @@ step_order,criterion,n,excluded_at_step,cum_excluded_from_cohort,path_proven_eve
 3,Sex known female/male (same frame as primary logistic/Cox categoricals),3756,0,372,
 4,Positive analytic follow-up (followup_years > 0),2525,1231,1603,
 5,Known surgery date (CPM surg_first_date; mig_258/mig_254 lineage),2525,0,1603,
-6,Finite positive Cox time_days (path-proven TTE if event else censor at FU×365.25),2494,31,1634,
-7,Tumor size known (cm; Cox covariate complete-case),2490,4,1638,
-8,Age at surgery known (Cox covariate complete-case),2490,0,1638,
-9,Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6),2490,0,1638,178
+6,Finite positive Cox time_days (path-proven TTE if event else censor at FU×365.25),2515,10,1613,
+7,Tumor size known (cm; Cox covariate complete-case),2511,4,1617,
+8,Age at surgery known (Cox covariate complete-case),2511,0,1617,
+9,Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6),2511,0,1617,178

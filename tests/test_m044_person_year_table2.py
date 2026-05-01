@@ -26,6 +26,7 @@ def test_py_rate_excludes_zero_fu_events_from_numerator() -> None:
             "ete_group": ["Microscopic ETE"] * 3,
             "followup_years": [3.0, 2.0, 0.0],
             "recurrence_path_proven": [True, False, True],
+            "is_implausible_date_quarantine": [False, False, False],
             "recurrence_status_final": ["path_proven", "none", "path_proven"],
             "recurrence_imaging_then_path_confirmed": [False, False, False],
         }
@@ -75,17 +76,19 @@ def test_motherduck_publication_table2_golden_three_groups() -> None:
     tbl = m044.build_table2_recurrence_summary(df)
 
     mic = tbl.loc[tbl["ete_group"] == "Microscopic ETE"].iloc[0]
-    assert mic["path_proven_n"] == 59
-    assert mic["path_proven_n_positive_fu"] == 58
+    assert mic["path_proven_n"] == 80
+    assert mic["path_proven_n_positive_fu"] == 78
     np.testing.assert_allclose(mic["person_years_positive_fu"], 8137.3, rtol=0, atol=0.15)
-    np.testing.assert_allclose(mic["pp_per_100py"], 0.71, atol=0.02)
+    np.testing.assert_allclose(mic["pp_per_100py"], 0.96, atol=0.02)
 
     gross = tbl.loc[tbl["ete_group"] == "Gross ETE"].iloc[0]
-    assert gross["path_proven_n"] == gross["path_proven_n_positive_fu"] == 73
+    assert gross["path_proven_n"] == 105
+    assert gross["path_proven_n_positive_fu"] == 103
     np.testing.assert_allclose(gross["person_years_positive_fu"], 4138.3, rtol=0, atol=0.15)
-    np.testing.assert_allclose(gross["pp_per_100py"], 1.76, atol=0.02)
+    np.testing.assert_allclose(gross["pp_per_100py"], 2.49, atol=0.02)
 
     noneg = tbl.loc[tbl["ete_group"] == "No/negative ETE"].iloc[0]
-    assert noneg["path_proven_n"] == noneg["path_proven_n_positive_fu"] == 12
+    assert noneg["path_proven_n"] == 18
+    assert noneg["path_proven_n_positive_fu"] == 17
     np.testing.assert_allclose(noneg["person_years_positive_fu"], 700.8, rtol=0, atol=0.15)
-    np.testing.assert_allclose(noneg["pp_per_100py"], 1.71, atol=0.02)
+    np.testing.assert_allclose(noneg["pp_per_100py"], 2.43, atol=0.02)

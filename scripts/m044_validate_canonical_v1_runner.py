@@ -49,10 +49,16 @@ EXPECTED_MAIN = {
     "ete_no_negative": 192,
     "ete_present_ungraded": 29,
     "ete_missing_other": 65,
-    # Drift vs 20260501 freeze: canonical recurrence + path-proven definition refresh.
-    "recurrence_path_proven_n": 228,
+    # Final M044 endpoint: path-proven primary excludes implausible-date quarantines.
+    "recurrence_path_proven_raw_n": 228,
+    "recurrence_path_proven_quarantined_n": 24,
+    "recurrence_path_proven_n": 204,
     "recurrence_imaging_only_n": 24,
-    "recurrence_composite_n": 252,
+    "recurrence_composite_n": 228,
+    "primary_quarantined_n": 0,
+    "primary_negative_days_n": 0,
+    "recurrence_path_proven_positive_fu_n": 199,
+    "recurrence_path_proven_zero_fu_n": 5,
     "fu_zero_n": 1400,
     "fu_positive_n": 2728,
 }

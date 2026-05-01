@@ -80,11 +80,21 @@ reop AS (
 rec AS (
   SELECT
     research_id,
+        first_surg_date AS recurrence_first_surg_date,
     recurrence_path_proven,
+        recurrence_path_proven_date,
+        recurrence_path_proven_source,
     recurrence_imaging_then_path_confirmed,
     recurrence_status_final,
     days_to_path_proven,
-    recurrence_imaging_suspicious_date
+        recurrence_imaging_suspicious_date,
+        is_implausible_date_quarantine,
+        (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+        (recurrence_status_final = 'imaging_only_unconfirmed') AS imaging_only_unconfirmed,
+        (
+            (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE))
+            OR recurrence_status_final = 'imaging_only_unconfirmed'
+        ) AS composite_primary
   FROM main.canonical_recurrence_resolved_v1
 )
 SELECT
@@ -110,6 +120,13 @@ SELECT
   c.rai_received_flag,
   c.any_recurrence_flag,
   rec.recurrence_path_proven,
+    rec.recurrence_path_proven_date,
+    rec.recurrence_path_proven_source,
+    rec.recurrence_first_surg_date,
+    rec.is_implausible_date_quarantine,
+    rec.path_proven_primary,
+    rec.imaging_only_unconfirmed,
+    rec.composite_primary,
   rec.recurrence_imaging_then_path_confirmed,
   rec.recurrence_status_final,
   rec.days_to_path_proven,
@@ -252,7 +269,36 @@ def encode_rai_01(series: pd.Series) -> pd.Series:
     return (m_true | txt_ok.fillna(False) | ex_true).astype(int)
 
 
+def bool_series(series: pd.Series | None, *, default: bool = False) -> pd.Series:
+    """Parse nullable DB booleans without triggering pd.NA truth-value errors."""
+
+    if series is None:
+        return pd.Series(dtype=bool)
+    if series.dtype == bool:
+        return series.fillna(default).astype(bool)
+    text = series.astype(str).str.strip().str.lower()
+    out = text.isin({"true", "t", "1", "yes", "y", "x"})
+    if default:
+        out = out | text.isin({"", "nan", "none", "<na>", "nat"})
+    return out.fillna(default).astype(bool)
+
+
+def add_endpoint_flags(df: pd.DataFrame) -> pd.DataFrame:
+    """Add M044 final endpoint flags, excluding implausible-date quarantines."""
+
+    out = df.copy()
+    raw_path = bool_series(out.get("recurrence_path_proven"))
+    quarantine = bool_series(out.get("is_implausible_date_quarantine"))
+    status = out.get("recurrence_status_final", pd.Series(index=out.index, dtype=object))
+    status = status.astype(str)
+    out["path_proven_primary"] = raw_path & ~quarantine
+    out["imaging_only_unconfirmed"] = status.eq("imaging_only_unconfirmed")
+    out["composite_primary"] = out["path_proven_primary"] | out["imaging_only_unconfirmed"]
+    return out
+
+
 def build_primary_prep(df: pd.DataFrame, *, strict_dtc: bool = False) -> pd.DataFrame:
+    df = add_endpoint_flags(df)
     d = df[
         df["ete_group"].isin(["No/negative ETE", "Microscopic ETE", "Gross ETE"])
     ].copy()
@@ -283,13 +329,9 @@ def build_primary_prep(df: pd.DataFrame, *, strict_dtc: bool = False) -> pd.Data
     ns = d["ajcc8_n_stage"]
     d["ajcc8_n_fac"] = np.where(ns.isna(), "missing", ns.astype(str))
     d["tumor_size_cm"] = pd.to_numeric(d["tumor_size_cm"], errors="coerce")
-    d["y_pp"] = d["recurrence_path_proven"].astype(bool).astype(int)
-    d["y_img"] = (
-        (d["recurrence_status_final"] == "imaging_only_unconfirmed").astype(int)
-    )
-    d["y_comp"] = d["recurrence_status_final"].isin(
-        ["path_proven", "imaging_only_unconfirmed"]
-    ).astype(int)
+    d["y_pp"] = bool_series(d["path_proven_primary"]).astype(int)
+    d["y_img"] = bool_series(d["imaging_only_unconfirmed"]).astype(int)
+    d["y_comp"] = bool_series(d["composite_primary"]).astype(int)
     # Sensitivity only; legacy flag vs canonical: manuscript_workspace.m044_legacy_recurrence_flag_audit_v1
     d["y_any"] = d["any_recurrence_flag"].astype(bool).astype(int)
 
@@ -649,6 +691,7 @@ def export_parquet(force: bool) -> Path:
     merged["margin_involved_fac"] = tri_cat(merged["margin_involved_any"])
     merged["braf_positive_fac"] = tri_cat(merged["braf_positive_final"])
     merged["surg_tt_fac"] = tri_cat(merged["surg_total_thyroidectomy"])
+    merged = add_endpoint_flags(merged)
     merged.to_parquet(out, index=False)
     print(f"[export] wrote {out}")
     return out
@@ -689,7 +732,7 @@ def size_panel_clean(frame: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for (eg, bn), grp in x.groupby(["ete3", "bin"]):
         n = len(grp)
-        ev = int(grp["recurrence_path_proven"].astype(bool).sum())
+        ev = int(bool_series(grp.get("path_proven_primary")).sum())
         rows.append(
             {"ete_group": eg, "size_bin": bn, "n": n, "events": ev, "rate_pct": round(100 * ev / n, 2)}
         )
@@ -726,10 +769,11 @@ def build_table2_recurrence_summary(df_merged: pd.DataFrame) -> pd.DataFrame:
     """M044 Table 2 — cohort-wide n/% vs positive-FU person-year rates (SQL-aligned)."""
 
     fu = pd.to_numeric(df_merged["followup_years"], errors="coerce").fillna(0.0)
-    work = df_merged.copy()
+    work = add_endpoint_flags(df_merged)
     work["_fu"] = fu
-    pp = work["recurrence_path_proven"].fillna(False).astype(bool)
-    st = work["recurrence_status_final"].astype(str)
+    pp = bool_series(work["path_proven_primary"])
+    img_only = bool_series(work["imaging_only_unconfirmed"])
+    comp = bool_series(work["composite_primary"])
     has_img_then = "recurrence_imaging_then_path_confirmed" in work.columns
     img_then = (
         work["recurrence_imaging_then_path_confirmed"].fillna(False).astype(bool)
@@ -743,15 +787,15 @@ def build_table2_recurrence_summary(df_merged: pd.DataFrame) -> pd.DataFrame:
         n = int(len(grp))
         pos = grp["_fu"] > 0
         path_n = int(pp.loc[m].sum())
-        img_only_n = int((st.loc[m] == "imaging_only_unconfirmed").sum())
-        comp_n = int(st.loc[m].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        img_only_n = int(img_only.loc[m].sum())
+        comp_n = int(comp.loc[m].sum())
         if img_then is not None:
             img_then_n: int | None = int(img_then.loc[m].sum())
         else:
             img_then_n = None
         py_pos = float(grp.loc[pos, "_fu"].sum())
         pp_pos = int(pp.loc[m & pos].sum())
-        comp_pos = int(st.loc[m & pos].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        comp_pos = int(comp.loc[m & pos].sum())
         pp_py = (100.0 * pp_pos / py_pos) if py_pos > 0 else 0.0
         comp_py = (100.0 * comp_pos / py_pos) if py_pos > 0 else 0.0
         rows.append(
@@ -1171,16 +1215,14 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     )
 
     # No/negative ETE — composite outcome (legacy supplemental row)
-    sub = df_merged.loc[df_merged["ete_group"] == "No/negative ETE"].copy()
+    sub = add_endpoint_flags(df_merged.loc[df_merged["ete_group"] == "No/negative ETE"]).copy()
     sub["tumor_size_cm"] = pd.to_numeric(sub["tumor_size_cm"], errors="coerce")
     ns = sub["ajcc8_n_stage"]
     sub["ajcc8_n_fac"] = np.where(ns.isna(), "missing", ns.astype(str))
     sub["ajcc8_n_fac"] = pd.Categorical(
         sub["ajcc8_n_fac"], categories=["N0", "N1a", "N1b", "Nx", "missing"]
     )
-    sub["y_comp"] = sub["recurrence_status_final"].isin(
-        ["path_proven", "imaging_only_unconfirmed"]
-    ).astype(int)
+    sub["y_comp"] = bool_series(sub["composite_primary"]).astype(int)
     sub["rai_received_flag"] = encode_rai_01(sub["rai_received_flag"])
     sub["n_surgeries"] = pd.to_numeric(sub["n_surgeries"], errors="coerce").fillna(1.0)
     sub["ge2"] = (sub["n_surgeries"] >= 2).astype(int)

@@ -8,7 +8,7 @@ const {
   TabStopPosition, WidthType, ImageRun
 } = require('/tmp/node_modules/docx');
 
-const REPO = '/sessions/wonderful-trusting-babbage/mnt/THyroid 2026';
+const REPO = path.resolve(__dirname, '..');
 const MD_PATH = path.join(REPO, 'M044_ETE_manuscript_draft.md');
 const FIG_DIR = path.join(REPO, 'figures');
 const OUT_DOCX = path.join(REPO, 'M044_ETE_manuscript_v1_0.docx');

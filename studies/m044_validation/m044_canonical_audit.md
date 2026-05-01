@@ -1,6 +1,6 @@
 # M044 canonical cohort validation
 
-- **Generated (UTC):** 2026-05-01T14:06:17Z
+- **Generated (UTC):** 2026-05-01T15:00:14Z
 - **Cohort:** `manuscript_workspace.cohort_m044_ajcc_ete_v1`
 - **SQL:** `scripts/m044_validate_canonical_v1.sql`
 
@@ -21,9 +21,15 @@
 | `ete_no_negative` | 192 | 192 | yes |
 | `ete_present_ungraded` | 29 | 29 | yes |
 | `ete_missing_other` | 65 | 65 | yes |
-| `recurrence_path_proven_n` | 228 | 228 | yes |
+| `recurrence_path_proven_raw_n` | 228 | 228 | yes |
+| `recurrence_path_proven_quarantined_n` | 24 | 24 | yes |
+| `recurrence_path_proven_n` | 204 | 204 | yes |
 | `recurrence_imaging_only_n` | 24 | 24 | yes |
-| `recurrence_composite_n` | 252 | 252 | yes |
+| `recurrence_composite_n` | 228 | 228 | yes |
+| `primary_quarantined_n` | 0 | 0 | yes |
+| `primary_negative_days_n` | 0 | 0 | yes |
+| `recurrence_path_proven_positive_fu_n` | 199 | 199 | yes |
+| `recurrence_path_proven_zero_fu_n` | 5 | 5 | yes |
 | `fu_zero_n` | 1400 | 1400 | yes |
 | `fu_positive_n` | 2728 | 2728 | yes |
 

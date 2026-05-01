@@ -91,7 +91,13 @@ rec AS (
     recurrence_status_final,
     days_to_path_proven,
     days_to_imaging_suspicious,
-    is_implausible_date_quarantine
+    is_implausible_date_quarantine,
+    (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+    (recurrence_status_final = 'imaging_only_unconfirmed') AS imaging_only_unconfirmed,
+    (
+      (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE))
+      OR recurrence_status_final = 'imaging_only_unconfirmed'
+    ) AS composite_primary
   FROM main.canonical_recurrence_resolved_v1
 )
 -- ---------------------------------------------------------------------
@@ -117,6 +123,11 @@ SELECT
   c.any_recurrence_flag,                      -- legacy, do NOT use as primary
   c.structural_recurrence_flag,               -- legacy, do NOT use as primary
   rec.recurrence_path_proven,
+  rec.recurrence_path_proven_date,
+  rec.is_implausible_date_quarantine,
+  rec.path_proven_primary,
+  rec.imaging_only_unconfirmed,
+  rec.composite_primary,
   rec.recurrence_imaging_suspicious,
   rec.recurrence_imaging_then_path_confirmed,
   rec.recurrence_status_final,
@@ -219,7 +230,11 @@ ORDER BY n DESC;
 -- 3. Table 2 — Recurrence outcomes by ETE group (DUAL-TRACK)
 -- ---------------------------------------------------------------------
 WITH cohort AS (
-  SELECT c.*, r.recurrence_path_proven, r.recurrence_imaging_suspicious,
+  SELECT c.*, r.recurrence_path_proven, r.is_implausible_date_quarantine,
+         (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+         (r.recurrence_status_final = 'imaging_only_unconfirmed') AS imaging_only_unconfirmed,
+         ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
+         r.recurrence_imaging_suspicious,
          r.recurrence_status_final, r.recurrence_imaging_then_path_confirmed,
     CASE
       WHEN c.ete_grade_final IN ('false','absent') THEN 'No/negative ETE'
@@ -234,24 +249,24 @@ WITH cohort AS (
 SELECT ete_group,
   COUNT(*)                                                                          AS n,
   -- Primary endpoint: path-proven
-  SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END)                            AS path_proven_n,
-  ROUND(AVG(CASE WHEN recurrence_path_proven THEN 1.0 ELSE 0.0 END), 4)              AS path_proven_rate,
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END)                               AS path_proven_n,
+  ROUND(AVG(CASE WHEN path_proven_primary THEN 1.0 ELSE 0.0 END), 4)                 AS path_proven_rate,
   -- Imaging-only-unconfirmed
   SUM(CASE WHEN recurrence_status_final='imaging_only_unconfirmed' THEN 1 ELSE 0 END) AS img_only_n,
   ROUND(AVG(CASE WHEN recurrence_status_final='imaging_only_unconfirmed' THEN 1.0 ELSE 0.0 END),4) AS img_only_rate,
   -- Composite
-  SUM(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END) AS comp_n,
-  ROUND(AVG(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1.0 ELSE 0.0 END),4) AS comp_rate,
+  SUM(CASE WHEN composite_primary THEN 1 ELSE 0 END) AS comp_n,
+  ROUND(AVG(CASE WHEN composite_primary THEN 1.0 ELSE 0.0 END),4) AS comp_rate,
   -- Imaging-then-path
   SUM(CASE WHEN recurrence_imaging_then_path_confirmed THEN 1 ELSE 0 END)            AS img_then_path_n,
   -- Person-years: pyrs = audit sum including zero-FU; pos_pyrs = PY-rate denominator
   ROUND(SUM(followup_years),1)                                                       AS pyrs,
   ROUND(SUM(CASE WHEN followup_years>0 THEN followup_years END),1)                   AS pos_pyrs,
   -- PY incidence numerators exclude zero-FU rows (align with pos_pyrs denominator)
-  SUM(CASE WHEN followup_years>0 AND recurrence_path_proven THEN 1 ELSE 0 END)       AS path_proven_n_positive_fu,
-  SUM(CASE WHEN followup_years>0 AND recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END) AS comp_n_positive_fu,
-  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND recurrence_path_proven THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS pp_per_100py,
-  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS comp_per_100py,
+  SUM(CASE WHEN followup_years>0 AND path_proven_primary THEN 1 ELSE 0 END)       AS path_proven_n_positive_fu,
+  SUM(CASE WHEN followup_years>0 AND composite_primary THEN 1 ELSE 0 END) AS comp_n_positive_fu,
+  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND path_proven_primary THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS pp_per_100py,
+  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND composite_primary THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS comp_per_100py,
   -- Legacy (sensitivity only)
   SUM(CASE WHEN any_recurrence_flag THEN 1 ELSE 0 END)                               AS legacy_any_n,
   ROUND(AVG(CASE WHEN any_recurrence_flag THEN 1.0 ELSE 0.0 END),4)                  AS legacy_any_rate
@@ -297,7 +312,11 @@ SELECT
   ln.ln_examined, ln.ln_positive, ln.ln_central_positive, ln.lateral_max,
   CASE WHEN ln.ln_central_positive>0 THEN 1 ELSE 0 END AS central_pos_flag,
   CASE WHEN ln.lateral_max>0 THEN 1 ELSE 0 END AS lateral_pos_flag,
-  r.recurrence_path_proven, r.recurrence_imaging_suspicious,
+  r.recurrence_path_proven,
+  (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+  (r.recurrence_status_final = 'imaging_only_unconfirmed') AS imaging_only_unconfirmed,
+  ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
+  r.recurrence_imaging_suspicious,
   r.recurrence_status_final, r.recurrence_imaging_then_path_confirmed,
   r.days_to_path_proven, r.days_to_imaging_suspicious
 FROM cohort c
@@ -309,7 +328,10 @@ LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id);
 -- 5. Table 4 — No/negative ETE recurred vs non-recurred subgroup
 -- ---------------------------------------------------------------------
 WITH cohort AS (
-  SELECT c.*, r.recurrence_path_proven, r.recurrence_imaging_then_path_confirmed,
+  SELECT c.*, r.recurrence_path_proven,
+         (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+         ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
+         r.recurrence_imaging_then_path_confirmed,
          r.recurrence_status_final, r.days_to_path_proven, r.days_to_imaging_suspicious
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
   LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
@@ -329,7 +351,7 @@ reop AS (
   FROM manuscript_workspace.cohort_m040_reoperative_v1 GROUP BY research_id
 )
 SELECT
-  CASE WHEN c.recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 'Recurred' ELSE 'No recurrence' END AS rec_status,
+  CASE WHEN c.composite_primary THEN 'Recurred' ELSE 'No recurrence' END AS rec_status,
   COUNT(*) AS n,
   ROUND(AVG(c.tumor_size_cm),2) AS mean_size, ROUND(MEDIAN(c.tumor_size_cm),2) AS median_size,
   ROUND(MEDIAN(c.followup_years),2) AS median_fu,
@@ -341,7 +363,7 @@ SELECT
   SUM(CASE WHEN c.rai_received_flag THEN 1 ELSE 0 END) AS rai_n,
   SUM(CASE WHEN reop.n_surgeries>=2 THEN 1 ELSE 0 END) AS ge2_surg_n,
   ROUND(MEDIAN(CASE WHEN reop.n_surgeries>=2 THEN reop.days_to_2nd END),0) AS median_days_to_2nd,
-  SUM(CASE WHEN c.recurrence_path_proven THEN 1 ELSE 0 END) AS path_proven_n,
+  SUM(CASE WHEN c.path_proven_primary THEN 1 ELSE 0 END) AS path_proven_n,
   SUM(CASE WHEN c.recurrence_imaging_then_path_confirmed THEN 1 ELSE 0 END) AS img_then_path_n
 FROM cohort c
 LEFT JOIN ln USING (research_id)
@@ -354,6 +376,8 @@ GROUP BY 1 ORDER BY 1;
 -- ---------------------------------------------------------------------
 WITH cohort AS (
   SELECT c.*, r.recurrence_path_proven, r.recurrence_status_final,
+    (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+    ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
     CASE
       WHEN c.ete_grade_final IN ('false','absent') THEN 'No/negative ETE'
       WHEN c.ete_grade_final = 'microscopic'       THEN 'Microscopic ETE'
@@ -366,10 +390,10 @@ WITH cohort AS (
   WHERE c.followup_years > 0
 )
 SELECT ete_group, COUNT(*) AS n_pos_fu,
-  SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END) AS pp_n,
-  ROUND(100.0*SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END)/SUM(followup_years),3) AS pp_per_100py,
-  SUM(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END) AS comp_n,
-  ROUND(100.0*SUM(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END)/SUM(followup_years),3) AS comp_per_100py
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS pp_n,
+  ROUND(100.0*SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END)/SUM(followup_years),3) AS pp_per_100py,
+  SUM(CASE WHEN composite_primary THEN 1 ELSE 0 END) AS comp_n,
+  ROUND(100.0*SUM(CASE WHEN composite_primary THEN 1 ELSE 0 END)/SUM(followup_years),3) AS comp_per_100py
 FROM cohort GROUP BY 1 ORDER BY 1;
 
 
@@ -387,15 +411,18 @@ WITH cohort AS (
          WHEN c.vascular_invasion_final='present_ungraded' THEN 'vas_present'
          WHEN c.vascular_invasion_final='indeterminate' THEN 'vas_indet'
          ELSE 'vas_missing' END AS vas_cat,
-    r.recurrence_path_proven, r.recurrence_status_final, c.followup_years
+    r.recurrence_path_proven,
+    (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
+    ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
+    r.recurrence_status_final, c.followup_years
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
   LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
 )
 SELECT lym_cat, vas_cat, COUNT(*) AS n,
-  SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END) AS pp_n,
-  ROUND(AVG(CASE WHEN recurrence_path_proven THEN 1.0 ELSE 0.0 END),4) AS pp_rate,
-  SUM(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END) AS comp_n,
-  ROUND(AVG(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1.0 ELSE 0.0 END),4) AS comp_rate
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS pp_n,
+  ROUND(AVG(CASE WHEN path_proven_primary THEN 1.0 ELSE 0.0 END),4) AS pp_rate,
+  SUM(CASE WHEN composite_primary THEN 1 ELSE 0 END) AS comp_n,
+  ROUND(AVG(CASE WHEN composite_primary THEN 1.0 ELSE 0.0 END),4) AS comp_rate
 FROM cohort GROUP BY 1,2 ORDER BY n DESC;
 
 
@@ -404,6 +431,7 @@ FROM cohort GROUP BY 1,2 ORDER BY n DESC;
 -- ---------------------------------------------------------------------
 WITH cohort AS (
   SELECT c.*, r.recurrence_path_proven, r.recurrence_status_final,
+    (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
     CASE
       WHEN c.ete_grade_final IN ('false','absent') THEN 'No/negative ETE'
       WHEN c.ete_grade_final = 'microscopic'       THEN 'Microscopic ETE'
@@ -416,8 +444,8 @@ WITH cohort AS (
   WHERE c.surg_first_date BETWEEN DATE '1999-01-01' AND DATE '2024-12-31'
 )
 SELECT ete_group, COUNT(*) AS n,
-  SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END) AS pp_n,
-  ROUND(AVG(CASE WHEN recurrence_path_proven THEN 1.0 ELSE 0.0 END),4) AS pp_rate
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS pp_n,
+  ROUND(AVG(CASE WHEN path_proven_primary THEN 1.0 ELSE 0.0 END),4) AS pp_rate
 FROM cohort GROUP BY 1 ORDER BY 1;
 
 
@@ -443,7 +471,8 @@ FROM cohort GROUP BY 1,2 ORDER BY 1, 2 NULLS LAST;
 -- 10. Tumor-size strata × ETE group (path-proven recurrence)
 -- ---------------------------------------------------------------------
 WITH cohort AS (
-  SELECT c.tumor_size_cm, r.recurrence_path_proven,
+  SELECT c.tumor_size_cm,
+    (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
     CASE
       WHEN c.ete_grade_final IN ('false','absent') THEN 'No/negative ETE'
       WHEN c.ete_grade_final = 'microscopic'       THEN 'Microscopic ETE'
@@ -460,8 +489,8 @@ SELECT ete_group,
        WHEN tumor_size_cm > 4  THEN '>4 cm'
        ELSE 'unknown' END AS size_bin,
   COUNT(*) AS n,
-  SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END) AS pp_n,
-  ROUND(AVG(CASE WHEN recurrence_path_proven THEN 1.0 ELSE 0.0 END),4) AS pp_rate
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS pp_n,
+  ROUND(AVG(CASE WHEN path_proven_primary THEN 1.0 ELSE 0.0 END),4) AS pp_rate
 FROM cohort
 WHERE ete_group IN ('No/negative ETE','Microscopic ETE','Gross ETE')
 GROUP BY 1,2 ORDER BY 1,2;
@@ -471,7 +500,8 @@ GROUP BY 1,2 ORDER BY 1,2;
 -- 11. Reoperative interaction by ETE group
 -- ---------------------------------------------------------------------
 WITH cohort AS (
-  SELECT c.research_id, c.ete_grade_final, r.recurrence_path_proven,
+  SELECT c.research_id, c.ete_grade_final,
+         (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) AS path_proven_primary,
          reop.n_surgeries, reop.days_to_2nd, reop.completion_reason,
     CASE
       WHEN c.ete_grade_final IN ('false','absent') THEN 'No/negative ETE'
@@ -491,7 +521,7 @@ WITH cohort AS (
 )
 SELECT ete_group, COUNT(*) AS n,
   SUM(CASE WHEN n_surgeries>=2 THEN 1 ELSE 0 END) AS ge2_n,
-  SUM(CASE WHEN n_surgeries>=2 AND recurrence_path_proven THEN 1 ELSE 0 END) AS ge2_and_pp_n,
+  SUM(CASE WHEN n_surgeries>=2 AND path_proven_primary THEN 1 ELSE 0 END) AS ge2_and_pp_n,
   SUM(CASE WHEN completion_reason IS NOT NULL THEN 1 ELSE 0 END) AS comp_reason_known
 FROM cohort GROUP BY 1 ORDER BY 1;
 

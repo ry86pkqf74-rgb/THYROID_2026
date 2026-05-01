@@ -3,14 +3,14 @@
 Stale benchmarks (pre–mig_254/258 lineage + legacy recurrence audit wording):
   surgery-date missing n=914; 1999–2024 window n=3,212; structural_recurrence headline 1,819;
   structural + recurrence_status none 1,467; Cox manuscript sample n=2,018 / figure n=2,025;
-  Table 2 microscopic person-year rate 0.73 (positive-FU denominator); total thyroidectomy Table 1B n=2,098.
+    Table 2 microscopic person-year stale rate near 0.73 (positive-FU denominator); total thyroidectomy Table 1B n=2,098.
 
 Violations report file path, rule id, and line excerpt. Legacy documentation that *explains* these
 numbers may live only in EXCLUDED_PATH_SUFFIXES.
 
 Environment:
   M044_SKIP_STALE_MANUSCRIPT_GUARD=1 — skip this module (emergency only).
-  M044_EXPECT_COX_FINAL_N — final Cox/KM row count from inclusion-flow QA CSV (default 2490).
+    M044_EXPECT_COX_FINAL_N — final Cox/KM row count from inclusion-flow QA CSV (default 2511).
 """
 
 from __future__ import annotations
@@ -218,7 +218,7 @@ def test_m044_inclusion_flow_not_stale_cox_ns() -> None:
             f"{rel}: discontinued Cox/sample n={n_val} in '{crit[:120]}'"
         )
 
-    exp_final = int(os.environ.get("M044_EXPECT_COX_FINAL_N", "2490"))
+    exp_final = int(os.environ.get("M044_EXPECT_COX_FINAL_N", "2511"))
     final_hit = [
         r
         for r in rows
@@ -234,7 +234,7 @@ def test_m044_inclusion_flow_not_stale_cox_ns() -> None:
 
 
 def test_m044_parquet_table2_microscopic_rate_not_point_73() -> None:
-    """0.710–0.724 was superseded (~0.71); exactly 0.73 (two decimals) flags old positive-FU extract."""
+    """Primary endpoint refits should not regress to the old microscopic PY rate."""
 
     pq = REPO / "data" / "m044" / "analytic_file_v1.parquet"
     if not pq.exists():

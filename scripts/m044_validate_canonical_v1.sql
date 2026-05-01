@@ -6,8 +6,10 @@
 --   n=4128, distinct_rid=4128, duplicate_rows=0
 --   ETE: Microscopic 2576, Gross 1266, No/negative 192, Present-ungraded 29,
 --        Missing/other 65
---   Recurrence (canonical_recurrence_resolved_v1): path_proven 145,
---        imaging_only_unconfirmed 195, composite (path + imaging-only) 340
+--   Recurrence endpoint: path_proven_primary = recurrence_path_proven
+--        AND NOT COALESCE(is_implausible_date_quarantine,false).
+--        Imaging-only endpoint = recurrence_status_final='imaging_only_unconfirmed'.
+--        Composite endpoint = path_proven_primary OR imaging-only.
 --   Follow-up: followup_years<=0 OR NULL => 1400; followup_years>0 => 2728
 --
 -- Split markers: lines must match -- QUERY: <name> (see runner regex)
@@ -18,8 +20,17 @@ WITH base AS (
   SELECT
     c.research_id,
     c.followup_years,
+    r.days_to_path_proven,
     r.recurrence_path_proven,
+    r.is_implausible_date_quarantine,
     r.recurrence_status_final,
+    (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE))
+      AS path_proven_primary,
+    (r.recurrence_status_final = 'imaging_only_unconfirmed') AS imaging_only_unconfirmed,
+    (
+      (r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE))
+      OR r.recurrence_status_final = 'imaging_only_unconfirmed'
+    ) AS composite_primary,
     CASE
       WHEN c.ete_grade_final IN ('false', 'absent') THEN 'No/negative'
       WHEN c.ete_grade_final = 'microscopic' THEN 'Microscopic'
@@ -40,15 +51,24 @@ SELECT
   SUM(CASE WHEN ete_bucket = 'No/negative' THEN 1 ELSE 0 END) AS ete_no_negative,
   SUM(CASE WHEN ete_bucket = 'Present-ungraded' THEN 1 ELSE 0 END) AS ete_present_ungraded,
   SUM(CASE WHEN ete_bucket = 'Missing/other' THEN 1 ELSE 0 END) AS ete_missing_other,
-  SUM(CASE WHEN recurrence_path_proven IS TRUE THEN 1 ELSE 0 END) AS recurrence_path_proven_n,
+  SUM(CASE WHEN recurrence_path_proven IS TRUE THEN 1 ELSE 0 END) AS recurrence_path_proven_raw_n,
+  SUM(CASE WHEN recurrence_path_proven IS TRUE AND COALESCE(is_implausible_date_quarantine, FALSE) THEN 1 ELSE 0 END)
+    AS recurrence_path_proven_quarantined_n,
+  SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS recurrence_path_proven_n,
   SUM(
-    CASE WHEN recurrence_status_final = 'imaging_only_unconfirmed' THEN 1 ELSE 0 END
+    CASE WHEN imaging_only_unconfirmed THEN 1 ELSE 0 END
   ) AS recurrence_imaging_only_n,
   SUM(
-    CASE
-      WHEN recurrence_status_final IN ('path_proven', 'imaging_only_unconfirmed')
-      THEN 1 ELSE 0 END
+    CASE WHEN composite_primary THEN 1 ELSE 0 END
   ) AS recurrence_composite_n,
+  SUM(CASE WHEN path_proven_primary AND COALESCE(is_implausible_date_quarantine, FALSE) THEN 1 ELSE 0 END)
+    AS primary_quarantined_n,
+  SUM(CASE WHEN path_proven_primary AND days_to_path_proven < 0 THEN 1 ELSE 0 END)
+    AS primary_negative_days_n,
+  SUM(CASE WHEN followup_years > 0 AND path_proven_primary THEN 1 ELSE 0 END)
+    AS recurrence_path_proven_positive_fu_n,
+  SUM(CASE WHEN followup_years <= 0 AND path_proven_primary THEN 1 ELSE 0 END)
+    AS recurrence_path_proven_zero_fu_n,
   SUM(CASE WHEN followup_years IS NULL OR followup_years <= 0 THEN 1 ELSE 0 END) AS fu_zero_n,
   SUM(CASE WHEN followup_years IS NOT NULL AND followup_years > 0 THEN 1 ELSE 0 END) AS fu_positive_n
 FROM base;
