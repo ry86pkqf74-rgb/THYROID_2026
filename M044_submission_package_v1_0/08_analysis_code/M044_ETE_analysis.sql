@@ -203,11 +203,14 @@ SELECT ete_group,
   ROUND(AVG(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1.0 ELSE 0.0 END),4) AS comp_rate,
   -- Imaging-then-path
   SUM(CASE WHEN recurrence_imaging_then_path_confirmed THEN 1 ELSE 0 END)            AS img_then_path_n,
-  -- Person-years
+  -- Person-years: pyrs = audit sum including zero-FU; pos_pyrs = PY-rate denominator
   ROUND(SUM(followup_years),1)                                                       AS pyrs,
   ROUND(SUM(CASE WHEN followup_years>0 THEN followup_years END),1)                   AS pos_pyrs,
-  ROUND(100.0*SUM(CASE WHEN recurrence_path_proven THEN 1 ELSE 0 END)/NULLIF(SUM(followup_years),0), 3) AS pp_per_100py,
-  ROUND(100.0*SUM(CASE WHEN recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END)/NULLIF(SUM(followup_years),0), 3) AS comp_per_100py,
+  -- PY incidence numerators exclude zero-FU rows (align with pos_pyrs denominator)
+  SUM(CASE WHEN followup_years>0 AND recurrence_path_proven THEN 1 ELSE 0 END)       AS path_proven_n_positive_fu,
+  SUM(CASE WHEN followup_years>0 AND recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END) AS comp_n_positive_fu,
+  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND recurrence_path_proven THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS pp_per_100py,
+  ROUND(100.0*SUM(CASE WHEN followup_years>0 AND recurrence_status_final IN ('path_proven','imaging_only_unconfirmed') THEN 1 ELSE 0 END)/NULLIF(SUM(CASE WHEN followup_years>0 THEN followup_years END),0), 3) AS comp_per_100py,
   -- Legacy (sensitivity only)
   SUM(CASE WHEN any_recurrence_flag THEN 1 ELSE 0 END)                               AS legacy_any_n,
   ROUND(AVG(CASE WHEN any_recurrence_flag THEN 1.0 ELSE 0.0 END),4)                  AS legacy_any_rate

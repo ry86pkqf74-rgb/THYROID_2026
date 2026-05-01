@@ -1,6 +1,7 @@
 [tool.pytest.ini_options]
 markers = [
     "local_db: requires repo-root thyroid_master.duckdb with lab canonical table; run locally or in DB-backed workflows",
+    "integration: optional checks against exported parquet / external assets",
 ]
 
 [tool.mypy]

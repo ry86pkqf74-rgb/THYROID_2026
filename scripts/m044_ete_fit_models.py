@@ -108,7 +108,9 @@ SELECT
          OR COALESCE(ln.ln_bilateral_lateral_positive,0) > 0 THEN 1 ELSE 0 END AS lateral_pos_flag,
   c.rai_received_flag,
   c.any_recurrence_flag,
-  rec.recurrence_path_proven, rec.recurrence_status_final,
+  rec.recurrence_path_proven,
+  rec.recurrence_imaging_then_path_confirmed,
+  rec.recurrence_status_final,
   rec.days_to_path_proven,
   reop.n_surgeries, reop.days_to_2nd
 FROM cohort c
@@ -500,6 +502,104 @@ def expected_size_rates() -> dict[tuple[str, str], float]:
         ("No/negative ETE", "2.1-4"): 7.0,
         ("No/negative ETE", ">4"): 3.8,
     }
+
+
+TABLE2_ETE_ORDER: tuple[str, ...] = (
+    "Microscopic ETE",
+    "Gross ETE",
+    "No/negative ETE",
+    "Present ungraded",
+    "Missing/other",
+)
+
+
+def build_table2_recurrence_summary(df_merged: pd.DataFrame) -> pd.DataFrame:
+    """M044 Table 2 — cohort-wide n/% vs positive-FU person-year rates (SQL-aligned)."""
+
+    fu = pd.to_numeric(df_merged["followup_years"], errors="coerce").fillna(0.0)
+    work = df_merged.copy()
+    work["_fu"] = fu
+    pp = work["recurrence_path_proven"].fillna(False).astype(bool)
+    st = work["recurrence_status_final"].astype(str)
+    has_img_then = "recurrence_imaging_then_path_confirmed" in work.columns
+    img_then = (
+        work["recurrence_imaging_then_path_confirmed"].fillna(False).astype(bool)
+        if has_img_then
+        else None
+    )
+    rows: list[dict[str, Any]] = []
+    for eg in TABLE2_ETE_ORDER:
+        m = work["ete_group"].astype(str) == eg
+        grp = work.loc[m]
+        n = int(len(grp))
+        pos = grp["_fu"] > 0
+        path_n = int(pp.loc[m].sum())
+        img_only_n = int((st.loc[m] == "imaging_only_unconfirmed").sum())
+        comp_n = int(st.loc[m].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        if img_then is not None:
+            img_then_n: int | None = int(img_then.loc[m].sum())
+        else:
+            img_then_n = None
+        py_pos = float(grp.loc[pos, "_fu"].sum())
+        pp_pos = int(pp.loc[m & pos].sum())
+        comp_pos = int(st.loc[m & pos].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        pp_py = (100.0 * pp_pos / py_pos) if py_pos > 0 else 0.0
+        comp_py = (100.0 * comp_pos / py_pos) if py_pos > 0 else 0.0
+        rows.append(
+            {
+                "ete_group": eg,
+                "n": n,
+                "path_proven_n": path_n,
+                "path_proven_pct": (100.0 * path_n / n) if n else 0.0,
+                "img_only_n": img_only_n,
+                "img_only_pct": (100.0 * img_only_n / n) if n else 0.0,
+                "comp_n": comp_n,
+                "comp_pct": (100.0 * comp_n / n) if n else 0.0,
+                "img_then_path_n": img_then_n,
+                "person_years_positive_fu": round(py_pos, 1),
+                "path_proven_n_positive_fu": pp_pos,
+                "comp_n_positive_fu": comp_pos,
+                "pp_per_100py": round(pp_py, 2),
+                "comp_per_100py": round(comp_py, 2),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def fill_table2_excel(ws: Any, tbl: pd.DataFrame) -> None:
+    """Write `Table 2 — Recurrence` data rows (expects manuscript column layout)."""
+
+    ws.cell(row=4, column=10, value="Person-years (FU>0)")
+    ws.cell(row=4, column=11, value="Path-proven /100 PY")
+    start_row = 5
+    pct_fmt = lambda x: f"{x:.2f}%"  # noqa: E731
+    for i, eg in enumerate(TABLE2_ETE_ORDER):
+        hit = tbl.loc[tbl["ete_group"].astype(str) == eg]
+        if len(hit) != 1:
+            raise ValueError(f"Table 2 missing row for {eg}")
+        r = hit.iloc[0]
+        row = start_row + i
+        ws.cell(row=row, column=1, value=eg)
+        ws.cell(row=row, column=2, value=int(r["n"]))
+        ws.cell(row=row, column=3, value=int(r["path_proven_n"]))
+        ws.cell(row=row, column=4, value=pct_fmt(float(r["path_proven_pct"])))
+        ws.cell(row=row, column=5, value=int(r["img_only_n"]))
+        ws.cell(row=row, column=6, value=pct_fmt(float(r["img_only_pct"])))
+        ws.cell(row=row, column=7, value=int(r["comp_n"]))
+        ws.cell(row=row, column=8, value=pct_fmt(float(r["comp_pct"])))
+        if r["img_then_path_n"] is not None:
+            ws.cell(row=row, column=9, value=int(r["img_then_path_n"]))
+        ws.cell(row=row, column=10, value=float(r["person_years_positive_fu"]))
+        ws.cell(row=row, column=11, value=float(r["pp_per_100py"]))
+    ws.cell(
+        row=11,
+        column=1,
+        value=(
+            "Notes: Col J sums follow-up years among patients with FU>0 only (PY-rate denominator). "
+            "Col K = 100 × (path-proven events among FU>0) / col J. "
+            "Path-proven n and Path-proven % include all patients (zero-FU retained in denominator for proportions)."
+        ),
+    )
 
 
 def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
@@ -960,6 +1060,8 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
             )
     out["size_strata_qa"] = {"table": qa_tbl, "flags": qa_flags}
 
+    out["table2_recurrence_df"] = build_table2_recurrence_summary(df_merged)
+
     return out
 
 
@@ -1207,6 +1309,9 @@ def update_workbook(bundle: dict[str, Any]) -> None:
     from openpyxl.styles import Font
 
     wb = load_workbook(XLSX)
+
+    ws2 = wb["Table 2 — Recurrence"]
+    fill_table2_excel(ws2, bundle["table2_recurrence_df"])
 
     ws3 = wb["Table 3 — Multivariable"]
     ws3.cell(

@@ -6,7 +6,7 @@ Figures:
   1. Cohort flow diagram (4,128 → strict-DTC → analytic primary).
   2. ETE group distribution.
   3. Path-proven recurrence rate by ETE group with 95% CI (Wilson).
-  4. Path-proven /100 person-years by ETE group with Poisson 95% CI.
+  4. Path-proven /100 person-years by ETE group (full analytic cohort; aligns with Table 2).
   5. Forest plot from strict-DTC + no-RAI primary logistic (already produced by
      m044_ete_fit_models.py — referenced here for completeness).
   6. Kaplan-Meier path-proven recurrence-free survival by ETE group, strict-DTC,
@@ -30,9 +30,9 @@ from lifelines import KaplanMeierFitter
 import warnings
 warnings.filterwarnings("ignore")
 
-REPO = Path("/sessions/wonderful-trusting-babbage/mnt/THyroid 2026")
+REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "data" / "m044"
-FIG  = REPO / "figures"
+FIG = REPO / "figures"
 FIG.mkdir(parents=True, exist_ok=True)
 
 # ETE colors and order
@@ -161,7 +161,7 @@ def fig3_pp_rate(df: pd.DataFrame):
     df_p = pd.DataFrame(rows)
 
     fig, ax = plt.subplots(figsize=(7, 5))
-    bars = ax.bar(df_p['ete_group'], df_p['rate'], color=[COL[g] for g in df_p['ete_group']], alpha=0.9)
+    ax.bar(df_p["ete_group"], df_p["rate"], color=[COL[g] for g in df_p["ete_group"]], alpha=0.9)
     err_low = df_p['rate'] - df_p['ci_low']
     err_high = df_p['ci_high'] - df_p['rate']
     ax.errorbar(df_p['ete_group'], df_p['rate'],
@@ -182,14 +182,19 @@ def fig3_pp_rate(df: pd.DataFrame):
 
 
 def fig4_pp_per_100py(df: pd.DataFrame):
-    """Figure 4 - Path-proven /100 PY by ETE group (strict-DTC, FU>0)."""
-    strict = df[~df['histology_final'].isin(EXC)]
-    pos = strict[strict['followup_years'] > 0]
+    """Figure 4 — path-proven /100 PY for primary three ETE levels.
+
+    Cohort matches M044 Table 2 (full analytic file / cohort view). Numerator and
+    denominator include only rows with follow-up years > 0.
+    """
+    fu = pd.to_numeric(df["followup_years"], errors="coerce").fillna(0.0)
+    work = df.assign(_fu=fu)
+    pos = work[work["_fu"] > 0]
     rows = []
     for g in ORDER:
-        sub = pos[pos['ete_group']==g]
-        py = sub['followup_years'].sum()
-        events = int(sub['recurrence_path_proven'].sum())
+        sub = pos[pos["ete_group"] == g]
+        py = float(sub["_fu"].sum())
+        events = int(sub["recurrence_path_proven"].fillna(False).astype(bool).sum())
         rate = (events / py * 100) if py else 0
         lo, hi = poisson_ci(events, py)
         rows.append({"ete_group": g, "n": len(sub), "events": events, "person_years": round(py,1),
@@ -206,7 +211,10 @@ def fig4_pp_per_100py(df: pd.DataFrame):
         ax.text(i, r['ci_high']+0.05, f"{r['rate_per_100py']:.2f}\n(events={r['events']}, PY={r['person_years']:.0f})",
                 ha='center', fontsize=9)
     ax.set_ylabel("Path-proven recurrence rate (per 100 person-years)")
-    ax.set_title("Figure 4. Path-proven recurrence per 100 PY by ETE group (strict-DTC, FU>0)")
+    ax.set_title(
+        "Figure 4. Path-proven recurrence per 100 PY by ETE group "
+        "(full M044 cohort; FU>0 numerator & denominator)"
+    )
     ax.set_ylim(0, max(df_p['ci_high'])*1.4)
     ax.grid(axis='y', alpha=0.3)
     plt.tight_layout()

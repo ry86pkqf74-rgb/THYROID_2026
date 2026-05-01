@@ -123,6 +123,8 @@ Imaging-suspicion-then-path-confirmation (`recurrence_imaging_then_path_confirme
 
 **Per-100-person-year rates (positive follow-up only):**
 
+Numerators for `/100 PY` exclude zero-follow-up patients (aligned with the person-year denominator). Cohort **n** and **Path-proven %** remain full-cohort counts.
+
 | ETE group | Person-years | Path-proven /100PY | Composite /100PY |
 |---|---:|---:|---:|
 | Microscopic ETE | 8,137 | 0.71 | 1.74 |

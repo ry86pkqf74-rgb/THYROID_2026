@@ -125,6 +125,8 @@ Imaging-suspicion-then-path-confirmation (`recurrence_imaging_then_path_confirme
 
 **Per-100-person-year rates (positive follow-up only):**
 
+Numerators (`path_proven` / composite events counted in these rates) are restricted to patients with `followup_years > 0`, matching the person-year denominator (`pos_pyrs`). Cohort **n** and **Path-proven %** remain full-cohort proportions (zero-follow-up patients retained). SQL emits `path_proven_n_positive_fu` alongside cohort-wide `path_proven_n` for audit (e.g., microscopic ETE: 59 cohort-wide path-proven vs 58 contributing to the PY rate).
+
 | ETE group | Person-years | Path-proven /100PY | Composite /100PY |
 |---|---:|---:|---:|
 | Microscopic ETE | 8,137 | 0.71 | 1.74 |
