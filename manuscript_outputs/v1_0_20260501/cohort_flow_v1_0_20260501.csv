@@ -1,0 +1,10 @@
+step,description,n_excluded,n_remaining
+1,Total distinct patients in canonical_patient_master,0,10871
+2,Excluded: not malignant (is_malignant=FALSE or NULL),6734,4137
+3,"Excluded: NIFTP/UMP-only (indeterminate events, no remaining malignant event) [mig_186b]",115,4022
+4,Excluded: no histology + no AJCC8 T-stage resolved (both NULL),0,4022
+5,Excluded: no last_contact_date,0,4022
+6,Informational: distinct patients with ≥1 borderline/benign-with-staging malignant row [mig_229],,24
+7,Informational: distinct patients with recurrence implausible-date quarantine (excluded from vw_recurrence_safe),,132
+8,Informational: raw malignant-event patients absent from semantic vw_path_malignant after dedup/quarantine,0,
+9,Analytic malignant cohort — patients with ≥1 vw_path_malignant_tumor_safe_VIEW_v1 row ∩ malignant CPM,,4022

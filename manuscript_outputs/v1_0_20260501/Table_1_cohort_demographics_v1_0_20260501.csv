@@ -1,0 +1,72 @@
+sort_key,characteristic,level,n,pct,statistic
+1,Cohort,Analytic (malignant CPM ∩ ≥1 semantic vw_path_malignant_tumor_safe row),4022,,N
+10,Age at first surgery (years),Mean ± SD,50.62 ± 15.67,,continuous
+11,Age at first surgery (years),Median (IQR),50.0 (38.0–63.0),,continuous
+20,Sex,Female,2937,73.0,categorical
+21,Sex,Male,1085,27.0,categorical
+25,Race / ethnicity,American Indian or Alaska Native,15,0.4,categorical
+25,Race / ethnicity,Asian,274,6.8,categorical
+25,Race / ethnicity,Black or African American,955,23.7,categorical
+25,Race / ethnicity,Hispanic or Latino,10,0.2,categorical
+25,Race / ethnicity,Native Hawaiian or Other Pacific Islander,14,0.3,categorical
+25,Race / ethnicity,Other,74,1.8,categorical
+25,Race / ethnicity,Unknown or Not Reported,289,7.2,categorical
+25,Race / ethnicity,White,2387,59.3,categorical
+25,Race / ethnicity,unknown,4,0.1,categorical
+30,Histology (bucket),ATC,24,0.6,categorical
+30,Histology (bucket),DTC_nonspecific,41,1.0,categorical
+30,Histology (bucket),FTC,500,12.4,categorical
+30,Histology (bucket),MTC,161,4.0,categorical
+30,Histology (bucket),PTC,3255,80.9,categorical
+30,Histology (bucket),other_or_mixed,41,1.0,categorical
+40,Tumor size primary (cm),Median (IQR),1.7 (0.8–3.2),,continuous
+41,Tumor size — <1 cm,,1118,27.8,bucket
+42,Tumor size — 1–2 cm,,1089,27.1,bucket
+43,Tumor size — 2–4 cm,,1148,28.5,bucket
+44,Tumor size — >4 cm,,658,16.4,bucket
+50,AJCC8 stage group (resolved),I,1440,35.8,categorical
+50,AJCC8 stage group (resolved),II,1644,40.9,categorical
+50,AJCC8 stage group (resolved),III,56,1.4,categorical
+50,AJCC8 stage group (resolved),IVA,17,0.4,categorical
+50,AJCC8 stage group (resolved),IVB,728,18.1,categorical
+50,AJCC8 stage group (resolved),IVC,63,1.6,categorical
+50,AJCC8 stage group (resolved),unstaged_or_unknown,74,1.8,categorical
+60,T stage (resolved),T0,44,1.1,categorical
+60,T stage (resolved),T1a,1062,26.4,categorical
+60,T stage (resolved),T1b,893,22.2,categorical
+60,T stage (resolved),T2,823,20.5,categorical
+60,T stage (resolved),T3a,424,10.5,categorical
+60,T stage (resolved),T3b,741,18.4,categorical
+60,T stage (resolved),T4,25,0.6,categorical
+60,T stage (resolved),T4a,8,0.2,categorical
+60,T stage (resolved),T4b,1,0.0,categorical
+60,T stage (resolved),unknown,1,0.0,categorical
+61,N stage (resolved / fallback),N0,1199,29.8,categorical
+61,N stage (resolved / fallback),N1a,2515,62.5,categorical
+61,N stage (resolved / fallback),N1b,83,2.1,categorical
+61,N stage (resolved / fallback),NX,6,0.1,categorical
+61,N stage (resolved / fallback),Nx,205,5.1,categorical
+61,N stage (resolved / fallback),unknown,14,0.3,categorical
+62,M stage (resolved / fallback),M0,2204,54.8,categorical
+62,M stage (resolved / fallback),M1,1818,45.2,categorical
+70,Multifocality (path),≥2 tumors,1731,43.0,binary
+80,Extrathyroidal extension,absent_or_unknown,206,5.1,categorical
+80,Extrathyroidal extension,gross,1265,31.5,categorical
+80,Extrathyroidal extension,minimal_or_ungraded_present,2549,63.4,categorical
+80,Extrathyroidal extension,other,2,0.0,categorical
+90,Lymphovascular invasion (any),Present,973,24.2,binary
+100,Margin (R-class),R0,3231,80.3,categorical
+100,Margin (R-class),R1,605,15.0,categorical
+100,Margin (R-class),Rx,29,0.7,categorical
+100,Margin (R-class),unknown,157,3.9,categorical
+110,LN positive (LN safe view ∪ CPM flag),Yes,1145,28.5,binary
+111,M1 at presentation (resolved / fallback),Yes,1818,45.2,binary
+120,Surgery group,hemithyroidectomy,947,23.5,categorical
+120,Surgery group,other,118,2.9,categorical
+120,Surgery group,total_thyroidectomy,2069,51.4,categorical
+120,Surgery group,unknown,888,22.1,categorical
+130,RAI ever,Yes (rai_first_date present),480,11.9,binary
+140,Recurrence ever,Yes,503,12.5,binary
+150,Follow-up (years surgery→last contact),Median (IQR),0.81 (0.0–4.74),,continuous
+160,Vital status (last contact),alive,4021,100.0,categorical
+160,Vital status (last contact),deceased,1,0.0,categorical

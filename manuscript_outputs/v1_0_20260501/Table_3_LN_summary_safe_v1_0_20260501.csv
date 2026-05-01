@@ -1,0 +1,9 @@
+summary_slice,bucket,n_patients,mean_ln_total_examined_safe,mean_ln_total_positive_safe,n_denominator_conflict,n_attribution_ambiguous,rollup_sort
+ln_crossval_status,concordant,2302,10.7348,3.0105,14,37,
+ln_crossval_status,cpm_only_null,14,1.6154,0.3333,0,1,
+ln_crossval_status,discordant_with_cpm,1303,1.7272,4.3795,10,7,
+ln_crossval_status,safe_only_null,389,,,0,0,
+ln_positive_bucket,N0_or_unknown_negative,2885,,,,,1
+ln_positive_bucket,N1_1_to_3,574,,,,,2
+ln_positive_bucket,N1_4_to_9,312,,,,,3
+ln_positive_bucket,N1_10_plus,237,,,,,4

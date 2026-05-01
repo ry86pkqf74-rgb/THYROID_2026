@@ -1,0 +1,5 @@
+platform,is_patient_level_only_evidence,n_molecular_rows,n_distinct_patients,n_rows_braf_pos,n_rows_ras_pos,n_rows_tert_pos
+Afirma,False,417,398,187,41,36
+NGS_unspecified,True,82,81,46,0,0
+ThyroSeq,False,442,406,30,94,18
+ThyroSeq,True,443,443,70,120,25

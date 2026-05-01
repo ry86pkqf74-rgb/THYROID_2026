@@ -1,0 +1,6 @@
+stage_group_ajcc8,overall_stage_ajcc8,n_tumor_rows,n_distinct_patients
+I,I,2096,1459
+II,II,1893,1226
+IVB,IVB,1079,736
+unknown,unknown,763,615
+III,III,113,73
