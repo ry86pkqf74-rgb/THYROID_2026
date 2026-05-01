@@ -426,7 +426,7 @@ def build_cox_analytic_frame(
 
 
 def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
-    """Waterfall counts for manuscript/QC — strict-DTC Cox slice (exact Python logic)."""
+    """Waterfall counts for manuscript/QC — strict-DTC Cox/KM slice (mirrors lifelines logic)."""
 
     def _hist_mask(df: pd.DataFrame) -> pd.Series:
         hs = df["histology_final"].map(_histology_str_raw)
@@ -440,10 +440,11 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
     rows.append(
         {
             "step_order": 1,
-            "criterion": "Strict-DTC (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list per script)",
+            "criterion": "Strict-DTC histology (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list)",
             "n": n1,
             "excluded_at_step": n0 - n1,
             "cum_excluded_from_cohort": n0 - n1,
+            "path_proven_events": pd.NA,
         }
     )
 
@@ -457,6 +458,7 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
             "n": n2,
             "excluded_at_step": n1 - n2,
             "cum_excluded_from_cohort": n0 - n2,
+            "path_proven_events": pd.NA,
         }
     )
 
@@ -465,10 +467,11 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
     rows.append(
         {
             "step_order": 3,
-            "criterion": "Sex known (female/male — multivariable frame)",
+            "criterion": "Sex known female/male (same frame as primary logistic/Cox categoricals)",
             "n": n3,
             "excluded_at_step": n2 - n3,
             "cum_excluded_from_cohort": n0 - n3,
+            "path_proven_events": pd.NA,
         }
     )
 
@@ -478,10 +481,11 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
     rows.append(
         {
             "step_order": 4,
-            "criterion": "Positive follow-up (followup_years > 0)",
+            "criterion": "Positive analytic follow-up (followup_years > 0)",
             "n": n4,
             "excluded_at_step": n3 - n4,
             "cum_excluded_from_cohort": n0 - n4,
+            "path_proven_events": pd.NA,
         }
     )
 
@@ -491,10 +495,11 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
     rows.append(
         {
             "step_order": 5,
-            "criterion": "Known surgery date (surg_first_date non-null — CPM SSOT lineage)",
+            "criterion": "Known surgery date (CPM surg_first_date; mig_258/mig_254 lineage)",
             "n": n5,
             "excluded_at_step": n4 - n5,
             "cum_excluded_from_cohort": n0 - n5,
+            "path_proven_events": pd.NA,
         }
     )
 
@@ -511,26 +516,51 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
     rows.append(
         {
             "step_order": 6,
-            "criterion": "Finite positive Cox duration (days; event-time or censored PY)",
+            "criterion": "Finite positive Cox time_days (path-proven TTE if event else censor at FU×365.25)",
             "n": n6,
             "excluded_at_step": n5 - n6,
             "cum_excluded_from_cohort": n0 - n6,
+            "path_proven_events": pd.NA,
         }
     )
 
-    age10_ok = pd.to_numeric(d6["age_at_surgery"], errors="coerce").notna()
     ts_ok = pd.to_numeric(d6["tumor_size_cm"], errors="coerce").notna()
-    cov_ok = age10_ok & ts_ok
-    n7 = int(cov_ok.sum())
+    d7 = d6.loc[ts_ok]
+    n7_ts = len(d7)
     rows.append(
         {
             "step_order": 7,
-            "criterion": "Age + tumor size non-missing (Cox covariate complete-case)",
-            "n": n7,
-            "excluded_at_step": n6 - n7,
-            "cum_excluded_from_cohort": n0 - n7,
+            "criterion": "Tumor size known (cm; Cox covariate complete-case)",
+            "n": n7_ts,
+            "excluded_at_step": n6 - n7_ts,
+            "cum_excluded_from_cohort": n0 - n7_ts,
+            "path_proven_events": pd.NA,
         }
     )
+
+    age_ok = pd.to_numeric(d7["age_at_surgery"], errors="coerce").notna()
+    d8 = d7.loc[age_ok]
+    n_fin = len(d8)
+    rows.append(
+        {
+            "step_order": 8,
+            "criterion": "Age at surgery known (Cox covariate complete-case)",
+            "n": n_fin,
+            "excluded_at_step": n7_ts - n_fin,
+            "cum_excluded_from_cohort": n0 - n_fin,
+            "path_proven_events": pd.NA,
+        }
+    )
+
+    dm_strict = model_frame_for_primary(df_merged, strict_dtc=True)
+    cox_df, cox_meta = build_cox_analytic_frame(dm_strict)
+    n_cox = len(cox_df)
+    ev_cox = int(cox_meta["events"])
+    if n_fin != n_cox:
+        raise SystemExit(
+            f"Inclusion QC waterfall final n ({n_fin}) != build_cox_analytic_frame ({n_cox}); "
+            "logic drift — fix build_inclusion_flow_qc vs build_cox_analytic_frame."
+        )
 
     header = pd.DataFrame(
         [
@@ -540,17 +570,19 @@ def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
                 "n": n0,
                 "excluded_at_step": 0,
                 "cum_excluded_from_cohort": 0,
+                "path_proven_events": pd.NA,
             }
         ]
     )
     footer = pd.DataFrame(
         [
             {
-                "step_order": 8,
-                "criterion": "Final Cox PH / KM analytic rows (= step 7; lifelines fitted sample)",
-                "n": n7,
+                "step_order": 9,
+                "criterion": "Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6)",
+                "n": n_cox,
                 "excluded_at_step": 0,
-                "cum_excluded_from_cohort": n0 - n7,
+                "cum_excluded_from_cohort": n0 - n_cox,
+                "path_proven_events": ev_cox,
             }
         ]
     )
@@ -1643,6 +1675,7 @@ def update_workbook(bundle: dict[str, Any]) -> None:
         qa.cell(row=hdr, column=3, value="n")
         qa.cell(row=hdr, column=4, value="excluded_at_step")
         qa.cell(row=hdr, column=5, value="cum_excluded_from_cohort")
+        qa.cell(row=hdr, column=6, value="path_proven_events_final_only")
         r0 = hdr + 1
         for jj, (_, qr) in enumerate(qc_df_inc.iterrows()):
             qa.cell(row=r0 + jj, column=1, value=int(qr["step_order"]))
@@ -1650,6 +1683,9 @@ def update_workbook(bundle: dict[str, Any]) -> None:
             qa.cell(row=r0 + jj, column=3, value=int(qr["n"]))
             qa.cell(row=r0 + jj, column=4, value=int(qr["excluded_at_step"]))
             qa.cell(row=r0 + jj, column=5, value=int(qr["cum_excluded_from_cohort"]))
+            pe = qr.get("path_proven_events")
+            if pd.notna(pe):
+                qa.cell(row=r0 + jj, column=6, value=int(pe))
 
     wb.save(XLSX)
     print(f"[xlsx] saved {XLSX}")

@@ -141,7 +141,7 @@ Reoperation rates are similar in microscopic, gross, and no/negative ETE groups 
 
 **S3.1 Zero-follow-up exclusion.** Excluding the 1,400 patients with `followup_years = 0` reduces the cohort to 2,728 patients. The path-proven recurrence rates remain qualitatively unchanged: microscopic 0.71/100PY, gross 1.76/100PY, no/negative 1.71/100PY (Supplement Table S3).
 
-**S3.2 Surgery-date restriction.** Restricting to 3,212 patients with surgery dates in 1999–2024 preserves the gross-vs-microscopic ETE contrast and removes 916 patients (914 missing dates + 2 pre-1999 outliers).
+**S3.2 Surgery-date restriction.** Restricting to the **`surg_date_1999_2024`** calendar-flag subset on **`canonical_patient_master.surg_first_date`** (mig_258; post–mig_254 lineage — see **`scripts/m044_validate_canonical_v1_runner.py`** QUERY `surgery_date_lineage` and workbook Supplement **S2_surgery_date_1999_2024**) preserves the gross-vs-microscopic contrast; exact *n* excludes depend on the live extract and replace legacy “914 missing dates / 3212 window-only” scaffolding.
 
 **S3.3 LN compartment substitution.** Replacing AJCC 8 N stage with explicit central- and lateral-LN-positive flags does not change the qualitative direction of the gross-ETE coefficient. The flag substitution does, however, weaken the no/negative ETE coefficient further, suggesting that a portion of the no/negative ETE recurrence signal that AJCC 8 N stage does not fully capture is absorbed by the lateral-compartment flag.
 

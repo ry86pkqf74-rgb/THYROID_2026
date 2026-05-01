@@ -1,7 +1,7 @@
 metric,no_recurrence,recurred
-Tumor size mean (cm),3.24,3.61
-Tumor size median (cm),2.0,2.5
-Lateral LN+ rate (%),31.9,65.5
->=2 surgeries (%),14.7,34.5
-Median days to 2nd surgery,147.0,679.0
-n,163.0,29.0
+Tumor size mean (cm),3.28,3.37
+Tumor size median (cm),2.1,1.8
+Lateral LN+ rate (%),32.3,68.0
+>=2 surgeries (%),15.0,36.0
+Median days to 2nd surgery,135.0,909.0
+n,167.0,25.0
