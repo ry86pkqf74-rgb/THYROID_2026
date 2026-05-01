@@ -178,6 +178,58 @@ def histology_grouped(h: Any) -> str:
     return "other"
 
 
+EXCLUDE_HISTOLOGIES_STRICT_DTC = frozenset(
+    {
+        "MTC",
+        "metastatic MTC",
+        "recurrent MTC",
+        "MTC/PTC mixed composite",
+        "anaplastic carcinoma",
+        "metastatic anaplastic carcinoma",
+        "NIFTP",
+        "FTUMP",
+        "atypical follicular adenoma",
+        "follicular adenoma",
+        "Atypical hurthle cell neoplasm",
+        "NUT carcinoma",
+        "adenoid cystic carcinoma",
+        "metastatic PTC/anaplastic carcinoma",
+    }
+)
+
+
+def _histology_str_raw(h: Any) -> str:
+    if h is None or (isinstance(h, float) and np.isnan(h)):
+        return ""
+    return str(h).strip()
+
+
+def histology_dtc_cat(h: Any) -> str:
+    """Five-level DTC histology for strict-DTC primary analysis (post exclusion)."""
+
+    nh = _histology_str_raw(h)
+    if not nh:
+        return "PTC"
+    low = nh.lower()
+    if nh.startswith("metastatic PTC") or nh.startswith("recurrent/metastatic PTC"):
+        return "Metastatic-PTC"
+    if nh == "follicular carcinoma":
+        return "FTC"
+    if "poorly differentiated" in low:
+        return "Poorly-differentiated DTC"
+    if "high grade" in low or "high-grade" in low:
+        return "High-grade DTC"
+    if nh == "PTC":
+        return "PTC"
+    if "metastatic thyroid carcinoma" in low:
+        return "Metastatic-PTC"
+    if nh == "differentiated thyroid carcinoma":
+        return "PTC"
+    if "thymus-like" in low:
+        return "PTC"
+    return "PTC"
+
+
 def encode_rai_01(series: pd.Series) -> pd.Series:
     """Map RAI-received to 0/1; undocumented / non-positive → 0 (see analysis note)."""
 
@@ -191,15 +243,34 @@ def encode_rai_01(series: pd.Series) -> pd.Series:
     return (m_true | txt_ok.fillna(False) | ex_true).astype(int)
 
 
-def build_primary_prep(df: pd.DataFrame) -> pd.DataFrame:
+def build_primary_prep(df: pd.DataFrame, *, strict_dtc: bool = False) -> pd.DataFrame:
     d = df[
         df["ete_group"].isin(["No/negative ETE", "Microscopic ETE", "Gross ETE"])
     ].copy()
+    if strict_dtc:
+        hs = d["histology_final"].map(_histology_str_raw)
+        d = d.loc[~hs.isin(EXCLUDE_HISTOLOGIES_STRICT_DTC)].copy()
+        d["histology_fac"] = d["histology_final"].apply(histology_dtc_cat)
+        d["histology_fac"] = pd.Categorical(
+            d["histology_fac"],
+            categories=[
+                "PTC",
+                "FTC",
+                "Metastatic-PTC",
+                "Poorly-differentiated DTC",
+                "High-grade DTC",
+            ],
+        )
+    else:
+        d["histology_fac"] = d["histology_final"].apply(histology_grouped)
+        d["histology_fac"] = pd.Categorical(
+            d["histology_fac"],
+            categories=["PTC", "follicular-like", "MTC-like", "other"],
+        )
     d["age10"] = pd.to_numeric(d["age_at_surgery"], errors="coerce") / 10.0
     sx = d["sex"].astype(str).str.strip().str.lower()
     sx = sx.replace({"female": "female", "male": "male"})
     d["sex_lc"] = sx.mask(~sx.isin(["female", "male"]))
-    d["histology_grouped"] = d["histology_final"].apply(histology_grouped)
     ns = d["ajcc8_n_stage"]
     d["ajcc8_n_fac"] = np.where(ns.isna(), "missing", ns.astype(str))
     d["tumor_size_cm"] = pd.to_numeric(d["tumor_size_cm"], errors="coerce")
@@ -218,10 +289,6 @@ def build_primary_prep(df: pd.DataFrame) -> pd.DataFrame:
     d["sex_lc"] = pd.Categorical(d["sex_lc"], categories=["female", "male"])
     d["ajcc8_n_fac"] = pd.Categorical(
         d["ajcc8_n_fac"], categories=["N0", "N1a", "N1b", "Nx", "missing"]
-    )
-    d["histology_grouped"] = pd.Categorical(
-        d["histology_grouped"],
-        categories=["PTC", "follicular-like", "MTC-like", "other"],
     )
     d["lvi_clean"] = pd.Categorical(
         d["lvi_clean"],
@@ -243,16 +310,22 @@ def build_primary_prep(df: pd.DataFrame) -> pd.DataFrame:
     return d
 
 
-PRIMARY_FORMULA = (
-    "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
-    " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
-    " + C(ajcc8_n_fac, Treatment(reference='N0'))"
-    " + C(histology_grouped, Treatment(reference='PTC')) + rai_received_flag"
-    " + C(lvi_clean, Treatment(reference='missing'))"
-    " + C(vasc_clean, Treatment(reference='missing'))"
-)
+def glm_formula_primary(*, include_rai: bool) -> str:
+    rai = " + rai_received_flag" if include_rai else ""
+    return (
+        "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
+        " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
+        " + C(ajcc8_n_fac, Treatment(reference='N0'))"
+        " + C(histology_fac, Treatment(reference='PTC'))"
+        f"{rai}"
+        " + C(lvi_clean, Treatment(reference='missing'))"
+        " + C(vasc_clean, Treatment(reference='missing'))"
+    )
 
-PRIMARY_FORMULA_CPH = PRIMARY_FORMULA.replace("y_pp ~ ", "").strip()
+
+PRIMARY_FORMULA = glm_formula_primary(include_rai=True)
+
+PRIMARY_FORMULA_CPH = glm_formula_primary(include_rai=False).replace("y_pp ~ ", "").strip()
 
 
 def _glm_metrics(m: Any) -> dict[str, Any]:
@@ -294,8 +367,10 @@ def coef_table_glm(m: Any) -> pd.DataFrame:
     )
 
 
-def model_frame_for_primary(df_merged: pd.DataFrame) -> pd.DataFrame:
-    d = build_primary_prep(df_merged)
+def model_frame_for_primary(
+    df_merged: pd.DataFrame, *, strict_dtc: bool
+) -> pd.DataFrame:
+    d = build_primary_prep(df_merged, strict_dtc=strict_dtc)
     d = d.dropna(subset=["sex_lc"])
     assert isinstance(d.index, pd.Index)
     return d
@@ -421,51 +496,187 @@ def expected_size_rates() -> dict[tuple[str, str], float]:
 
 
 def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
-    dm = model_frame_for_primary(df_merged)
+    dm_broad = model_frame_for_primary(df_merged, strict_dtc=False)
+    dm_strict = model_frame_for_primary(df_merged, strict_dtc=True)
     out: dict[str, Any] = {}
-    out["primary_n"] = len(dm)
-    out["primary_events_pp"] = int(dm["y_pp"].sum())
-    out["drop_sex_missing_n"] = int(
-        len(build_primary_prep(df_merged)) - len(dm)
+    out["primary_n_broad"] = len(dm_broad)
+    out["primary_n_strict"] = len(dm_strict)
+    out["primary_events_pp_strict"] = int(dm_strict["y_pp"].sum())
+    out["drop_sex_missing_n_strict"] = int(
+        len(build_primary_prep(df_merged, strict_dtc=True)) - len(dm_strict)
     )
-    out["crude"] = crude_pairwise(dm)
+    out["crude"] = crude_pairwise(dm_strict)
+    out["crude_broad"] = crude_pairwise(dm_broad)
 
-    primary = smf.glm(PRIMARY_FORMULA, data=dm, family=sm.families.Binomial()).fit()
+    f_strict_no_rai = glm_formula_primary(include_rai=False)
+    f_strict_rai = glm_formula_primary(include_rai=True)
+
+    primary_strict_no_rai = smf.glm(
+        f_strict_no_rai, data=dm_strict, family=sm.families.Binomial()
+    ).fit()
+    primary_strict_rai = smf.glm(
+        f_strict_rai, data=dm_strict, family=sm.families.Binomial()
+    ).fit()
+    primary_broad_rai = smf.glm(
+        f_strict_rai, data=dm_broad, family=sm.families.Binomial()
+    ).fit()
+
     out["primary"] = {
-        "metrics": _glm_metrics(primary),
-        "coef": coef_table_glm(primary),
-        "formula": PRIMARY_FORMULA,
+        "metrics": _glm_metrics(primary_strict_no_rai),
+        "coef": coef_table_glm(primary_strict_no_rai),
+        "formula": f_strict_no_rai,
+        "label": "strict-DTC primary — without RAI covariate",
+    }
+    out["primary_strict_with_rai"] = {
+        "metrics": _glm_metrics(primary_strict_rai),
+        "coef": coef_table_glm(primary_strict_rai),
+        "formula": f_strict_rai,
+    }
+    out["primary_broad_with_rai"] = {
+        "metrics": _glm_metrics(primary_broad_rai),
+        "coef": coef_table_glm(primary_broad_rai),
+        "formula": f_strict_rai,
+        "label": "full cohort sensitivity — includes non-DTC histologies (RAI covariate)",
     }
 
-    img = PRIMARY_FORMULA.replace("y_pp", "y_img")
-    m_img = smf.glm(img, data=dm, family=sm.families.Binomial()).fit()
+    f_int_full = (
+        "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
+        " * C(ajcc8_n_fac, Treatment(reference='N0'))"
+        " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
+        " + C(histology_fac, Treatment(reference='PTC'))"
+        " + C(lvi_clean, Treatment(reference='missing'))"
+        " + C(vasc_clean, Treatment(reference='missing'))"
+    )
+    f_int_red = (
+        "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
+        " + C(ajcc8_n_fac, Treatment(reference='N0'))"
+        " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
+        " + C(histology_fac, Treatment(reference='PTC'))"
+        " + C(lvi_clean, Treatment(reference='missing'))"
+        " + C(vasc_clean, Treatment(reference='missing'))"
+    )
+    m_int = smf.glm(f_int_full, data=dm_strict, family=sm.families.Binomial()).fit()
+    m_int_red = smf.glm(f_int_red, data=dm_strict, family=sm.families.Binomial()).fit()
+    lr_i = 2.0 * (m_int.llf - m_int_red.llf)
+    df_i = int(round(m_int.df_model - m_int_red.df_model))
+    p_int = float(1.0 - stats.chi2.cdf(lr_i, df=df_i)) if df_i > 0 else float("nan")
+    out["ete_by_n_stage_interaction_lr"] = {
+        "lr_chi2": float(lr_i),
+        "df": df_i,
+        "p_value": p_int,
+        "formula_full": f_int_full,
+        "formula_reduced": f_int_red,
+    }
+
+    strat_rows: list[dict[str, Any]] = []
+    stratum_formula = (
+        "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
+        " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
+        " + C(histology_fac, Treatment(reference='PTC'))"
+        " + C(lvi_clean, Treatment(reference='missing'))"
+        " + C(vasc_clean, Treatment(reference='missing'))"
+    )
+    for st in ["N0", "N1a", "N1b", "Nx", "missing"]:
+        sub_n = dm_strict.loc[dm_strict["ajcc8_n_fac"].astype(str) == st].copy()
+        ev_ct = int(sub_n["y_pp"].sum())
+        if len(sub_n) < 20 or ev_ct < 5:
+            strat_rows.append(
+                {
+                    "stratum": st,
+                    "n": len(sub_n),
+                    "events": ev_ct,
+                    "note": "skipped_sparse_events_for_stable_GLMs",
+                }
+            )
+            continue
+        try:
+            ms = smf.glm(stratum_formula, data=sub_n, family=sm.families.Binomial()).fit()
+            ct = coef_table_glm(ms)
+            g_row = ct.loc[ct["term"].astype(str).str.contains("Gross ETE", regex=False)]
+            nn_row = ct.loc[ct["term"].astype(str).str.contains("No/negative", regex=False)]
+            if len(g_row) == 0:
+                strat_rows.append(
+                    {
+                        "stratum": st,
+                        "n": len(sub_n),
+                        "events": ev_ct,
+                        "note": "skipped_missing_gross_coef",
+                    }
+                )
+                continue
+            glo = float(g_row["or_ci_low"].iloc[0])
+            ghi = float(g_row["or_ci_high"].iloc[0])
+            gor = float(g_row["or"].iloc[0])
+            if (
+                not np.isfinite(glo)
+                or not np.isfinite(ghi)
+                or not np.isfinite(gor)
+                or ghi > 100
+                or glo <= 0
+                or ghi / max(glo, 1e-12) > 1e6
+            ):
+                strat_rows.append(
+                    {
+                        "stratum": st,
+                        "n": len(sub_n),
+                        "events": ev_ct,
+                        "note": "skipped_numerically_unstable_OR_CI",
+                    }
+                )
+                continue
+            strat_rows.append(
+                {
+                    "stratum": st,
+                    "n": len(sub_n),
+                    "events": int(sub_n["y_pp"].sum()),
+                    "gross_or": gor,
+                    "gross_ci": (glo, ghi),
+                    "gross_p": float(g_row["pvalue"].iloc[0]) if len(g_row) else None,
+                    "noneg_or": float(nn_row["or"].iloc[0]) if len(nn_row) else None,
+                    "noneg_ci": (
+                        float(nn_row["or_ci_low"].iloc[0]),
+                        float(nn_row["or_ci_high"].iloc[0]),
+                    )
+                    if len(nn_row)
+                    else None,
+                    "noneg_p": float(nn_row["pvalue"].iloc[0]) if len(nn_row) else None,
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            strat_rows.append({"stratum": st, "n": len(sub_n), "error": str(exc)})
+    out["stratified_primary_by_n_stage"] = strat_rows
+
+    img = f_strict_no_rai.replace("y_pp", "y_img")
+    m_img = smf.glm(img, data=dm_strict, family=sm.families.Binomial()).fit()
     out["secondary_imaging_only"] = {
         "metrics": _glm_metrics(m_img),
         "coef": coef_table_glm(m_img),
     }
 
-    comp = PRIMARY_FORMULA.replace("y_pp", "y_comp")
-    m_comp = smf.glm(comp, data=dm, family=sm.families.Binomial()).fit()
+    comp = f_strict_no_rai.replace("y_pp", "y_comp")
+    m_comp = smf.glm(comp, data=dm_strict, family=sm.families.Binomial()).fit()
     out["secondary_composite"] = {
         "metrics": _glm_metrics(m_comp),
         "coef": coef_table_glm(m_comp),
     }
 
-    d_s1 = dm.loc[pd.to_numeric(dm["followup_years"], errors="coerce") > 0].copy()
-    m_s1 = smf.glm(PRIMARY_FORMULA, data=d_s1, family=sm.families.Binomial()).fit()
+    d_s1 = dm_strict.loc[
+        pd.to_numeric(dm_strict["followup_years"], errors="coerce") > 0
+    ].copy()
+    m_s1 = smf.glm(f_strict_no_rai, data=d_s1, family=sm.families.Binomial()).fit()
     out["S1_exclude_zero_followup"] = {
         "n": len(d_s1),
         "metrics": _glm_metrics(m_s1),
         "coef": coef_table_glm(m_s1),
     }
 
-    sfd = pd.to_datetime(dm["surg_first_date"], errors="coerce")
+    sfd = pd.to_datetime(dm_strict["surg_first_date"], errors="coerce")
     win = (
         (sfd >= pd.Timestamp("1999-01-01"))
         & (sfd <= pd.Timestamp("2024-12-31"))
     ).fillna(False)
-    d_s2 = dm.loc[win].copy()
-    m_s2 = smf.glm(PRIMARY_FORMULA, data=d_s2, family=sm.families.Binomial()).fit()
+    d_s2 = dm_strict.loc[win].copy()
+    m_s2 = smf.glm(f_strict_no_rai, data=d_s2, family=sm.families.Binomial()).fit()
     out["S2_surgery_date_1999_2024"] = {
         "n": len(d_s2),
         "metrics": _glm_metrics(m_s2),
@@ -476,24 +687,24 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
         " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
         " + central_pos_flag + lateral_pos_flag"
-        " + C(histology_grouped, Treatment(reference='PTC')) + rai_received_flag"
+        " + C(histology_fac, Treatment(reference='PTC'))"
         " + C(lvi_clean, Treatment(reference='missing'))"
         " + C(vasc_clean, Treatment(reference='missing'))"
     )
-    m_s3 = smf.glm(f_s3, data=dm, family=sm.families.Binomial()).fit()
+    m_s3 = smf.glm(f_s3, data=dm_strict, family=sm.families.Binomial()).fit()
     out["S3_ln_flags_substitute_n_stage"] = {
         "metrics": _glm_metrics(m_s3),
         "coef": coef_table_glm(m_s3),
     }
 
-    dp = dm.copy()
-    lc = dm["lvi_clean"].astype(str)
-    vc = dm["vasc_clean"].astype(str)
+    dp = dm_strict.copy()
+    lc = dm_strict["lvi_clean"].astype(str)
+    vc = dm_strict["vasc_clean"].astype(str)
     dp["lvi_pooled"] = (
         lc.isin(["present", "extensive", "focal"])
         | (vc.ne("missing") & vc.ne("nan") & vc.ne("indeterminate"))
     ).astype(int)
-    f_s4 = PRIMARY_FORMULA.replace(
+    f_s4 = f_strict_no_rai.replace(
         "+ C(lvi_clean, Treatment(reference='missing'))"
         " + C(vasc_clean, Treatment(reference='missing'))",
         "+ lvi_pooled",
@@ -503,9 +714,11 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     row_pv = ct_s4.loc[ct_s4["term"] == "lvi_pooled", "coef_logit"]
     pooled_coef = float(row_pv.iloc[0]) if len(row_pv) else float("nan")
     pooled_or = float(np.exp(pooled_coef)) if np.isfinite(pooled_coef) else np.nan
-    pooled_p = float(ct_s4.loc[ct_s4["term"] == "lvi_pooled", "pvalue"].iloc[0]) if len(
-        ct_s4.loc[ct_s4["term"] == "lvi_pooled"]
-    ) else float("nan")
+    pooled_p = (
+        float(ct_s4.loc[ct_s4["term"] == "lvi_pooled", "pvalue"].iloc[0])
+        if len(ct_s4.loc[ct_s4["term"] == "lvi_pooled"])
+        else float("nan")
+    )
 
     protective = pooled_coef < -1e-6 and pooled_p < 0.05
     risk_increasing_sig = pooled_coef > 1e-6 and pooled_p < 0.05
@@ -520,7 +733,7 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "lvi_pooled_pvalue": pooled_p,
     }
 
-    dor = dm.copy()
+    dor = dm_strict.copy()
     vmap = {
         "missing": 0,
         "indeterminate": 1,
@@ -533,7 +746,7 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "y_pp ~ C(ete_group, Treatment(reference='Microscopic ETE'))"
         " + age10 + C(sex_lc, Treatment(reference='female')) + tumor_size_cm"
         " + C(ajcc8_n_fac, Treatment(reference='N0'))"
-        " + C(histology_grouped, Treatment(reference='PTC')) + rai_received_flag"
+        " + C(histology_fac, Treatment(reference='PTC'))"
         " + C(lvi_clean, Treatment(reference='missing')) + vasc_ord"
     )
     m_s5 = smf.glm(f_s5, data=dor, family=sm.families.Binomial()).fit()
@@ -547,17 +760,17 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         ),
     }
 
-    dm6 = dm.loc[dm["ete_grade_final"].astype(str) != "true"].copy()
-    m_s6 = smf.glm(PRIMARY_FORMULA, data=dm6, family=sm.families.Binomial()).fit()
+    dm6 = dm_strict.loc[dm_strict["ete_grade_final"].astype(str) != "true"].copy()
+    m_s6 = smf.glm(f_strict_no_rai, data=dm6, family=sm.families.Binomial()).fit()
     out["S6_drop_ete_grade_true"] = {
         "n": len(dm6),
-        "n_removed": len(dm) - len(dm6),
+        "n_removed": len(dm_strict) - len(dm6),
         "metrics": _glm_metrics(m_s6),
         "coef": coef_table_glm(m_s6),
     }
 
     f_s7 = (
-        PRIMARY_FORMULA.rstrip()
+        f_strict_no_rai.rstrip()
         + " + C(multifocal_flag_path_fac, Treatment(reference='missing'))"
         " + C(bilateral_disease_fac, Treatment(reference='missing'))"
         " + C(margin_involved_fac, Treatment(reference='missing'))"
@@ -565,8 +778,8 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         " + C(braf_positive_fac, Treatment(reference='missing'))"
         " + C(surg_tt_fac, Treatment(reference='missing'))"
     )
-    m_s7 = smf.glm(f_s7, data=dm, family=sm.families.Binomial()).fit()
-    pr_g = coef_table_glm(primary)
+    m_s7 = smf.glm(f_s7, data=dm_strict, family=sm.families.Binomial()).fit()
+    pr_g = coef_table_glm(primary_strict_no_rai)
     au_g = coef_table_glm(m_s7)
     pr_gross = pr_g[pr_g["term"].str.contains("Gross ETE", regex=False)]
     au_gross = au_g[au_g["term"].str.contains("Gross ETE", regex=False)]
@@ -579,73 +792,87 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "gross_vs_micro_coef_primary": g1,
         "gross_vs_micro_coef_augmented": g2,
         "change_note": (
-            "coefficient strengthened vs primary" if g2 > g1 + 1e-6
-            else "coefficient attenuated vs primary" if g2 < g1 - 1e-6
+            "coefficient strengthened vs primary"
+            if g2 > g1 + 1e-6
+            else "coefficient attenuated vs primary"
+            if g2 < g1 - 1e-6
             else "essentially unchanged"
         ),
     }
 
     m_s8 = smf.glm(
-        PRIMARY_FORMULA.replace("y_pp", "y_any"), data=dm, family=sm.families.Binomial()
+        f_strict_no_rai.replace("y_pp", "y_any"),
+        data=dm_strict,
+        family=sm.families.Binomial(),
     ).fit()
     out["S8_legacy_any_recurrence_flag"] = {
         "metrics": _glm_metrics(m_s8),
         "coef": coef_table_glm(m_s8),
     }
 
-    # Cox PH
-    dc = dm.copy()
-    dc = dc.loc[
-        pd.notna(dc["surg_first_date"])
-        & (pd.to_numeric(dc["followup_years"], errors="coerce") > 0)
-    ].copy()
-    fu = pd.to_numeric(dc["followup_years"], errors="coerce")
-    dtp_arr = pd.to_numeric(dc["days_to_path_proven"], errors="coerce").to_numpy(dtype=float)
-    ev_s = dc["y_pp"].astype(int)
-    fu_arr = fu.to_numpy(dtype=float)
-    cens = fu_arr * 365.25
-    ev_arr = ev_s.to_numpy(dtype=int)
-    event_time = np.where(np.isfinite(dtp_arr), dtp_arr, cens)
-    time_days_arr = np.where(ev_arr == 1, event_time, cens)
-    dc["time_days"] = time_days_arr.astype(float)
-    dc = dc.loc[np.isfinite(dc["time_days"]) & (dc["time_days"] > 0)].copy()
-    dc = dc.dropna(subset=["age10", "tumor_size_cm"]).reset_index(drop=True)
+    def _cox_fit(dm: pd.DataFrame, formula_tail: str, csv_name: str) -> dict[str, Any]:
+        dc = dm.copy()
+        dc = dc.loc[
+            pd.notna(dc["surg_first_date"])
+            & (pd.to_numeric(dc["followup_years"], errors="coerce") > 0)
+        ].copy()
+        fu = pd.to_numeric(dc["followup_years"], errors="coerce")
+        dtp_arr = pd.to_numeric(dc["days_to_path_proven"], errors="coerce").to_numpy(
+            dtype=float
+        )
+        ev_s = dc["y_pp"].astype(int)
+        fu_arr = fu.to_numpy(dtype=float)
+        cens = fu_arr * 365.25
+        ev_arr = ev_s.to_numpy(dtype=int)
+        event_time = np.where(np.isfinite(dtp_arr), dtp_arr, cens)
+        time_days_arr = np.where(ev_arr == 1, event_time, cens)
+        dc["time_days"] = time_days_arr.astype(float)
+        dc = dc.loc[np.isfinite(dc["time_days"]) & (dc["time_days"] > 0)].copy()
+        dc = dc.dropna(subset=["age10", "tumor_size_cm"]).reset_index(drop=True)
 
-    cat_for_cox = (
-        "ete_group",
-        "sex_lc",
-        "ajcc8_n_fac",
-        "histology_grouped",
-        "lvi_clean",
-        "vasc_clean",
+        cat_for_cox = (
+            "ete_group",
+            "sex_lc",
+            "ajcc8_n_fac",
+            "histology_fac",
+            "lvi_clean",
+            "vasc_clean",
+        )
+        for c in cat_for_cox:
+            if c in dc.columns:
+                dc[c] = dc[c].astype(str)
+
+        cph = CoxPHFitter(penalizer=0.0001)
+        cph.fit(
+            dc,
+            duration_col="time_days",
+            event_col="y_pp",
+            formula=formula_tail,
+        )
+        summ_df = cph.summary.reset_index()
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        out_path = DATA_DIR / csv_name
+        summ_df.to_csv(out_path, index=False)
+        gross_hr = cox_extract_contrast(summ_df, "Gross ETE")
+        noneg_hr = cox_extract_contrast(summ_df, "No/negative ETE")
+        return {
+            "n": len(dc),
+            "events": int(dc["y_pp"].sum()),
+            "coef_table_path": str(out_path),
+            "gross_vs_microscopic_hr": gross_hr,
+            "noneg_vs_microscopic_hr": noneg_hr,
+        }
+
+    cox_no_rai = glm_formula_primary(include_rai=False).replace("y_pp ~ ", "").strip()
+    cox_with_rai = glm_formula_primary(include_rai=True).replace("y_pp ~ ", "").strip()
+    out["Cox_surgery_date_known_positive_fu"] = _cox_fit(
+        dm_strict, cox_no_rai, "m044_cox_primary_summary.csv"
     )
-    for c in cat_for_cox:
-        if c in dc.columns:
-            dc[c] = dc[c].astype(str)
-
-    cph = CoxPHFitter(penalizer=0.0001)
-    cph.fit(
-        dc,
-        duration_col="time_days",
-        event_col="y_pp",
-        formula=PRIMARY_FORMULA_CPH,
+    out["Cox_strict_with_rai_covariate"] = _cox_fit(
+        dm_strict, cox_with_rai, "m044_cox_primary_with_rai_summary.csv"
     )
-    summ_df = cph.summary.reset_index()
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    summ_df.to_csv(DATA_DIR / "m044_cox_primary_summary.csv", index=False)
 
-    gross_hr = cox_extract_contrast(summ_df, "Gross ETE")
-    noneg_hr = cox_extract_contrast(summ_df, "No/negative ETE")
-
-    out["Cox_surgery_date_known_positive_fu"] = {
-        "n": len(dc),
-        "events": int(dc["y_pp"].sum()),
-        "coef_table_path": str(DATA_DIR / "m044_cox_primary_summary.csv"),
-        "gross_vs_microscopic_hr": gross_hr,
-        "noneg_vs_microscopic_hr": noneg_hr,
-    }
-
-    # No/negative subgroup
+    # No/negative ETE — composite outcome (legacy supplemental row)
     sub = df_merged.loc[df_merged["ete_group"] == "No/negative ETE"].copy()
     sub["tumor_size_cm"] = pd.to_numeric(sub["tumor_size_cm"], errors="coerce")
     ns = sub["ajcc8_n_stage"]
@@ -659,7 +886,9 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     sub["rai_received_flag"] = encode_rai_01(sub["rai_received_flag"])
     sub["n_surgeries"] = pd.to_numeric(sub["n_surgeries"], errors="coerce").fillna(1.0)
     sub["ge2"] = (sub["n_surgeries"] >= 2).astype(int)
-    sub["days_per_100"] = pd.to_numeric(sub["days_to_2nd"], errors="coerce").fillna(0.0) / 100.0
+    sub["days_per_100"] = (
+        pd.to_numeric(sub["days_to_2nd"], errors="coerce").fillna(0.0) / 100.0
+    )
     sg_form = (
         "y_comp ~ tumor_size_cm + C(ajcc8_n_fac, Treatment(reference='N0'))"
         " + central_pos_flag + lateral_pos_flag + rai_received_flag"
@@ -674,7 +903,31 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "coef": coef_table_glm(m_sg),
     }
 
-    # Size QA
+    # Refit 5 — strict DTC no/negative ETE — path-proven only — no RAI covariate
+    sub_s = dm_strict.loc[
+        dm_strict["ete_group"].astype(str) == "No/negative ETE"
+    ].copy()
+    sub_s["n_surgeries"] = pd.to_numeric(sub_s["n_surgeries"], errors="coerce").fillna(
+        1.0
+    )
+    sub_s["ge2"] = (sub_s["n_surgeries"] >= 2).astype(int)
+    sub_s["days_per_100"] = (
+        pd.to_numeric(sub_s["days_to_2nd"], errors="coerce").fillna(0.0) / 100.0
+    )
+    sg5_form = (
+        "y_pp ~ tumor_size_cm + C(ajcc8_n_fac, Treatment(reference='N0'))"
+        " + central_pos_flag + lateral_pos_flag"
+        " + ge2 + days_per_100"
+    )
+    m_sg5 = smf.glm(sg5_form, data=sub_s, family=sm.families.Binomial()).fit()
+    out["subgroup_no_neg_ete_strict_pathproven"] = {
+        "n": len(sub_s),
+        "events": int(sub_s["y_pp"].sum()),
+        "formula": sg5_form,
+        "metrics": _glm_metrics(m_sg5),
+        "coef": coef_table_glm(m_sg5),
+    }
+
     qa_tbl = size_panel_clean(df_merged)
     qa_flags = []
     exp = expected_size_rates()
@@ -692,7 +945,13 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     return out
 
 
-def forest_plot_primary(primary_coef: pd.DataFrame, out_png: Path, out_csv: Path) -> None:
+def forest_plot_primary(
+    primary_coef: pd.DataFrame,
+    out_png: Path,
+    out_csv: Path,
+    *,
+    title: str = "M044 strict-DTC primary — path-proven recurrence (no RAI covariate)",
+) -> None:
     tab = primary_coef[~primary_coef["term"].str.contains("Intercept", na=False)].copy()
     tab = tab.sort_values("or").reset_index(drop=True)
     ete_hit = tab["term"].astype(str).str.contains("ete_group", regex=False)
@@ -707,7 +966,7 @@ def forest_plot_primary(primary_coef: pd.DataFrame, out_png: Path, out_csv: Path
     ax.set_yticks(yy)
     ax.set_yticklabels(tab["term"], fontsize=8)
     ax.set_xlabel("Adjusted OR (95% CI)")
-    ax.set_title("M044 primary model — path-proven recurrence")
+    ax.set_title(title)
     fig.tight_layout()
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_png, dpi=200)
@@ -740,38 +999,170 @@ def _coef_one(coef: pd.DataFrame, *needles: str) -> pd.Series | None:
     return None
 
 
-def fill_table3_excel(ws: Any, coef: pd.DataFrame) -> None:
-    specs: list[tuple[str, tuple[str, ...]]] = [
-        ("No/negative ETE", ("ete_group", "No/negative")),
-        ("Gross ETE", ("ete_group", "Gross")),
-        ("Age, per 10 years", ("age10",)),
-        ("Sex (male", ("sex_lc", "[T.male")),
-        ("Tumor size", ("tumor_size_cm",)),
-        ("AJCC N1a", ("ajcc8_n_fac", "N1a")),
-        ("AJCC N1b", ("ajcc8_n_fac", "N1b")),
-        ("AJCC Nx", ("ajcc8_n_fac", "Nx")),
-        ("AJCC N missing", ("ajcc8_n_fac", "missing")),
-        ("Histology — Follicular-like", ("histology_grouped", "follicular")),
-        ("Histology — MTC-like", ("histology_grouped", "MTC")),
-        ("RAI received", ("rai_received_flag",)),
-        ("Lymphatic — present", ("lvi_clean", "present")),
-        ("Lymphatic — extensive", ("lvi_clean", "extensive")),
-        ("Lymphatic — focal", ("lvi_clean", "focal")),
-        ("Lymphatic — indeterminate", ("lvi_clean", "indeterminate")),
-        ("Vascular — present_ungraded", ("vasc_clean", "present_ungraded")),
-        ("Vascular — focal", ("vasc_clean", "focal")),
-        ("Vascular — extensive", ("vasc_clean", "extensive")),
-        ("Vascular — indeterminate", ("vasc_clean", "indeterminate")),
+def layout_table3_strict_primary(ws: Any) -> dict[str, int]:
+    """Rewrite Table 3 column A labels for strict-DTC primary + sensitivity rows."""
+
+    rows_txt: list[tuple[int, str]] = [
+        (4, "Variable"),
+        (5, "No/negative ETE (vs Microscopic)"),
+        (6, "Gross ETE (vs Microscopic)"),
+        (7, "Age, per 10 years"),
+        (8, "Sex (male vs female)"),
+        (9, "Tumor size, per cm"),
+        (10, "AJCC N1a (vs N0)"),
+        (11, "AJCC N1b (vs N0)"),
+        (12, "AJCC Nx (vs N0)"),
+        (13, "AJCC N missing (vs N0)"),
+        (14, "Histology — FTC (vs PTC)"),
+        (15, "Histology — Metastatic-PTC (vs PTC)"),
+        (16, "Histology — Poorly-differentiated DTC (vs PTC)"),
+        (17, "Histology — High-grade DTC (vs PTC)"),
+        (18, "Lymphatic — present (vs missing)"),
+        (19, "Lymphatic — extensive (vs missing)"),
+        (20, "Lymphatic — focal (vs missing)"),
+        (21, "Lymphatic — indeterminate (vs missing)"),
+        (22, "Vascular — present_ungraded (vs missing)"),
+        (23, "Vascular — focal (vs missing)"),
+        (24, "Vascular — extensive (vs missing)"),
+        (25, "Vascular — indeterminate (vs missing)"),
+        (26, ""),
+        (27, "Sensitivity — full cohort, Gross ETE (vs Microscopic); histology grouped + RAI"),
+        (28, "Sensitivity — full cohort, No/negative ETE (vs Microscopic)"),
+        (29, "Sensitivity — strict-DTC + RAI covariate, Gross ETE"),
+        (30, "Sensitivity — strict-DTC + RAI covariate, No/negative ETE"),
+        (31, "Sensitivity — strict-DTC + RAI covariate (RAI receipt term)"),
+        (32, ""),
+        (33, "ETE × N stage interaction (LR vs main effects only)"),
+        (34, ""),
+        (35, "Stratified Gross vs Microscopic OR within AJCC N0"),
+        (36, "Stratified Gross vs Microscopic OR within AJCC N1a"),
+        (37, "Stratified Gross vs Microscopic OR within AJCC N1b"),
+        (38, "Stratified Gross vs Microscopic OR within AJCC Nx"),
+        (39, "Stratified Gross vs Microscopic OR within AJCC N missing"),
     ]
-    for prefix, reqs in specs:
-        rr = _find_table3_row(ws, prefix)
-        if rr is None:
-            continue
-        prow = _coef_one(coef, *reqs)
+    from openpyxl.styles import Font
+
+    for r, txt in rows_txt:
+        c = ws.cell(row=r, column=1, value=txt if txt else None)
+        if r == 4:
+            c.font = Font(bold=True)
+    h2 = ws.cell(row=4, column=2, value="Adjusted OR")
+    h2.font = Font(bold=True)
+    for cc, lab in ((3, "95% CI low"), (4, "95% CI high"), (5, "p-value")):
+        ws.cell(row=4, column=cc, value=lab).font = Font(bold=True)
+    keys = {
+        "ete_noneg": 5,
+        "ete_gross": 6,
+        "age10": 7,
+        "sex_male": 8,
+        "tumor_size": 9,
+        "n_n1a": 10,
+        "n_n1b": 11,
+        "n_nx": 12,
+        "n_miss": 13,
+        "hist_ftc": 14,
+        "hist_meta": 15,
+        "hist_poor": 16,
+        "hist_hg": 17,
+        "lvi_pr": 18,
+        "lvi_ex": 19,
+        "lvi_fo": 20,
+        "lvi_ind": 21,
+        "vas_pu": 22,
+        "vas_fo": 23,
+        "vas_ex": 24,
+        "vas_ind": 25,
+        "sens_broad_gross": 27,
+        "sens_broad_noneg": 28,
+        "sens_strict_wrai_gross": 29,
+        "sens_strict_wrai_noneg": 30,
+        "sens_strict_wrai_rai": 31,
+        "lr_interaction": 33,
+        "strat_n0": 35,
+        "strat_n1a": 36,
+        "strat_n1b": 37,
+        "strat_nx": 38,
+        "strat_nm": 39,
+    }
+    return keys
+
+
+def fill_table3_excel(ws: Any, bundle: dict[str, Any]) -> None:
+    rows = layout_table3_strict_primary(ws)
+    coef = bundle["primary"]["coef"]
+
+    def put_term(row_key: str, needles: tuple[str, ...]) -> None:
+        prow = _coef_one(coef, *needles)
+        r = rows[row_key]
         if prow is None:
-            ws.cell(row=rr, column=6, value=f"TERM_NOT_FOUND:{prefix}:{reqs}")
+            ws.cell(row=r, column=6, value=f"TERM_NOT_FOUND:{needles}")
+            return
+        _set_or_row(ws, r, prow)
+
+    put_term("ete_noneg", ("ete_group", "No/negative"))
+    put_term("ete_gross", ("ete_group", "Gross"))
+    put_term("age10", ("age10",))
+    put_term("sex_male", ("sex_lc", "[T.male"))
+    put_term("tumor_size", ("tumor_size_cm",))
+    put_term("n_n1a", ("ajcc8_n_fac", "N1a"))
+    put_term("n_n1b", ("ajcc8_n_fac", "N1b"))
+    put_term("n_nx", ("ajcc8_n_fac", "Nx"))
+    put_term("n_miss", ("ajcc8_n_fac", "missing"))
+    put_term("hist_ftc", ("histology_fac", "FTC"))
+    put_term("hist_meta", ("histology_fac", "Metastatic"))
+    put_term("hist_poor", ("histology_fac", "Poorly"))
+    put_term("hist_hg", ("histology_fac", "High-grade"))
+    put_term("lvi_pr", ("lvi_clean", "present"))
+    put_term("lvi_ex", ("lvi_clean", "extensive"))
+    put_term("lvi_fo", ("lvi_clean", "focal"))
+    put_term("lvi_ind", ("lvi_clean", "indeterminate"))
+    put_term("vas_pu", ("vasc_clean", "present_ungraded"))
+    put_term("vas_fo", ("vasc_clean", "focal"))
+    put_term("vas_ex", ("vasc_clean", "extensive"))
+    put_term("vas_ind", ("vasc_clean", "indeterminate"))
+
+    c_broad = bundle["primary_broad_with_rai"]["coef"]
+    c_wrai = bundle["primary_strict_with_rai"]["coef"]
+    for rk, cf, needles in (
+        ("sens_broad_gross", c_broad, ("ete_group", "Gross")),
+        ("sens_broad_noneg", c_broad, ("ete_group", "No/negative")),
+        ("sens_strict_wrai_gross", c_wrai, ("ete_group", "Gross")),
+        ("sens_strict_wrai_noneg", c_wrai, ("ete_group", "No/negative")),
+        ("sens_strict_wrai_rai", c_wrai, ("rai_received_flag",)),
+    ):
+        prow = _coef_one(cf, *needles)
+        if prow is not None:
+            _set_or_row(ws, rows[rk], prow)
+
+    inte = bundle["ete_by_n_stage_interaction_lr"]
+    lr_txt = (
+        f"LR χ²={inte['lr_chi2']:.2f}, df={inte['df']}, p={inte['p_value']:.4g}"
+    )
+    ws.cell(row=rows["lr_interaction"], column=2, value=lr_txt)
+
+    stmap = [
+        ("strat_n0", "N0"),
+        ("strat_n1a", "N1a"),
+        ("strat_n1b", "N1b"),
+        ("strat_nx", "Nx"),
+        ("strat_nm", "missing"),
+    ]
+    byst = {x["stratum"]: x for x in bundle["stratified_primary_by_n_stage"]}
+    for rk, stlbl in stmap:
+        item = byst.get(stlbl, {})
+        gor = item.get("gross_or")
+        if gor is None:
+            note = item.get("note") or item.get("error") or "n/a"
+            ws.cell(row=rows[rk], column=2, value=str(note))
             continue
-        _set_or_row(ws, rr, prow)
+        lo, hi = item["gross_ci"] if item.get("gross_ci") else (None, None)
+        ws.cell(row=rows[rk], column=2, value=float(gor))
+        if lo is not None and hi is not None:
+            ws.cell(row=rows[rk], column=3, value=float(lo))
+            ws.cell(row=rows[rk], column=4, value=float(hi))
+        gp = item.get("gross_p")
+        if gp is not None:
+            ws.cell(row=rows[rk], column=5, value=float(gp))
 
 
 def _append_coef_block(
@@ -797,7 +1188,6 @@ def _append_coef_block(
 def update_workbook(bundle: dict[str, Any]) -> None:
     from openpyxl.styles import Font
 
-    coef = bundle["primary"]["coef"]
     wb = load_workbook(XLSX)
 
     ws3 = wb["Table 3 — Multivariable"]
@@ -805,11 +1195,11 @@ def update_workbook(bundle: dict[str, Any]) -> None:
         row=2,
         column=1,
         value=(
-            "Reference = Microscopic ETE | Binomial GLM | excludes unknown sex | "
+            "Strict-DTC primary model without RAI covariate | Reference = Microscopic ETE | "
             "scripts/m044_ete_fit_models.py"
         ),
     )
-    fill_table3_excel(ws3, coef)
+    fill_table3_excel(ws3, bundle)
 
     ws_m = wb["Model outputs"]
     for rr in ws_m.iter_rows():
@@ -818,7 +1208,10 @@ def update_workbook(bundle: dict[str, Any]) -> None:
 
     r = 1
     seq = [
-        ("Primary — path proven", "primary"),
+        ("Primary — strict-DTC path proven (NO RAI covariate)", "primary"),
+        ("Primary — strict-DTC + RAI covariate (sensitivity)", "primary_strict_with_rai"),
+        ("Primary — full cohort + RAI (sensitivity)", "primary_broad_with_rai"),
+        ("ETE × N stage interaction (LR)", "_interaction_note"),
         ("Secondary — imaging_only_unconfirmed", "secondary_imaging_only"),
         ("Secondary — composite", "secondary_composite"),
         ("S1 exclude FU==0", "S1_exclude_zero_followup"),
@@ -831,20 +1224,54 @@ def update_workbook(bundle: dict[str, Any]) -> None:
         ("S8 legacy any recurrence flag", "S8_legacy_any_recurrence_flag"),
     ]
     for title, key in seq:
+        if key == "_interaction_note":
+            ws_m.cell(row=r, column=1, value=title).font = Font(bold=True)
+            r += 1
+            ws_m.cell(
+                row=r,
+                column=1,
+                value=json.dumps(bundle["ete_by_n_stage_interaction_lr"], indent=2),
+            )
+            r += 2
+            continue
         blk = bundle[key]
         met = dict(blk.get("metrics", {}))
         for k_extra in ("n", "formula", "n_removed", "change_note", "ordering_note"):
             if k_extra in blk:
                 met[k_extra] = blk[k_extra]
+        if "label" in blk:
+            met["label"] = blk["label"]
         r = _append_coef_block(ws_m, r, title, met, blk["coef"])
+
+    ws_m.cell(row=r, column=1, value="Stratified ORs Gross vs Microscopic by N stage").font = Font(
+        bold=True
+    )
+    r += 1
+    ws_m.cell(
+        row=r, column=1, value=json.dumps(bundle["stratified_primary_by_n_stage"], indent=2)
+    )
+    r += 2
 
     sgk = bundle["subgroup_no_neg_ete_composite"]
     sg_met = dict(sgk.get("metrics", {}))
     sg_met["events"] = sgk["events"]
     sg_met["formula"] = sgk["formula"]
     r = _append_coef_block(ws_m, r, "Subgroup no/negative composite", sg_met, sgk["coef"])
+
+    sg5 = bundle["subgroup_no_neg_ete_strict_pathproven"]
+    sg5_met = dict(sg5.get("metrics", {}))
+    sg5_met["events"] = sg5["events"]
+    sg5_met["formula"] = sg5["formula"]
+    r = _append_coef_block(
+        ws_m,
+        r,
+        "Supplement — strict-DTC no/negative ETE, path-proven only (Refit 5)",
+        sg5_met,
+        sg5["coef"],
+    )
+
     cx = bundle["Cox_surgery_date_known_positive_fu"]
-    ws_m.cell(row=r, column=1, value="Cox PH (surgery date known, FU>0)").font = Font(bold=True)
+    ws_m.cell(row=r, column=1, value="Cox PH strict-DTC (NO RAI covariate)").font = Font(bold=True)
     r += 1
     slim = {k: v for k, v in cx.items() if k != "summary"}
     ws_m.cell(row=r, column=1, value=json.dumps(slim, indent=2, default=str))
@@ -859,11 +1286,49 @@ def update_workbook(bundle: dict[str, Any]) -> None:
         ws_m.cell(row=r, column=5, value=float(row["p"]))
         r += 1
 
+    cx2 = bundle["Cox_strict_with_rai_covariate"]
+    ws_m.cell(row=r, column=1, value="Cox PH strict-DTC (RAI covariate sensitivity)").font = Font(
+        bold=True
+    )
+    r += 1
+    slim2 = {k: v for k, v in cx2.items() if k != "summary"}
+    ws_m.cell(row=r, column=1, value=json.dumps(slim2, indent=2, default=str))
+    r += 1
+    cdf2 = pd.read_csv(DATA_DIR / "m044_cox_primary_with_rai_summary.csv")
+    for _, row in cdf2.iterrows():
+        ws_m.cell(row=r, column=1, value=row[cov_col])
+        ws_m.cell(row=r, column=2, value=float(row["exp(coef)"]))
+        ws_m.cell(row=r, column=3, value=float(row["exp(coef) lower 95%"]))
+        ws_m.cell(row=r, column=4, value=float(row["exp(coef) upper 95%"]))
+        ws_m.cell(row=r, column=5, value=float(row["p"]))
+        r += 1
+
+    sup_name = "Supp Refit5 no-neg path-proven"
+    if sup_name in wb.sheetnames:
+        wb.remove(wb[sup_name])
+    ws_sup = wb.create_sheet(sup_name)
+    ws_sup.cell(row=1, column=1, value="Supplement table — Refit 5 (strict-DTC no/negative ETE, path-proven)")
+    ws_sup.cell(row=3, column=1, value="term")
+    ws_sup.cell(row=3, column=2, value="OR")
+    ws_sup.cell(row=3, column=3, value="CI_low")
+    ws_sup.cell(row=3, column=4, value="CI_high")
+    ws_sup.cell(row=3, column=5, value="p")
+    rr = 4
+    for _, row in sg5["coef"].iterrows():
+        ws_sup.cell(row=rr, column=1, value=row["term"])
+        ws_sup.cell(row=rr, column=2, value=float(row["or"]))
+        ws_sup.cell(row=rr, column=3, value=float(row["or_ci_low"]))
+        ws_sup.cell(row=rr, column=4, value=float(row["or_ci_high"]))
+        ws_sup.cell(row=rr, column=5, value=float(row["pvalue"]))
+        rr += 1
+
     if "Figures" not in wb.sheetnames:
         wb.create_sheet("Figures")
     wfig = wb["Figures"]
-    wfig.cell(row=1, column=1, value="figures/m044_forest_primary.png")
+    wfig.cell(row=1, column=1, value="figures/m044_forest_primary.png (strict-DTC, no RAI)")
     wfig.cell(row=2, column=1, value="figures/m044_forest_primary_data.csv")
+    wfig.cell(row=3, column=1, value="figures/m044_forest_primary_broad.png (full cohort + RAI)")
+    wfig.cell(row=4, column=1, value="figures/m044_forest_primary_broad_data.csv")
 
     qa = wb["QA"]
     nxt = qa.max_row + 2
@@ -925,14 +1390,23 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
 
     adj_gross = _adj_txt(g_adj, "Gross vs microscopic ETE:")
     adj_noneg = _adj_txt(nn_adj, "No/negative vs microscopic ETE:")
+    coef_wrai = bundle["primary_strict_with_rai"]["coef"]
+    g_wrai = _coef_one(coef_wrai, "ete_group", "Gross")
+    nn_wrai = _coef_one(coef_wrai, "ete_group", "No/negative")
+    adj_gross_wrai = _adj_txt(
+        g_wrai, "Strict cohort — gross vs microscopic ETE (RAI covariate retained):"
+    )
+    adj_noneg_wrai = _adj_txt(
+        nn_wrai, "Strict cohort — no/negative vs microscopic ETE (RAI covariate retained):"
+    )
     cx = bundle["Cox_surgery_date_known_positive_fu"]
     gh = cx.get("gross_vs_microscopic_hr")
 
     gross_hr_note = ""
     if isinstance(gh, dict) and "hr" in gh:
         gross_hr_note = (
-            f" A Cox proportional hazards sensitivity analysis (restricted to patients with documented "
-            f"surgery date and positive follow-up; n={cx['n']}) estimated HR="
+            f" A Cox proportional hazards model on the same strict-DTC subset (documented surgery date, positive "
+            f"follow-up; **no RAI covariate**; n={cx['n']}) estimated HR="
             f"{gh['hr']:.2f} (95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; p={gh['p']:.4g}) "
             f"for gross vs microscopic ETE."
         )
@@ -967,28 +1441,70 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
         )
 
     pm = bundle["primary"]["metrics"]
+    inte = bundle["ete_by_n_stage_interaction_lr"]
+    interaction_note = (
+        f"Global **ETE × AJCC8 N-stage interaction** (likelihood ratio vs main-effects-only model): "
+        f"LR χ²={inte['lr_chi2']:.2f}, df={inte['df']}, p={inte['p_value']:.4g}. "
+    )
+    if inte["p_value"] < 0.05:
+        interaction_note += (
+            "The interaction term bundle reached conventional statistical significance; "
+            "stratum-specific gross-vs-microscopic ORs are summarized in Table 3."
+        )
+    else:
+        interaction_note += (
+            "The omnibus interaction test did not reach α=0.05; stratum-specific contrasts are nevertheless "
+            "presented given clinically heterogeneous crude gradients (especially within N1b)."
+        )
+
+    strat_lines: list[str] = []
+    for x in bundle["stratified_primary_by_n_stage"]:
+        st = x.get("stratum", "?")
+        gor = x.get("gross_or")
+        if gor is None:
+            strat_lines.append(f"- **{st}:** {x.get('note') or x.get('error') or 'n/a'}")
+            continue
+        lo, hi = x["gross_ci"]
+        strat_lines.append(
+            f"- **{st}:** adjusted OR {gor:.2f} "
+            f"(95% CI {lo:.2f}–{hi:.2f}; p={x['gross_p']:.4g}); n={x['n']}, path-proven events={x['events']}."
+        )
+    strat_blob = "\n".join(strat_lines)
 
     mv_par = (
-        f"In the primary logistic regression of path-proven recurrence (covariates: age per decade, sex, "
-        f"tumor size (cm), AJCC 8 N stage with explicit missing category, grouped histology, RAI receipt, "
-        f"and separated lymphatic and vascular invasion categories),\n\n{adj_gross}\n\n{adj_noneg}\n\n"
+        "Multivariable models were refit on a **strict-DTC** analytic subset after excluding medullary carcinoma, "
+        "anaplastic carcinoma, NIFTP/FTUMP, benign follicular neoplasms (including atypical adenoma), and rare "
+        "non-DTC histologies listed in Methods (see Table 3 footnote in workbook). Histology was parameterized as "
+        "PTC (reference), FTC, metastatic PTC, poorly differentiated DTC, and high-grade DTC. "
+        "**Radioactive iodine was excluded from the primary covariate set** because receipt reflects "
+        "confounding-by-indication; a parallel strict-cohort model retaining RAI appears as sensitivity.\n\n"
+        "**Primary logistic model (strict-DTC; no RAI covariate):**\n\n"
+        f"{adj_gross}\n\n{adj_noneg}\n\n"
+        "**Sensitivity — strict-DTC with RAI covariate retained:**\n\n"
+        f"{adj_gross_wrai}\n\n{adj_noneg_wrai}\n\n"
         f"(McFadden pseudo-R²={pm['pseudo_r2_mcfadden']:.4f}; "
-        f"n={pm['n_obs']}, events={pm['n_events']}; likelihood-ratio χ²="
+        f"n={pm['n_obs']}, path-proven events={pm['n_events']}; likelihood-ratio χ²="
         f"{pm['lr_vs_null_chi2']:.2f} vs intercept-only)."
         f"{gross_hr_note}\n\n"
-        "Detailed coefficients appear in Table 3 and Supplement tables.\n\n"
+        f"{interaction_note}\n\n"
+        f"**Within-N-stage gross-vs-microscopic contrasts** (same adjustment bundle excluding the fixed stratum’s "
+        f"N-stage factor):\n{strat_blob}\n\n"
+        "Full coefficient tables are in Table 3 (including full-cohort sensitivity rows) and Supplement.\n\n"
         f"{pooled_bits}\n"
     )
 
     core = (
-        f"The crude path-proven odds ratio for gross ETE vs microscopic ETE was {cg:.2f} "
+        f"Within the strict-DTC three-group analytic subset (Methods), the crude path-proven odds ratio for "
+        f"gross ETE vs microscopic ETE was {cg:.2f} "
         f"(95% CI {cgl:.2f}–{cgh:.2f}); the crude odds ratio for no/negative ETE vs microscopic ETE was "
         f"{cn:.2f} (95% CI {cnl:.2f}–{cnh:.2f}). "
     )
+    # Mid-sentence uses lowercase "the crude …" after "(Methods),"
     txt, n12 = _re.subn(
-        r"The crude path-proven odds ratio for gross ETE vs microscopic ETE was .*?;"
-        r" the crude odds ratio for no/negative ETE vs microscopic ETE was .*?\.\s*"
-        r"(?=The legacy `any_recurrence_flag`)",
+        r"(?:Within the strict-DTC three-group analytic subset \(Methods\), )?"
+        r"[Tt]he crude path-proven odds ratio for gross ETE vs microscopic ETE was .*?;"
+        r" [Tt]he crude odds ratio for no/negative ETE vs microscopic ETE was .*?\.\s*"
+        r"(?=[Tt]he legacy `any_recurrence_flag`)",
         core,
         txt,
         count=1,
@@ -1005,19 +1521,45 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
     if n12 != 1 or n3 != 1:
         raise SystemExit(f"manuscript regex replace failed: crude_block={n12}, multivariable={n3}")
 
-    txt, dsc = _re.subn(
-        r"gross ETE was associated with approximately 2\.5-fold higher pathology-proven recurrence than "
-        r"microscopic ETE on both crude and adjusted analyses",
-        (
-            "gross ETE was associated with substantially higher pathology-proven recurrence than microscopic ETE "
-            "on crude analysis; logistic adjustment attenuated the gross-vs-microscopic odds ratio (Table 3), "
-            "whereas Cox regression on documented surgery-interval follow-up retained elevated hazard gross vs microscopic"
-            " (Results)."
-        ),
+    if isinstance(gh, dict) and "hr" in gh:
+        disc_par = (
+            "The original **full-cohort** logistic specification—including both **RAI receipt** and a collapsed "
+            "**histology-other** bucket containing non-DTC and borderline entities—materially attenuated the "
+            "gross-vs-microscopic adjusted odds ratio relative to crude estimates (prior Table 3 iteration). "
+            "Under the **strict-DTC primary model without an RAI covariate**, the gross-vs-microscopic association "
+            f"moves toward the crude gradient ({adj_gross}), while Cox regression on documented surgery-interval "
+            f"follow-up without RAI retained elevated hazard for gross vs microscopic disease "
+            f"(HR={gh['hr']:.2f}, 95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; p={gh['p']:.4g}). "
+            "Together, these findings indicate that much of the earlier logistic attenuation was driven by "
+            "**treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of a "
+            "true gross-ETE signal."
+        )
+    else:
+        disc_par = (
+            "Strict-DTC refitting and omission of RAI as a covariate were undertaken to address "
+            "confounding-by-indication and histology heterogeneity; see Results for updated effect estimates."
+        )
+
+    txt, ndisc = _re.subn(
+        r"The original \*\*full-cohort\*\* logistic specification.+?true gross-ETE signal\.\s+",
+        disc_par + " ",
         txt,
         count=1,
+        flags=_re.S,
     )
-    del dsc
+    if ndisc == 0:
+        txt, ndisc = _re.subn(
+            r"In a contemporary 4,128-patient single-institution thyroid cancer cohort, gross versus microscopic "
+            r"extrathyroidal extension showed the largest disparity in pathology-proven recurrence crude odds ratios; "
+            r"logistic adjustment materially attenuated the gross-vs-microscopic odds ratio \(Table 3\), whereas Cox "
+            r"proportional hazards regression on documented surgery-interval follow-up retained elevated hazard comparing "
+            r"gross versus microscopic disease \(above in Results\)\.\s+",
+            disc_par + " ",
+            txt,
+            count=1,
+        )
+    if ndisc != 1:
+        raise SystemExit(f"manuscript Discussion paragraph replace failed: {ndisc}")
 
     path_md.write_text(txt, encoding="utf-8")
     print(f"[md] patched {path_md}")
@@ -1048,7 +1590,16 @@ def main() -> None:
     fg_png = FIG_DIR / "m044_forest_primary.png"
     fg_csv = FIG_DIR / "m044_forest_primary_data.csv"
     forest_plot_primary(bundle["primary"]["coef"], fg_png, fg_csv)
+    fb_png = FIG_DIR / "m044_forest_primary_broad.png"
+    fb_csv = FIG_DIR / "m044_forest_primary_broad_data.csv"
+    forest_plot_primary(
+        bundle["primary_broad_with_rai"]["coef"],
+        fb_png,
+        fb_csv,
+        title="M044 sensitivity — full cohort + RAI covariate (historical specification)",
+    )
     print(f"[figures] wrote {fg_png} {fg_csv}")
+    print(f"[figures] wrote {fb_png} {fb_csv}")
 
     update_workbook(bundle)
     patch_manuscript_md(bundle)

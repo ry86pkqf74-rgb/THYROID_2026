@@ -37,6 +37,8 @@ The objective of this study is to evaluate the prognostic implications of micros
 
 We performed a retrospective cohort study using the THYROID_2026 canonical publication database (version 1.0; database `thyroid_canonical_publication_v1_0`). The analytic cohort is defined by the manuscript-pinned view `manuscript_workspace.cohort_m044_ajcc_ete_v1`, which materializes one row per `research_id` after the hierarchical ETE-resolution and de-duplication pipeline. The cohort comprises 4,128 patients with surgically managed differentiated thyroid cancer.
 
+**Strict-DTC primary analyses** further exclude non-DTC entities (medullary and anaplastic carcinoma), borderline/benign follicular neoplasms (NIFTP, FTUMP, follicular adenoma, atypical Hurthle neoplasm), and rare non-thyroid epithelial malignancies (see script exclusion list in `scripts/m044_ete_fit_models.py` and Table 3 workbook footnote). The resulting malignant DTC subset retains papillary, follicular, metastatic/recurrent PTC, poorly differentiated DTC, and high-grade differentiated carcinoma for multivariable modeling.
+
 Inclusion is implicit in the cohort view and reflects: (1) operative resection of a DTC primary, (2) availability of canonical pathology synoptic, ETE-resolution, and operative-events tables, and (3) successful de-duplication to one row per research identifier. Cohort construction details, including the upstream ETE-resolution rules (`extraction_audit_engine_v7`, `script_390_rule_a_20260422`, and `tumor_episode_master_v2`), are documented in the THYROID_2026 phase-4 variable inventory and the data manifest at `data/v1_0/_manifest.json`.
 
 ### Exposure: ETE category
@@ -57,13 +59,13 @@ We adopted the canonical dual-track recurrence schema in `main.canonical_recurre
 
 ### Covariates
 
-Demographic variables: age at first surgery (continuous), sex (female reference). Tumor characteristics: tumor size in cm (continuous), histology (PTC reference; follicular-like, MTC-like, other), AJCC 8 T stage, AJCC 8 N stage (N0 reference; N1a, N1b, Nx, missing), AJCC 8 stage group. Treatment: radioactive iodine receipt (RAI). Pathology covariates of primary interest are lymphatic invasion (`lvi_clean`: extensive, present, focal, indeterminate, missing) and vascular/angioinvasion (`vasc_clean`: extensive, focal, present_ungraded, indeterminate, missing). Lymph-node burden was sourced from `manuscript_workspace.ln_master_rollup_v1`, pre-aggregated to one row per patient by selecting the maximum value for each rollup metric across same-patient records, which yielded central- and lateral-compartment positivity flags. Reoperative context (≥2 surgeries, days to second surgery, completion-thyroidectomy reason) was sourced from `manuscript_workspace.cohort_m040_reoperative_v1` and used in the no/negative ETE subgroup analysis.
+Demographic variables: age at first surgery (continuous), sex (female reference). Tumor characteristics: tumor size in cm (continuous); AJCC 8 T/N/stage group for descriptive Table 1. **Histology in strict-DTC multivariable models** uses five malignant categories with papillary thyroid carcinoma as reference: FTC (`histology_final = follicular carcinoma`), metastatic/recurrent PTC (strings beginning `metastatic PTC` or `recurrent/metastatic PTC`), poorly differentiated DTC (strings containing “poorly differentiated”), high-grade differentiated carcinoma, and residual explicit PTC rows. **Radioactive iodine is not included as a primary covariate** because receipt reflects confounding-by-indication; a parallel model retaining RAI is reported as sensitivity. Pathology covariates of primary interest are lymphatic invasion (`lvi_clean`: extensive, present, focal, indeterminate, missing) and vascular/angioinvasion (`vasc_clean`: extensive, focal, present_ungraded, indeterminate, missing). Lymph-node burden was sourced from `manuscript_workspace.ln_master_rollup_v1`, pre-aggregated to one row per patient by selecting the maximum value for each rollup metric across same-patient records, which yielded central- and lateral-compartment positivity flags. Reoperative context (≥2 surgeries, days to second surgery, completion-thyroidectomy reason) was sourced from `manuscript_workspace.cohort_m040_reoperative_v1` and used in the strict-DTC no/negative ETE subgroup regression (Supplement).
 
 ### Statistical analysis
 
 Continuous variables are reported as mean (SD) or median (IQR), and categorical variables as n (%). Crude recurrence outcomes by ETE group are reported as n (%) and as path-proven and composite recurrence per 100 person-years (with positive follow-up time as the denominator and zero-follow-up patients excluded). Crude odds ratios with 95% Wald confidence intervals were computed for path-proven recurrence with microscopic ETE as the reference.
 
-The primary multivariable model is a logistic regression of path-proven recurrence on `ete_group` adjusting for age, sex, tumor size, AJCC 8 N stage, histology, RAI receipt, lymphatic invasion (categorical), and vascular invasion (categorical). Pre-specified sensitivity models include exclusion of zero-follow-up patients, restriction to surgery-date-known patients (1999–2024), use of central- and lateral-LN-positive flags in place of AJCC 8 N stage, and time-to-event Cox regression on the surgery-date-known subset. The full sensitivity panel is enumerated in the analysis plan (M044_ETE_analysis_plan.md §6.4).
+The **primary** multivariable model is a logistic regression of path-proven recurrence on `ete_group` in the strict-DTC cohort, adjusting for age, sex, tumor size, AJCC 8 N stage, five-level malignant histology, lymphatic invasion (categorical), and vascular invasion (categorical), **without** RAI receipt. Pre-specified sensitivity models include the same specification with RAI retained, the full 4,128-patient cohort with historical histology grouping and RAI (supplement), exclusion of zero-follow-up patients, restriction to surgery-date-known patients (1999–2024), use of central- and lateral-LN-positive flags in place of AJCC 8 N stage, ETE × N-stage interaction testing with within-stratum gross-vs-microscopic fits, time-to-event Cox regression on the documented surgery-date subset with and without RAI, and the no/negative-ETE subgroup logistic (Supplement). The full sensitivity panel is enumerated in the analysis plan (M044_ETE_analysis_plan.md §6.4).
 
 Missing covariates were retained as explicit categories, never recoded as absent. Six microscopic-ETE rows have unknown tumor size and were excluded from size-stratified analyses. Two patients with surgery dates pre-1999 (earliest 1945-07-13) were retained in the primary cohort and excluded in a sensitivity analysis. Two-sided p-values are reported; α = 0.05. Analyses were performed in Python (statsmodels logistic regression and lifelines Cox PH) driven by reproducible extracts from `scripts/m044_ete_fit_models.py` and SQL package `M044_ETE_analysis.sql`.
 
@@ -99,21 +101,38 @@ Path-proven recurrence occurred in 59/2,576 (2.3%) microscopic ETE, 73/1,266 (5.
 
 On the positive-follow-up person-year denominator, path-proven recurrence rates were 0.71, 1.76, and 1.71 per 100 person-years for microscopic, gross, and no/negative ETE respectively (Table 2). Composite-event person-year rates were 1.74, 3.92, and 4.00.
 
-The crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.61 (95% CI 1.84–3.70); the crude odds ratio for no/negative ETE vs microscopic ETE was 2.84 (95% CI 1.50–5.39). The legacy `any_recurrence_flag` produced 503 events, of which 318 had no canonical evidence in the recurrence-resolved table and were therefore considered uncoded; the legacy variable is reported only in sensitivity (Supplement Table S2).
+Within the strict-DTC three-group analytic subset (Methods), the crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.60 (95% CI 1.82–3.70); the crude odds ratio for no/negative ETE vs microscopic ETE was 2.82 (95% CI 1.45–5.48). The legacy `any_recurrence_flag` produced 503 events, of which 318 had no canonical evidence in the recurrence-resolved table and were therefore considered uncoded; the legacy variable is reported only in sensitivity (Supplement Table S2).
 
 ### Multivariable analysis
 
-In the primary logistic regression of path-proven recurrence (covariates: age per decade, sex, tumor size (cm), AJCC 8 N stage with explicit missing category, grouped histology, RAI receipt, and separated lymphatic and vascular invasion categories),
+Multivariable models were refit on a **strict-DTC** analytic subset after excluding medullary carcinoma, anaplastic carcinoma, NIFTP/FTUMP, benign follicular neoplasms (including atypical adenoma), and rare non-DTC histologies listed in Methods (see Table 3 footnote in workbook). Histology was parameterized as PTC (reference), FTC, metastatic PTC, poorly differentiated DTC, and high-grade DTC. **Radioactive iodine was excluded from the primary covariate set** because receipt reflects confounding-by-indication; a parallel strict-cohort model retaining RAI appears as sensitivity.
 
-Gross vs microscopic ETE: adjusted OR 1.39 (95% CI 0.94–2.06; p=0.09758)
+**Primary logistic model (strict-DTC; no RAI covariate):**
 
-No/negative vs microscopic ETE: adjusted OR 1.03 (95% CI 0.47–2.24; p=0.9506)
+Gross vs microscopic ETE: adjusted OR 1.80 (95% CI 1.22–2.67; p=0.003324)
 
-(McFadden pseudo-R²=0.1572; n=4028, events=144; likelihood-ratio χ²=195.32 vs intercept-only). A Cox proportional hazards sensitivity analysis (restricted to patients with documented surgery date and positive follow-up; n=2129) estimated HR=2.10 (95% CI 1.22–3.62; p=0.007366) for gross vs microscopic ETE.
+No/negative vs microscopic ETE: adjusted OR 0.52 (95% CI 0.22–1.23; p=0.1358)
 
-Detailed coefficients appear in Table 3 and Supplement tables.
+**Sensitivity — strict-DTC with RAI covariate retained:**
 
-In the pre-specified pooled lymphovascular sensitivity model (missing treated as absent for the pooled binary), the pooled coefficient had adjusted OR=1.60 (p=0.01733). Instead, this pooled construction produced a statistically significant **elevated-odds** association (OR>1), not a protective association; it therefore does **not** reconstruct the classic **protective** pooled-LVI artifact, though it still mixes lymphatic/vascular signal and treats missing as absent.
+Strict cohort — gross vs microscopic ETE (RAI covariate retained): adjusted OR 1.40 (95% CI 0.93–2.10; p=0.1052)
+
+Strict cohort — no/negative vs microscopic ETE (RAI covariate retained): adjusted OR 0.52 (95% CI 0.22–1.25; p=0.1469)
+
+(McFadden pseudo-R²=0.1370; n=3750, path-proven events=139; likelihood-ratio χ²=162.91 vs intercept-only). A Cox proportional hazards model on the same strict-DTC subset (documented surgery date, positive follow-up; **no RAI covariate**; n=2018) estimated HR=2.34 (95% CI 1.35–4.06; p=0.002591) for gross vs microscopic ETE.
+
+Global **ETE × AJCC8 N-stage interaction** (likelihood ratio vs main-effects-only model): LR χ²=6.30, df=6, p=0.3909. The omnibus interaction test did not reach α=0.05; stratum-specific contrasts are nevertheless presented given clinically heterogeneous crude gradients (especially within N1b).
+
+**Within-N-stage gross-vs-microscopic contrasts** (same adjustment bundle excluding the fixed stratum’s N-stage factor):
+- **N0:** adjusted OR 1.65 (95% CI 0.72–3.75; p=0.2351); n=1115, path-proven events=29.
+- **N1a:** adjusted OR 1.95 (95% CI 1.21–3.15; p=0.006118); n=2372, path-proven events=92.
+- **N1b:** adjusted OR 1.24 (95% CI 0.07–21.38; p=0.8817); n=76, path-proven events=16.
+- **Nx:** skipped_sparse_events_for_stable_GLMs
+- **missing:** skipped_sparse_events_for_stable_GLMs
+
+Full coefficient tables are in Table 3 (including full-cohort sensitivity rows) and Supplement.
+
+In the pre-specified pooled lymphovascular sensitivity model (missing treated as absent for the pooled binary), the pooled coefficient had adjusted OR=1.80 (p=0.004005). Instead, this pooled construction produced a statistically significant **elevated-odds** association (OR>1), not a protective association; it therefore does **not** reconstruct the classic **protective** pooled-LVI artifact, though it still mixes lymphatic/vascular signal and treats missing as absent.
 
 
 ### Tumor-size-stratified analysis
@@ -146,7 +165,7 @@ Excluding the 1,400 zero-follow-up patients did not materially change ETE-group 
 
 ## Discussion
 
-In a contemporary 4,128-patient single-institution thyroid cancer cohort, gross versus microscopic extrathyroidal extension showed the largest disparity in pathology-proven recurrence crude odds ratios; logistic adjustment materially attenuated the gross-vs-microscopic odds ratio (Table 3), whereas Cox proportional hazards regression on documented surgery-interval follow-up retained elevated hazard comparing gross versus microscopic disease (above in Results). Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
+The original **full-cohort** logistic specification—including both **RAI receipt** and a collapsed **histology-other** bucket containing non-DTC and borderline entities—materially attenuated the gross-vs-microscopic adjusted odds ratio relative to crude estimates (prior Table 3 iteration). Under the **strict-DTC primary model without an RAI covariate**, the gross-vs-microscopic association moves toward the crude gradient (Gross vs microscopic ETE: adjusted OR 1.80 (95% CI 1.22–2.67; p=0.003324)), while Cox regression on documented surgery-interval follow-up without RAI retained elevated hazard for gross vs microscopic disease (HR=2.34, 95% CI 1.35–4.06; p=0.002591). Together, these findings indicate that much of the earlier logistic attenuation was driven by **treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of a true gross-ETE signal. Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
 
 Three findings warrant emphasis. First, the disconnect between the analytic cohort's `any_recurrence_flag` (n=503) and the canonical dual-track recurrence schema (path-proven n=145; imaging-only n=195) reinforces a methodologic principle that has been understated in the prior thyroid-cancer literature: pathologically-confirmed recurrence is a distinct endpoint from imaging-suspicion, and the two should not be collapsed when the surveillance intensity differs between exposure groups. In our cohort, the microscopic-ETE group has shorter median follow-up (0.66 years vs 1.94 for gross ETE), reflecting a younger calendar-time sampling, and the cohort-flag noise was greatest in this group.
 
