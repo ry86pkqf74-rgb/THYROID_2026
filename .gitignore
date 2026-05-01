@@ -145,3 +145,7 @@ qc_framework_v1/migrations/65a_stage_fna_source_long_date_v1.sql
 # Parquet export directory (large binary files — manifest committed separately)
 parquet_export/**/*.parquet
 parquet_export/**/_archive_snapshots/
+
+# Snowflake trial — generated Parquet exports (regenerable via 01_export_md_to_parquet.py)
+snowflake_trial/parquet/
+
