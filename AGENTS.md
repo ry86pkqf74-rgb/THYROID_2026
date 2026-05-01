@@ -40,6 +40,7 @@
 - Column `r_class_true` exists (rollup fix applied)
 - Column `ete_grade_final_v2` exists (ETE adjudication applied)
 - Column `cpm_built_at` exists AND `IS NOT NULL` for all 10,871 rows (provenance invariant; updated by every reconciliation/cleanup run)
+- Column `surg_first_date` is non-NULL for all **10,871** rows (post **mig_254** `20260501`: backfill from `first_surgery_date_v2` where operative spine had left it NULL; archive `canonical_patient_master_pre_mig254_surg_first_backfill_20260501` on `"Thyroid 2026 UPdated".archive_pub_v1_0`)
 - Column `ajcc8_t_stage` is the **corrected** AJCC8 T-stage (post 04-17 phase-4.6 rename); the original lives as `ajcc8_t_stage_with_microete_t3b_DEPRECATED`
 - 6 per-entity confirmed columns: `comp_vc_paralysis_confirmed`, `comp_vc_paresis_confirmed`, `comp_hematoma_confirmed`, `comp_seroma_confirmed`, `comp_chyle_leak_confirmed`, `comp_wound_infection_confirmed` all exist
 - Both `main.thyroglobulin_lab_canonical_v1` and `main.longitudinal_lab_canonical_v1` carry `is_in_canonical_cancer_cohort BOOLEAN` (TRUE for CPM rids, FALSE for the 403 benign-thyroidectomy Tg-surveillance orphans, NULL = invariant violation)
