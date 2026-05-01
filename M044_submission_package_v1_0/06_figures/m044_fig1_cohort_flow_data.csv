@@ -1,0 +1,7 @@
+step,n
+Total cohort,4128
+Excluded non-DTC / borderline,339
+Strict-DTC subset,3789
+Excluded present-ungraded / missing,33
+Primary 3-level analytic,3756
+Cox subset (surg-date known + FU>0),2025
