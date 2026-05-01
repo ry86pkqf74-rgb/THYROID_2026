@@ -65,7 +65,7 @@ Continuous variables are reported as mean (SD) or median (IQR), and categorical 
 
 The primary multivariable model is a logistic regression of path-proven recurrence on `ete_group` adjusting for age, sex, tumor size, AJCC 8 N stage, histology, RAI receipt, lymphatic invasion (categorical), and vascular invasion (categorical). Pre-specified sensitivity models include exclusion of zero-follow-up patients, restriction to surgery-date-known patients (1999–2024), use of central- and lateral-LN-positive flags in place of AJCC 8 N stage, and time-to-event Cox regression on the surgery-date-known subset. The full sensitivity panel is enumerated in the analysis plan (M044_ETE_analysis_plan.md §6.4).
 
-Missing covariates were retained as explicit categories, never recoded as absent. Six microscopic-ETE rows have unknown tumor size and were excluded from size-stratified analyses. Two patients with surgery dates pre-1999 (earliest 1945-07-13) were retained in the primary cohort and excluded in a sensitivity analysis. Two-sided p-values are reported; α = 0.05. Analyses were performed in [SOFTWARE/VERSION; VERIFY] using the SQL package `M044_ETE_analysis.sql`.
+Missing covariates were retained as explicit categories, never recoded as absent. Six microscopic-ETE rows have unknown tumor size and were excluded from size-stratified analyses. Two patients with surgery dates pre-1999 (earliest 1945-07-13) were retained in the primary cohort and excluded in a sensitivity analysis. Two-sided p-values are reported; α = 0.05. Analyses were performed in Python (statsmodels logistic regression and lifelines Cox PH) driven by reproducible extracts from `scripts/m044_ete_fit_models.py` and SQL package `M044_ETE_analysis.sql`.
 
 ### Ethics
 
@@ -99,11 +99,22 @@ Path-proven recurrence occurred in 59/2,576 (2.3%) microscopic ETE, 73/1,266 (5.
 
 On the positive-follow-up person-year denominator, path-proven recurrence rates were 0.71, 1.76, and 1.71 per 100 person-years for microscopic, gross, and no/negative ETE respectively (Table 2). Composite-event person-year rates were 1.74, 3.92, and 4.00.
 
-The crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.62 (95% CI [VERIFY] approximately 1.85–3.71); the crude odds ratio for no/negative ETE vs microscopic ETE was 2.84 (95% CI [VERIFY] approximately 1.51–5.34). The legacy `any_recurrence_flag` produced 503 events, of which 318 had no canonical evidence in the recurrence-resolved table and were therefore considered uncoded; the legacy variable is reported only in sensitivity (Supplement Table S2).
+The crude path-proven odds ratio for gross ETE vs microscopic ETE was 2.61 (95% CI 1.84–3.70); the crude odds ratio for no/negative ETE vs microscopic ETE was 2.84 (95% CI 1.50–5.39). The legacy `any_recurrence_flag` produced 503 events, of which 318 had no canonical evidence in the recurrence-resolved table and were therefore considered uncoded; the legacy variable is reported only in sensitivity (Supplement Table S2).
 
 ### Multivariable analysis
 
-In the primary logistic regression of path-proven recurrence (covariates: age, sex, tumor size, AJCC 8 N stage, histology, RAI receipt, lymphatic invasion, vascular invasion), gross ETE was associated with elevated odds of path-proven recurrence relative to microscopic ETE (adjusted OR [VERIFY], 95% CI [VERIFY]). The no/negative ETE coefficient attenuated substantially after adjustment for tumor size and N stage but remained directionally elevated; this is interpreted in the context of the subgroup audit below. Detailed model coefficients are reported in Table 3 (TO BE COMPUTED FROM ANALYSIS FILE).
+In the primary logistic regression of path-proven recurrence (covariates: age per decade, sex, tumor size (cm), AJCC 8 N stage with explicit missing category, grouped histology, RAI receipt, and separated lymphatic and vascular invasion categories),
+
+Gross vs microscopic ETE: adjusted OR 1.39 (95% CI 0.94–2.06; p=0.09758)
+
+No/negative vs microscopic ETE: adjusted OR 1.03 (95% CI 0.47–2.24; p=0.9506)
+
+(McFadden pseudo-R²=0.1572; n=4028, events=144; likelihood-ratio χ²=195.32 vs intercept-only). A Cox proportional hazards sensitivity analysis (restricted to patients with documented surgery date and positive follow-up; n=2129) estimated HR=2.10 (95% CI 1.22–3.62; p=0.007366) for gross vs microscopic ETE.
+
+Detailed coefficients appear in Table 3 and Supplement tables.
+
+In the pre-specified pooled lymphovascular sensitivity model (missing treated as absent for the pooled binary), the pooled coefficient had adjusted OR=1.60 (p=0.01733). Instead, this pooled construction produced a statistically significant **elevated-odds** association (OR>1), not a protective association; it therefore does **not** reconstruct the classic **protective** pooled-LVI artifact, though it still mixes lymphatic/vascular signal and treats missing as absent.
+
 
 ### Tumor-size-stratified analysis
 
@@ -129,13 +140,13 @@ When lymphatic invasion (`lvi_clean`) and vascular invasion (`vasc_clean`) were 
 
 ### Sensitivity analyses
 
-Excluding the 1,400 zero-follow-up patients did not materially change ETE-group rate estimates, although it shifted denominators downward (Supplement Table S3). Restricting to surgery-date-known patients (1999–2024, n=3,212) preserved the gross-vs-microscopic ETE contrast (Supplement Table S4). Replacing AJCC 8 N stage with central- and lateral-LN-positive flags did not change the qualitative direction of the gross-ETE effect (Supplement Table S5). The legacy `any_recurrence_flag` model produced inflated event counts (n=503) and a smaller relative gross-vs-microscopic-ETE effect, consistent with legacy-flag noise rather than a different biologic signal.
+Excluding the 1,400 zero-follow-up patients did not materially change ETE-group rate estimates, although it shifted denominators downward (Supplement Table S3). Restricting to surgery-date-known patients (1999–2024, n=3,212) preserved the gross-vs-microscopic ETE contrast (Supplement Table S4). Replacing AJCC 8 N stage with central- and lateral-LN-positive flags did not change the qualitative direction of the gross-ETE effect (Supplement Table S5). The legacy `any_recurrence_flag` model produced inflated event counts (n=503) and a smaller relative gross-vs-microscopic-ETE effect, consistent with legacy-flag noise rather than a different biologic signal. The pooled lymphovascular binary sensitivity (combining lymphatic and vascular positivity with missing treated as absent) produced statistically significant elevated odds—not a protective signal (see Results, multivariable block)—making it an inadequate reconstruction of inverse-risk pooled-LVI artifacts emphasized in prior reports.
 
 ---
 
 ## Discussion
 
-In a contemporary 4,128-patient single-institution thyroid cancer cohort, gross ETE was associated with approximately 2.5-fold higher pathology-proven recurrence than microscopic ETE on both crude and adjusted analyses, while microscopic ETE behaved more like the no-ETE group than like gross ETE on every ETE-anchored measure. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
+In a contemporary 4,128-patient single-institution thyroid cancer cohort, gross versus microscopic extrathyroidal extension showed the largest disparity in pathology-proven recurrence crude odds ratios; logistic adjustment materially attenuated the gross-vs-microscopic odds ratio (Table 3), whereas Cox proportional hazards regression on documented surgery-interval follow-up retained elevated hazard comparing gross versus microscopic disease (above in Results). Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in small tumors.[24, 47, 51]
 
 Three findings warrant emphasis. First, the disconnect between the analytic cohort's `any_recurrence_flag` (n=503) and the canonical dual-track recurrence schema (path-proven n=145; imaging-only n=195) reinforces a methodologic principle that has been understated in the prior thyroid-cancer literature: pathologically-confirmed recurrence is a distinct endpoint from imaging-suspicion, and the two should not be collapsed when the surveillance intensity differs between exposure groups. In our cohort, the microscopic-ETE group has shorter median follow-up (0.66 years vs 1.94 for gross ETE), reflecting a younger calendar-time sampling, and the cohort-flag noise was greatest in this group.
 
