@@ -1,0 +1,4 @@
+field_name,queue_rows,nonblank_value_rows,key_mapped_rows,nonblank_mapped_rows,canonical_rows_tagged
+tirads_category_v2,123,123.0,123.0,123.0,120
+tirads_reported,2494,2494.0,2494.0,2494.0,2491
+tirads_score_2017,23,23.0,23.0,23.0,23

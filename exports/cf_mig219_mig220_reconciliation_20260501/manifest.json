@@ -1,0 +1,14 @@
+{
+  "run_id": "cf_mig219_mig220_reconciliation_20260501",
+  "generated_at": "2026-05-01T04:13:21.856051+00:00",
+  "git_commit": "358cf7b658212a8ccb5205f119710c38e82cc0e5",
+  "report_path": "qc_framework_v1/reports/cf_mig219_mig220_reconciliation_20260501.md",
+  "artifacts": [
+    "cf219_counts.csv",
+    "cf219_crosstab.csv",
+    "cf219_view_parity.csv",
+    "cf220_fields.csv",
+    "cf220_mapping.csv"
+  ],
+  "mode": "read_only_selects_against_motherduck"
+}
