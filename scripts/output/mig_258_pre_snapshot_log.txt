@@ -1,0 +1,18 @@
+mig_258 / mig_259 apply log — 2026-05-01 (UTC session)
+======================================================
+Rule: C (ln_status_source; no overwrite of ajcc8_n_stage or ln_total_positive)
+
+Pre-snapshot table:
+  "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_patient_master_pre_mig259_ln_status_source_20260501
+  Rows: 10871 (slice columns: research_id, is_malignant, ajcc8_n_stage, ln_total_positive, ln_total_examined, ln_positive_flag)
+
+MotherDuck post-apply checks:
+  ln_status_source distribution: both=1126, staging=1509, NULL=8236
+  cpm_built_at IS NULL: 0
+
+SQL file: qc_framework_v1/migrations/259_ln_status_source_cf_mig258_20260501.sql
+Decision memo: scripts/output/mig_258_ln_reconcile_decision_20260501.md
+
+Carry-forwards:
+  CF-mig258-NSTAGE-LNCOUNT-RECONCILE — closed (Rule C applied)
+  CF-mig258-MANUSCRIPT-FILTER-UPDATE — M037/M044: document ln_status_source in methods; use filter ln_status_source='both' when LN count must align with N1
