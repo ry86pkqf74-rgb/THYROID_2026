@@ -1,15 +1,18 @@
 -- mig_262 — Imaging exam_date outliers + LN suspicious rollup (canonical US v2 VIEWs)
 --
--- Mechanical execution is scripted: scripts/mig_262_imaging_date_ln_flag.py
--- (MotherDuck RW). Summary:
---   • Archive selective rows on "Thyroid 2026 UPdated".archive_pub_v1_0
---     .raw_imaging_12_slots_v1_pre_mig262_20260501
---   • UPDATE raw_imaging_12_slots_v1 exam_date for rid 12048 (pre-1990) and 10511
---     (post-2030) per 2-digit-year / century OCR convention.
---   • Re-define n_abnormal_us_ln_on_exam in scripts/366_canonical_us_exam_master_v2.py,
---     then --commit Script 366 (exam master VIEW) + Script 367 (patient master VIEW).
---   • signoff_migration.mig_id = 'mig_262'
+-- scripts/mig_262_imaging_date_ln_flag.py (MotherDuck RW)
 --
--- NULL bulk recovery (~2k rows): carry-forward CF-mig262-NULL-DATE-RECOVERY if needed.
+-- LN leg: signoff_migration.mig_id = 'mig_262' — script 366 LN heuristic + 366/367 VIEWs.
+--
+-- Imaging leg A (publication, default when raw table missing):
+--   Archive + UPDATE main.imaging_exam_master_v1 and main.canonical_us_nodule_v2
+--   rid 12048 YEAR=202 → DATE '2002-08-29'; rid 10511 YEAR=3022 → DATE '2022-03-03'.
+--   signoff_migration.mig_id = 'mig_262_imaging'; then 366/367 --commit.
+--
+-- Imaging leg B (optional raw ingest):
+--   Archive on ...raw_imaging_12_slots_v1_pre_mig262_20260501 + UPDATE that table
+--   if main.raw_imaging_12_slots_v1 exists (multimodule script 50).
+--
+-- NULL bulk recovery (~2k rows): CF-mig262-NULL-DATE-RECOVERY remains open.
 
 SELECT 1 WHERE FALSE;
