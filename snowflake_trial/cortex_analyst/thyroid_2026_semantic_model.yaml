@@ -1,0 +1,206 @@
+name: thyroid_2026_publication_model
+description: >
+  10,871-patient thyroid surgery outcomes cohort (1999-2025) at Emory.
+  CANONICAL_PATIENT_MASTER_FLAT carries 1,630 clinical variables per patient.
+  Use this semantic model to answer plain-English clinical questions about
+  the cohort.
+
+tables:
+  - name: canonical_patient_master_flat
+    description: >
+      Master analytic table — one row per patient. Contains demographic,
+      surgical, pathological, molecular, treatment, and outcome variables.
+    base_table:
+      database: THYROID_VALIDATION
+      schema: PUBLIC
+      table: CANONICAL_PATIENT_MASTER_FLAT
+    primary_key:
+      columns: [research_id]
+
+    dimensions:
+      - name: research_id
+        expr: research_id
+        description: Anonymized patient identifier
+      - name: sex
+        expr: sex
+        description: Patient sex (female/male)
+      - name: race
+        expr: race
+        description: Self-reported race
+      - name: histology_final
+        expr: histology_final
+        description: Final histological diagnosis (raw string)
+      - name: histology_group
+        expr: |
+          CASE WHEN histology_final ILIKE 'PTC%' THEN 'PTC'
+               WHEN histology_final ILIKE '%follicular%' THEN 'FTC'
+               WHEN histology_final ILIKE 'MTC%' OR histology_final ILIKE '%medullary%' THEN 'MTC'
+               WHEN histology_final ILIKE '%anaplastic%' THEN 'ATC'
+               WHEN histology_final ILIKE '%poorly differentiated%' THEN 'PDTC'
+               WHEN histology_final ILIKE '%hurthle%' OR histology_final ILIKE '%oncocytic%' THEN 'Hurthle'
+               WHEN histology_final IS NOT NULL THEN 'Other malignant'
+               ELSE 'Benign' END
+        description: Histology grouped (PTC/FTC/MTC/ATC/PDTC/Hurthle/Other/Benign)
+      - name: is_malignant
+        expr: is_malignant
+        description: TRUE if final pathology malignant
+      - name: ajcc8_stage_group
+        expr: ajcc8_stage_group
+        description: AJCC 8 stage (I/II/III/IVB; canonical collapses IVA/IVC into IVB)
+      - name: ajcc8_t_stage
+        expr: ajcc8_t_stage
+      - name: ajcc8_n_stage
+        expr: ajcc8_n_stage
+      - name: ajcc8_m_stage
+        expr: ajcc8_m_stage
+      - name: surgery_type
+        expr: surg_procedure_type
+      - name: rai_received
+        expr: rai_received_flag
+      - name: any_recurrence
+        expr: any_recurrence_flag
+      - name: ete_grade
+        expr: ete_grade
+      - name: bethesda
+        expr: bethesda_final
+      - name: braf_positive
+        expr: braf_positive_final
+      - name: ras_positive
+        expr: ras_positive_final
+      - name: molecular_tested
+        expr: molecular_tested_confirmed
+      - name: mol_platform
+        expr: mol_platform
+      - name: vital_status
+        expr: vital_status
+      - name: surgery_year
+        expr: EXTRACT(YEAR FROM first_surgery_date)
+      - name: surgery_era
+        expr: |
+          CASE WHEN EXTRACT(YEAR FROM first_surgery_date) BETWEEN 1999 AND 2005 THEN 'Early (1999-2005)'
+               WHEN EXTRACT(YEAR FROM first_surgery_date) BETWEEN 2006 AND 2013 THEN 'Middle (2006-2013)'
+               WHEN EXTRACT(YEAR FROM first_surgery_date) BETWEEN 2014 AND 2019 THEN 'Modern (2014-2019)'
+               WHEN EXTRACT(YEAR FROM first_surgery_date) >= 2020 THEN 'Contemporary (2020+)'
+               ELSE 'Unknown' END
+        description: 4-bucket era for time-trend analyses
+      - name: autoimmune_type
+        expr: |
+          CASE WHEN syn_graves THEN 'Graves'
+               WHEN syn_hashimoto THEN 'Hashimoto'
+               WHEN syn_chronic_thyroiditis THEN 'Chronic thyroiditis'
+               ELSE 'None' END
+        description: Autoimmune thyroid disease (synoptic-derived)
+      - name: ln_status_source
+        expr: ln_status_source
+        description: >
+          LN positivity provenance (staging/count/both/NULL).
+          Filter ln_status_source='both' when numeric LN counts required.
+
+    measures:
+      - name: total_patients
+        expr: COUNT(DISTINCT research_id)
+      - name: malignancy_rate
+        expr: ROUND(100.0 * COUNT_IF(is_malignant) / COUNT(*), 1)
+      - name: mean_age
+        expr: ROUND(AVG(age_at_surgery), 1)
+      - name: median_age
+        expr: MEDIAN(age_at_surgery)
+      - name: mean_tumor_size_cm
+        expr: ROUND(AVG(tumor_size_cm_max), 2)
+      - name: recurrence_rate
+        expr: ROUND(100.0 * COUNT_IF(any_recurrence_flag) / NULLIF(COUNT(*), 0), 1)
+      - name: rai_rate
+        expr: ROUND(100.0 * COUNT_IF(rai_received_flag) / COUNT(*), 1)
+      - name: braf_positivity_rate
+        expr: ROUND(100.0 * COUNT_IF(braf_positive_final) / NULLIF(COUNT_IF(molecular_tested_confirmed), 0), 1)
+      - name: mean_followup_years
+        expr: ROUND(AVG(followup_years), 1)
+      - name: ln_positivity_rate
+        expr: ROUND(100.0 * COUNT_IF(ln_total_positive > 0) / NULLIF(COUNT(*), 0), 1)
+
+  - name: cohort_m037_ln_predictors
+    description: M037 manuscript cohort — 4,137 malignant patients
+    base_table: {database: THYROID_VALIDATION, schema: PUBLIC, table: COHORT_M037_LN_PREDICTORS}
+
+  - name: cohort_m032_25yr_descriptive
+    description: M032 cohort — 10,871 patients with surgery date + era bucket
+    base_table: {database: THYROID_VALIDATION, schema: PUBLIC, table: COHORT_M032_25YR_DESCRIPTIVE}
+
+  - name: cohort_m004_autoimmune_carcinoma
+    description: M004 cohort — 4,137 malignant; HAS_GRAVES + HAS_HASHIMOTO synoptic-derived
+    base_table: {database: THYROID_VALIDATION, schema: PUBLIC, table: COHORT_M004_AUTOIMMUNE_CARCINOMA}
+
+  - name: canonical_labs_thyroglobulin
+    description: >
+      53,006 Thyroglobulin lab results. VALUE_NUMERIC is TEXT
+      (use TRY_TO_DOUBLE for numeric ops).
+    base_table: {database: THYROID_VALIDATION, schema: PUBLIC, table: CANONICAL_LABS_THYROGLOBULIN_V1_FLAT}
+
+verified_queries:
+  - question: What is the malignancy rate by Bethesda category?
+    sql: |
+      SELECT bethesda_final, COUNT(*) AS n,
+        COUNT_IF(is_malignant) AS malignant,
+        ROUND(100.0 * COUNT_IF(is_malignant) / COUNT(*), 1) AS rom_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE bethesda_final IS NOT NULL
+      GROUP BY bethesda_final ORDER BY bethesda_final
+
+  - question: Show me recurrence rates by AJCC stage
+    sql: |
+      SELECT ajcc8_stage_group, COUNT(*) AS n,
+        COUNT_IF(any_recurrence_flag) AS recurred,
+        ROUND(100.0 * COUNT_IF(any_recurrence_flag) / COUNT(*), 1) AS recurrence_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE ajcc8_stage_group IS NOT NULL AND is_malignant = TRUE
+      GROUP BY ajcc8_stage_group ORDER BY ajcc8_stage_group
+
+  - question: Compare molecular testing rates by surgery era
+    sql: |
+      SELECT
+        CASE WHEN EXTRACT(YEAR FROM first_surgery_date) < 2010 THEN 'Pre-2010'
+             WHEN EXTRACT(YEAR FROM first_surgery_date) < 2015 THEN '2010-2014'
+             WHEN EXTRACT(YEAR FROM first_surgery_date) < 2020 THEN '2015-2019'
+             ELSE '2020+' END AS era,
+        COUNT(*) AS n,
+        ROUND(100.0 * COUNT_IF(molecular_tested_confirmed) / COUNT(*), 1) AS mol_rate_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE first_surgery_date IS NOT NULL GROUP BY era ORDER BY era
+
+  - question: How many Graves patients had papillary cancer?
+    sql: |
+      SELECT COUNT(*) AS n_graves_with_ptc
+      FROM THYROID_VALIDATION.PUBLIC.COHORT_M004_AUTOIMMUNE_CARCINOMA
+      WHERE has_graves = TRUE AND histology_final ILIKE 'PTC%'
+
+  - question: Show recurrence rates by ETE group, stratified by surgery type
+    sql: |
+      SELECT ete_grade, surg_procedure_type, COUNT(*) AS n,
+        COUNT_IF(any_recurrence_flag) AS recurred,
+        ROUND(100.0 * COUNT_IF(any_recurrence_flag) / COUNT(*), 1) AS recurrence_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE is_malignant = TRUE AND ete_grade IN ('none','microscopic','gross')
+      GROUP BY ete_grade, surg_procedure_type
+      ORDER BY ete_grade, surg_procedure_type
+
+  - question: What percentage of BRAF-positive patients received RAI?
+    sql: |
+      SELECT COUNT(*) AS n_braf_positive,
+        COUNT_IF(rai_received_flag) AS n_received_rai,
+        ROUND(100.0 * COUNT_IF(rai_received_flag) / COUNT(*), 1) AS rai_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE braf_positive_final = TRUE
+
+  - question: What is the LN positivity rate by tumor size bucket?
+    sql: |
+      SELECT
+        CASE WHEN tumor_size_cm_max <= 1.0 THEN '≤1 cm'
+             WHEN tumor_size_cm_max <= 2.0 THEN '1-2 cm'
+             WHEN tumor_size_cm_max <= 4.0 THEN '2-4 cm'
+             ELSE '>4 cm' END AS size_bucket,
+        COUNT(*) AS n,
+        COUNT_IF(ln_total_positive > 0) AS n_ln_pos,
+        ROUND(100.0 * COUNT_IF(ln_total_positive > 0) / COUNT(*), 1) AS ln_pos_pct
+      FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+      WHERE is_malignant = TRUE AND tumor_size_cm_max IS NOT NULL
+      GROUP BY size_bucket ORDER BY size_bucket
