@@ -124,7 +124,7 @@ WHERE histology_final = 'NIFTP'
     if args.dry_run:
         log("Dry-run OK — no writes.")
         _write_out(f"{REPO_ROOT}/scripts/output/mig_271_dry_run_{stamp.replace(':', '')}.txt", log_lines)
-        log(f"Wrote scripts/output dry-run log.")
+        log("Wrote scripts/output dry-run log.")
         con.close()
         return 0
 
