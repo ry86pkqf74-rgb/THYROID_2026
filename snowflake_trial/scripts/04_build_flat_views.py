@@ -38,6 +38,8 @@ cur = ctx.cursor()
 
 TABLES = [
     "CANONICAL_PATIENT_MASTER",
+    # mig_270: parquet → flat view for Cortex / scripts that consume *_FLAT pattern
+    "CANONICAL_HISTOLOGY_LOOKUP_V1",
     "CANONICAL_FNA_EVENTS_V1",
     "CANONICAL_INVASION_EVENTS_V1",
     "CANONICAL_LABS_THYROGLOBULIN_V1",

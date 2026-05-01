@@ -17,6 +17,8 @@ OUT.mkdir(parents=True, exist_ok=True)
 # Pull canonical_patient_master plus the highest-value detail tables
 TABLES = [
     "canonical_patient_master",
+    # mig_267 / mig_270: histology SSOT for Snowflake JOINs (replaces scattered ILIKE grouping)
+    "canonical_histology_lookup_v1",
     "canonical_fna_events_v1",
     "canonical_molecular_genetics_v2",
     "canonical_rai_episodes_v1",

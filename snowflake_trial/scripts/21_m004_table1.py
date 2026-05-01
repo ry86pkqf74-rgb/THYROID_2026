@@ -11,7 +11,7 @@ print("=== Pulling M004 cohort ===")
 cur.execute("""
 SELECT
   RESEARCH_ID, AGE_AT_SURGERY, SEX, RACE, BMI_COMBINED,
-  HISTOLOGY_FINAL, IS_MALIGNANT, FIRST_SURGERY_DATE,
+  HISTOLOGY_FINAL, HISTOLOGY_GROUP, IS_MALIGNANT, FIRST_SURGERY_DATE,
   AJCC8_STAGE_GROUP, AJCC8_T_STAGE, AJCC8_N_STAGE, AJCC8_M_STAGE,
   TUMOR_SIZE_CM_MAX, ETE_GRADE,
   LN_TOTAL_EXAMINED, LN_TOTAL_POSITIVE, LN_POSITIVE_FLAG,
@@ -36,7 +36,7 @@ n_g, n_h, n_n = len(graves_df), len(hashi_df), len(none_df)
 print(f"  Graves={n_g}  Hashimoto={n_h}  Neither={n_n}")
 
 try:
-    from scipy.stats import kruskal, chi2_contingency, fisher_exact
+    from scipy.stats import kruskal, chi2_contingency
     HAVE_STATS = True
 except ImportError:
     HAVE_STATS = False
@@ -101,7 +101,8 @@ t1.append(["", "", "", "", ""])
 for blk in [
     cat_rows("Sex", "SEX"),
     cat_rows("Race", "RACE", top=8),
-    cat_rows("Histology", "HISTOLOGY_FINAL", top=10),
+    cat_rows("Histology group (SSOT)", "HISTOLOGY_GROUP"),
+    cat_rows("Histology (raw)", "HISTOLOGY_FINAL", top=10),
     cat_rows("AJCC 8 T", "AJCC8_T_STAGE"),
     cat_rows("AJCC 8 N", "AJCC8_N_STAGE"),
     cat_rows("AJCC 8 stage", "AJCC8_STAGE_GROUP"),
@@ -119,9 +120,9 @@ md = ["# Table 1 — Manuscript M004: Autoimmune Thyroid Disease + Carcinoma\n",
       f"**Generated:** {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
       f"**Cohort:** Malignant patients with autoimmune type assigned (N={len(df):,})\n",
       f"**Strata:** Graves={n_g} | Hashimoto={n_h} | Neither={n_n}\n",
-      f"**P-values:** Kruskal-Wallis (3-group continuous), chi-square (categorical)\n",
-      f"**Note:** Graves/Hashimoto signals are synoptic-derived (path-report findings)\n",
-      f"per memory `project_medications_parathyroid_families_complete_2026-04-29.md`.\n\n"]
+      "**P-values:** Kruskal-Wallis (3-group continuous), chi-square (categorical)\n",
+      "**Note:** Graves/Hashimoto signals are synoptic-derived (path-report findings)\n",
+      "per memory `project_medications_parathyroid_families_complete_2026-04-29.md`.\n\n"]
 md.append("| Variable | Graves | Hashimoto | Neither | p |\n")
 md.append("| --- | --- | --- | --- | --- |\n")
 for row in t1:

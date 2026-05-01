@@ -6,32 +6,37 @@ stratified by gland weight bucket: ≥200g, 50-199g, <50g, NULL.
 import sys, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-from _sf_client import get_cursor
+from _sf_client import deploy_histology_lookup_ssot, get_cursor
 
 OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/m038_table1_massive_goiter.md")
 ctx, cur = get_cursor()
+deploy_histology_lookup_ssot(cur)
 
 # Build cohort view
 print("=== Building COHORT_M038_MASSIVE_GOITER ===")
 cur.execute("""
 CREATE OR REPLACE VIEW THYROID_VALIDATION.PUBLIC.COHORT_M038_MASSIVE_GOITER AS
 SELECT
-  RESEARCH_ID, AGE_AT_SURGERY, SEX, RACE,
-  HISTOLOGY_FINAL, IS_MALIGNANT, FIRST_SURGERY_DATE,
-  AJCC8_T_STAGE, AJCC8_N_STAGE, AJCC8_M_STAGE, AJCC8_STAGE_GROUP,
-  TUMOR_SIZE_CM_MAX, ETE_GRADE,
-  GLAND_WEIGHT_FINAL_G, GLAND_WEIGHT_SOURCE, MULTIFOCAL_FLAG_PATH,
-  SYN_MULTINODULAR_GOITER, CT_GOITER_PRESENT_ANY,
-  SURG_PROCEDURE_TYPE, RAI_RECEIVED_FLAG,
-  ANY_RECURRENCE_FLAG, OVERALL_SURVIVAL_YEARS, FOLLOWUP_YEARS,
+  cp.RESEARCH_ID, cp.AGE_AT_SURGERY, cp.SEX, cp.RACE,
+  cp.HISTOLOGY_FINAL,
+  COALESCE(lu.HISTOLOGY_GROUP, 'Other') AS HISTOLOGY_GROUP,
+  cp.IS_MALIGNANT, cp.FIRST_SURGERY_DATE,
+  cp.AJCC8_T_STAGE, cp.AJCC8_N_STAGE, cp.AJCC8_M_STAGE, cp.AJCC8_STAGE_GROUP,
+  cp.TUMOR_SIZE_CM_MAX, cp.ETE_GRADE,
+  cp.GLAND_WEIGHT_FINAL_G, cp.GLAND_WEIGHT_SOURCE, cp.MULTIFOCAL_FLAG_PATH,
+  cp.SYN_MULTINODULAR_GOITER, cp.CT_GOITER_PRESENT_ANY,
+  cp.SURG_PROCEDURE_TYPE, cp.RAI_RECEIVED_FLAG,
+  cp.ANY_RECURRENCE_FLAG, cp.OVERALL_SURVIVAL_YEARS, cp.FOLLOWUP_YEARS,
   CASE
-    WHEN GLAND_WEIGHT_FINAL_G IS NULL THEN 'unknown'
-    WHEN GLAND_WEIGHT_FINAL_G >= 200 THEN 'massive_200g_plus'
-    WHEN GLAND_WEIGHT_FINAL_G >= 50  THEN 'moderate_50_to_199g'
+    WHEN cp.GLAND_WEIGHT_FINAL_G IS NULL THEN 'unknown'
+    WHEN cp.GLAND_WEIGHT_FINAL_G >= 200 THEN 'massive_200g_plus'
+    WHEN cp.GLAND_WEIGHT_FINAL_G >= 50  THEN 'moderate_50_to_199g'
     ELSE 'small_under_50g'
   END AS WEIGHT_BUCKET,
-  CASE WHEN GLAND_WEIGHT_FINAL_G >= 200 THEN TRUE ELSE FALSE END AS IS_MASSIVE_GOITER
-FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+  CASE WHEN cp.GLAND_WEIGHT_FINAL_G >= 200 THEN TRUE ELSE FALSE END AS IS_MASSIVE_GOITER
+FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT cp
+LEFT JOIN THYROID_VALIDATION.PUBLIC.CANONICAL_HISTOLOGY_LOOKUP_V1 lu
+  ON cp.HISTOLOGY_FINAL = lu.HISTOLOGY_FINAL_RAW
 """)
 cur.execute("SELECT WEIGHT_BUCKET, COUNT(*) FROM COHORT_M038_MASSIVE_GOITER GROUP BY 1 ORDER BY 2 DESC")
 for r in cur.fetchall(): print(f"  {r[0]}: {r[1]:,}")
@@ -116,6 +121,7 @@ t1.append(["", "", "", "", ""])
 for blk in [
     cat_rows("Sex", "SEX"),
     cat_rows("Race", "RACE", top=8),
+    cat_rows("Histology group (SSOT)", "HISTOLOGY_GROUP"),
     cat_rows("Malignant", "IS_MALIGNANT"),
     cat_rows("Multifocal (path)", "MULTIFOCAL_FLAG_PATH"),
     cat_rows("Multinodular (synoptic)", "SYN_MULTINODULAR_GOITER"),
@@ -132,8 +138,8 @@ md = ["# Table 1 — Manuscript M038: Massive Goiter (Definition Paper)\n",
       f"**Generated:** {time.strftime('%Y-%m-%d %H:%M:%S')}\n",
       f"**Cohort:** {len(df):,} patients with non-NULL gland weight\n",
       f"**Strata:** ≥200g (massive)={len(bucket_dfs['massive_200g_plus']):,} | 50-199g (moderate)={len(bucket_dfs['moderate_50_to_199g']):,} | <50g (small)={len(bucket_dfs['small_under_50g']):,}\n",
-      f"**P-values:** Kruskal-Wallis (continuous), chi-square (categorical)\n",
-      f"**Source:** THYROID_VALIDATION.PUBLIC.COHORT_M038_MASSIVE_GOITER (post-mig_262 LN flag rebuild)\n\n"]
+      "**P-values:** Kruskal-Wallis (continuous), chi-square (categorical)\n",
+      "**Source:** THYROID_VALIDATION.PUBLIC.COHORT_M038_MASSIVE_GOITER (post-mig_262 LN flag rebuild)\n\n"]
 md.append("| Variable | ≥200g (massive) | 50-199g (moderate) | <50g (small) | p |\n")
 md.append("| --- | --- | --- | --- | --- |\n")
 for row in t1:
