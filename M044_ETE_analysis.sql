@@ -1,7 +1,8 @@
 -- =====================================================================
 -- M044 — Microscopic vs Gross ETE manuscript: reproducible SQL package
 -- Database: thyroid_canonical_publication_v1_0
--- Primary cohort: manuscript_workspace.cohort_m044_ajcc_ete_v1 (n=4128)
+-- Primary cohort: manuscript_workspace.cohort_m044_ajcc_ete_v1
+-- Row count: pin against `scripts/m044_validate_canonical_v1_runner.py` (main_audit.n_rows).
 -- Recurrence column-of-record: main.canonical_recurrence_resolved_v1
 -- LN rollup: manuscript_workspace.ln_master_rollup_v1
 -- Reoperative: manuscript_workspace.cohort_m040_reoperative_v1

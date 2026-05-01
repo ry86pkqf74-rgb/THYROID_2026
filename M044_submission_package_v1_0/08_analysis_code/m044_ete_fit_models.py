@@ -93,6 +93,12 @@ SELECT
   c.age_at_surgery, c.sex, c.histology_final, c.tumor_size_cm,
   c.ajcc8_t_stage, c.ajcc8_n_stage, c.ajcc8_stage_group,
   c.surg_first_date,
+  c.surg_first_date_lineage_note,
+  c.surg_date_missing,
+  c.surg_date_pre_1999,
+  c.surg_date_1999_2024,
+  c.surg_date_post_2024,
+  c.surg_date_after_2024_06_04,
   c.followup_years, c.overall_survival_years, c.death_occurred,
   c.lvi_clean, c.vasc_clean, c.lvi_grade,
   ln.ln_lateral_left_positive, ln.ln_lateral_right_positive, ln.ln_bilateral_lateral_positive,
@@ -102,7 +108,9 @@ SELECT
          OR COALESCE(ln.ln_bilateral_lateral_positive,0) > 0 THEN 1 ELSE 0 END AS lateral_pos_flag,
   c.rai_received_flag,
   c.any_recurrence_flag,
-  rec.recurrence_path_proven, rec.recurrence_status_final,
+  rec.recurrence_path_proven,
+  rec.recurrence_imaging_then_path_confirmed,
+  rec.recurrence_status_final,
   rec.days_to_path_proven,
   reop.n_surgeries, reop.days_to_2nd
 FROM cohort c
@@ -281,6 +289,7 @@ def build_primary_prep(df: pd.DataFrame, *, strict_dtc: bool = False) -> pd.Data
     d["y_comp"] = d["recurrence_status_final"].isin(
         ["path_proven", "imaging_only_unconfirmed"]
     ).astype(int)
+    # Sensitivity only; legacy flag vs canonical: manuscript_workspace.m044_legacy_recurrence_flag_audit_v1
     d["y_any"] = d["any_recurrence_flag"].astype(bool).astype(int)
 
     d["ete_group"] = pd.Categorical(
@@ -376,6 +385,179 @@ def model_frame_for_primary(
     return d
 
 
+def build_cox_analytic_frame(
+    dm_strict: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Cox/KM-aligned rows: documented surgery date, FU>0, path-proven TTE in days.
+
+    Mirrors lifelines Cox sample: censor at follow-up (years×365.25), event-time from
+    ``days_to_path_proven`` when ``y_pp==1``, drop age/size missing / non-positive duration.
+    """
+    dc = dm_strict.copy()
+    dc = dc.loc[
+        pd.notna(dc["surg_first_date"])
+        & (pd.to_numeric(dc["followup_years"], errors="coerce") > 0)
+    ].copy()
+    fu = pd.to_numeric(dc["followup_years"], errors="coerce")
+    dtp_arr = pd.to_numeric(dc["days_to_path_proven"], errors="coerce").to_numpy(dtype=float)
+    ev_s = dc["y_pp"].astype(int)
+    fu_arr = fu.to_numpy(dtype=float)
+    cens = fu_arr * 365.25
+    ev_arr = ev_s.to_numpy(dtype=int)
+    event_time = np.where(np.isfinite(dtp_arr), dtp_arr, cens)
+    time_days_arr = np.where(ev_arr == 1, event_time, cens)
+    dc["time_days"] = time_days_arr.astype(float)
+    dc = dc.loc[np.isfinite(dc["time_days"]) & (dc["time_days"] > 0)].copy()
+
+    dc = dc.dropna(subset=["age10", "tumor_size_cm"]).reset_index(drop=True)
+    cat_for_cox = (
+        "ete_group",
+        "sex_lc",
+        "ajcc8_n_fac",
+        "histology_fac",
+        "lvi_clean",
+        "vasc_clean",
+    )
+    for c in cat_for_cox:
+        if c in dc.columns:
+            dc[c] = dc[c].astype(str)
+    meta = {"n": len(dc), "events": int(dc["y_pp"].sum())}
+    return dc, meta
+
+
+def build_inclusion_flow_qc(df_merged: pd.DataFrame) -> pd.DataFrame:
+    """Waterfall counts for manuscript/QC — strict-DTC Cox slice (exact Python logic)."""
+
+    def _hist_mask(df: pd.DataFrame) -> pd.Series:
+        hs = df["histology_final"].map(_histology_str_raw)
+        return ~hs.isin(EXCLUDE_HISTOLOGIES_STRICT_DTC)
+
+    rows: list[dict[str, Any]] = []
+    n0 = len(df_merged)
+
+    hx = df_merged.loc[_hist_mask(df_merged)]
+    n1 = len(hx)
+    rows.append(
+        {
+            "step_order": 1,
+            "criterion": "Strict-DTC (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list per script)",
+            "n": n1,
+            "excluded_at_step": n0 - n1,
+            "cum_excluded_from_cohort": n0 - n1,
+        }
+    )
+
+    eg_ok = hx["ete_group"].isin(["No/negative ETE", "Microscopic ETE", "Gross ETE"])
+    hx2 = hx.loc[eg_ok]
+    n2 = len(hx2)
+    rows.append(
+        {
+            "step_order": 2,
+            "criterion": "Three-level ETE (No/negative vs Microscopic vs Gross)",
+            "n": n2,
+            "excluded_at_step": n1 - n2,
+            "cum_excluded_from_cohort": n0 - n2,
+        }
+    )
+
+    dm_s = model_frame_for_primary(df_merged, strict_dtc=True)
+    n3 = len(dm_s)
+    rows.append(
+        {
+            "step_order": 3,
+            "criterion": "Sex known (female/male — multivariable frame)",
+            "n": n3,
+            "excluded_at_step": n2 - n3,
+            "cum_excluded_from_cohort": n0 - n3,
+        }
+    )
+
+    fu_ok = pd.to_numeric(dm_s["followup_years"], errors="coerce") > 0
+    d4 = dm_s.loc[fu_ok]
+    n4 = len(d4)
+    rows.append(
+        {
+            "step_order": 4,
+            "criterion": "Positive follow-up (followup_years > 0)",
+            "n": n4,
+            "excluded_at_step": n3 - n4,
+            "cum_excluded_from_cohort": n0 - n4,
+        }
+    )
+
+    sd_ok = d4["surg_first_date"].notna()
+    d5 = d4.loc[sd_ok]
+    n5 = len(d5)
+    rows.append(
+        {
+            "step_order": 5,
+            "criterion": "Known surgery date (surg_first_date non-null — CPM SSOT lineage)",
+            "n": n5,
+            "excluded_at_step": n4 - n5,
+            "cum_excluded_from_cohort": n0 - n5,
+        }
+    )
+
+    fu = pd.to_numeric(d5["followup_years"], errors="coerce")
+    dtp = pd.to_numeric(d5["days_to_path_proven"], errors="coerce").to_numpy(dtype=float)
+    ev_arr = d5["y_pp"].astype(int).to_numpy(dtype=int)
+    fu_arr = fu.to_numpy(dtype=float)
+    cens = fu_arr * 365.25
+    event_time = np.where(np.isfinite(dtp), dtp, cens)
+    time_days = np.where(ev_arr == 1, event_time, cens)
+    td_ok = pd.Series(np.isfinite(time_days) & (time_days > 0), index=d5.index)
+    d6 = d5.loc[td_ok]
+    n6 = len(d6)
+    rows.append(
+        {
+            "step_order": 6,
+            "criterion": "Finite positive Cox duration (days; event-time or censored PY)",
+            "n": n6,
+            "excluded_at_step": n5 - n6,
+            "cum_excluded_from_cohort": n0 - n6,
+        }
+    )
+
+    age10_ok = pd.to_numeric(d6["age_at_surgery"], errors="coerce").notna()
+    ts_ok = pd.to_numeric(d6["tumor_size_cm"], errors="coerce").notna()
+    cov_ok = age10_ok & ts_ok
+    n7 = int(cov_ok.sum())
+    rows.append(
+        {
+            "step_order": 7,
+            "criterion": "Age + tumor size non-missing (Cox covariate complete-case)",
+            "n": n7,
+            "excluded_at_step": n6 - n7,
+            "cum_excluded_from_cohort": n0 - n7,
+        }
+    )
+
+    header = pd.DataFrame(
+        [
+            {
+                "step_order": 0,
+                "criterion": "M044 analytic extract (cohort_m044_ajcc_ete_v1 + recurrence join)",
+                "n": n0,
+                "excluded_at_step": 0,
+                "cum_excluded_from_cohort": 0,
+            }
+        ]
+    )
+    footer = pd.DataFrame(
+        [
+            {
+                "step_order": 8,
+                "criterion": "Final Cox PH / KM analytic rows (= step 7; lifelines fitted sample)",
+                "n": n7,
+                "excluded_at_step": 0,
+                "cum_excluded_from_cohort": n0 - n7,
+            }
+        ]
+    )
+    body = pd.DataFrame(rows)
+    return pd.concat([header, body, footer], ignore_index=True)
+
+
 def crude_pairwise(d_model: pd.DataFrame) -> dict[str, Any]:
     sub = d_model.dropna(subset=["y_pp"]).copy()
 
@@ -414,8 +596,8 @@ def export_parquet(force: bool) -> Path:
     print("[export] MotherDuck master analytic + CPM …")
     con = connect_locked()
     df_main = con.execute(MASTER_ANALYTIC_SQL).df()
-    if len(df_main) != 4128:
-        raise SystemExit(f"expected 4128 rows, got {len(df_main)}")
+    cohort_n = len(df_main)
+    print(f"[export] cohort extract rows = {cohort_n} (pin with m044_validate_canonical_v1_runner.py)")
     df_cpm = con.execute(CPM_EXTRA_SQL).df()
     df_main["research_id_norm"] = normalize_rid_series(df_main["research_id"])
     df_cpm["research_id_norm"] = pd.to_numeric(
@@ -493,6 +675,104 @@ def expected_size_rates() -> dict[tuple[str, str], float]:
         ("No/negative ETE", "2.1-4"): 7.0,
         ("No/negative ETE", ">4"): 3.8,
     }
+
+
+TABLE2_ETE_ORDER: tuple[str, ...] = (
+    "Microscopic ETE",
+    "Gross ETE",
+    "No/negative ETE",
+    "Present ungraded",
+    "Missing/other",
+)
+
+
+def build_table2_recurrence_summary(df_merged: pd.DataFrame) -> pd.DataFrame:
+    """M044 Table 2 — cohort-wide n/% vs positive-FU person-year rates (SQL-aligned)."""
+
+    fu = pd.to_numeric(df_merged["followup_years"], errors="coerce").fillna(0.0)
+    work = df_merged.copy()
+    work["_fu"] = fu
+    pp = work["recurrence_path_proven"].fillna(False).astype(bool)
+    st = work["recurrence_status_final"].astype(str)
+    has_img_then = "recurrence_imaging_then_path_confirmed" in work.columns
+    img_then = (
+        work["recurrence_imaging_then_path_confirmed"].fillna(False).astype(bool)
+        if has_img_then
+        else None
+    )
+    rows: list[dict[str, Any]] = []
+    for eg in TABLE2_ETE_ORDER:
+        m = work["ete_group"].astype(str) == eg
+        grp = work.loc[m]
+        n = int(len(grp))
+        pos = grp["_fu"] > 0
+        path_n = int(pp.loc[m].sum())
+        img_only_n = int((st.loc[m] == "imaging_only_unconfirmed").sum())
+        comp_n = int(st.loc[m].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        if img_then is not None:
+            img_then_n: int | None = int(img_then.loc[m].sum())
+        else:
+            img_then_n = None
+        py_pos = float(grp.loc[pos, "_fu"].sum())
+        pp_pos = int(pp.loc[m & pos].sum())
+        comp_pos = int(st.loc[m & pos].isin(["path_proven", "imaging_only_unconfirmed"]).sum())
+        pp_py = (100.0 * pp_pos / py_pos) if py_pos > 0 else 0.0
+        comp_py = (100.0 * comp_pos / py_pos) if py_pos > 0 else 0.0
+        rows.append(
+            {
+                "ete_group": eg,
+                "n": n,
+                "path_proven_n": path_n,
+                "path_proven_pct": (100.0 * path_n / n) if n else 0.0,
+                "img_only_n": img_only_n,
+                "img_only_pct": (100.0 * img_only_n / n) if n else 0.0,
+                "comp_n": comp_n,
+                "comp_pct": (100.0 * comp_n / n) if n else 0.0,
+                "img_then_path_n": img_then_n,
+                "person_years_positive_fu": round(py_pos, 1),
+                "path_proven_n_positive_fu": pp_pos,
+                "comp_n_positive_fu": comp_pos,
+                "pp_per_100py": round(pp_py, 2),
+                "comp_per_100py": round(comp_py, 2),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def fill_table2_excel(ws: Any, tbl: pd.DataFrame) -> None:
+    """Write `Table 2 — Recurrence` data rows (expects manuscript column layout)."""
+
+    ws.cell(row=4, column=10, value="Person-years (FU>0)")
+    ws.cell(row=4, column=11, value="Path-proven /100 PY")
+    start_row = 5
+    pct_fmt = lambda x: f"{x:.2f}%"  # noqa: E731
+    for i, eg in enumerate(TABLE2_ETE_ORDER):
+        hit = tbl.loc[tbl["ete_group"].astype(str) == eg]
+        if len(hit) != 1:
+            raise ValueError(f"Table 2 missing row for {eg}")
+        r = hit.iloc[0]
+        row = start_row + i
+        ws.cell(row=row, column=1, value=eg)
+        ws.cell(row=row, column=2, value=int(r["n"]))
+        ws.cell(row=row, column=3, value=int(r["path_proven_n"]))
+        ws.cell(row=row, column=4, value=pct_fmt(float(r["path_proven_pct"])))
+        ws.cell(row=row, column=5, value=int(r["img_only_n"]))
+        ws.cell(row=row, column=6, value=pct_fmt(float(r["img_only_pct"])))
+        ws.cell(row=row, column=7, value=int(r["comp_n"]))
+        ws.cell(row=row, column=8, value=pct_fmt(float(r["comp_pct"])))
+        if r["img_then_path_n"] is not None:
+            ws.cell(row=row, column=9, value=int(r["img_then_path_n"]))
+        ws.cell(row=row, column=10, value=float(r["person_years_positive_fu"]))
+        ws.cell(row=row, column=11, value=float(r["pp_per_100py"]))
+    ws.cell(
+        row=11,
+        column=1,
+        value=(
+            "Notes: Col J sums follow-up years among patients with FU>0 only (PY-rate denominator). "
+            "Col K = 100 × (path-proven events among FU>0) / col J. "
+            "Path-proven n and Path-proven % include all patients (zero-FU retained in denominator for proportions)."
+        ),
+    )
 
 
 def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
@@ -671,10 +951,21 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     }
 
     sfd = pd.to_datetime(dm_strict["surg_first_date"], errors="coerce")
-    win = (
-        (sfd >= pd.Timestamp("1999-01-01"))
-        & (sfd <= pd.Timestamp("2024-12-31"))
-    ).fillna(False)
+    if "surg_date_1999_2024" in dm_strict.columns:
+        cohort_win = dm_strict["surg_date_1999_2024"].fillna(False).eq(True)
+        py_win = (
+            (sfd >= pd.Timestamp("1999-01-01")) & (sfd <= pd.Timestamp("2024-12-31"))
+        ).fillna(False)
+        if not cohort_win.eq(py_win).all():
+            raise SystemExit(
+                "cohort_view.surg_date_1999_2024 disagrees with calendar window on strict-DTC frame"
+            )
+        win = cohort_win
+    else:
+        win = (
+            (sfd >= pd.Timestamp("1999-01-01"))
+            & (sfd <= pd.Timestamp("2024-12-31"))
+        ).fillna(False)
     d_s2 = dm_strict.loc[win].copy()
     m_s2 = smf.glm(f_strict_no_rai, data=d_s2, family=sm.families.Binomial()).fit()
     out["S2_surgery_date_1999_2024"] = {
@@ -811,36 +1102,7 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
     }
 
     def _cox_fit(dm: pd.DataFrame, formula_tail: str, csv_name: str) -> dict[str, Any]:
-        dc = dm.copy()
-        dc = dc.loc[
-            pd.notna(dc["surg_first_date"])
-            & (pd.to_numeric(dc["followup_years"], errors="coerce") > 0)
-        ].copy()
-        fu = pd.to_numeric(dc["followup_years"], errors="coerce")
-        dtp_arr = pd.to_numeric(dc["days_to_path_proven"], errors="coerce").to_numpy(
-            dtype=float
-        )
-        ev_s = dc["y_pp"].astype(int)
-        fu_arr = fu.to_numpy(dtype=float)
-        cens = fu_arr * 365.25
-        ev_arr = ev_s.to_numpy(dtype=int)
-        event_time = np.where(np.isfinite(dtp_arr), dtp_arr, cens)
-        time_days_arr = np.where(ev_arr == 1, event_time, cens)
-        dc["time_days"] = time_days_arr.astype(float)
-        dc = dc.loc[np.isfinite(dc["time_days"]) & (dc["time_days"] > 0)].copy()
-        dc = dc.dropna(subset=["age10", "tumor_size_cm"]).reset_index(drop=True)
-
-        cat_for_cox = (
-            "ete_group",
-            "sex_lc",
-            "ajcc8_n_fac",
-            "histology_fac",
-            "lvi_clean",
-            "vasc_clean",
-        )
-        for c in cat_for_cox:
-            if c in dc.columns:
-                dc[c] = dc[c].astype(str)
+        dc, _meta = build_cox_analytic_frame(dm)
 
         cph = CoxPHFitter(penalizer=0.0001)
         cph.fit(
@@ -928,6 +1190,13 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         "coef": coef_table_glm(m_sg5),
     }
 
+    qc_ie = build_inclusion_flow_qc(df_merged)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    qc_csv = DATA_DIR / "m044_inclusion_flow_qc.csv"
+    qc_ie.to_csv(qc_csv, index=False)
+    out["inclusion_flow_qc_csv"] = str(qc_csv)
+    out["inclusion_flow_qc_df"] = qc_ie
+
     qa_tbl = size_panel_clean(df_merged)
     qa_flags = []
     exp = expected_size_rates()
@@ -941,6 +1210,8 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
                 f"{key}: got {r['rate_pct']}% expected {ex}% (n={r['n']})"
             )
     out["size_strata_qa"] = {"table": qa_tbl, "flags": qa_flags}
+
+    out["table2_recurrence_df"] = build_table2_recurrence_summary(df_merged)
 
     return out
 
@@ -1190,6 +1461,9 @@ def update_workbook(bundle: dict[str, Any]) -> None:
 
     wb = load_workbook(XLSX)
 
+    ws2 = wb["Table 2 — Recurrence"]
+    fill_table2_excel(ws2, bundle["table2_recurrence_df"])
+
     ws3 = wb["Table 3 — Multivariable"]
     ws3.cell(
         row=2,
@@ -1358,15 +1632,125 @@ def update_workbook(bundle: dict[str, Any]) -> None:
     else:
         qa.cell(row=nxt, column=1, value="SIZE_STRAT QA: within ±0.5 ppt")
 
+    qc_df_inc = bundle.get("inclusion_flow_qc_df")
+    if qc_df_inc is not None:
+        nxt_row = nxt + max(len(qs), 1) + 2
+        qa.cell(row=nxt_row, column=1, value="Strict-DTC Cox/KM inclusion flow").font = Font(bold=True)
+        qa.cell(row=nxt_row, column=2, value=str(DATA_DIR / "m044_inclusion_flow_qc.csv"))
+        hdr = nxt_row + 1
+        qa.cell(row=hdr, column=1, value="step")
+        qa.cell(row=hdr, column=2, value="criterion")
+        qa.cell(row=hdr, column=3, value="n")
+        qa.cell(row=hdr, column=4, value="excluded_at_step")
+        qa.cell(row=hdr, column=5, value="cum_excluded_from_cohort")
+        r0 = hdr + 1
+        for jj, (_, qr) in enumerate(qc_df_inc.iterrows()):
+            qa.cell(row=r0 + jj, column=1, value=int(qr["step_order"]))
+            qa.cell(row=r0 + jj, column=2, value=str(qr["criterion"]))
+            qa.cell(row=r0 + jj, column=3, value=int(qr["n"]))
+            qa.cell(row=r0 + jj, column=4, value=int(qr["excluded_at_step"]))
+            qa.cell(row=r0 + jj, column=5, value=int(qr["cum_excluded_from_cohort"]))
+
     wb.save(XLSX)
     print(f"[xlsx] saved {XLSX}")
 
 
-def patch_manuscript_md(bundle: dict[str, Any]) -> None:
+def surgery_date_paragraph_live(df_parquet: pd.DataFrame) -> str:
+    """Narrative for Results — replaces legacy missing-date / 1999-only wording."""
+
+    n = len(df_parquet)
+    cols = df_parquet.columns
+    miss = (
+        int(df_parquet["surg_date_missing"].fillna(False).astype(bool).sum())
+        if "surg_date_missing" in cols
+        else int(df_parquet["surg_first_date"].isna().sum())
+    )
+    pct = round(100.0 * miss / n, 1) if n else 0.0
+    pre99 = (
+        int(df_parquet["surg_date_pre_1999"].fillna(False).astype(bool).sum())
+        if "surg_date_pre_1999" in cols
+        else 0
+    )
+    win_1999 = (
+        int(df_parquet["surg_date_1999_2024"].fillna(False).astype(bool).sum())
+        if "surg_date_1999_2024" in cols
+        else 0
+    )
+    post24 = (
+        int(df_parquet["surg_date_post_2024"].fillna(False).astype(bool).sum())
+        if "surg_date_post_2024" in cols
+        else 0
+    )
+    sfd = pd.to_datetime(df_parquet["surg_first_date"], errors="coerce")
+    ok_dt = sfd.notna()
+    if ok_dt.any():
+        dmin = sfd.loc[ok_dt].min()
+        dmax = sfd.loc[ok_dt].max()
+        cal_rng = (
+            dmin.strftime("%Y-%m-%d")
+            + "–"
+            + (dmax.strftime("%Y-%m-%d") if hasattr(dmax, "strftime") else str(dmax))
+        )
+        cal_sentence = (
+            f"Among patients with calendar surgery dates ({int(ok_dt.sum())}/{n}), "
+            f"first-surgery spans {cal_rng}."
+        )
+    else:
+        cal_sentence = ""
+
+    lineage = ""
+    note_col = (
+        df_parquet["surg_first_date_lineage_note"].dropna().astype(str).head(1).tolist()
+    )
+    if note_col:
+        lineage = note_col[0]
+    lineage_sentence = ""
+    if lineage and len(lineage) < 500:
+        lineage_sentence = (
+            " Lineage SSOT notes (cohort extract): "
+            + lineage.replace("\n", " ").strip()
+            + ".\n\n"
+        )
+
+    return (
+        f"Surgery-anchor dates derive from **`canonical_patient_master.surg_first_date`** "
+        f"(operative-spine lineage; mig_258 cohort flags include `surg_date_missing`). "
+        f"In this extract (n={n}), **missing surgery-date indicator** applied to "
+        f"**{miss}** patients (**{pct}%**)."
+        + lineage_sentence
+        + (
+            "Calendar partition among lineage flags counts (non-exclusive windows per flag): "
+            f"before 1999-01-01: **{pre99}**; 1999-01-01 through 2024-12-31: **{win_1999}**; "
+            f"after 2024-12-31: **{post24}**. "
+            if any(x in cols for x in ("surg_date_pre_1999", "surg_date_1999_2024", "surg_date_post_2024"))
+            else ""
+        )
+        + cal_sentence
+        + (
+            " For Cox PH and Kaplan–Meier path-proven time-to-event, only patients with documented "
+            "surgery dates, strictly positive analytic follow-up, complete age and tumor size, and "
+            "positive finite durations are retained — see **`data/m044/m044_inclusion_flow_qc.csv`** "
+            "(latest `scripts/m044_ete_fit_models.py` run) and validation "
+            "**`studies/m044_validation/m044_canonical_audit.md`**."
+        )
+    )
+
+
+def patch_manuscript_md(bundle: dict[str, Any], df_parquet: pd.DataFrame) -> None:
     import re as _re
 
     path_md = REPO_ROOT / "M044_ETE_manuscript_draft.md"
     txt = path_md.read_text(encoding="utf-8")
+    surg_new = surgery_date_paragraph_live(df_parquet)
+    txt, nsurg = _re.subn(
+        r"(?:Surgery dates were available for|Surgery-anchor dates derive from).*?(?=\n\nFollow-up was)",
+        surg_new.strip(),
+        txt,
+        count=1,
+        flags=_re.S,
+    )
+    if nsurg != 1:
+        print("[md] WARN: surgery-date paragraph regex did not match; manual manuscript update may be needed")
     crude = bundle["crude"]
     coef = bundle["primary"]["coef"]
     g_adj = _coef_one(coef, "ete_group", "Gross")
@@ -1522,17 +1906,40 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
         raise SystemExit(f"manuscript regex replace failed: crude_block={n12}, multivariable={n3}")
 
     if isinstance(gh, dict) and "hr" in gh:
+        p_cox = float(gh["p"])
+        hr_v = float(gh["hr"])
+        if p_cox < 0.05 and hr_v > 1.0:
+            cox_sentence = (
+                f"Cox regression on documented surgery-interval follow-up without RAI estimated HR {hr_v:.2f} "
+                f"(95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; p={p_cox:.4g}) for gross versus "
+                "microscopic ETE, consistent with **elevated hazard** on the path-proven time axis."
+            )
+        elif p_cox < 0.05 and hr_v < 1.0:
+            cox_sentence = (
+                f"Cox regression estimated HR {hr_v:.2f} (95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; "
+                f"p={p_cox:.4g}) — interpret with caution (convergence / sparse events; see lifelines warnings)."
+            )
+        else:
+            cox_sentence = (
+                f"Cox regression on documented surgery-interval follow-up without RAI yielded HR {hr_v:.2f} "
+                f"(95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; p={p_cox:.4g}) for gross versus "
+                "microscopic ETE — **no statistically significant incremental hazard** on the Cox time axis "
+                "aligned to path-proven TTE (`data/m044/m044_inclusion_flow_qc.csv`)."
+            )
         disc_par = (
             "The original **full-cohort** logistic specification—including both **RAI receipt** and a collapsed "
             "**histology-other** bucket containing non-DTC and borderline entities—materially attenuated the "
             "gross-vs-microscopic adjusted odds ratio relative to crude estimates (prior Table 3 iteration). "
             "Under the **strict-DTC primary model without an RAI covariate**, the gross-vs-microscopic association "
-            f"moves toward the crude gradient ({adj_gross}), while Cox regression on documented surgery-interval "
-            f"follow-up without RAI retained elevated hazard for gross vs microscopic disease "
-            f"(HR={gh['hr']:.2f}, 95% CI {gh['hr_ci_low']:.2f}–{gh['hr_ci_high']:.2f}; p={gh['p']:.4g}). "
+            f"moves toward the crude gradient ({adj_gross}), while {cox_sentence} "
             "Together, these findings indicate that much of the earlier logistic attenuation was driven by "
-            "**treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of a "
-            "true gross-ETE signal."
+            "**treatment-confounding (RAI)** and **histologic heterogeneity**, not by disappearance of the "
+            "gross-vs-microscopic OR gradient in the primary logistic frame. "
+            "Microscopic ETE behaved more like the no-ETE group than gross ETE on most ETE-anchored contrasts. "
+            "These findings support the AJCC 8th edition decision not to upstage microscopic ETE to T3b and "
+            "reinforce the principle that gross strap-muscle invasion is a meaningfully different pathologic "
+            "phenomenon, despite recent literature questioning whether T3b adds incremental risk over T2 in "
+            "small tumors.[24, 47, 51]"
         )
     else:
         disc_par = (
@@ -1540,13 +1947,22 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
             "confounding-by-indication and histology heterogeneity; see Results for updated effect estimates."
         )
 
+    # Opening Discussion paragraph (pattern updated when manuscript was hand-edited 2026-05-01).
     txt, ndisc = _re.subn(
-        r"The original \*\*full-cohort\*\* logistic specification.+?true gross-ETE signal\.\s+",
-        disc_par + " ",
+        r"The original \*\*full-cohort\*\* logistic specification.+?(?=\n\nThree findings warrant emphasis\.)",
+        disc_par.rstrip() + "\n\n",
         txt,
         count=1,
         flags=_re.S,
     )
+    if ndisc == 0:
+        txt, ndisc = _re.subn(
+            r"The original \*\*full-cohort\*\* logistic specification.+?true gross-ETE signal\.\s+",
+            disc_par.rstrip() + "\n\n",
+            txt,
+            count=1,
+            flags=_re.S,
+        )
     if ndisc == 0:
         txt, ndisc = _re.subn(
             r"In a contemporary 4,128-patient single-institution thyroid cancer cohort, gross versus microscopic "
@@ -1554,12 +1970,72 @@ def patch_manuscript_md(bundle: dict[str, Any]) -> None:
             r"logistic adjustment materially attenuated the gross-vs-microscopic odds ratio \(Table 3\), whereas Cox "
             r"proportional hazards regression on documented surgery-interval follow-up retained elevated hazard comparing "
             r"gross versus microscopic disease \(above in Results\)\.\s+",
-            disc_par + " ",
+            disc_par.rstrip() + "\n\n",
             txt,
             count=1,
         )
     if ndisc != 1:
         raise SystemExit(f"manuscript Discussion paragraph replace failed: {ndisc}")
+
+    # Normalize excessive blank lines before "Three findings"
+    txt, _ = _re.subn(
+        r"(small tumors\.\[[0-9, ]+\])\n\n+(Three findings warrant emphasis\.)",
+        r"\1\n\n\2",
+        txt,
+        count=1,
+    )
+
+    # Limitations: refresh obsolete surgery-date % / calendar-only wording when cohort flags exist.
+    cols = df_parquet.columns
+    if "surg_date_missing" in cols:
+        n_lp = len(df_parquet)
+        miss_lp = int(df_parquet["surg_date_missing"].fillna(False).astype(bool).sum())
+        pct_lp = round(100.0 * miss_lp / n_lp, 1) if n_lp else 0.0
+        txt, nlim = _re.subn(
+            r"(\d+(?:\.\d+)?%)\s+missing surgery dates",
+            f"{pct_lp}% missing surgery-date indicator (`surg_date_missing`; n={miss_lp}/{n_lp})",
+            txt,
+            count=1,
+        )
+        if nlim != 1:
+            txt, _ = _re.subn(
+                r"22\.1%\s+missing surgery dates",
+                f"{pct_lp}% missing surgery-date indicator (`surg_date_missing`; n={miss_lp}/{n_lp})",
+                txt,
+                count=1,
+            )
+    if all(c in cols for c in ("surg_date_1999_2024", "surg_date_pre_1999", "surg_date_post_2024")):
+        win_94 = int(df_parquet["surg_date_1999_2024"].fillna(False).astype(bool).sum())
+        win_pre = int(df_parquet["surg_date_pre_1999"].fillna(False).astype(bool).sum())
+        win_post = int(df_parquet["surg_date_post_2024"].fillna(False).astype(bool).sum())
+        era_block = (
+            f"Surgery-flag calendar strata in this analytic extract: "
+            f"1999‑01‑01–2024‑12‑31 n={win_94}, pre‑1999 n={win_pre}, post‑2024 n={win_post} "
+            f"(counts from mig_258 `surg_date_*`; not a censorship rule for the primary Cox slice). "
+            f"Era-stratified sensitivity analyses are reported in the supplement."
+        )
+        old_era = (
+            "Our cohort spans 1999–2024 among patients with non-missing dates, encompassing "
+            "two distinct AJCC eras and a large change in surveillance intensity; "
+            "era-stratified sensitivity analyses are reported in the supplement."
+        )
+        if old_era in txt:
+            txt = txt.replace(old_era, era_block, 1)
+        else:
+            # Prior regex-based edits may have partially replaced; fuse fragment if needed
+            txt, ne = _re.subn(
+                r"Surgery-flag calendar strata in this analytic extract:[^\n]+\s*Implications\.",
+                era_block + "\n\nImplications.",
+                txt,
+                count=1,
+            )
+            if ne != 1:
+                txt, _ = _re.subn(
+                    r"Surgery-flag calendar strata in this analytic extract:.+?\)\.\s+",
+                    era_block + "\n\n",
+                    txt,
+                    count=1,
+                )
 
     path_md.write_text(txt, encoding="utf-8")
     print(f"[md] patched {path_md}")
@@ -1583,8 +2059,8 @@ def main() -> None:
         pq = export_parquet(force=args.force)
 
     df = pd.read_parquet(pq)
-    if len(df) != 4128:
-        raise SystemExit(f"parquet rows {len(df)} != 4128")
+    cohort_n = len(df)
+    print(f"[models] analytic parquet rows = {cohort_n}")
 
     bundle = run_all_models(df)
     fg_png = FIG_DIR / "m044_forest_primary.png"
@@ -1602,7 +2078,7 @@ def main() -> None:
     print(f"[figures] wrote {fb_png} {fb_csv}")
 
     update_workbook(bundle)
-    patch_manuscript_md(bundle)
+    patch_manuscript_md(bundle, df)
     print("[done]")
 
 

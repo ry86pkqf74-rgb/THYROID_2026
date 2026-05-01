@@ -1,0 +1,10 @@
+step_order,criterion,n,excluded_at_step,cum_excluded_from_cohort
+0,M044 analytic extract (cohort_m044_ajcc_ete_v1 + recurrence join),4128,0,0
+1,Strict-DTC (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list per script),3789,339,339
+2,Three-level ETE (No/negative vs Microscopic vs Gross),3756,33,372
+3,Sex known (female/male — multivariable frame),3756,0,372
+4,Positive follow-up (followup_years > 0),2525,1231,1603
+5,Known surgery date (surg_first_date non-null — CPM SSOT lineage),2525,0,1603
+6,Finite positive Cox duration (days; event-time or censored PY),2494,31,1634
+7,Age + tumor size non-missing (Cox covariate complete-case),2490,4,1638
+8,Final Cox PH / KM analytic rows (= step 7; lifelines fitted sample),2490,0,1638
