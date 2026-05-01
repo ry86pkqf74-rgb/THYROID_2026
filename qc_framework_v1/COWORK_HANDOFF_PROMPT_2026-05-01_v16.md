@@ -1,7 +1,7 @@
 # Cowork Handoff Prompt v16 — Thyroid Canonical Publication v1.0
 
-**Generated:** 2026-05-01 (post v15 Prompts 1, 2, 3, 5 landed; Prompt 4 `mig_233` in flight)
-**Tip of `origin/main` at write:** `7b61dba` — `feat(qc): Lane J — CPM 24-na column audit (mig_235)`
+**Generated:** 2026-05-01 (post v15 round CLOSED CLEAN — all 4 prompts + Prompt 5 carryover landed + Path-C verified)
+**Tip of `origin/main` at write:** `c49b971` — `feat(qc): mig_233 audit dashboard snapshot view` (handoff doc to be appended at next commit)
 **Supersedes:** v12 at `qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-04-30_v12.md` and v13/v14/v15 batch docs
 **Companion:** v15 batch at `cursor_prompts/PARALLEL_AGENT_BATCH_20260501_v15.md`; v14 batch at `cursor_prompts/PARALLEL_AGENT_BATCH_20260430_v14.md`
 
@@ -9,9 +9,9 @@
 
 ## §0 — First message to paste into the new Cowork chat (verbatim)
 
-> Please read `/Users/ros/THyroid 2026/qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v16.md` end-to-end before any tool use. Then run the §3 first-action checklist (`git fetch && git log --oneline -10`, run the v2 verification suite from `qc_framework_v1/queries/cowork_verification_suite_20260430.md`, check whether Prompt 4 `mig_233 qc_audit_dashboard_VIEW_v1` has landed since handoff, and confirm 5-gate state matches §2 expected metrics).
+> Please read `/Users/ros/THyroid 2026/qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v16.md` end-to-end before any tool use. Then run the §3 first-action checklist (`git fetch && git log --oneline -10`, run the v2 verification suite from `qc_framework_v1/queries/cowork_verification_suite_20260430.md`, query `manuscript_workspace.qc_audit_dashboard_VIEW_v1` for instant 5-gate state, and confirm metrics match §2 expected).
 >
-> **Standing context:** I'm Logan Glosser, thyroid cancer surgery researcher at Emory. We're in the final cleanup of the v1.0 publication lakehouse on MotherDuck (`thyroid_canonical_publication_v1_0`). v15 round closed three of four prompts cleanly: Lane G `mig_223` (semantic_publication schema + 9 manuscript-safe views) shipped in v14 + cleaned up via `mig_231`; Lane LN `mig_224-229` (LN/histology safe views + QC + borderline quarantine) shipped in v14; Copilot CF reconciliation closed CF-mig219 + CF-mig220; Cline Sonnet 4.6 ran ISSUE_REGISTRY refresh + Lane J CPM 24-na audit; Cursor Composer shipped Lane M Manuscript Methods + Table 1–5 refresh; Cline Sonnet 4.6 shipped `mig_230` Parquet export of 133 frozen tables. Manuscript readiness verdict: **READY** — Lane M outputs are ready for manuscript drafting against `manuscript_outputs/v1_0_20260501/` + `docs/Methods_thyroid_canonical_pub_v1_0_20260501.md`. You're the orchestrator + verifier + applier; agents do bulk authoring; I'm the final ratifier.
+> **Standing context:** I'm Logan Glosser, thyroid cancer surgery researcher at Emory. We're in the final cleanup of the v1.0 publication lakehouse on MotherDuck (`thyroid_canonical_publication_v1_0`). **v15 round closed clean — all 4 prompts + Prompt 5 carryover landed + Path-C verified.** Lane G `mig_223` (semantic_publication schema + 9 manuscript-safe views) + Lane LN `mig_224-229` (LN/histology safe views + QC + borderline quarantine) shipped in v14; Copilot CF reconciliation closed CF-mig219 + CF-mig220; Cline Sonnet 4.6 ran ISSUE_REGISTRY refresh + Lane J CPM 24-na audit; Cursor Composer shipped Lane M Manuscript Methods + Table 1–5 refresh; Cline Sonnet 4.6 shipped `mig_230` Parquet export of 133 frozen tables; Cline Sonnet 4.6 shipped `mig_233 qc_audit_dashboard_VIEW_v1` (single-row 5-gate dashboard). Manuscript readiness verdict: **READY** — Lane M outputs are ready for manuscript drafting against `manuscript_outputs/v1_0_20260501/` + `docs/Methods_thyroid_canonical_pub_v1_0_20260501.md`. You're the orchestrator + verifier + applier; agents do bulk authoring; I'm the final ratifier.
 >
 > **You have:**
 > - **Desktop Commander MCP** for git/shell on my Mac (FileVault — `.git/index.lock` cleanup may be needed; bash sandbox can't unlink)
@@ -19,7 +19,7 @@
 > - **GitHub repo** at `/Users/ros/THyroid 2026` (URL `https://github.com/ry86pkqf74-rgb/THYROID_2026.git`)
 > - **Auto-memory** at `/Users/ros/Library/Application Support/Claude/local-agent-mode-sessions/.../memory/`
 >
-> **1 LANE IN FLIGHT** at handoff: Prompt 4 `mig_233 qc_audit_dashboard_VIEW_v1` (Cline Sonnet 4.6) — gated on `mig_232` commit landing (already landed). Should commit + push autonomously when it finishes.
+> **NO LANES IN FLIGHT** at handoff. v15 round fully closed. Live `manuscript_workspace.qc_audit_dashboard_VIEW_v1` reports gate1=210, gates 2-5=0, cohort_parity_ok=TRUE.
 >
 > **DEFERRED FUTURE TASKS** (not pending; trigger when stated condition is met):
 > - **Future H** — `bi_powerbi.*` star-schema marts; trigger when Phase 4 Power BI Desktop migration starts
@@ -57,7 +57,7 @@
 
 | Metric | v14 final | v15 final (post Prompt 4 expected) | Δ |
 |---|---:|---:|---:|
-| 5-gate gate1 (verified tables, distinct objects) | 209 (with 1 dup → 208 distinct) | **209 → 210 (after Prompt 4)** | -1 dup cleaned (mig_231) + mig_232 view + mig_233 dashboard view |
+| 5-gate gate1 (verified tables, distinct objects) | 209 (with 1 dup → 208 distinct) | **210 (gate1_total = gate1_distinct)** | -1 dup cleaned (mig_231) + mig_232 view (+1) + mig_233 dashboard view (+1) |
 | 5-gate gates 2–5 | 0/0/0/0 | **0/0/0/0** | unchanged |
 | Cohort parity (CPM / US gland v2 / US LN v2) | 10871/10871/10871 | **10871/10871/10871** | unchanged |
 | CPM column counts | 1606 v / 24 na | **1607 v / 23 na / 0 failed** | +1 verified, -1 na (Lane J mig_235; `pmhx_nlp_family_hx_thyroid` reclassified) |
@@ -65,7 +65,7 @@
 | Manuscript outputs | none | **6 CSVs + Methods .md + .bib stubs** | full Lane M deliverable |
 | Frozen reproducibility | none | **133 Parquet files / 64 MB ZSTD / sha256 manifest** | mig_230 Parquet export |
 
-**v15 migrations landed:** `mig_230` (Parquet), `mig_231` (registry cleanup, Cowork-direct), `mig_232` (narrow ACR view), `mig_234` (Lane M Table 1 refresh), `mig_235` (CPM 24-na audit). Plus Lane M Methods .md + 6 CSVs + ISSUE_REGISTRY refresh + 7-typo `histology_vocab_normalization_map_v1` extension via Lane LN mig_224.
+**v15 migrations landed:** `mig_230` (Parquet), `mig_231` (registry cleanup, Cowork-direct), `mig_232` (narrow ACR view), `mig_233` (audit dashboard view), `mig_234` (Lane M Table 1 refresh), `mig_235` (CPM 24-na audit). Plus Lane M Methods .md + 6 CSVs + ISSUE_REGISTRY refresh + 7-typo `histology_vocab_normalization_map_v1` extension via Lane LN mig_224.
 
 ---
 
@@ -73,22 +73,18 @@
 
 ```
 1. cd "/Users/ros/THyroid 2026" && git fetch origin && git log --oneline -10
-   Expect tip ≥ 7b61dba (or later if Prompt 4 mig_233 has landed)
-   Look for: "feat(qc): mig_233 audit dashboard snapshot view"
+   Expect tip ≥ c49b971 (or later if new work has landed)
 
-2. Run the v2 5-gate audit (cowork_verification_suite_20260430.md §1):
-   Expect: gate1 = 209 (or 210 if mig_233 landed); gate1_distinct = gate1; gates 2–5 = 0
+2. ONE-QUERY HEALTH CHECK (preferred over manual 5-gate query — uses mig_233 dashboard):
+   SELECT * FROM manuscript_workspace.qc_audit_dashboard_VIEW_v1;
+   Expect: gate1=210, gate1_distinct=210, gates 2-5=0,
+           cpm_pts=us_gland_v2_pts=us_ln_v2_pts=10871,
+           cohort_parity_ok=TRUE
 
-3. Verify cohort parity §2: 10,871 / 10,871 / 10,871
+3. (Optional fallback) Manual v2 5-gate audit per cowork_verification_suite_20260430.md §1
+   if dashboard view returns unexpected — both should agree
 
-4. Check Prompt 4 status:
-   SELECT EXISTS(SELECT 1 FROM information_schema.tables
-                 WHERE table_schema='manuscript_workspace'
-                 AND table_name='qc_audit_dashboard_VIEW_v1');
-   - If TRUE → Prompt 4 landed; verify Path-C (probe single-row dashboard, sanity-check counts)
-   - If FALSE → still in flight; pick non-overlapping work
-
-5. Read latest reports + close-outs:
+4. Read latest reports + close-outs:
    - qc_framework_v1/COWORK_HANDOFF_PROMPT_2026-05-01_v16.md (this doc)
    - cursor_prompts/PARALLEL_AGENT_BATCH_20260501_v15.md (v15 dispatch context)
    - qc_framework_v1/reports/cf_mig219_mig220_reconciliation_20260501.md
@@ -97,25 +93,28 @@
    - docs/Methods_thyroid_canonical_pub_v1_0_20260501.md
    - qc_framework_v1/ISSUE_REGISTRY.md (1,293 lines — full project history)
 
-6. ls cursor_prompts/ for any pending lane prompts authored but not yet dispatched
+5. ls cursor_prompts/ for any pending lane prompts authored but not yet dispatched
 ```
 
 ---
 
 ## §4 — Currently in flight at handoff
 
-### Prompt 4 (v15 batch) — `mig_233 qc_audit_dashboard_VIEW_v1`
+**None.** v15 round closed. Path-C verification confirmed `mig_233 qc_audit_dashboard_VIEW_v1` clean at commit `c49b971`:
 
-- **Agent:** Cline Sonnet 4.6
-- **Mig label:** `mig_233_qc_audit_dashboard_VIEW_20260501`
-- **Status at handoff:** dispatched, in flight (gated on mig_232 commit which landed at `96a89f1`)
-- **Expected commit:** `feat(qc): mig_233 audit dashboard snapshot view`
-- **Acceptance:**
-  - View `manuscript_workspace.qc_audit_dashboard_VIEW_v1` exists with single-row output
-  - Output: gate1_verified_tables (≥210 post self-registration), gate1_distinct_objects (=gate1), gate2/3/4/5 (=0), cpm_pts/us_gland_v2_pts/us_ln_v2_pts (=10871 each), cohort_parity_ok (=TRUE), most_recent_signoff_ts/_migration, dashboard_built_at
-  - Re-running view returns fresh values
-- **Path-C verification on landing:** probe view exists + single-row matches expected; insert dummy provenance, re-query, confirm dashboard updates; lint repo for `233_*.sql` + memory note + provenance row.
-- **Source:** `cursor_prompts/PARALLEL_AGENT_BATCH_20260501_v15.md` §4
+```
+gate1_verified_tables       = 210
+gate1_distinct_objects      = 210  (matches; no dups)
+gate2_missing_signoff       = 0
+gate3_count_mismatch        = 0
+gate4_verified_cols_meta    = 0
+gate5_clinical_date_violations = 0
+cpm_pts                     = 10871
+us_gland_v2_pts             = 10871
+us_ln_v2_pts                = 10871
+cohort_parity_ok            = TRUE
+most_recent_signoff_migration = qc_framework_v1/migrations/233_qc_audit_dashboard_VIEW_20260501.sql
+```
 
 ---
 
@@ -247,11 +246,11 @@ For every agent summary Logan pastes, or every commit landing while you watch:
 
 ## §11 — Hand-off summary
 
-**State at handoff:** v1.0 publication is **manuscript-ready**. Lane G semantic_publication layer is the analyst SSOT. Lane LN LN/histology surfaces are clean. Lane M Methods + Tables 1–5 + cohort flow are drafted and ready for manuscript text. Frozen Parquet mirror at `parquet_export/pub_v1_0_20260430/` provides offline reproducibility. CPM column governance is now 1,607 v / 23 na / 0 failed (every na has documented rationale).
+**State at handoff:** v1.0 publication is **manuscript-ready**. Lane G semantic_publication layer is the analyst SSOT. Lane LN LN/histology surfaces are clean. Lane M Methods + Tables 1–5 + cohort flow are drafted and ready for manuscript text. Frozen Parquet mirror at `parquet_export/pub_v1_0_20260430/` provides offline reproducibility. CPM column governance is now 1,607 v / 23 na / 0 failed (every na has documented rationale). One-query lakehouse health via `manuscript_workspace.qc_audit_dashboard_VIEW_v1` (mig_233) — current state 210/0/0/0/0 with cohort_parity_ok=TRUE.
 
-**Active work:** Prompt 4 `mig_233 qc_audit_dashboard_VIEW_v1` (Cline Sonnet 4.6) in flight; should land autonomously and bump gate1 to 210.
+**Active work:** none. v15 round closed clean.
 
-**Next likely user action:** start manuscript drafting against Lane M outputs (option C in §6 decision menu) OR ask for a new lane to address residual carry-forwards (option D).
+**Next likely user action:** start manuscript drafting against Lane M outputs (option C in §6 decision menu) OR ask for a new lane to address residual carry-forwards (option D) OR trigger Future H Power BI marts (option E).
 
 **Future H Power BI marts** are deferred until Logan triggers Phase 4 — no work needed until then.
 
@@ -260,6 +259,7 @@ For every agent summary Logan pastes, or every commit landing while you watch:
 ## §12 — Recent commit log (for context)
 
 ```
+c49b971  feat(qc): mig_233 audit dashboard snapshot view                   [Cline Sonnet 4.6, v15 Prompt 4]
 7b61dba  feat(qc): Lane J — CPM 24-na column audit (mig_235)              [Cline GPT-5.5, v15 Prompt 3]
 2d71885  docs(manuscript): Lane M Methods + Table 1 refresh                 [Cursor Composer, v15 Prompt 2]
 96a89f1  feat(qc): mig_232 narrow ACR missing view (CF-mig219 follow-up)   [Cline Sonnet 4.6, v15 Prompt 1]
