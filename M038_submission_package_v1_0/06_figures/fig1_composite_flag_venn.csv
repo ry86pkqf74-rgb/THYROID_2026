@@ -1,0 +1,9 @@
+region,n
+weight_only,898
+substernal_only,145
+airway_only,429
+weight_substernal_only,18
+weight_airway_only,127
+substernal_airway_only,498
+all_three,386
+TOTAL,2501
