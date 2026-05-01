@@ -1,0 +1,5 @@
+mig_262 started utc 2026-05-01T21:57:39Z
+[probe cupm_ln_pre SKIP — view not queriable (BinderException)
+[probe raw_imaging_12_slots_v1 BASE TABLE exists] False
+[probe imaging] SKIP — table missing from publication canonical
+Dry-run / no --apply: stopping before DDL+DML (+366/367).

@@ -167,8 +167,20 @@ ln_agg AS (
         ANY_VALUE(us_exam_id)                      AS us_exam_id_ln,
         TRUE                                       AS has_us_ln_findings,
         COUNT(*)                                   AS n_us_ln_total_on_exam,
-        SUM(CASE WHEN suspicious_flag IS TRUE THEN 1 ELSE 0 END)
-                                                   AS n_abnormal_us_ln_on_exam,
+        SUM(CASE
+            WHEN suspicious_flag IS TRUE THEN 1
+            WHEN suspicious_flag IS FALSE THEN 0
+            WHEN COALESCE(short_axis_mm, -1e9) >= 10 THEN 1
+            WHEN COALESCE(size_cm_max, -1e9) >= 1.0 THEN 1
+            WHEN hilum_preserved IS FALSE THEN 1
+            WHEN extranodal_extension_on_us IS TRUE THEN 1
+            WHEN LOWER(TRIM(COALESCE(suspicion_level,'')))
+                 IN ('suspicious','indeterminate') THEN 1
+            WHEN evidence_text IS NULL THEN 0
+            WHEN regexp_matches(LOWER(evidence_text),
+                 '(no\\s+abnormal|unremarkable\\s+adenopath|benign.?appearing|within\\s+normal|negative\\s+for|M\\s*[0-3]\\s*adenopath|stable\\s+adenopath)') THEN 0
+            ELSE 1
+        END)                                       AS n_abnormal_us_ln_on_exam,
         BOOL_OR(nlp_backfill_pending)              AS any_us_ln_pending_on_exam
     FROM {PUBLICATION_DB}.main.canonical_us_lymph_node_v2
     WHERE exam_date IS NOT NULL
@@ -254,7 +266,7 @@ joined AS (
     LEFT JOIN ln_nlp_exam_agg x USING (research_id, exam_date)
     {surg_join}
 )
-SELECT * FROM joined;
+SELECT * REPLACE (CAST(research_id AS INTEGER) AS research_id) FROM joined;
 """
 
 
@@ -265,7 +277,8 @@ COMMENT_SQL = (
     f"as a VIEW over canonical_us_nodule_v2 + canonical_us_thyroid_gland_v2 + "
     f"canonical_us_lymph_node_v2 + LN-NLP exam-date extension from "
     f"canonical_us_lymph_node_events_v2 (exam_id_source ln_nlp_only; "
-    f"mig_187 R-A; last refreshed {RUN_TS}). "
+    f"mig_187 R-A; mig_262 widened n_abnormal_us_ln_on_exam heuristic for "
+    f"structured shells with NULL suspicious_flag; last refreshed {RUN_TS}). "
     f"LN columns are US-prefixed (has_us_ln_findings, "
     f"n_us_ln_total_on_exam, n_abnormal_us_ln_on_exam) so future "
     f"CT/PET-CT/MR/nucmed exam masters slot in as ct_ln_*, etc.';"

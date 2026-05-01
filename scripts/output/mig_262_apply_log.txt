@@ -1,0 +1,10 @@
+mig_262 started utc 2026-05-01T21:57:55Z
+[probe cupm_ln_pre] {'n_with_us': 4385, 'n_ln_findings': 4077, 'n_suspicious_ln': 1733}
+[probe raw_imaging_12_slots_v1 BASE TABLE exists] False
+[probe imaging] SKIP — table missing from publication canonical
+NOTICE: Imaging table absent — LN-only apply path.
+--ln-only set: SKIP imaging archive + DATE UPDATE.
+subprocess: /Users/ros/THyroid 2026/.venv/bin/python /Users/ros/THyroid 2026/scripts/366_canonical_us_exam_master_v2.py --commit
+subprocess: /Users/ros/THyroid 2026/.venv/bin/python /Users/ros/THyroid 2026/scripts/367_canonical_us_patient_master_v2.py --commit
+INSERT signoff_migration mig_262 OK
+[post-rebuild LN rollup] {'n_with_us': 4385, 'n_ln_findings': 4077, 'n_suspicious_post': 1733}
