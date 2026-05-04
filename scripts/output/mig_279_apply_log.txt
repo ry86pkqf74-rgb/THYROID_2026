@@ -1,0 +1,8 @@
+Applying qc_framework_v1/migrations/279_registry_audit_253_256_258_259_20260503.sql ...
+OK: migration SQL executed without exception
+
+Post-apply signoff rows:
+('mig_253', datetime.datetime(2026, 5, 3, 23, 14, 41, 191922), 'mig_279 retro signoff: mig_253 CPM surgical procedure-type NULL-fill already applied. Probe 20260503')
+('mig_256', datetime.datetime(2026, 5, 3, 23, 14, 41, 191922), 'mig_279 retro signoff: mig_256 complication temporality passthrough cohort views live. Probe 2026050')
+('mig_258', datetime.datetime(2026, 5, 3, 23, 14, 41, 191922), 'mig_279 retro signoff: mig_258 M044 surgery-date lineage + study-window booleans applied. Probe 2026')
+('mig_259', datetime.datetime(2026, 5, 3, 23, 14, 41, 191922), 'mig_279 retro signoff: mig_259 ln_status_source Rule C on CPM verified. Probe 20260503 — both=1126, ')
