@@ -74,6 +74,31 @@ for t in TABLES:
     manifest.append((t, n, sz, dt))
     print(f"OK   {t:50s} rows={n:>7,}  size={sz:>7.1f}MB  t={dt:>5.1f}s")
 
+# mig_289: manuscript_workspace cohort views (already-flat, cross-schema export)
+COHORT_VIEWS = [
+    ("manuscript_workspace.cohort_m044_ajcc_ete_v1",       "cohort_m044_ajcc_ete_v1"),
+    ("manuscript_workspace.cohort_m037_ln_metastasis_v1",  "cohort_m037_ln_metastasis_v1"),
+    ("manuscript_workspace.cohort_m025_tirads_performance_v1", "cohort_m025_tirads_performance_v1"),
+    ("manuscript_workspace.cohort_m032_descriptive_25yr_v1", "cohort_m032_descriptive_25yr_v1"),
+    ("main.cohort_m038_massive_goiter_v1",                 "cohort_m038_massive_goiter_v1"),
+]
+print("\n=== mig_289 cohort views ===")
+for src, name in COHORT_VIEWS:
+    out = OUT / f"{name}.parquet"
+    t0 = time.time()
+    try:
+        n = con.sql(f"SELECT COUNT(*) FROM {src}").fetchone()[0]
+        con.sql(
+            f"COPY (SELECT * FROM {src}) TO '{out}' "
+            f"(FORMAT 'parquet', COMPRESSION 'zstd')"
+        )
+        sz = out.stat().st_size / 1024 / 1024
+        dt = time.time() - t0
+        manifest.append((name, n, sz, dt))
+        print(f"OK   {name:50s} rows={n:>7,}  size={sz:>7.1f}MB  t={dt:>5.1f}s")
+    except Exception as e:
+        print(f"SKIP {name}: {e}")
+
 print("\n=== manifest ===")
 for t, n, sz, dt in manifest:
     print(f"{t},{n},{sz:.2f},{dt:.2f}")

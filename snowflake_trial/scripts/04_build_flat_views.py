@@ -107,6 +107,28 @@ FROM THYROID_VALIDATION.PUBLIC.{table}
     except Exception as e:
         print(f"  FAIL {view_name}: {str(e)[:200]}")
 
+# mig_289: cohort views are already-flat (no VARIANT $1 needed) — passthrough views
+COHORT_VIEW_TABLES = [
+    "COHORT_M044_AJCC_ETE_V1",
+    "COHORT_M037_LN_METASTASIS_V1",
+    "COHORT_M025_TIRADS_PERFORMANCE_V1",
+    "COHORT_M032_DESCRIPTIVE_25YR_V1",
+    "COHORT_M038_MASSIVE_GOITER_V1",
+]
+print("\n=== mig_289 cohort passthrough views ===")
+for t in COHORT_VIEW_TABLES:
+    t0 = time.time()
+    try:
+        cur.execute(
+            f"CREATE OR REPLACE VIEW THYROID_VALIDATION.PUBLIC.{t}_FLAT "
+            f"AS SELECT * FROM THYROID_VALIDATION.PUBLIC.{t}"
+        )
+        cur.execute(f"SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.{t}_FLAT")
+        n = cur.fetchone()[0]
+        print(f"  created {t}_FLAT (passthrough) -> {n:,} rows  t={time.time()-t0:.1f}s")
+    except Exception as e:
+        print(f"  FAIL {t}_FLAT: {str(e)[:200]}")
+
 # Quick sanity: same query as Prompt 1 but against the flat view
 print("\n=== Sanity check: same demographics on the flat view ===")
 cur.execute("""

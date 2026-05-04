@@ -1,0 +1,32 @@
+mig_289 apply log — 2026-05-04
+==============================
+
+PIPELINE RUN: 01_export_md_to_parquet.py → 02_load_to_snowflake.py → 04_build_flat_views.py
+
+## Script 01 — MD → Parquet export
+cohort_m044_ajcc_ete_v1              rows=4,013
+cohort_m037_ln_metastasis_v1         rows=2,234
+cohort_m025_tirads_performance_v1    rows=3,375
+cohort_m032_descriptive_25yr_v1      rows=10,871
+cohort_m038_massive_goiter_v1        rows=10,871
+All 5 cohort views exported OK.
+
+## Script 02 — Parquet → Snowflake CTAS
+23 files uploaded (5 new cohort + 18 existing). loaded=23 failed=0.
+COHORT_M044_AJCC_ETE_V1              rows=4,013
+COHORT_M037_LN_METASTASIS_V1         rows=2,234
+COHORT_M025_TIRADS_PERFORMANCE_V1    rows=3,375
+COHORT_M032_DESCRIPTIVE_25YR_V1      rows=10,871
+COHORT_M038_MASSIVE_GOITER_V1        rows=10,871
+Row counts match MD source. ✅
+
+## Script 04 — Flat views
+COHORT_M044_AJCC_ETE_V1_FLAT         passthrough -> 4,013 rows
+COHORT_M037_LN_METASTASIS_V1_FLAT    passthrough -> 2,234 rows
+COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT passthrough -> 3,375 rows
+COHORT_M032_DESCRIPTIVE_25YR_V1_FLAT passthrough -> 10,871 rows
+COHORT_M038_MASSIVE_GOITER_V1_FLAT   passthrough -> 10,871 rows
+All 5 passthrough flat views created OK. ✅
+
+## Signoff
+INSERT INTO main.signoff_migration confirmed at 2026-05-04T00:55:18Z by cursor_composer_mig289.
