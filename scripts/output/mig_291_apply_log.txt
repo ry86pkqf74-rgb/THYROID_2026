@@ -1,0 +1,3 @@
+OK: migration 291 executed
+    mig_id              signed_off_at                by_actor
+0  mig_291 2026-05-04 01:17:31.906910  cursor_composer_mig291

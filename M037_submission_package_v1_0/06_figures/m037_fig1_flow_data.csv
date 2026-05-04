@@ -1,0 +1,4 @@
+step,n
+Malignant with LN examined>0 OR LN+ flag (M037 view),2234
+With join to CPM (analytic spine),2234
+With non-missing age+tumor for primary model subset,2148
