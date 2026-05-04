@@ -1,5 +1,5 @@
 # Snowflake Cortex Validation — Prompt 8: Complications Patterns
-**Generated:** 2026-05-01 11:36:34
+**Generated:** 2026-05-03 22:50:45
 **Source:** CANONICAL_COMPLICATIONS_EVENTS_V1_FLAT (5,050 events)
 
 ---

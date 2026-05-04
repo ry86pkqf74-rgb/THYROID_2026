@@ -1,6 +1,6 @@
 # M044 Manuscript Figures Data
 
-**Generated:** 2026-05-01 18:34:40
+**Generated:** 2026-05-03 22:50:27
 
 ## Files
 
@@ -9,9 +9,9 @@
 - `m044_forest_plot_data.csv` — Cox PH multivariable HRs with 95% CI for forest plot (Figure 3). Columns: predictor, hr, ci_lo, ci_hi, p_value, log_hr (for plotting on log scale), se.
 
 ## Cox model
-n = 2,626; events = 496; c-index = 0.717; AIC = 6829.5
+n = 2,598; events = 493; c-index = 0.719; AIC = 6776.4
 
 ## KM strata sizes
 - **ETE none:** n=106, events=32
-- **ETE microscopic:** n=1,621, events=273
-- **ETE gross:** n=979, events=212
+- **ETE microscopic:** n=1,594, events=271
+- **ETE gross:** n=978, events=211
