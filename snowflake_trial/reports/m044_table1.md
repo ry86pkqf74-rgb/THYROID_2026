@@ -1,5 +1,5 @@
 # Table 1 — Manuscript M044: Extrathyroidal Extension and Outcomes
-**Generated:** 2026-05-03 22:50:02
+**Generated:** 2026-05-03 22:55:08
 **Cohort:** Malignant + ETE_GRADE in (none, microscopic, gross) (N=3,960)
 **Strata:** ETE none=177 | microscopic=2,518 | gross=1,265
 **P-values:** Kruskal-Wallis (3-group continuous), chi-square (categorical)
@@ -77,6 +77,6 @@ Generated from THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT via Snowf
 |   False | 176 (99.4%) | 2402 (95.4%) | 1202 (95.0%) |  |
 |   True | 1 (0.6%) | 116 (4.6%) | 63 (5.0%) |  |
 | **Any recurrence** |  |  |  | <0.0001 |
-|   False | 139 (78.5%) | 2237 (88.8%) | 1043 (82.5%) |  |
-|   True | 38 (21.5%) | 281 (11.2%) | 222 (17.5%) |  |
+|   False | 150 (84.7%) | 2251 (89.4%) | 1062 (84.0%) |  |
+|   True | 27 (15.3%) | 267 (10.6%) | 203 (16.0%) |  |
 

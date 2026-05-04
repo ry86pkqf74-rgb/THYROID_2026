@@ -1,6 +1,6 @@
 # Manuscript M044 — Cox Proportional Hazards: Time-to-Recurrence by ETE
-**Generated:** 2026-05-01 18:17:28
-**Cohort:** 2,626 malignant patients (ETE in none/micro/gross), 496 recurrence events
+**Generated:** 2026-05-03 22:54:35
+**Cohort:** 2,481 malignant patients (ETE in none/micro/gross), 349 recurrence events
 **Method:** lifelines CoxPHFitter; events = any_recurrence_flag (post-mig_255 hybrid B′/A′)
 
 _Note: Time-to-event uses time_to_recurrence_days for events, followup_years*365.25 for censored. mig_255 cleared 740 flag/timing mismatches; ln_status_source not yet integrated as covariate (would tighten LN N1 measurement)._
@@ -9,31 +9,31 @@ _Note: Time-to-event uses time_to_recurrence_days for events, followup_years*365
 
 | Predictor | HR | 95% CI | p |
 | --- | --- | --- | --- |
-| Age (per year) | 0.99 | (0.99–1.00) | 0.0252 |
-| Male sex | 1.12 | (0.91–1.38) | 0.2768 |
-| ETE microscopic (vs none) | 1.15 | (0.65–2.05) | 0.6355 |
-| ETE gross (vs none) | 1.34 | (0.71–2.56) | 0.3668 |
-| T3-T4 (vs T1-T2) | 1.04 | (0.72–1.49) | 0.8437 |
-| N1 (vs N0) | 1.11 | (0.91–1.35) | 0.2981 |
-| BRAF positive | 1.20 | (0.87–1.67) | 0.2662 |
-| Total thyroidectomy | 0.36 | (0.30–0.43) | <0.0001 |
-| RAI received | 1.49 | (1.20–1.85) | 0.0004 |
-| Tumor size (per cm) | 1.13 | (1.08–1.18) | <0.0001 |
+| Age (per year) | 0.99 | (0.99–1.00) | 0.0176 |
+| Male sex | 1.22 | (0.96–1.54) | 0.0985 |
+| ETE microscopic (vs none) | 0.98 | (0.49–1.99) | 0.9640 |
+| ETE gross (vs none) | 1.10 | (0.51–2.38) | 0.8118 |
+| T3-T4 (vs T1-T2) | 1.05 | (0.67–1.65) | 0.8346 |
+| N1 (vs N0) | 1.35 | (1.06–1.71) | 0.0166 |
+| BRAF positive | 1.23 | (0.83–1.82) | 0.2983 |
+| Total thyroidectomy | 0.33 | (0.27–0.41) | <0.0001 |
+| RAI received | 1.62 | (1.26–2.07) | 0.0001 |
+| Tumor size (per cm) | 1.12 | (1.06–1.18) | <0.0001 |
 
-**Concordance index:** 0.717; AIC = 6829.5; partial log-lik = -3404.7
+**Concordance index:** 0.717; AIC = 5035.6; partial log-lik = -2507.8
 
 ## Log-rank test across ETE strata
 
-- Statistic: 13.79
-- p-value: 0.0010
+- Statistic: 13.10
+- p-value: 0.0014
 
 ## Kaplan-Meier per ETE stratum
 
 | ETE | n | events | median followup (yr) | 5-yr surv | 10-yr surv |
 | --- | --- | --- | --- | --- | --- |
-| none | 106 | 32 | 2.3 | 0.640 | 0.579 |
-| microscopic | 1,621 | 273 | 2.3 | 0.832 | 0.806 |
-| gross | 979 | 212 | 2.4 | 0.776 | 0.678 |
+| none | 105 | 21 | 2.4 | 0.729 | 0.659 |
+| microscopic | 1,518 | 183 | 2.3 | 0.862 | 0.843 |
+| gross | 943 | 158 | 2.4 | 0.806 | 0.700 |
 
 ## Methods
 
