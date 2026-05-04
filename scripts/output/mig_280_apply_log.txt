@@ -1,0 +1,11 @@
+mig_280 start UTC (local connection time is server-side CURRENT_TIMESTAMP)
+s1 archive cohort_m037 snapshot
+s1 archive cohort_m025 snapshot
+s2 REPLACE cohort_m037_ln_metastasis_v1
+s2 REPLACE cohort_m025_tirads_performance_v1
+s3 verify LIMIT 1 + COUNT(*)
+  cohort_m037_ln_metastasis_v1 count=2233
+  cohort_m025_tirads_performance_v1 count=3375
+s4 signoff_migration INSERT
+mig_280 COMPLETE
+mig_280: CREATE OR REPLACE VIEW for manuscript_workspace.cohort_m037_ln_metastasis_v1 + cohort_m025_tirads_performance_v1. Fixed catalog DATE drift (m037; post-mig_160b) and stale cupm.tirads_worst_rank_source ref (NULL placeholder). Post-state: resolves. Cohort counts: M037 n=2233, M025 n=3375. Closes CF-mig277-COHORT-VIEW-BINDER + CF-mig160b-COHORT-VIEW-CASCADE.
