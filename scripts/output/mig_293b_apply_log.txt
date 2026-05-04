@@ -1,26 +1,33 @@
 mig_293b apply log — SF VALIDATION_RUN_LOG_V1 → MotherDuck main.cowork_sf_validation_log_v1
-Generated: 2026-05-04 (Cursor Composer)
+Updated: 2026-05-04 (live apply via Cursor agent)
 
-Prerequisites
--------------
-1. Apply migration (DDL + idempotent signoff):
-     qc_framework_v1/migrations/293b_validation_log_md_mirror_20260504.sql
-   Target catalog: thyroid_canonical_publication_v1_0
+Prerequisites (completed)
+-------------------------
+1. Migration DDL + idempotent signoff applied on thyroid_canonical_publication_v1_0:
+   - qc_framework_v1/migrations/293b_validation_log_md_mirror_20260504.sql
+   - Equivalent sequential DDL executed via utils.md_connect (COMMENT contains ';').
 
-2. Refresh mirror data (full replace):
-     SNOWFLAKE_PAT=... .venv/bin/python snowflake_trial/scripts/35_pull_sf_validation_log.py --md
-   MotherDuck RW token: motherduck.local.toml or MD_SA_TOKEN / MOTHERDUCK_TOKEN (never log values).
+2. Data refresh (full replace):
+   SNOWFLAKE_PAT=<keychain THYROID_2026_SNOWFLAKE_PAT>
+   .venv/bin/python snowflake_trial/scripts/35_pull_sf_validation_log.py --md
 
-Dry-run (SF read only, no MD write):
-     SNOWFLAKE_PAT=... .venv/bin/python snowflake_trial/scripts/35_pull_sf_validation_log.py --dry-run
+Live apply evidence (2026-05-04)
+------------------------------
+- Snowflake fetch: 37 rows from VALIDATION_RUN_LOG_V1
+- MotherDuck insert: Mirrored 37 rows to main.cowork_sf_validation_log_v1
+- DISTINCT check_name: 17 (baseline v2)
+- Rows by SF_RUN_TS (batch):
+    * 2026-05-04 01:30:14.982 UTC-equivalent — 17 rows (latest SP baseline)
+    * 2026-05-04 01:28:23.556 — 10 rows (prior baseline)
+    * 2026-05-04 01:08:16.230 — 10 rows (prior baseline)
+- Sample statuses on latest batch include PASS/FAIL (e.g. M037_cohort_n FAIL, M044_cohort_n FAIL — SF cohort thresholds vs MD; mirror is audit-only).
+
+Verify queries
+--------------
+SELECT COUNT(*) FROM main.cowork_sf_validation_log_v1;
+SELECT COUNT(DISTINCT check_name), MIN(sf_run_ts), MAX(sf_run_ts) FROM main.cowork_sf_validation_log_v1;
+SELECT mig_id, signed_off_at FROM main.signoff_migration WHERE mig_id = 'mig_293b';
 
 Optional pipeline hook
 ----------------------
-After flat-view build, set MOTHERDUCK_MIRROR_VALIDATION_LOG=1 (with PAT + MD token) to run script 35
-from snowflake_trial/scripts/04_build_flat_views.py postlude.
-
-Live apply notes (operator fills after run)
--------------------------------------------
-- migration_applied_at:
-- pull_script_rows_mirrored:
-- verify: SELECT COUNT(*) FROM main.cowork_sf_validation_log_v1;
+After flat-view build: MOTHERDUCK_MIRROR_VALIDATION_LOG=1 runs script 35 from 04_build_flat_views.py.
