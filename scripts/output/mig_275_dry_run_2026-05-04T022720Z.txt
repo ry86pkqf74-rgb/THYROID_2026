@@ -1,0 +1,7 @@
+mig_275 started utc 2026-05-04T02:27:20Z
+--- Discovery: operative_events complexity-ish columns ---
+  ebl_ml: DOUBLE
+  ebl_ml_nlp: DOUBLE
+  op_detail_ebl_n: INTEGER
+Probe NSQIP: n with operative_duration_min=1,261; n with any LOS field=1,800
+--dry-run: no ALTER/UPDATE/signoff

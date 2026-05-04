@@ -36,6 +36,12 @@ SELECT
   any_recurrence_flag,
   overall_survival_years,
   followup_years,
+  cpm_op_time_min,
+  cpm_ebl_ml,
+  cpm_los_days,
+  cpm_op_time_min_source,
+  cpm_ebl_ml_source,
+  cpm_los_days_source,
   CASE
     WHEN gland_weight_final_g IS NULL THEN 'unknown'
     WHEN gland_weight_final_g >= 200 THEN 'massive_200g_plus'
