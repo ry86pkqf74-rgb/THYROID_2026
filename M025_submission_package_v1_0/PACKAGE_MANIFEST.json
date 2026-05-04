@@ -1,0 +1,182 @@
+{
+  "package": "M025_submission_package_v1_0",
+  "release_tag": "pub_v1_1_20260504",
+  "generated_at_utc": "2026-05-04T15:45:19.394402Z",
+  "n_files": 29,
+  "files": [
+    {
+      "path": "00_README.md",
+      "sha256": "770f573ad1cc2dc5bf500e5fef73691d0d747fe5ba1959f1afbac2c9afcd2bd6",
+      "size_bytes": 2471,
+      "mtime_utc": "2026-05-04T15:29:32.763274Z"
+    },
+    {
+      "path": "01_title_page.docx",
+      "sha256": "2c3ca6c95ea711296d2eee72875e00691c8aba6a9634384a878b17094c2e2b3c",
+      "size_bytes": 9595,
+      "mtime_utc": "2026-05-04T05:19:42.416525Z"
+    },
+    {
+      "path": "02_manuscript.docx",
+      "sha256": "dff382263fdb63546f68207f9504226b1aad170e29f65012c9f131c14639012b",
+      "size_bytes": 1068876,
+      "mtime_utc": "2026-05-04T05:19:42.417670Z"
+    },
+    {
+      "path": "03_supplement.docx",
+      "sha256": "85d509e6fd813424508953d29bd09a2b67add8e793bdef89d0176b43932d496d",
+      "size_bytes": 15558,
+      "mtime_utc": "2026-05-04T05:19:42.418047Z"
+    },
+    {
+      "path": "04_tables.xlsx",
+      "sha256": "9e7f3cf65b6dbb0bd0416ca0f4daeb2da5b62e577f3cb29564f2aa891747db54",
+      "size_bytes": 13657,
+      "mtime_utc": "2026-05-04T05:19:45.183333Z"
+    },
+    {
+      "path": "05_master_data.xlsx",
+      "sha256": "729e8875ebd062a2c14047f9629c452f487bb81ab989987d65af87245f5b3b9b",
+      "size_bytes": 431966,
+      "mtime_utc": "2026-05-04T05:19:45.656633Z"
+    },
+    {
+      "path": "06_figures/m025_fig1_cohort_flow.png",
+      "sha256": "73fdc50138d93df9941d094b0c9ed31bea97399d0db3706c7482188c3e4debf7",
+      "size_bytes": 73950,
+      "mtime_utc": "2026-05-04T05:20:07.124834Z"
+    },
+    {
+      "path": "06_figures/m025_fig1_flow_data.csv",
+      "sha256": "383d4608fd0df84b11f3fab22511b2f77bbb0979f41fc17b724b143705d48dd5",
+      "size_bytes": 144,
+      "mtime_utc": "2026-05-04T05:20:07.018482Z"
+    },
+    {
+      "path": "06_figures/m025_fig2_roc_curve.png",
+      "sha256": "ae3eb8f0888fb87f57b45de85232d8574adff4f0ce25b66af57fa11030893cc8",
+      "size_bytes": 110741,
+      "mtime_utc": "2026-05-04T05:20:07.359694Z"
+    },
+    {
+      "path": "06_figures/m025_fig2_roc_curve_data.csv",
+      "sha256": "e8ce1688bd2fb381b9bce07a2508b9ceffb387faeac7bc7fe21c7bd144063fc2",
+      "size_bytes": 175,
+      "mtime_utc": "2026-05-04T05:20:07.304643Z"
+    },
+    {
+      "path": "06_figures/m025_fig3_rom_by_bucket.png",
+      "sha256": "41edaebe61995b66f77d4aab7cdf635d1d14e2dc6c714fd00926133b7a792af2",
+      "size_bytes": 95546,
+      "mtime_utc": "2026-05-04T05:20:07.185451Z"
+    },
+    {
+      "path": "06_figures/m025_fig3_rom_by_bucket_data.csv",
+      "sha256": "b7bc53d0c925851203fd4c9dbb417bce8c0202a99d9a0a6497e34fd23b8df2c7",
+      "size_bytes": 653,
+      "mtime_utc": "2026-05-04T05:20:07.128909Z"
+    },
+    {
+      "path": "06_figures/m025_fig4_heatmap_counts_data.csv",
+      "sha256": "60c14d01ce617515e46e5632ff639467d3b9f0027c4461212254a9299b89e82f",
+      "size_bytes": 166,
+      "mtime_utc": "2026-05-04T05:20:07.189038Z"
+    },
+    {
+      "path": "06_figures/m025_fig4_tr_bethesda_heatmap.png",
+      "sha256": "ae9087a38eab26d9285eb99b70ac8aaf54529e924d21b385b1a3431547fa3a8b",
+      "size_bytes": 129384,
+      "mtime_utc": "2026-05-04T05:20:07.303666Z"
+    },
+    {
+      "path": "07_response_to_reviewers_template.docx",
+      "sha256": "9ac02ea17907ab3e07802386d4c880f35cab6de41cd17b42e05709ea13a94bf8",
+      "size_bytes": 8816,
+      "mtime_utc": "2026-05-04T05:19:42.418372Z"
+    },
+    {
+      "path": "08_analysis_code/M025_tirads_analysis.sql",
+      "sha256": "452480af9ad26c079d21a80b5da01bd589645b2a635ebb05408188c3842b63d8",
+      "size_bytes": 1549,
+      "mtime_utc": "2026-05-04T05:18:48.398587Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m025_figures.cpython-313.pyc",
+      "sha256": "9aaaf98e36558c24cf80a818887dcd4fa9cb25863d42b7e9cbba133fc8547918",
+      "size_bytes": 12064,
+      "mtime_utc": "2026-05-04T05:19:42.826915Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m025_manuscript_md.cpython-313.pyc",
+      "sha256": "099c90aeb15c3c1de2f8d6ec3085082685853b4cb6b60799fceea7ff3d4b1aef",
+      "size_bytes": 5591,
+      "mtime_utc": "2026-05-04T05:19:42.828275Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m025_tables.cpython-313.pyc",
+      "sha256": "e2bf5b985bfc0aca933e08ffe4b6cb5ecdc10df3fe23679507404b231613bb3a",
+      "size_bytes": 28997,
+      "mtime_utc": "2026-05-04T05:19:42.824496Z"
+    },
+    {
+      "path": "08_analysis_code/build_m025_figures.py",
+      "sha256": "dd0a93ea92d2014b1974cb3aec07c04656ae769b8c7fe4d4f4ccdfc1cc8496de",
+      "size_bytes": 6455,
+      "mtime_utc": "2026-05-04T05:20:05.083890Z"
+    },
+    {
+      "path": "08_analysis_code/build_m025_manuscript_md.py",
+      "sha256": "44372b22b850a72a4a28163e00de4cba5af7440a7f4b437b0ba87c61cfa1315c",
+      "size_bytes": 3271,
+      "mtime_utc": "2026-05-04T05:19:37.646272Z"
+    },
+    {
+      "path": "08_analysis_code/build_m025_tables.py",
+      "sha256": "a0c15aa5a7aa2985c6743b83313254abc13a504b11f0fd35adc7b7b5256d326c",
+      "size_bytes": 17856,
+      "mtime_utc": "2026-05-04T05:19:23.704953Z"
+    },
+    {
+      "path": "08_analysis_outputs/M025_manuscript_numbers_20260504.md",
+      "sha256": "7acdb3ab450b46fbcf9a71de26b1f62b8a07325d174be335329e9ea8137d5415",
+      "size_bytes": 894,
+      "mtime_utc": "2026-05-04T05:19:48.904609Z"
+    },
+    {
+      "path": "08_analysis_outputs/m025_analytic_spine.parquet",
+      "sha256": "9d579bf3f98e1db0f5b6f066106b0a086346e1a01c11657df13135c0f79602c2",
+      "size_bytes": 119393,
+      "mtime_utc": "2026-05-04T05:19:45.124512Z"
+    },
+    {
+      "path": "08_analysis_outputs/m025_run_snapshot.json",
+      "sha256": "20ca87d2ee279d6019fb0f4a1110b0df612dc3ee17a680b80a50fe3f51582f85",
+      "size_bytes": 152,
+      "mtime_utc": "2026-05-04T05:19:45.074963Z"
+    },
+    {
+      "path": "08_analysis_outputs/m025_supp_ROC_curve_points.csv",
+      "sha256": "66ab1b70e4ae5745a265154579cfdd5dde73a5430a52e9aa0087a502957e463f",
+      "size_bytes": 176,
+      "mtime_utc": "2026-05-04T05:19:45.159885Z"
+    },
+    {
+      "path": "08_analysis_outputs/m025_supp_ROC_summary.csv",
+      "sha256": "b4f35a31b697a9f4acc36978164d8c39840ab62052e9392fc0459dce951ced7e",
+      "size_bytes": 53,
+      "mtime_utc": "2026-05-04T05:19:45.160377Z"
+    },
+    {
+      "path": "09_validation_report.md",
+      "sha256": "08fa22c3ec71401b214ac8c1847e172b3244dbe21d4ce61105fd99f0e551f315",
+      "size_bytes": 1170,
+      "mtime_utc": "2026-05-04T05:19:55.418057Z"
+    },
+    {
+      "path": "CLOSEOUT_NOTES.md",
+      "sha256": "ce1d4ffe918102ee40df724e6e30c3b0fd92ba66c227af7074b1277dce190e96",
+      "size_bytes": 883,
+      "mtime_utc": "2026-05-04T05:18:46.745783Z"
+    }
+  ]
+}

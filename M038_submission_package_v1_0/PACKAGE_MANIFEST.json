@@ -1,0 +1,290 @@
+{
+  "package": "M038_submission_package_v1_0",
+  "release_tag": "pub_v1_1_20260504",
+  "generated_at_utc": "2026-05-04T15:45:19.371283Z",
+  "n_files": 47,
+  "files": [
+    {
+      "path": "00_README.md",
+      "sha256": "8090e853e9a0ca1a4d19f0f9c99b41bcb535fc15b63a0b6f6cd68c09b4ba6fab",
+      "size_bytes": 3878,
+      "mtime_utc": "2026-05-04T15:29:30.857540Z"
+    },
+    {
+      "path": "01_title_page.docx",
+      "sha256": "b74dced4c59ced4de3ef906851a85ffabdeaf239fbb38b51ef4b354fe736b28b",
+      "size_bytes": 11304,
+      "mtime_utc": "2026-05-01T13:30:44.637541Z"
+    },
+    {
+      "path": "02_manuscript.docx",
+      "sha256": "2dcdf8a1eef5e9f758cde41243b9a8d6742fc15dfae4914727dbebc5dc144480",
+      "size_bytes": 993019,
+      "mtime_utc": "2026-05-01T13:30:44.639979Z"
+    },
+    {
+      "path": "03_supplement.docx",
+      "sha256": "25ef252b8d55e6d2ac6aa53a38b5d924ed8c09fa1a88020b2f88e75eabd3b730",
+      "size_bytes": 14645,
+      "mtime_utc": "2026-05-01T13:30:44.640672Z"
+    },
+    {
+      "path": "04_tables.xlsx",
+      "sha256": "6d7613dcc00db91cdb1f873954eb1d50536fc094b6f71d6d4cbe98e24f251616",
+      "size_bytes": 31562,
+      "mtime_utc": "2026-05-01T13:30:44.641161Z"
+    },
+    {
+      "path": "05b_per_patient_with_sources.xlsx",
+      "sha256": "2e67b4d1855ae23c76e83ca391e6015dfb2421bee86d44ee28b165a11185df76",
+      "size_bytes": 2249405,
+      "mtime_utc": "2026-05-01T13:38:42.663365Z"
+    },
+    {
+      "path": "06_figures/fig1_composite_flag_venn.csv",
+      "sha256": "aa4ed98e5c361ef67f9b6c4269989b5cfe5230d10f4d23a322cce6bb1c794ae4",
+      "size_bytes": 162,
+      "mtime_utc": "2026-05-01T13:30:44.641640Z"
+    },
+    {
+      "path": "06_figures/fig1_composite_flag_venn.png",
+      "sha256": "c2780b29c58135dac21a4ecfb4df6a0d760d549ba545f3ee4a2ae12b0df34ef2",
+      "size_bytes": 297702,
+      "mtime_utc": "2026-05-01T13:30:44.643083Z"
+    },
+    {
+      "path": "06_figures/fig2_era_prevalence.csv",
+      "sha256": "9ae0cb12d318f1a00b162dcf388bb6a550191778bed767644fea340eb516fcaa",
+      "size_bytes": 219,
+      "mtime_utc": "2026-05-01T13:30:44.643581Z"
+    },
+    {
+      "path": "06_figures/fig2_era_prevalence.png",
+      "sha256": "843beb705cd698bfbe43990634f6b494a5a3b78d07201dcadb505db777a19ae5",
+      "size_bytes": 283102,
+      "mtime_utc": "2026-05-01T13:30:44.645307Z"
+    },
+    {
+      "path": "06_figures/fig3_complications_bar.csv",
+      "sha256": "aad7a0feb3f67d350c2fae10289066c7f81b40b73ee406d8d85a477ab27cfae3",
+      "size_bytes": 764,
+      "mtime_utc": "2026-05-01T13:30:44.645935Z"
+    },
+    {
+      "path": "06_figures/fig3_complications_bar.png",
+      "sha256": "af002cf764fc697a318aa6e9644faee090a216d6f719e3791f17fecf4e3ae032",
+      "size_bytes": 226409,
+      "mtime_utc": "2026-05-01T13:30:44.647319Z"
+    },
+    {
+      "path": "06_figures/fig4_component_coverage.csv",
+      "sha256": "6be7158b9272b4271d448324be23fe8a219d79bb0b457a614eb5e464ffa0517a",
+      "size_bytes": 608,
+      "mtime_utc": "2026-05-01T13:30:44.647525Z"
+    },
+    {
+      "path": "06_figures/fig4_component_coverage.png",
+      "sha256": "49f0fbe05674779c18f81b12dea3b23e273bfc0cda0bf2fe2a982ab707d029ef",
+      "size_bytes": 254449,
+      "mtime_utc": "2026-05-01T13:30:44.648727Z"
+    },
+    {
+      "path": "07_response_to_reviewers_template.docx",
+      "sha256": "4b67b6d40cf94ec39363f8f8f1c001e5181d44dcc157f164c9c5ea774be7bb34",
+      "size_bytes": 10529,
+      "mtime_utc": "2026-05-01T13:30:44.649370Z"
+    },
+    {
+      "path": "08_analysis_code/M038_descriptive_analysis.sql",
+      "sha256": "8e213db8eb0425033c1b5609d9f844f6d92f3ad44af6eb643073e7a5e97cc896",
+      "size_bytes": 15276,
+      "mtime_utc": "2026-05-04T15:29:51.635673Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m038_figures.cpython-313.pyc",
+      "sha256": "29e39ef6822a017b74367b1d0ef569317a9d9f197caa1e3a3c70ad7fa2708f80",
+      "size_bytes": 14693,
+      "mtime_utc": "2026-05-04T06:17:53.328085Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m038_manuscript_md.cpython-313.pyc",
+      "sha256": "e1eb1e80e65512d405037fc52a59559edbdd981c46db6eb6098e4acba95276d0",
+      "size_bytes": 6198,
+      "mtime_utc": "2026-05-04T06:17:53.330884Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m038_per_patient.cpython-313.pyc",
+      "sha256": "2c7cad2078032eb22049d84fc2ff7bae482af332db61370195d8d91d730476a1",
+      "size_bytes": 20121,
+      "mtime_utc": "2026-05-04T15:29:57.031972Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m038_tables.cpython-313.pyc",
+      "sha256": "1874c16535556c6bf4732bc9f31e2d48ce81f7138b2f9a80afca03e4bd457095",
+      "size_bytes": 30254,
+      "mtime_utc": "2026-05-04T15:29:57.030758Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/m038_docx_post.cpython-313.pyc",
+      "sha256": "5aa036ddd8dc9bf06419ee8d0a39d07ae4b6f9450049c2cf708288a998dbb6fc",
+      "size_bytes": 5048,
+      "mtime_utc": "2026-05-04T06:17:53.328699Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/split_m038_supporting.cpython-313.pyc",
+      "sha256": "381463b6a9703cf8aa3f0ca1421df1c0c8777d4da30543879834e64488d21198",
+      "size_bytes": 5145,
+      "mtime_utc": "2026-05-04T06:17:53.329327Z"
+    },
+    {
+      "path": "08_analysis_code/build_m038_figures.py",
+      "sha256": "40cbda66745dfef1ce7fc4c01d7c8ace6bd2680fd9528aea4026f6deab090e25",
+      "size_bytes": 12952,
+      "mtime_utc": "2026-05-04T06:16:13.789794Z"
+    },
+    {
+      "path": "08_analysis_code/build_m038_manuscript_md.py",
+      "sha256": "4a40ab4ee5959d8b93f8ce8721d10e824af3aafec75ec93f7579e073148bbf9c",
+      "size_bytes": 6040,
+      "mtime_utc": "2026-05-04T06:16:42.789302Z"
+    },
+    {
+      "path": "08_analysis_code/build_m038_per_patient.py",
+      "sha256": "dd31043592d1e1b0b2ea55a6bc22ca227ff0ab79b35ff68ca354a27b0da54772",
+      "size_bytes": 15798,
+      "mtime_utc": "2026-05-04T15:29:51.321572Z"
+    },
+    {
+      "path": "08_analysis_code/build_m038_tables.py",
+      "sha256": "ff65d5e1463ab28c108c2143d8f6415c04818c406bfba630078b4eabe14b8e0c",
+      "size_bytes": 34033,
+      "mtime_utc": "2026-05-04T15:29:51.036434Z"
+    },
+    {
+      "path": "08_analysis_code/m038_docx_post.py",
+      "sha256": "926ecdfcd56b61cb8634f5f9e4afc5bb6f2b6de509a0df147ad35487b119bb4b",
+      "size_bytes": 3762,
+      "mtime_utc": "2026-05-04T06:16:17.951713Z"
+    },
+    {
+      "path": "08_analysis_code/split_m038_supporting.py",
+      "sha256": "94ec253737b6aa99c65ca559d979032f9565cd4102bbe15eaf5d3745407cd5db",
+      "size_bytes": 3916,
+      "mtime_utc": "2026-05-04T06:16:28.845090Z"
+    },
+    {
+      "path": "09_validation_report.md",
+      "sha256": "9756daa4b47d39ca54689fe772e83f6dd6ceb5ab02d037275478947011095c5a",
+      "size_bytes": 3709,
+      "mtime_utc": "2026-05-04T15:29:35.859838Z"
+    },
+    {
+      "path": "CLOSEOUT_NOTES.md",
+      "sha256": "84c51dc885d99ef143a0ee510dce2d84d1bdc5fb466fe88b1e692d66f502cae5",
+      "size_bytes": 1922,
+      "mtime_utc": "2026-05-04T06:17:12.741299Z"
+    },
+    {
+      "path": "M038_GOITER_analysis_workbook.xlsx",
+      "sha256": "6da1e966561830c164463dbe0701757b60d4c1abddb011f16fa13ddbcbd272ca",
+      "size_bytes": 21703,
+      "mtime_utc": "2026-05-04T04:43:25.764234Z"
+    },
+    {
+      "path": "M038_GOITER_eMethods.docx",
+      "sha256": "40d4080b3eb47d43b705c3ae10bbf1e8bb62df8372fff4628c8a58ba678e4876",
+      "size_bytes": 42704,
+      "mtime_utc": "2026-05-04T04:48:52.102089Z"
+    },
+    {
+      "path": "M038_GOITER_patient_level_dataset.xlsx",
+      "sha256": "605df8efe85ad52eb04c42f50adf99c3ee2e94cac0948e13db5c6a10bd7d34e2",
+      "size_bytes": 5027645,
+      "mtime_utc": "2026-05-04T04:39:18.058072Z"
+    },
+    {
+      "path": "M038_GOITER_size_symptoms_by_demographics.xlsx",
+      "sha256": "37b6584a9a6cee26560aef50f91e9fbae0a174413fa47c990b01f7a895c079c6",
+      "size_bytes": 59467,
+      "mtime_utc": "2026-05-04T04:59:04.256441Z"
+    },
+    {
+      "path": "M038_GOITER_tables_figures.xlsx",
+      "sha256": "bcd68c427eac42d474db0a529444ab654dc5b173ef195e9bfc9f245de626fc51",
+      "size_bytes": 21924,
+      "mtime_utc": "2026-05-04T04:46:45.837321Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/01_pull_parquet.py",
+      "sha256": "8cbeaced04f002cf2a699eb25adcced2e55d24a20e71f0a8117030f21d8fa847",
+      "size_bytes": 6425,
+      "mtime_utc": "2026-05-04T04:37:45.798724Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/02_build_d1_patient_dataset.py",
+      "sha256": "790805c33336bece68ffd97c249fa1a2464b438059fdc10f36d4c474ae5f57e0",
+      "size_bytes": 10935,
+      "mtime_utc": "2026-05-04T15:29:49.977332Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/03_build_d2_analysis_workbook.py",
+      "sha256": "d3193b225e457239a1aa83693e9ebbb619c9a2f1e28cfa4fd9ea45ea779b420f",
+      "size_bytes": 41351,
+      "mtime_utc": "2026-05-04T04:43:05.235752Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/04_build_d3_tables_figures.py",
+      "sha256": "5757e74f06c2431d17a941baf81ab1866975df14f6ee752a2e975817fee24a2f",
+      "size_bytes": 34938,
+      "mtime_utc": "2026-05-04T04:46:40.747994Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/05_build_d4_emethods.py",
+      "sha256": "4ec6bd21e4255277b1b5facaf16e5034fd4270e07ece9ba943da8a3c44473b32",
+      "size_bytes": 20447,
+      "mtime_utc": "2026-05-04T15:29:50.652995Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/06_verify.py",
+      "sha256": "01b0b9dfa2f03fc9b2cfcdd7d4eba841836791191e76ae413ed846996d11cd99",
+      "size_bytes": 6047,
+      "mtime_utc": "2026-05-04T04:49:28.513249Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/07_build_d5_size_symptoms_by_demo.py",
+      "sha256": "b3a4cf65fd1b3a3b3ed558e6330412caa15687b6cd3ff01e860b4e641776d4db",
+      "size_bytes": 26438,
+      "mtime_utc": "2026-05-04T04:58:58.837020Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/README.md",
+      "sha256": "ae2c072756e02c50a67071325435a346d5dcb5983e45eee9d8b64ae348505e19",
+      "size_bytes": 3739,
+      "mtime_utc": "2026-05-04T15:29:36.394550Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/__pycache__/02_build_d1_patient_dataset.cpython-313.pyc",
+      "sha256": "d83103a2f1c09f51af6d116c92a33b2f2b9269a7659c0bdce0cd87fbb3584a5a",
+      "size_bytes": 12709,
+      "mtime_utc": "2026-05-04T15:29:57.026961Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/__pycache__/05_build_d4_emethods.cpython-313.pyc",
+      "sha256": "2752d572065ea342b93c8e02f4268f71a5c67dd850516555a6ccb79bae421931",
+      "size_bytes": 22609,
+      "mtime_utc": "2026-05-04T15:29:57.028352Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/_stats.py",
+      "sha256": "6bcd41d8e344d5d4345d4931c63d06c9c241b98c7a5639e168f8f2c62c46b3b4",
+      "size_bytes": 5441,
+      "mtime_utc": "2026-05-04T04:43:20.574970Z"
+    },
+    {
+      "path": "data_extraction_v2_20260504/m038_per_patient_v2.parquet",
+      "sha256": "cbabb7d9bcfb2b8bbb6400b52d8394a386bed74c20671108e1907180c2458a4e",
+      "size_bytes": 527030,
+      "mtime_utc": "2026-05-04T04:37:49.997780Z"
+    }
+  ]
+}

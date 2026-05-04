@@ -1,0 +1,158 @@
+{
+  "package": "M032_submission_package_v1_0",
+  "release_tag": "pub_v1_1_20260504",
+  "generated_at_utc": "2026-05-04T15:45:19.378918Z",
+  "n_files": 25,
+  "files": [
+    {
+      "path": "00_README.md",
+      "sha256": "cadc6dafffd2066028ff936478ca19c22890fe9a6c9808c5800808109be2911e",
+      "size_bytes": 4046,
+      "mtime_utc": "2026-05-04T15:29:29.613597Z"
+    },
+    {
+      "path": "01_title_page.docx",
+      "sha256": "44822060e846a6fd5214d87d2207dc78a05a29b18d32116b22e55893af49db00",
+      "size_bytes": 37100,
+      "mtime_utc": "2026-05-04T05:06:47.892359Z"
+    },
+    {
+      "path": "02_manuscript.docx",
+      "sha256": "d4d9dccc8f1da050047b36b861a26047599532d5a0feb259472f889bb882bdc8",
+      "size_bytes": 47134,
+      "mtime_utc": "2026-05-04T05:07:23.245606Z"
+    },
+    {
+      "path": "03_supplement.docx",
+      "sha256": "1cc32e1b9614fb4870cd3f4d98f1d86ccd05b6f09be98304ff488b5f061ea7c2",
+      "size_bytes": 37723,
+      "mtime_utc": "2026-05-04T05:07:23.257355Z"
+    },
+    {
+      "path": "04_tables.xlsx",
+      "sha256": "5889c74a3068dbbed35240f9c9d0cdd2c904f6fb9e4e7979651917c726cf6708",
+      "size_bytes": 18641,
+      "mtime_utc": "2026-05-04T05:27:34.525659Z"
+    },
+    {
+      "path": "05_master_data.xlsx",
+      "sha256": "67eadb3cc4cba960e1c2d13d7a5de0c4f842f2e03ebab46909846f428165c966",
+      "size_bytes": 1378001,
+      "mtime_utc": "2026-05-04T05:27:34.530424Z"
+    },
+    {
+      "path": "06_figures/Fig2_malignancy_rate_data.csv",
+      "sha256": "fe24aa3afb64464cb264731535c5c2c347b2aa768576e07b87f0abbbef295140",
+      "size_bytes": 498,
+      "mtime_utc": "2026-05-04T05:14:50.430035Z"
+    },
+    {
+      "path": "06_figures/Fig3_stage_distribution_data.csv",
+      "sha256": "d2d69b46e165c05729e14bad2493bd656c2a48586ce34144c42fe82071860cf5",
+      "size_bytes": 528,
+      "mtime_utc": "2026-05-04T05:27:34.530775Z"
+    },
+    {
+      "path": "06_figures/Fig4_smoking_trend_data.csv",
+      "sha256": "85e41f2b02b8e9ea886a7bf2957589d906313f2025b48fa494f9b57c562efbb8",
+      "size_bytes": 636,
+      "mtime_utc": "2026-05-04T05:14:50.675612Z"
+    },
+    {
+      "path": "06_figures/Figure1_CohortFlow.png",
+      "sha256": "dddedf65d90bb3a9cdbd5f0acd22826c78484f52a9d12ac78b84c89172905beb",
+      "size_bytes": 168707,
+      "mtime_utc": "2026-05-04T05:14:50.277906Z"
+    },
+    {
+      "path": "06_figures/Figure2_MalignancyRateByEra.png",
+      "sha256": "5029b1154898816d27723aa93d046f35901c4d8f0f8fde31b81fe19a5755c904",
+      "size_bytes": 199677,
+      "mtime_utc": "2026-05-04T05:14:50.517235Z"
+    },
+    {
+      "path": "06_figures/Figure3_StageDistributionByEra.png",
+      "sha256": "26871001a6c21d2112c6022213866ff1ad114343fcc201bd8bcb3b76835f790c",
+      "size_bytes": 170162,
+      "mtime_utc": "2026-05-04T05:14:50.634832Z"
+    },
+    {
+      "path": "06_figures/Figure4_SmokingTrendByEra.png",
+      "sha256": "d6e2f64940ae3a338be3426d2c3bb117872245f005a47a6e5b5362b371c8e65d",
+      "size_bytes": 327101,
+      "mtime_utc": "2026-05-04T05:14:50.814788Z"
+    },
+    {
+      "path": "07_response_to_reviewers_template.docx",
+      "sha256": "2e40e6127d71803fd9d619f100129910487cd831bd98f122e03f8d20b849af52",
+      "size_bytes": 37069,
+      "mtime_utc": "2026-05-04T05:06:47.906350Z"
+    },
+    {
+      "path": "08_analysis_code/M032_descriptive_analysis.sql",
+      "sha256": "8a009c59d26649de600c188322e10a09be6cfed0152aad569a225d422c2c4ab8",
+      "size_bytes": 17924,
+      "mtime_utc": "2026-05-04T15:29:29.982843Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m032_figures.cpython-313.pyc",
+      "sha256": "2a6f479c5114863628ebe8ec60a5c948711994bd9bd527c2f8b1f2eeb711bbc8",
+      "size_bytes": 20529,
+      "mtime_utc": "2026-05-04T05:14:33.825133Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m032_manuscript_md.cpython-313.pyc",
+      "sha256": "ee6fe8c13044f49d24d822a653ced255cae7b4dfb81aa766cb366bce24b097ef",
+      "size_bytes": 14762,
+      "mtime_utc": "2026-05-04T05:14:33.825912Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m032_tables.cpython-313.pyc",
+      "sha256": "b91c7880f29955614b8a3aadeafb0fe93c1d19b2dad962a8611fd40fde080c1a",
+      "size_bytes": 30933,
+      "mtime_utc": "2026-05-04T05:14:33.823858Z"
+    },
+    {
+      "path": "08_analysis_code/build_m032_figures.py",
+      "sha256": "6bdf8bcb8e65dbd66c40b7bd32f07c4637727e5a522252b55d5bea4e236eaadf",
+      "size_bytes": 14262,
+      "mtime_utc": "2026-05-04T05:03:06.991218Z"
+    },
+    {
+      "path": "08_analysis_code/build_m032_manuscript_md.py",
+      "sha256": "a1431360c44fa1983d0d5c03212ccb39594766eda68403cce0a7d247593512c0",
+      "size_bytes": 10504,
+      "mtime_utc": "2026-05-04T05:04:03.507194Z"
+    },
+    {
+      "path": "08_analysis_code/build_m032_tables.py",
+      "sha256": "03b160f69f9b1691c89c389bcebd52136d22db19abe82fbda44da2b762d2db79",
+      "size_bytes": 27695,
+      "mtime_utc": "2026-05-04T05:06:18.290927Z"
+    },
+    {
+      "path": "08_analysis_outputs/M032_locked_numbers_20260504.json",
+      "sha256": "19cad75a2ebae3c0c6d6f2f15c361fa911e6d474825b32540dce4eb7db9eb831",
+      "size_bytes": 547,
+      "mtime_utc": "2026-05-04T05:14:51.721220Z"
+    },
+    {
+      "path": "08_analysis_outputs/M032_manuscript_numbers_20260504.md",
+      "sha256": "33aaaaaf4530d03242849e8289a5ca73b217098965da8163c17e794f4b9a7443",
+      "size_bytes": 2290,
+      "mtime_utc": "2026-05-04T05:27:34.531165Z"
+    },
+    {
+      "path": "09_validation_report.md",
+      "sha256": "6ce07e9a7c2e92a435fc1eefd255edf4627c2038dc2992a05c8b0a5ae5e84361",
+      "size_bytes": 3423,
+      "mtime_utc": "2026-05-04T05:08:23.952117Z"
+    },
+    {
+      "path": "CLOSEOUT_NOTES.md",
+      "sha256": "497661978ef73f5a10177e03338c323f8f5e676cc4435d12b86ee351448aeb69",
+      "size_bytes": 3071,
+      "mtime_utc": "2026-05-04T05:08:47.271949Z"
+    }
+  ]
+}

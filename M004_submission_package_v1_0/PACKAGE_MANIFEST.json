@@ -1,0 +1,68 @@
+{
+  "package": "M004_submission_package_v1_0",
+  "release_tag": "pub_v1_1_20260504",
+  "generated_at_utc": "2026-05-04T15:45:19.395576Z",
+  "n_files": 10,
+  "files": [
+    {
+      "path": "00_README.md",
+      "sha256": "d537845da0a1b6aeff20f61bd754b7c135d1fcc420cffed2d34aec150a5c505d",
+      "size_bytes": 4192,
+      "mtime_utc": "2026-05-04T15:29:33.322096Z"
+    },
+    {
+      "path": "08_analysis_code/M004_autoimmune_analysis.sql",
+      "sha256": "3e9c297a3a235fa96bbb7ac68aeefbe5d402d1bef700036e278ceb4590dae979",
+      "size_bytes": 5708,
+      "mtime_utc": "2026-05-04T15:25:18.233077Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m004_figures.cpython-313.pyc",
+      "sha256": "46f0e02895d05971bf2bffbb7272986116253cbeb2c89636e1d122f77f3cb4b1",
+      "size_bytes": 10401,
+      "mtime_utc": "2026-05-04T15:28:11.530937Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m004_logreg.cpython-313.pyc",
+      "sha256": "462c2092f9a34f75ebcb9bf6fed6c3ffe7be82e769188e2851d38daa2c9fdf1f",
+      "size_bytes": 6161,
+      "mtime_utc": "2026-05-04T15:28:11.507939Z"
+    },
+    {
+      "path": "08_analysis_code/__pycache__/build_m004_tables.cpython-313.pyc",
+      "sha256": "5a7eb8a96c29713fcbf5086a5e702c97439c1b3d4be97747c0421f993babbd0e",
+      "size_bytes": 8241,
+      "mtime_utc": "2026-05-04T15:28:11.485395Z"
+    },
+    {
+      "path": "08_analysis_code/build_m004_figures.py",
+      "sha256": "69c81bcfa42766b9776f0a22d6c52f23e8fb38846db3b814d861cfac843548bd",
+      "size_bytes": 6425,
+      "mtime_utc": "2026-05-04T15:26:16.114996Z"
+    },
+    {
+      "path": "08_analysis_code/build_m004_logreg.py",
+      "sha256": "ec666030818a448d108138f2aceb2f751424e800acec5f6b207c51c9efb1f9dd",
+      "size_bytes": 4004,
+      "mtime_utc": "2026-05-04T15:26:37.819426Z"
+    },
+    {
+      "path": "08_analysis_code/build_m004_tables.py",
+      "sha256": "786f09c39728152414e465dd5ce84ccca065226df2424fc24f054c55b68e7c76",
+      "size_bytes": 6044,
+      "mtime_utc": "2026-05-04T15:25:46.529107Z"
+    },
+    {
+      "path": "09_validation_report.md",
+      "sha256": "a555407f249681ec83fa8b7fb4cb1e708816da262e440f4d370cd3be0298c14b",
+      "size_bytes": 3362,
+      "mtime_utc": "2026-05-04T15:27:08.919837Z"
+    },
+    {
+      "path": "CLOSEOUT_NOTES.md",
+      "sha256": "971ce97a3b7c4d739d2bca123fbfc4ffbb917024e402834f78c457aea168a0a1",
+      "size_bytes": 2256,
+      "mtime_utc": "2026-05-04T15:24:52.367780Z"
+    }
+  ]
+}
