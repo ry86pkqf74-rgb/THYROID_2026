@@ -1,0 +1,11 @@
+mig_292 — M025 submission package + signoff_migration
+========================================
+UTC: applied via repo-root Python duckdb(md:...) executing
+qc_framework_v1/migrations/292_m025_submission_package_20260504.sql
+
+Evidence:
+  signoff_migration row mig_292 inserted (by_actor=cursor_composer_mig292)
+  Builders: M025_submission_package_v1_0/08_analysis_code/build_m025_tables.py
+             M025_submission_package_v1_0/08_analysis_code/build_m025_figures.py
+             M025_submission_package_v1_0/08_analysis_code/build_m025_manuscript_md.py
+  Live snapshot: n_cohort_view=3375, n_tr_rank_known=3375, n_malignant=1479

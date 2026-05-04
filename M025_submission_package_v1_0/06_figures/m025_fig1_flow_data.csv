@@ -1,0 +1,4 @@
+step,n
+Cohort filter (cohort_m025),3375
+Patients with ordinal TR rank (resolved+worst fallback),3375
+Malignancies (gold: CPM.is_malignant),1479
