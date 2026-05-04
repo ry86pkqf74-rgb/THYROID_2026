@@ -1,0 +1,47 @@
+mig_290 Apply Log
+=================
+Date: 2026-05-04
+Agent: cursor_composer_mig290
+DB: thyroid_canonical_publication_v1_0
+
+STEPS COMPLETED:
+  [OK] Directory M032_submission_package_v1_0/ created (mirrors M044/M038 pattern)
+  [OK] 00_README.md — package overview + locked numbers + rebuild instructions
+  [OK] 01_title_page.docx — submission title page (authorship placeholders)
+  [OK] 02_manuscript.docx — full manuscript draft v1.1 (from DRAFT_v1 + mig_290 refresh)
+  [OK] 03_supplement.docx — Tables S1-S3 + Supplementary Methods
+  [OK] 04_tables.xlsx — Tables 1-5 + Supp S1-S2 + DataDictionary + QA tab
+  [OK] 05_master_data.xlsx — per-patient analytic dataset (10,871 rows)
+  [OK] 06_figures/Figure1_CohortFlow.png (300 DPI)
+  [OK] 06_figures/Figure2_MalignancyRateByEra.png (300 DPI)
+  [OK] 06_figures/Figure3_StageDistributionByEra.png (300 DPI)
+  [OK] 06_figures/Figure4_SmokingTrendByEra.png (300 DPI)
+  [OK] 07_response_to_reviewers_template.docx
+  [OK] 08_analysis_code/M032_descriptive_analysis.sql
+  [OK] 08_analysis_code/build_m032_tables.py
+  [OK] 08_analysis_code/build_m032_figures.py
+  [OK] 08_analysis_code/build_m032_manuscript_md.py
+  [OK] 08_analysis_outputs/M032_manuscript_numbers_20260504.md
+  [OK] 08_analysis_outputs/M032_locked_numbers_20260504.json
+  [OK] 09_validation_report.md — 9/9 QA metrics PASS
+  [OK] CLOSEOUT_NOTES.md
+  [OK] qc_framework_v1/migrations/290_m032_submission_package_20260504.sql
+  [OK] signoff_migration entry: mig_290 (2026-05-04T01:09:14 UTC)
+
+QA SUMMARY:
+  n_total:             10,871 PASS (diff=0)
+  n_malig:             4,019  PASS (diff=+1, tol=2; Cowork lock=4,018)
+  pct_malig:           37.0%  PASS
+  n_nlp_smoke_current:   215  PASS (diff=+3, tol=5; mig_287 normalization)
+  n_nlp_smoke_former:    504  PASS (diff=+2, tol=5)
+  n_nlp_smoke_never:   2,303  PASS (diff=+5, tol=5)
+  n_nlp_smoke_known:   3,022  PASS (diff=0)
+  n_fhx_thyroid:         366  PASS (diff=0)
+  n_fhx_known:         3,018  PASS (diff=0)
+
+CARRY-FORWARDS:
+  CLOSED: CF-M032-READY-FOR-WRITING
+  OPEN:   CF-M032-LOGREG-MULTIVARIABLE
+  OPEN:   CF-mig265-NLP-SOCHX-FAMHX-REFRESH-SCOPE
+
+STATUS: COMPLETE
