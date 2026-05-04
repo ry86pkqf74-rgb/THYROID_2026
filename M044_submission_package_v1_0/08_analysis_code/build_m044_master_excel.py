@@ -25,7 +25,7 @@ BD = Border(left=Side(style="thin", color="CCCCCC"), right=Side(style="thin", co
 ANALYTIC_SQL = open("/tmp/analytic.sql").read()
 SRC_COHORT_SQL = "SELECT * FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 ORDER BY research_id"
 SRC_CPM_SQL = open("/tmp/cpm.sql").read()
-SRC_REC_SQL = """SELECT r.* FROM main.canonical_recurrence_resolved_v1 r
+SRC_REC_SQL = """SELECT r.* FROM semantic_publication.vw_recurrence_safe_VIEW_v1 r
                  JOIN manuscript_workspace.cohort_m044_ajcc_ete_v1 c USING (research_id) ORDER BY r.research_id"""
 SRC_LN_SQL = """SELECT research_id,
   MAX(ln_total_examined) AS ln_examined, MAX(ln_total_positive) AS ln_positive,
@@ -207,10 +207,10 @@ def main():
         ("Date prepared", datetime.utcnow().strftime("%Y-%m-%d")),
         ("Cohort", "manuscript_workspace.cohort_m044_ajcc_ete_v1 (n = 4,128)"),
         ("Database", DB),
-        ("Primary endpoint", "main.canonical_recurrence_resolved_v1.recurrence_path_proven (n = 145)"),
+        ("Primary endpoint", "semantic_publication.vw_recurrence_safe_VIEW_v1.recurrence_path_proven"),
         ("Secondary endpoint A", "imaging_only_unconfirmed (n = 195)"),
         ("Secondary endpoint B", "Composite path-or-imaging-suspicious (n = 340)"),
-        ("Source objects", "cohort_m044_ajcc_ete_v1; canonical_patient_master; canonical_recurrence_resolved_v1; "
+        ("Source objects", "cohort_m044_ajcc_ete_v1; canonical_patient_master; semantic_publication.vw_recurrence_safe_VIEW_v1; "
                          "ln_master_rollup_v1; cohort_m040_reoperative_v1; path_synoptics"),
         ("Aggregation rule", "ln_master_rollup_v1 and cohort_m040_reoperative_v1 are pre-aggregated MAX(...) per research_id."),
         ("Strict-DTC denominator", "n = 3,787 patients. Excludes MTC, anaplastic, NIFTP, FTUMP, follicular adenoma, NUT, adenoid cystic."),

@@ -95,7 +95,7 @@ rec AS (
             (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE))
             OR recurrence_status_final = 'imaging_only_unconfirmed'
         ) AS composite_primary
-  FROM main.canonical_recurrence_resolved_v1
+  FROM semantic_publication.vw_recurrence_safe_VIEW_v1
 )
 SELECT
   c.research_id,

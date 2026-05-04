@@ -3,7 +3,7 @@
 -- Database: thyroid_canonical_publication_v1_0
 -- Primary cohort: manuscript_workspace.cohort_m044_ajcc_ete_v1
 -- Row count: pin against `scripts/m044_validate_canonical_v1_runner.py` (main_audit.n_rows).
--- Recurrence column-of-record: main.canonical_recurrence_resolved_v1
+-- Recurrence column-of-record: semantic_publication.vw_recurrence_safe_VIEW_v1
 -- LN rollup: manuscript_workspace.ln_master_rollup_v1
 -- Reoperative: manuscript_workspace.cohort_m040_reoperative_v1
 -- Author: Claude (independent verifier), 2026-05-01
@@ -98,7 +98,7 @@ rec AS (
       (recurrence_path_proven IS TRUE AND NOT COALESCE(is_implausible_date_quarantine, FALSE))
       OR recurrence_status_final = 'imaging_only_unconfirmed'
     ) AS composite_primary
-  FROM main.canonical_recurrence_resolved_v1
+  FROM semantic_publication.vw_recurrence_safe_VIEW_v1
 )
 -- ---------------------------------------------------------------------
 -- Master analytic table — one row per research_id
@@ -244,7 +244,7 @@ WITH cohort AS (
       ELSE 'Missing/other'
     END AS ete_group
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
 )
 SELECT ete_group,
   COUNT(*)                                                                          AS n,
@@ -321,7 +321,7 @@ SELECT
   r.days_to_path_proven, r.days_to_imaging_suspicious
 FROM cohort c
 LEFT JOIN ln  USING (research_id)
-LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id);
+LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id);
 
 
 -- ---------------------------------------------------------------------
@@ -334,7 +334,7 @@ WITH cohort AS (
          r.recurrence_imaging_then_path_confirmed,
          r.recurrence_status_final, r.days_to_path_proven, r.days_to_imaging_suspicious
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
   WHERE c.ete_grade_final IN ('false','absent')
 ),
 ln AS (
@@ -386,7 +386,7 @@ WITH cohort AS (
       ELSE 'Missing/other'
     END AS ete_group
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
   WHERE c.followup_years > 0
 )
 SELECT ete_group, COUNT(*) AS n_pos_fu,
@@ -416,7 +416,7 @@ WITH cohort AS (
     ((r.recurrence_path_proven IS TRUE AND NOT COALESCE(r.is_implausible_date_quarantine, FALSE)) OR r.recurrence_status_final = 'imaging_only_unconfirmed') AS composite_primary,
     r.recurrence_status_final, c.followup_years
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
 )
 SELECT lym_cat, vas_cat, COUNT(*) AS n,
   SUM(CASE WHEN path_proven_primary THEN 1 ELSE 0 END) AS pp_n,
@@ -440,7 +440,7 @@ WITH cohort AS (
       ELSE 'Missing/other'
     END AS ete_group
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
   WHERE c.surg_first_date BETWEEN DATE '1999-01-01' AND DATE '2024-12-31'
 )
 SELECT ete_group, COUNT(*) AS n,
@@ -480,7 +480,7 @@ WITH cohort AS (
       ELSE 'Other'
     END AS ete_group
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
 )
 SELECT ete_group,
   CASE WHEN tumor_size_cm <= 1 THEN '<=1 cm'
@@ -511,7 +511,7 @@ WITH cohort AS (
       ELSE 'Missing/other'
     END AS ete_group
   FROM manuscript_workspace.cohort_m044_ajcc_ete_v1 c
-  LEFT JOIN main.canonical_recurrence_resolved_v1 r USING (research_id)
+  LEFT JOIN semantic_publication.vw_recurrence_safe_VIEW_v1 r USING (research_id)
   LEFT JOIN (
     SELECT research_id, MAX(n_surgeries) AS n_surgeries,
            MAX(days_between_first_second_surgery) AS days_to_2nd,

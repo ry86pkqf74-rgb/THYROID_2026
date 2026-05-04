@@ -1,0 +1,15 @@
+[start] mig_284 apply 2026-05-04T04:14:01.141035+00:00
+[step] create SSOT compatibility views (semantic_publication)
+[step] archive legacy tables pre-drop
+[step] drop legacy tables
+[step] recreate compatibility objects at legacy names (as views)
+[verify] legacy table objects remaining in information_schema.tables = 5
+[verify] legacy compatibility views in information_schema.views = 3
+[verify] canonical_recurrence_events_v1 = 1946
+[verify] canonical_recurrence_patient_rollup_v1 = 10871
+[verify] compatibility main.canonical_recurrence_v1 = 10871
+[verify] compatibility main.canonical_recurrence_resolved_v1 = 10871
+[verify] compatibility main.recurrence_event_clean_v1 = 1946
+[signoff] inserted signoff_migration row
+[done] wrote scripts/output/mig_284_disposition.md
+[end] mig_284 apply complete
