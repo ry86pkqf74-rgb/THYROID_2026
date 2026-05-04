@@ -1,0 +1,73 @@
+mig_287 apply log — 2026-05-04
+
+MIGRATION: mig_287 — Smoking taxonomy normalization (mig_281 follow-up)
+CLOSES: CF-mig281-SMOKING-TAXONOMY-DIRTY
+ACTOR: cursor_composer_mig287
+DB: thyroid_canonical_publication_v1_0.main
+
+§1 PRE-TASK PROBE
+-----------------
+CPM pmhx_nlp_smoking_status pre-update distribution:
+  ('never', 2298)
+  ('former', 502)
+  ('current', 212)
+  ('never smoker', 4)
+  ('tobacco smoking', 1)
+  ('History of tobacco smoking. Now 3 cigarettes.', 1)
+  ('current smoker', 1)
+  ('nonsmoker', 1)
+  ('quit smoking', 1)
+  ('former smoker', 1)
+
+canonical_pmh_events_v1 smoking pre-update:
+  ('smoking_never', 'smoking_never', 16)
+  ('smoking_status', None, 8)
+  ('smoking_former', 'smoking_former', 5)
+  ('smoking_current', 'smoking_current', 1)
+
+§2a PRE-SNAPSHOT ARCHIVES
+--------------------------
+  "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_smoking_pre_mig287_20260504: 10871 rows
+  "Thyroid 2026 UPdated".archive_pub_v1_0.pmh_events_smoking_pre_mig287_20260504: 30 rows
+
+§2b UPDATE CPM
+--------------
+  Applied CASE mapping:
+    current/current_smoker/current smoker → 'current'
+    former/former_smoker/former smoker/quit smoking/... → 'former'
+    never/never_smoker/never smoker/non-smoker/nonsmoker → 'never'
+    unknown_or_not_mentioned/unknown/not mentioned/nan → NULL
+    tobacco smoking → 'current' (present-tense, no history qualifier)
+    'History of tobacco smoking. Now 3 cigarettes.' → 'current' (says "Now")
+  cpm_built_at stamped for all non-NULL rows
+
+§2c UPDATE canonical_pmh_events_v1
+------------------------------------
+  smoking_never: 16 rows — unchanged (already normalized)
+  smoking_former: 5 rows — unchanged (already normalized)
+  smoking_current: 1 row — unchanged (already normalized)
+  smoking_status (8 rows, finding_value=None) → smoking_status_unresolved
+
+§2d VERIFICATION — FINAL
+-------------------------
+CPM pmhx_nlp_smoking_status post-update:
+  never:   2303 (+5 from 'never smoker' normalization)
+  former:   504 (+2 from 'former smoker' + 'quit smoking')
+  current:  215 (+3 from 'current smoker' + 'tobacco smoking' + free-text)
+  CLEAN: only {current, former, never} — 0 unrecognized values remain
+  Total known: 3022 / 10871 (27.8%)
+
+canonical_pmh_events_v1 post-update:
+  smoking_never: 16
+  smoking_status_unresolved: 8  (genuine free-text without clear direction)
+  smoking_former: 5
+  smoking_current: 1
+
+§2e REGISTRY SIGNOFF
+---------------------
+  main.signoff_migration: mig_287 row inserted
+  manuscript_workspace.cpm_reconciliation_provenance_v1: row inserted
+    run_id: mig_287_smoking_taxonomy_norm_20260504
+    critical_findings_cleared: CF-mig281-SMOKING-TAXONOMY-DIRTY
+
+STATUS: COMPLETE ✅
