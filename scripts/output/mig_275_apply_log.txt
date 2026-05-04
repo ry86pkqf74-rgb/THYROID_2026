@@ -1,2 +1,21 @@
-mig_275 started utc 2026-05-04T02:27:32Z
-SKIP: signoff_migration already has mig_275 (rows=1)
+mig_275 started utc 2026-05-04T02:27:23Z
+--- Discovery: operative_events complexity-ish columns ---
+  ebl_ml: DOUBLE
+  ebl_ml_nlp: DOUBLE
+  op_detail_ebl_n: INTEGER
+Probe NSQIP: n with operative_duration_min=1,261; n with any LOS field=1,800
+ALTER TABLE ADD COLUMN cpm_op_time_min DOUBLE
+ALTER TABLE ADD COLUMN cpm_ebl_ml DOUBLE
+ALTER TABLE ADD COLUMN cpm_los_days DOUBLE
+ALTER TABLE ADD COLUMN cpm_op_time_min_source VARCHAR
+ALTER TABLE ADD COLUMN cpm_ebl_ml_source VARCHAR
+ALTER TABLE ADD COLUMN cpm_los_days_source VARCHAR
+CREATE OR REPLACE TABLE "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_pre_mig275_20260503 (archive snapshot)
+Archive rows: 10871
+UPDATE canonical_patient_master (complexity columns)
+Post-fill: cpm_op_time_min=1,261; cpm_ebl_ml=1,731; cpm_los_days=1,800
+Stamp cpm_built_at where any complexity metric non-null
+INSERT cpm_reconciliation_provenance_v1 mig_275 OK
+INSERT signoff_migration mig_275 OK
+--- REFRESH main.cohort_m038_massive_goiter_v1 (273 DDL; adds mig_275 cols) ---
+VERIFY cohort_m038 view rows=10871 (expect 10871)
