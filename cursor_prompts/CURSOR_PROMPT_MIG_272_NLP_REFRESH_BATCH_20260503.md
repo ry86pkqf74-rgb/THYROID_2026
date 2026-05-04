@@ -1,4 +1,6 @@
-# Cursor Composer Dispatch — mig_272: NLP refresh batch (vasc invasion + smoking + family hx)
+# [DEPRECATED 2026-05-03] Cursor Composer Dispatch — mig_272: NLP refresh batch (vasc invasion + smoking + family hx)
+
+**STATUS — DO NOT EXECUTE.** Logan-ratified 2026-05-03: this Vast.ai/H200 path is rescinded in favor of Snowflake AI SQL (`AI_CLASSIFY` / `AI_COMPLETE` / `AI_AGG`). The extraction will be orchestrated by Cowork directly on Snowflake during the trial; a follow-on Cursor mig (likely renumbered to mig_282/283/284) will handle the MD canonical promotion only. See `feedback_nlp_refresh_on_snowflake.md` in auto-memory for the full convention. This file is retained for post-trial reference if AI SQL credits become a constraint.
 
 **Generated:** 2026-05-03 by Cowork at HEAD `be75bee`.
 **Lane:** mig_272 — Coordinated re-extraction over `clinical_notes_long` to close 3 documented coverage gaps that block manuscript credibility:
