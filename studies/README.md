@@ -34,3 +34,11 @@ linkage methodology documentation.
 
 Cross-file validation outputs (laterality mismatches, report matching,
 missing demographics) and summary report.
+
+## LN Procedure Investigation (`ln_procedure_investigation_20260504/`)
+
+Investigation and resolution of three operative pipeline gaps:
+completion thyroidectomy (0→931), CND (2,495→2,831), LND (241→476).
+Added LND sidedness (left/right/bilateral/unspecified) and per-level
+LN cross-tabulation. Five resolution tables and four archive snapshots
+created in MotherDuck `manuscript_workspace` and `archive_pub_v1_0`.
