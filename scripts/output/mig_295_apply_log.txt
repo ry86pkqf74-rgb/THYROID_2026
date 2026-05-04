@@ -1,0 +1,99 @@
+mig_295 — M044 .docx v1.0 -> v1.1 patch — apply log
+applied_at_utc: 2026-05-04T05:37:59.948797Z
+recipe: scripts/mig_295_apply_docx_patches.py (inline)
+
+=== per-file replacement log ===
+{
+  "file": "M044_submission_package_v1_0/02_manuscript.docx",
+  "replacements": [
+    {
+      "old": "4,128/4,128",
+      "new": "4,012/4,012",
+      "paragraphs_changed": 0,
+      "runs_changed": 0
+    },
+    {
+      "old": "(n = 3,789)",
+      "new": "(n = 3,750)",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    },
+    {
+      "old": "(n = 3,756; events = 139)",
+      "new": "(n = 3,750; events = 193)",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    },
+    {
+      "old": "Cox subset n = 2,025.",
+      "new": "Cox subset n = 2,511 (events = 178).",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    },
+    {
+      "old": "4,128",
+      "new": "4,012",
+      "paragraphs_changed": 9,
+      "runs_changed": 9
+    }
+  ],
+  "paragraph_inserted": true,
+  "paragraph_inserted_after_index": 83,
+  "paragraph_inserted_anchor_text80": "The original full-cohort logistic specification—including both RAI receipt and a"
+}
+{
+  "file": "M044_submission_package_v1_0/03_supplement.docx",
+  "replacements": [
+    {
+      "old": "4,128/4,128",
+      "new": "4,012/4,012",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    },
+    {
+      "old": "(n = 3,789)",
+      "new": "(n = 3,750)",
+      "paragraphs_changed": 0,
+      "runs_changed": 0
+    },
+    {
+      "old": "(n = 3,756; events = 139)",
+      "new": "(n = 3,750; events = 193)",
+      "paragraphs_changed": 0,
+      "runs_changed": 0
+    },
+    {
+      "old": "Cox subset n = 2,025.",
+      "new": "Cox subset n = 2,511 (events = 178).",
+      "paragraphs_changed": 0,
+      "runs_changed": 0
+    },
+    {
+      "old": "4,128",
+      "new": "4,012",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    }
+  ],
+  "paragraph_inserted": false
+}
+
+=== post-apply residual scan ===
+RESIDUAL HITS:
+  M044_submission_package_v1_0/02_manuscript.docx              | 3,756              | count=1
+
+=== follow-up pass: standalone (n = 3,756) ===
+{
+  "file": "M044_submission_package_v1_0/02_manuscript.docx",
+  "replacements": [
+    {
+      "old": "(n = 3,756)",
+      "new": "(n = 3,750)",
+      "paragraphs_changed": 1,
+      "runs_changed": 1
+    }
+  ]
+}
+
+=== final residual scan ===
+clean — no v1.0 numerical tokens remain in either .docx body
