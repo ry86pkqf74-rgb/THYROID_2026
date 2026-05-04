@@ -1,0 +1,16 @@
+mig_269 — MotherDuck apply 20260503 (thyroid_canonical_publication_v1_0)
+
+Pre-apply KPIs:
+- drift rows simulated (flags + first_recurrence_date): 1265
+- recurrence_event_clean_v1 rows: 1946 pts: 1946
+- canonical_recurrence recurrence_confirmed TRUE: 514
+- CPM pre: any_recurrence_flag TRUE: 560, recurrence_confirmed TRUE: 514
+
+Post-apply:
+- canonical_recurrence_events_v1: 1946 rows, 1946 distinct research_id
+- canonical_recurrence_patient_rollup_v1: 10871 rows, 10871 distinct research_id
+- CPM vs canonical alignment (any/confirmed/first_recurrence_date): 0 mismatches all three checks
+- CPM post: flagged_confirmed=514, flagged_any=514, with_date=1268, with_ttr=1247
+
+Archived (Thyroid 2026 UPdated.archive_pub_v1_0.*_pre_mig269_20260503):
+- canonical_recurrence_v1, canonical_recurrence_resolved_v1, recurrence_event_clean_v1, cpm_recurrence_cols subset
