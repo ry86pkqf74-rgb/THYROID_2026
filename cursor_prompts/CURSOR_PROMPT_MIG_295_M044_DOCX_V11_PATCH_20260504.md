@@ -98,4 +98,11 @@ cursor_prompts/CURSOR_PROMPT_MIG_295_M044_DOCX_V11_PATCH_20260504.md
 
 ---
 
+## Completion (Cursor Composer, 2026-05-04)
+
+- Added `scripts/mig_295_apply_docx_patches.py` (idempotent `--apply`; patches comma and **unformatted** `4128` denominators; inserts median follow-up **3.2 years** in the Cox sensitivity Discussion sentence from the lifelines Cox frame on `analytic_file_v1.parquet`).
+- `02_manuscript.docx`: post-scan clean for v1.0 headline tokens in paragraphs **and** tables.
+- `03_supplement.docx`: body text had no v1.0 tokens; left at **HEAD** to avoid zip metadata-only commits.
+- MotherDuck: run `qc_framework_v1/migrations/295_m044_docx_v11_patch_20260504.sql` when signing off (`WHERE NOT EXISTS` on `mig_295`).
+
 **End of mig_295 dispatch.**

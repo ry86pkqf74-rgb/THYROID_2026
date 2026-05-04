@@ -23,8 +23,8 @@
 -- sensitivity per CF-M044-COX-HR-FLIPPED Logan Option A disposition.
 --
 -- Files patched (Surgical git add):
---   M044_submission_package_v1_0/02_manuscript.docx      (paragraphs 166 -> 167)
---   M044_submission_package_v1_0/03_supplement.docx      (paragraph count unchanged)
+--   M044_submission_package_v1_0/02_manuscript.docx
+--   03_supplement.docx — verified no v1.0 tokens remain (revert if editor re-saved zip metadata only)
 --
 -- Per-cell diff (see scripts/output/mig_295_diff_table.md for the full table):
 --   * Total cohort denominator             4,128 -> 4,012   (manuscript x9, supplement x1)
@@ -46,8 +46,10 @@
 --   * RAI-retained sensitivity OR 1.59 (95% CI 1.12-2.26; p=0.009911)
 --
 -- Post-apply residual scan (scripts/output/mig_295_apply_log.txt):
---   none of {4,128 / 1.80 / 2.34 / 3,789 / 3,756 / 2,025 / 139 events}
---   remain in either .docx body.
+--   none of {4,128 / 4128 / 1.80 / 2.34 / 3,789 / 3,756 / 2,025 / 139 events}
+--   remain in either .docx (paragraphs + tables).
+--   2026-05-04 follow-on: unformatted 4128 denominators required a second replace pass
+--   ((n=4128) / 4128/4128 / n=0/4128) — see scripts/mig_295_apply_docx_patches.py.
 --
 -- Known prose residuals (NOT in mig_295 scope; routed to writing chat per
 -- M044_READY_FOR_WRITING_BRIEF_v1_1.md):
@@ -63,24 +65,23 @@
 --     mig_295 scope.
 -- ----------------------------------------------------------------------------
 
+USE thyroid_canonical_publication_v1_0;
+
 INSERT INTO main.signoff_migration (mig_id, signed_off_at, by_actor, summary)
-VALUES (
+SELECT
     'mig_295',
     CURRENT_TIMESTAMP,
     'cursor_composer_mig295',
-    'mig_295: Patched M044_submission_package_v1_0/02_manuscript.docx and 03_supplement.docx from v1.0 to v1.1 numbers. '
-    || 'Manuscript: 5 unique find/replace patterns applied across 13 paragraph hits '
-    || '(cohort denominator 4,128->4,012 x9 paragraphs; Figure 1 strict-DTC 3,789->3,750; '
-    || 'Figure 1 3-level 3,756->3,750; Figure 1 Cox subset 2,025->2,511 with events=178 added; '
-    || 'Figure 5 logistic n/events 3,756/139->3,750/193). Supplement: 2 patches '
-    || '(4,128->4,012 in cohort definition; 4,128/4,128->4,012/4,012 in S3.2 '
-    || 'surgery-date sensitivity). Discussion paragraph inserted after existing Cox-narrative '
-    || 'paragraph (index 84) documenting CF-M044-COX-HR-FLIPPED Logan Option A spec-sensitivity '
-    || '(HR 0.91 vs aOR 2.08, n=2,511/178 events vs n=3,750/193 events). Logistic + Cox numbers '
-    || 'in Multivariable section were already at v1.1 (no edits). Post-apply residual scan clean: '
-    || 'none of {4,128 / 1.80 / 2.34 / 3,789 / 3,756 / 2,025 / 139 events} remain. '
-    || 'Per-ETE-group counts/percentages in body prose remain v1.0-derivative and are routed '
-    || 'to the writing chat per M044_READY_FOR_WRITING_BRIEF_v1_1.md. '
-    || 'Apply log: scripts/output/mig_295_apply_log.txt; diff table: scripts/output/mig_295_diff_table.md. '
+    'mig_295: Patched M044_submission_package_v1_0/02_manuscript.docx (and verified 03_supplement.docx) '
+    || 'from v1.0 to v1.1 headline numbers. Follow-on pass closed residual unformatted denominators '
+    || '(n=4128 -> n=4,012; 4128/4128 -> 4,012/4,012; n=0/4128 -> n=0/4,012) missed when only '
+    || '"4,128" (with comma) was replaced. Discussion sensitivity paragraph updated with '
+    || 'median follow-up 3.2 years (Cox-eligible subset; from analytic parquet via build_cox_analytic_frame). '
+    || 'Repro: scripts/mig_295_apply_docx_patches.py --apply. '
+    || 'Apply log: scripts/output/mig_295_apply_log.txt; diff: scripts/output/mig_295_diff_table.md. '
     || 'Closes CF-M044-DOCX-V11-PATCH.'
-);
+WHERE NOT EXISTS (SELECT 1 FROM main.signoff_migration WHERE mig_id = 'mig_295');
+
+SELECT mig_id, signed_off_at, by_actor, substring(summary, 1, 140) AS summary_head
+FROM main.signoff_migration
+WHERE mig_id = 'mig_295';
