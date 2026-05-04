@@ -11,6 +11,7 @@ Reproducible build of the four "M038_GOITER_*" deliverables per the new-chat dat
 | `M038_GOITER_analysis_workbook.xlsx` | 21 KB | 9 tabs: Cohort Overview, T1-T5, NSQIP Comp, Component Subgroup, Exploratory |
 | `M038_GOITER_tables_figures.xlsx` | 21 KB | T1-T5 + Fig 1-4 underlying data + Supp S1-S6 |
 | `M038_GOITER_eMethods.docx` | 42 KB | 8-section statistical methods, US Letter / Arial 11pt |
+| `M038_GOITER_size_symptoms_by_demographics.xlsx` | 58 KB | Additive view (D5): thyroid size & weight + goiter symptoms × demographics |
 
 ## Pipeline
 
@@ -22,6 +23,7 @@ python3 03_build_d2_analysis_workbook.py
 python3 04_build_d3_tables_figures.py
 python3 05_build_d4_emethods.py
 python3 06_verify.py                  # reconciles to validation report
+python3 07_build_d5_size_symptoms_by_demo.py   # additive: size+wt + symptoms × demographics
 ```
 
 `_stats.py` provides chi2/Fisher, Mann-Whitney, t-test, RR + 95% CI helpers.
