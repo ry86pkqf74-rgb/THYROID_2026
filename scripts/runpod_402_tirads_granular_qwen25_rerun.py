@@ -10,12 +10,12 @@ Prompt: llm_extraction/prompts/tirads_granular_extraction_v2.txt (v2 — already
 iterated past v1 per the preflight audit; this script loads the new extractor
 output without changing the prompt version).
 
-CPM columns rebuilt (nlp_tirads_* — 5 cols):
+CPM columns rebuilt (nlp_tirads_* — 4 cols + tirads_resolved merge for NLP TR1–TR5):
     nlp_tirads_has_data
     nlp_tirads_n_entities
     nlp_tirads_n_notes
-    nlp_tirads_max_category
     nlp_tirads_has_component_detail
+    tirads_resolved (COALESCE(nlp_clean_tr, existing) — legacy nlp_tirads_max_category dropped mig_294b)
 
 NOTE: The Job 2 (TIRADS requeue) pathway in runpod_403 is NOT a subset of
 this job. Job 2 re-runs the v2 prompt over a nodule-level queue
@@ -66,8 +66,8 @@ CPM_COLS = (
     "nlp_tirads_has_data",
     "nlp_tirads_n_entities",
     "nlp_tirads_n_notes",
-    "nlp_tirads_max_category",
     "nlp_tirads_has_component_detail",
+    "tirads_resolved",
 )
 
 ROLLUP_BASE_CTE = f"""
@@ -111,7 +111,7 @@ agg AS (
             WHEN entity_value ILIKE '%TR2%' OR entity_value ILIKE '%TIRADS 2%' THEN 'TR2'
             WHEN entity_value ILIKE '%TR1%' OR entity_value ILIKE '%TIRADS 1%' THEN 'TR1'
             ELSE NULL
-        END)                                                             AS nlp_tirads_max_category,
+        END)                                                             AS nlp_tirads_clean_tr,
         BOOL_OR(entity_type ILIKE '%compos%' OR entity_type ILIKE '%echogen%'
                 OR entity_type ILIKE '%calcif%' OR entity_type ILIKE '%shape%'
                 OR entity_type ILIKE '%margin%')                          AS nlp_tirads_has_component_detail
@@ -142,7 +142,6 @@ def phase5_rollup(con) -> dict:
            SET nlp_tirads_has_data             = FALSE,
                nlp_tirads_n_entities           = 0,
                nlp_tirads_n_notes              = 0,
-               nlp_tirads_max_category         = NULL,
                nlp_tirads_has_component_detail = FALSE;
         """
     )
@@ -153,8 +152,8 @@ def phase5_rollup(con) -> dict:
            SET nlp_tirads_has_data             = a.nlp_tirads_has_data,
                nlp_tirads_n_entities           = a.nlp_tirads_n_entities,
                nlp_tirads_n_notes              = a.nlp_tirads_n_notes,
-               nlp_tirads_max_category         = a.nlp_tirads_max_category,
-               nlp_tirads_has_component_detail = a.nlp_tirads_has_component_detail
+               nlp_tirads_has_component_detail = a.nlp_tirads_has_component_detail,
+               tirads_resolved                 = COALESCE(a.nlp_tirads_clean_tr, c.tirads_resolved)
           FROM agg AS a
          WHERE CAST(c.research_id AS VARCHAR) = a.rid_v;
         """
@@ -163,12 +162,12 @@ def phase5_rollup(con) -> dict:
         """
         SELECT COUNT(*),
                COUNT(*) FILTER (WHERE nlp_tirads_has_data),
-               COUNT(DISTINCT nlp_tirads_max_category)
+               COUNT(DISTINCT tirads_resolved)
           FROM main.canonical_patient_master;
         """
     ).fetchone()
     out = {"cpm_rows": int(stats[0]), "has_data_true": int(stats[1]),
-           "max_category_distinct": int(stats[2])}
+           "tirads_resolved_distinct": int(stats[2])}
     log(f"  rollup: {out}")
     return out
 
