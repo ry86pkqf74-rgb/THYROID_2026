@@ -1,0 +1,18 @@
+mig_298 start @ 2026-05-04T06:13:32.978050+00:00
+SF rollups: hashimoto pts=265 (present=183); graves pts=2,488 (present=1,386)
+materialized thyroid_canonical_publication_v1_0.manuscript_workspace.m004_nlp_autoimmune_rollup_v1: rows=2,617 (nlp_hashi+=183, nlp_graves+=1,386)
+built thyroid_canonical_publication_v1_0.manuscript_workspace.cohort_m004_autoimmune_cancer_v1: rows=10,871
+autoimmune_category breakdown (Option 2 NLP+syn combined):
+| autoimmune_category | n | n_malig | pct_malig |
+|---|---:|---:|---:|
+| both | 52 | 21 | 40.4% |
+| graves_only | 1,604 | 554 | 34.5% |
+| hashimoto_only | 348 | 153 | 44.0% |
+| neither | 8,867 | 3,291 | 37.1% |
+verify both: n=52 target~52 drift=0.0% tol=30% [OK]
+verify hashimoto_only: n=348 target~296 drift=17.6% tol=15% [WARN]
+verify graves_only: n=1604 target~1552 drift=3.4% tol=10% [OK]
+verify neither: n=8867 target~8971 drift=1.2% tol=5% [OK]
+verify totals: hashimoto=400 graves=1656
+mig_298: Built manuscript_workspace.cohort_m004_autoimmune_cancer_v1 (Option 2 NLP-augmented). Materialized manuscript_workspace.m004_nlp_autoimmune_rollup_v1 (2,617 pts; nlp_hashi+=183, nlp_graves+=1,386) from SF NLP_HASHIMOTO_FULL_RESULTS_v1 + NLP_GRAVES_FULL_RESULTS_v1. View row count=10,871 (= CPM invariant 10,871). autoimmune_category breakdown — both=52, hashimoto_only=348, graves_only=1604, neither=8867. Combined exposures: has_hashi=400, has_graves=1,656. Smoking + family-hx covariates included from mig_281. Aligns with M004 ready-for-writing brief (NLP-augmented Option 2 path).
+mig_298 complete @ 2026-05-04T06:13:35.830452+00:00
