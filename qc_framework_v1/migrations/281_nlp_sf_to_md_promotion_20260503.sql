@@ -33,3 +33,15 @@
 -- Verification:
 --   scripts/output/mig_281_coverage_uplift_report.csv
 --   scripts/output/mig_281_apply_log.txt
+--
+-- Observed coverage uplift:
+--   smoking: 20 -> 3,022
+--   family_hx_thyroid: 290 -> 3,018
+--   vascular_invasion_final: 1,172 -> 1,220
+--
+-- Carry-forward:
+--   CF-mig281-VASC-PILOT-YIELD-LOW remains OPEN. Vascular results were
+--   promoted and preserved as model-tagged canonical NLP rows, but CPM fill
+--   only increased by 48 because existing CAP-derived values were preserved
+--   and only positive/focal/extensive NULL vascular_invasion_final rows were
+--   backfilled.
