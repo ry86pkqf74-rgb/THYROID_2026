@@ -1,0 +1,29 @@
+[03:56:55Z] mig_281 starting
+[03:56:55Z] Snowflake NLP result table inventory rows=6
+[03:56:55Z] Snowflake pull NLP_SMOKING_FULL_RESULTS_v1: rows=3541
+[03:56:55Z] gate OK: NLP_SMOKING_FULL_RESULTS_v1 rows >= 3541
+[03:56:56Z] Snowflake pull NLP_FAMILY_HX_THYROID_FULL_RESULTS_v1: rows=3534
+[03:56:56Z] gate OK: NLP_FAMILY_HX_THYROID_FULL_RESULTS_v1 rows >= 3534
+[03:56:56Z] Snowflake pull NLP_VASC_INVASION_FULL_RESULTS_v1: rows=806
+[03:56:56Z] gate OK: NLP_VASC_INVASION_FULL_RESULTS_v1 rows >= 806
+[03:56:56Z] staged PMH rows=7075 to /Users/ros/THyroid 2026/scripts/output/mig_281_sf_stage/mig_281_pmhx.parquet
+[03:56:56Z] staged vascular rows=806 to /Users/ros/THyroid 2026/scripts/output/mig_281_sf_stage/mig_281_vascular.parquet
+[03:56:57Z] Connected MotherDuck publication DB (token_mode=motherduck.local.toml:MD_SA_TOKEN)
+[03:56:59Z] created archive: note_entities_llm_past_medical_hx_pre_mig281_20260503
+[03:57:00Z] created archive: note_entities_llm_vascular_invasion_v2_pre_mig281_20260503
+[03:57:00Z] created archive: cpm_nlp_cols_pre_mig281_20260503
+[03:57:00Z] removed prior mig_281 rows by llm_model tag (idempotence)
+[03:57:01Z] inserted staged rows into MD NLP canonical tables
+[03:57:01Z] rebuilt CPM NLP rollup columns
+[03:57:01Z] coverage report written: /Users/ros/THyroid 2026/scripts/output/mig_281_coverage_uplift_report.csv
+[03:57:01Z] gate OK: CPM row count remains 10,871
+[03:57:01Z] gate OK: CPM distinct research_id remains 10,871
+[03:57:01Z] gate OK: CPM cpm_built_at has no NULLs
+[03:57:01Z] gate OK: PMH appended row count is 7,075
+[03:57:01Z] gate OK: vascular appended row count is 806
+[03:57:02Z] inserted signoff_migration row for mig_281
+[03:57:02Z] coverage uplift:
+[03:57:02Z]   smoking: 20 -> 3022
+[03:57:02Z]   family_hx_thyroid: 290 -> 3018
+[03:57:02Z]   vasc_invasion: 1172 -> 1220
+[03:57:02Z] mig_281 complete

@@ -1,0 +1,35 @@
+-- mig_281: Snowflake AI_CLASSIFY NLP promotion to MotherDuck canonicals
+-- Date: 2026-05-03
+-- Canonical DB: thyroid_canonical_publication_v1_0
+--
+-- Executed by scripts/mig_281_nlp_promotion.py.
+--
+-- Source Snowflake tables:
+--   THYROID_VALIDATION.PUBLIC.NLP_SMOKING_FULL_RESULTS_v1
+--   THYROID_VALIDATION.PUBLIC.NLP_FAMILY_HX_THYROID_FULL_RESULTS_v1
+--   THYROID_VALIDATION.PUBLIC.NLP_VASC_INVASION_FULL_RESULTS_v1
+--
+-- Target MotherDuck tables:
+--   main.note_entities_llm_past_medical_hx
+--   main.note_entities_llm_vascular_invasion_v2
+--   main.canonical_patient_master
+--
+-- Archive snapshots:
+--   "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_past_medical_hx_pre_mig281_20260503
+--   "Thyroid 2026 UPdated".archive_pub_v1_0.note_entities_llm_vascular_invasion_v2_pre_mig281_20260503
+--   "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_nlp_cols_pre_mig281_20260503
+--
+-- Idempotence:
+--   Prior rows with llm_model='AI_CLASSIFY_snowflake_cortex_20260503'
+--   are deleted before append; archive snapshots are create-if-absent.
+--
+-- Rollup rules:
+--   Smoking: current > former > never; unknown labels ignored.
+--   Family history thyroid cancer: present > absent; unknown labels ignored.
+--   Vascular invasion: update only canonical_patient_master rows where
+--   vascular_invasion_final is NULL and the SF result is present/focal/extensive,
+--   preserving existing CAP-derived values.
+--
+-- Verification:
+--   scripts/output/mig_281_coverage_uplift_report.csv
+--   scripts/output/mig_281_apply_log.txt
