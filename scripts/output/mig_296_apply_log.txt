@@ -1,0 +1,54 @@
+mig_296 apply start (MotherDuck thyroid_canonical_publication_v1_0)
+
+--- CTAS 1/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_recurrence_events_v1_baseline_20260504 AS
+SELECT * FROM main.canonical_recurrence_events_v1
+EXECUTE OK
+
+--- CTAS 2/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.canonical_recurrence_patient_rollup_v1_baseline_20260504 AS
+SELECT * FROM main.canonical_recurrence_patient_rollup_v1
+EXECUTE OK
+
+--- CTAS 3/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.cohort_m032_descriptive_25yr_v1_baseline_20260504 AS
+SELECT * FROM manuscript_workspace.cohort_m032_descriptive_25yr_v1
+EXECUTE OK
+
+--- CTAS 4/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.cohort_m037_ln_metastasis_v1_baseline_20260504 AS
+SELECT * FROM manuscript_workspace.cohort_m037_ln_metastasis_v1
+EXECUTE OK
+
+--- CTAS 5/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_tirads_resolved_baseline_20260504 AS
+SELECT research_id, tirads_resolved, nlp_tirads_max_category
+FROM main.canonical_patient_master
+EXECUTE OK
+
+--- CTAS 6/6 ---
+CREATE TABLE IF NOT EXISTS "Thyroid 2026 UPdated".archive_pub_v1_0.cpm_smoking_clean_baseline_20260504 AS
+SELECT research_id, pmhx_nlp_smoking_status, nsqip_smoker
+FROM main.canonical_patient_master
+EXECUTE OK
+
+--- VERIFICATION ---
+  canonical_recurrence_events_v1_baseline_20260504: archive=1946 source=1946 -> MATCH
+  canonical_recurrence_patient_rollup_v1_baseline_20260504: archive=10871 source=10871 -> MATCH
+  cohort_m032_descriptive_25yr_v1_baseline_20260504: archive=10871 source=10871 -> MATCH
+  cohort_m037_ln_metastasis_v1_baseline_20260504: archive=2234 source=2234 -> MATCH
+  cpm_smoking_clean_baseline_20260504: archive=10871 source=10871 -> MATCH
+  cpm_tirads_resolved_baseline_20260504: archive=10871 source=10871 -> MATCH
+
+--- SIGNOFF INSERT ---
+INSERT OK
+
+--- information_schema baseline tables ---
+  Thyroid 2026 UPdated.canonical_recurrence_events_v1_baseline_20260504
+  Thyroid 2026 UPdated.canonical_recurrence_patient_rollup_v1_baseline_20260504
+  Thyroid 2026 UPdated.cohort_m032_descriptive_25yr_v1_baseline_20260504
+  Thyroid 2026 UPdated.cohort_m037_ln_metastasis_v1_baseline_20260504
+  Thyroid 2026 UPdated.cpm_smoking_clean_baseline_20260504
+  Thyroid 2026 UPdated.cpm_tirads_resolved_baseline_20260504
+
+mig_296 apply COMPLETE.
