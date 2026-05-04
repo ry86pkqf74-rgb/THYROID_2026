@@ -1,0 +1,5 @@
+step,criterion,n_remaining,excluded_at_step
+1,All publication-eligible patients,10871,0
+2,Final M038 cohort (full PUB; weight-known subset analytic),10871,0
+3,Weight known (gland_weight_final_g IS NOT NULL),9130,1741
+4,Massive (≥200g),475,8655

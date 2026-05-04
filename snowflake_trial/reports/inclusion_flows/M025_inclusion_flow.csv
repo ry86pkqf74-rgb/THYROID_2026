@@ -1,0 +1,5 @@
+step,criterion,n_remaining,excluded_at_step
+1,All publication-eligible patients,10871,0
+2,Has any US exam,4082,6789
+3,Has TIRADS-categorized exam (post-mig_288),3382,700
+4,Final M025 cohort,3375,7

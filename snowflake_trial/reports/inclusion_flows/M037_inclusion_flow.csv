@@ -1,0 +1,5 @@
+step,criterion,n_remaining,excluded_at_step
+1,All publication-eligible patients,10871,0
+2,Malignant histology,4019,6852
+3,LN staging assigned (N0/N1a/N1b/Nx),4000,19
+4,Final M037 cohort,2234,1766

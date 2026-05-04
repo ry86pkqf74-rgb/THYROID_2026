@@ -1,0 +1,6 @@
+step,criterion,n_remaining,excluded_at_step
+1,All publication-eligible patients,10871,0
+2,Final M004 cohort (full PUB),10871,0
+3,Hashimoto-positive (NLP+syn combined),400,10471
+4,Graves-positive (NLP+syn combined),1656,-1256
+5,Either autoimmune-positive,2004,-348
