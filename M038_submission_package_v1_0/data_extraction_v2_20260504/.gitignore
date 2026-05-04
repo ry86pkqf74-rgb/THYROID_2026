@@ -1,0 +1,3 @@
+# Local extraction artifact — regenerable via 01_pull_parquet.py (~30s)
+m038_per_patient_v2.parquet
+__pycache__/
