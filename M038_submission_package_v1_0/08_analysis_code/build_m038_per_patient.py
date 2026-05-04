@@ -235,7 +235,7 @@ def build_excel():
     readme = [
         ("Workbook", "M038_per_patient_with_sources.xlsx"),
         ("Manuscript", "M038 v2 — Massive Goiter Composite-Definition Descriptive Cohort"),
-        ("Database", "thyroid_canonical_publication_v1_0 (release pub_v1_0_20260430)"),
+        ("Database", "thyroid_canonical_publication_v1_0 (release pub_v1_1_20260504)"),
         ("Cohort view", "manuscript_workspace.cohort_m038_massive_goiter_v1 (post-mig_255)"),
         ("Rows", f"{len(df):,} (1 row per research_id)"),
         ("Columns", f"{len(df.columns)}"),

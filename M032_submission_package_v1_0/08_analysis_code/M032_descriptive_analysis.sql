@@ -1,6 +1,6 @@
 -- M032 — Twenty-Five Year Single-Institution Descriptive Cohort of Thyroid Surgery
 -- Single SQL package reproducing every numeric cell in the manuscript.
--- Run against MotherDuck `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`).
+-- Run against MotherDuck `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`).
 -- Post-release NLP augment: mig_281 (smoking/family-hx NLP promotion) + mig_285 (cohort_m032 view NLP augment)
 -- Cohort lock commit: 590acb5 (2026-05-04, post-mig_281/285)
 --

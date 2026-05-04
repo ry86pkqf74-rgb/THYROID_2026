@@ -2,7 +2,8 @@
 ## Submission Package v1.0
 
 **Generated:** 2026-05-04 | mig_290 | Cursor Composer  
-**DB:** `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`)  
+**DB:** `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)  
+**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)  
 **Cohort view:** `manuscript_workspace.cohort_m032_descriptive_25yr_v1`  
 **Cohort lock:** mig_281 + mig_285 (post-2026-05-03, commit `590acb5`)  
 **Pattern follows:** M044_submission_package_v1_0 / M038_submission_package_v1_0

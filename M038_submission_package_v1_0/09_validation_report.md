@@ -4,7 +4,7 @@
 **Auditor:** Cowork (Claude)
 **Manuscript audited:** `manuscript_outputs/v1_0_20260501/M038_massive_goiter_DRAFT_v2_post_mig_252_253.md` (post-Cursor v2.1 patches)
 **Cohort view:** `manuscript_workspace.cohort_m038_massive_goiter_v1` (post-mig_255)
-**Database:** `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`)
+**Database:** `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)
 
 ## Summary
 
@@ -49,7 +49,7 @@ Per `memory/feedback_complications_transient_vs_permanent.md` (set 2026-05-01), 
 | Anchor | Value |
 |---|---|
 | Database | `thyroid_canonical_publication_v1_0` (MotherDuck) |
-| Release ID | `pub_v1_0_20260430` |
+| Release ID | `pub_v1_1_20260504` |
 | Most-recent applied migration | `mig_255_cohort_m038_complication_temporality_columns_20260502` |
 | Cohort view | `manuscript_workspace.cohort_m038_massive_goiter_v1` (post-mig_255 passthrough; ~129 cols) |
 | Gate health | gate1=218; gates 2–5=0; cohort_parity=TRUE |

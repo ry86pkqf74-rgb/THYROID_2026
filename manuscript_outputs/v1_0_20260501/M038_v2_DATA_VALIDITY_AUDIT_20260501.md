@@ -2,7 +2,7 @@
 
 **Manuscript audited:** `manuscript_outputs/v1_0_20260501/M038_massive_goiter_DRAFT_v2_post_mig_252_253.md`
 **Cohort view:** `manuscript_workspace.cohort_m038_massive_goiter_v1`
-**Database:** `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`)
+**Database:** `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)
 **Most-recent applied migration:** `mig_253_surg_procedure_type_fill_20260501.sql` (signoff 2026-05-01 06:41:00 UTC)
 **Predecessor migration:** `mig_252` — repaired `comp_*_confirmed` strict rollups (commit `32beb7b`)
 **Cohort view extension:** `mig_251` — extended `cohort_m038_massive_goiter_v1` to ~117 columns (commit `f673f09`)
@@ -21,7 +21,7 @@ cpm_pts                         : 10,871
 us_gland_v2_pts                 : 10,871
 us_ln_v2_pts                    : 10,871
 cohort_parity_ok                : TRUE
-release_id                      : pub_v1_0_20260430
+release_id                      : pub_v1_1_20260504
 most_recent_signoff_migration   : qc_framework_v1/migrations/253_surg_procedure_type_fill_20260501.sql
 most_recent_signoff_ts          : 2026-05-01 06:41:00 UTC
 ```
@@ -459,4 +459,4 @@ The Excel deliverable's `05_Table4_Complications` tab has been updated to reflec
 
 ---
 
-**Audit complete.** Reproducibility anchors: `release_id='pub_v1_0_20260430'`; `signoff_registry` most-recent = `mig_253` (2026-05-01 06:41:00 UTC); cohort view `manuscript_workspace.cohort_m038_massive_goiter_v1` (~117 columns, post-mig_251); standing-rule reference `memory/feedback_complications_transient_vs_permanent.md`. Companion deliverable: `M038_v2_DATA_AND_SOURCES.xlsx` (this directory).
+**Audit complete.** Reproducibility anchors: `release_id='pub_v1_1_20260504'`; `signoff_registry` most-recent = `mig_253` (2026-05-01 06:41:00 UTC); cohort view `manuscript_workspace.cohort_m038_massive_goiter_v1` (~117 columns, post-mig_251); standing-rule reference `memory/feedback_complications_transient_vs_permanent.md`. Companion deliverable: `M038_v2_DATA_AND_SOURCES.xlsx` (this directory).

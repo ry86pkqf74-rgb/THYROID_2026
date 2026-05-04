@@ -4,6 +4,7 @@
 
 **Target journal:** Surgery / Annals of Surgical Oncology / Thyroid (TBD)
 **Style:** AMA references (TBD by journal)
+**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)
 **Cohort:** THYROID_2026 canonical publication v1.0 (n = 10,871 total; 2,501 composite massive)
 
 ## Files
@@ -45,7 +46,7 @@ All numbers reproduce from `thyroid_canonical_publication_v1_0` via:
 - `08_analysis_code/build_m038_figures.py` — Figures build script.
 - `08_analysis_code/build_m038_per_patient.py` — Per-patient Excel build script (parked).
 
-Database release: `pub_v1_0_20260430`. Most-recent applied migration: `mig_255_cohort_m038_complication_temporality_columns_20260502`. Standing-rule reference: `memory/feedback_complications_transient_vs_permanent.md`.
+Database release: `pub_v1_1_20260504`. Most-recent applied migration: `mig_255_cohort_m038_complication_temporality_columns_20260502`. Standing-rule reference: `memory/feedback_complications_transient_vs_permanent.md`.
 
 ---
 

@@ -30,7 +30,7 @@ python3 07_build_d5_size_symptoms_by_demo.py   # additive: size+wt + symptoms ×
 
 ## Source of truth
 
-* Database: `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`)
+* Database: `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)
 * Cohort view: `manuscript_workspace.cohort_m038_massive_goiter_v1` (post-mig_255, 129 cols)
 * Auth: MotherDuck `MD_SA_TOKEN` from `/Users/ros/THyroid 2026/motherduck.local.toml` (.eras account)
 * Standing rule: `memory/feedback_complications_transient_vs_permanent.md` (hypopara transient<6mo / permanent>6mo; hypocalcemia preexisting)

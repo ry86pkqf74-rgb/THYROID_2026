@@ -71,7 +71,7 @@ cover = [
     ("Target journal", "Surgery / Annals of Surgical Oncology / Thyroid (TBD)"),
     ("",""),
     ("Database", "thyroid_canonical_publication_v1_0 (MotherDuck)"),
-    ("Release ID", "pub_v1_0_20260430"),
+    ("Release ID", "pub_v1_1_20260504"),
     ("Cohort view", "manuscript_workspace.cohort_m038_massive_goiter_v1"),
     ("Most-recent migration", "mig_255 (cohort_m038 complication temporality columns) — applied 2026-05-02"),
     ("Upstream fixes", "mig_252 (strict comp_*_confirmed rollup) + mig_253 (surg_procedure_type fill) + mig_254 (surg_first_date backfill) + mig_255 (temporality columns)"),

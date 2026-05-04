@@ -153,7 +153,7 @@ def main():
         ("Manuscript ID", "M038"),
         ("Title", "Massive Goiter at a Tertiary Referral Center: A Composite-Definition Descriptive Cohort"),
         ("Date assembled", date.today().isoformat()),
-        ("Database", "thyroid_canonical_publication_v1_0 (release pub_v1_0_20260430)"),
+        ("Database", "thyroid_canonical_publication_v1_0 (release pub_v1_1_20260504)"),
         ("Cohort view", "manuscript_workspace.cohort_m038_massive_goiter_v1 (post-mig_255)"),
         ("Cohort definition (composite massive flag)",
          "gland_weight_final_g >= 100g  OR  ct_substernal_extension_any OR mri_substernal_any  "

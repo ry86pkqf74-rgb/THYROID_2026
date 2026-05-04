@@ -2,6 +2,7 @@
 ## Microscopic Versus Gross Extrathyroidal Extension in Differentiated Thyroid Cancer
 
 **Target journal:** Thyroid (Mary Ann Liebert)  •  **Style:** AMA references
+**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)
 **Cohort:** THYROID_2026 canonical publication v1.0 (n = 4,128)
 **Strict-DTC primary subset:** n = 3,789  •  Primary 3-level analytic n = 3,756 (events 139)
 

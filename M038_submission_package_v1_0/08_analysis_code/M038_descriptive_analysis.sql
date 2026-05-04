@@ -1,6 +1,6 @@
 -- M038 — Massive Goiter Composite-Definition Descriptive Cohort
 -- Single SQL package reproducing every numeric cell in the manuscript.
--- Run against MotherDuck `thyroid_canonical_publication_v1_0` (release `pub_v1_0_20260430`).
+-- Run against MotherDuck `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`).
 -- Most-recent applied migration: mig_255_cohort_m038_complication_temporality_columns_20260502.
 
 -- Standing reference for is_massive composite + era binning + hypopara split:

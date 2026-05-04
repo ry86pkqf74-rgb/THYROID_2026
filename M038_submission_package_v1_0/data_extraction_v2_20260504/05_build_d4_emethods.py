@@ -99,7 +99,7 @@ def main():
     p.paragraph_format.space_after = Pt(4)
 
     p = doc.add_paragraph()
-    run = p.add_run(f"Manuscript ID: M038  •  Document date: {date.today().isoformat()}  •  Database release: pub_v1_0_20260430")
+    run = p.add_run(f"Manuscript ID: M038  •  Document date: {date.today().isoformat()}  •  Database release: pub_v1_1_20260504")
     set_run(run, size=10, italic=True, color=RGBColor(0x55, 0x55, 0x55))
     p.paragraph_format.space_after = Pt(14)
 
@@ -109,7 +109,7 @@ def main():
         "This was a single-institution, retrospective cohort study of all adult patients undergoing thyroid surgery "
         "at Emory University Hospital and affiliated facilities between January 1, 1999 and December 31, 2025. Source "
         "data were drawn from the THYROID_2026 canonical lakehouse (MotherDuck database "
-        "thyroid_canonical_publication_v1_0, release pub_v1_0_20260430, most-recent applied migration "
+        "thyroid_canonical_publication_v1_0, release pub_v1_1_20260504, most-recent applied migration "
         "mig_255_cohort_m038_complication_temporality_columns_20260502). The lakehouse integrates structured EHR "
         "extracts, NSQIP institutional submission records, synoptic pathology reports, operative notes (with "
         "domain-specific NLP enrichment), and imaging-report NLP extractions.")

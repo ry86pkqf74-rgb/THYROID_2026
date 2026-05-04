@@ -3,6 +3,7 @@
 
 **Target journal:** TBD (Thyroid / JCEM / Surgery) • **Style:** AMA references  
 **Database:** `thyroid_canonical_publication_v1_0` (MotherDuck)  
+**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)  
 **Cohort view:** `manuscript_workspace.cohort_m037_ln_metastasis_v1` (malignant; LN examined > 0 or LN-positive flag)  
 **Augmentation:** `mig_286` — NLP family history + `family_syndrome_flag` on CPM joined into the view.
 
