@@ -7,7 +7,9 @@ we generate a CREATE VIEW that projects $1:<col>::<TYPE> AS <col> for each.
 Run from /Users/ros/THyroid 2026/ with .venv activated:
     SNOWFLAKE_PAT='...' python snowflake_trial/scripts/04_build_flat_views.py
 """
-import os, json, time
+import os, json, sys, time
+from pathlib import Path
+
 import snowflake.connector
 import snowflake.connector.network as _net
 
@@ -142,3 +144,16 @@ FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
 print(cur.fetchone())
 
 ctx.close()
+
+# ── mig_293b (optional): mirror SF validation audit log to MotherDuck ────────
+# Requires SNOWFLAKE_PAT + MotherDuck RW token. Does not block flat-view build on failure.
+_flag = (os.environ.get("MOTHERDUCK_MIRROR_VALIDATION_LOG") or "").strip().lower()
+if _flag in ("1", "true", "yes", "on"):
+    import subprocess
+
+    _root = Path(__file__).resolve().parents[2]
+    _script = _root / "snowflake_trial" / "scripts" / "35_pull_sf_validation_log.py"
+    print("\n=== mig_293b: SF VALIDATION_RUN_LOG_V1 → MotherDuck (subprocess) ===")
+    rc = subprocess.run([sys.executable, str(_script), "--md"], cwd=str(_root)).returncode
+    if rc != 0:
+        print(f"  WARN: 35_pull_sf_validation_log.py exited {rc}; flat views already committed above.")

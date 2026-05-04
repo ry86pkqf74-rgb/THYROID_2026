@@ -5,7 +5,6 @@ from pathlib import Path
 import snowflake.connector
 import snowflake.connector.network as _net
 
-PAT = os.environ["SNOWFLAKE_PAT"]
 DOTTED = "qcc02515.us-east-1"
 
 _orig = _net.SnowflakeRestful._post_request
@@ -15,7 +14,7 @@ def _patched(self, url, headers, body, *args, **kwargs):
             d = json.loads(body) if isinstance(body, str) else json.loads(body.decode())
             d["data"]["ACCOUNT_NAME"] = DOTTED
             if not d["data"].get("TOKEN"):
-                d["data"]["TOKEN"] = PAT
+                d["data"]["TOKEN"] = os.environ.get("SNOWFLAKE_PAT") or ""
             body = json.dumps(d)
         except Exception:
             pass
@@ -24,9 +23,12 @@ _net.SnowflakeRestful._post_request = _patched
 
 
 def get_cursor():
+    pat = os.environ.get("SNOWFLAKE_PAT")
+    if not pat:
+        raise RuntimeError("SNOWFLAKE_PAT is not set")
     ctx = snowflake.connector.connect(
         account="qcc02515", host=f"{DOTTED}.snowflakecomputing.com",
-        user="LGLOSSE13", password=PAT,
+        user="LGLOSSE13", password=pat,
         authenticator="PROGRAMMATIC_ACCESS_TOKEN",
         warehouse="COMPUTE_WH", database="THYROID_VALIDATION",
         schema="PUBLIC", role="ACCOUNTADMIN")

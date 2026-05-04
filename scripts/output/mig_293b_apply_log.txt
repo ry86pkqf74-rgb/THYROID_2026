@@ -1,0 +1,26 @@
+mig_293b apply log — SF VALIDATION_RUN_LOG_V1 → MotherDuck main.cowork_sf_validation_log_v1
+Generated: 2026-05-04 (Cursor Composer)
+
+Prerequisites
+-------------
+1. Apply migration (DDL + idempotent signoff):
+     qc_framework_v1/migrations/293b_validation_log_md_mirror_20260504.sql
+   Target catalog: thyroid_canonical_publication_v1_0
+
+2. Refresh mirror data (full replace):
+     SNOWFLAKE_PAT=... .venv/bin/python snowflake_trial/scripts/35_pull_sf_validation_log.py --md
+   MotherDuck RW token: motherduck.local.toml or MD_SA_TOKEN / MOTHERDUCK_TOKEN (never log values).
+
+Dry-run (SF read only, no MD write):
+     SNOWFLAKE_PAT=... .venv/bin/python snowflake_trial/scripts/35_pull_sf_validation_log.py --dry-run
+
+Optional pipeline hook
+----------------------
+After flat-view build, set MOTHERDUCK_MIRROR_VALIDATION_LOG=1 (with PAT + MD token) to run script 35
+from snowflake_trial/scripts/04_build_flat_views.py postlude.
+
+Live apply notes (operator fills after run)
+-------------------------------------------
+- migration_applied_at:
+- pull_script_rows_mirrored:
+- verify: SELECT COUNT(*) FROM main.cowork_sf_validation_log_v1;
