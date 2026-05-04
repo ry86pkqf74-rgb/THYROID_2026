@@ -1,0 +1,11 @@
+mig_302 started at 2026-05-04T15:23:53.764913+00:00
+§0 pre: view definition excerpt from duckdb_views()
+  pre_def_len=99 uses_nlp_tirads_max=False
+  canonical_patient_master rows OK (10871)
+  pre Patient_Master_Canonical COUNT SKIP (expected if view stale vs CPM): BinderException
+§1 archive snapshot → "Thyroid 2026 UPdated".archive_pub_v1_0.view_def_patient_master_canonical_pre_mig302_20260504
+§2 CREATE OR REPLACE VIEW views_readable.Patient_Master_Canonical
+  (pre-migration view was unreadable; post replace OK)
+§3 verify Patient_Master_Canonical cols: legacy_nlp_col=0 tirads_resolved=1
+§4 INSERT main.signoff_migration
+mig_302 OK
