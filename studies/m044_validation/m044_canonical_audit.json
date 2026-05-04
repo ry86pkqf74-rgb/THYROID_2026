@@ -1,20 +1,44 @@
 {
-  "generated_at_utc": "2026-05-01T15:00:14Z",
+  "generated_at_utc": "2026-05-04T03:09:21Z",
   "cohort_object": "manuscript_workspace.cohort_m044_ajcc_ete_v1",
   "sql_path": "scripts/m044_validate_canonical_v1.sql",
-  "overall_status": "PASS",
-  "failures": [],
+  "overall_status": "FAIL",
+  "failures": [
+    "main_audit.n_rows: expected 4128, got 4012",
+    "main_audit.distinct_research_id: expected 4128, got 4012",
+    "main_audit.ete_microscopic: expected 2576, got 2517",
+    "main_audit.ete_gross: expected 1266, got 1262",
+    "main_audit.ete_no_negative: expected 192, got 190",
+    "main_audit.ete_missing_other: expected 65, got 14",
+    "main_audit.recurrence_path_proven_raw_n: expected 228, got 227",
+    "main_audit.recurrence_path_proven_n: expected 204, got 203",
+    "main_audit.recurrence_imaging_only_n: expected 24, got 14",
+    "main_audit.recurrence_composite_n: expected 228, got 217",
+    "main_audit.recurrence_path_proven_positive_fu_n: expected 199, got 198",
+    "main_audit.fu_zero_n: expected 1400, got 1338",
+    "main_audit.fu_positive_n: expected 2728, got 2674",
+    "cpm_ete_consistency.ete_mismatch_n: expected 178, got 176",
+    "surgery_date_lineage.n_cohort: expected 4128, got 4012",
+    "surgery_date_lineage.surg_first_nonmissing: expected 4128, got 4012",
+    "surgery_date_lineage.surg_date_1999_2024_n: expected 4090, got 3976",
+    "surgery_date_lineage.surg_date_post_2024_n: expected 35, got 33",
+    "surgery_date_lineage.surg_date_after_2024_06_04_n: expected 245, got 236",
+    "table1b_tt_ete_audit.tt_n_total: expected 2798, got 2748",
+    "table1b_tt_ete_audit.tt_n_microscopic: expected 1732, got 1708",
+    "table1b_tt_ete_audit.tt_n_gross: expected 956, got 954",
+    "table1b_tt_ete_audit.tt_n_missing_other: expected 28, got 4"
+  ],
   "details": {
     "main_audit": {
       "n_rows": {
         "expected": 4128,
-        "actual": 4128,
-        "pass": true
+        "actual": 4012,
+        "pass": false
       },
       "distinct_research_id": {
         "expected": 4128,
-        "actual": 4128,
-        "pass": true
+        "actual": 4012,
+        "pass": false
       },
       "duplicate_extra_rows": {
         "expected": 0,
@@ -23,18 +47,18 @@
       },
       "ete_microscopic": {
         "expected": 2576,
-        "actual": 2576,
-        "pass": true
+        "actual": 2517,
+        "pass": false
       },
       "ete_gross": {
         "expected": 1266,
-        "actual": 1266,
-        "pass": true
+        "actual": 1262,
+        "pass": false
       },
       "ete_no_negative": {
         "expected": 192,
-        "actual": 192,
-        "pass": true
+        "actual": 190,
+        "pass": false
       },
       "ete_present_ungraded": {
         "expected": 29,
@@ -43,13 +67,13 @@
       },
       "ete_missing_other": {
         "expected": 65,
-        "actual": 65,
-        "pass": true
+        "actual": 14,
+        "pass": false
       },
       "recurrence_path_proven_raw_n": {
         "expected": 228,
-        "actual": 228,
-        "pass": true
+        "actual": 227,
+        "pass": false
       },
       "recurrence_path_proven_quarantined_n": {
         "expected": 24,
@@ -58,18 +82,18 @@
       },
       "recurrence_path_proven_n": {
         "expected": 204,
-        "actual": 204,
-        "pass": true
+        "actual": 203,
+        "pass": false
       },
       "recurrence_imaging_only_n": {
         "expected": 24,
-        "actual": 24,
-        "pass": true
+        "actual": 14,
+        "pass": false
       },
       "recurrence_composite_n": {
         "expected": 228,
-        "actual": 228,
-        "pass": true
+        "actual": 217,
+        "pass": false
       },
       "primary_quarantined_n": {
         "expected": 0,
@@ -83,8 +107,8 @@
       },
       "recurrence_path_proven_positive_fu_n": {
         "expected": 199,
-        "actual": 199,
-        "pass": true
+        "actual": 198,
+        "pass": false
       },
       "recurrence_path_proven_zero_fu_n": {
         "expected": 5,
@@ -93,13 +117,13 @@
       },
       "fu_zero_n": {
         "expected": 1400,
-        "actual": 1400,
-        "pass": true
+        "actual": 1338,
+        "pass": false
       },
       "fu_positive_n": {
         "expected": 2728,
-        "actual": 2728,
-        "pass": true
+        "actual": 2674,
+        "pass": false
       }
     },
     "cohort_membership": {
@@ -115,42 +139,42 @@
       },
       "cpm_malignant_staged_n": {
         "expected": null,
-        "actual": 4128,
+        "actual": 4012,
         "pass": true
       },
       "cohort_n": {
         "expected": null,
-        "actual": 4128,
+        "actual": 4012,
         "pass": true
       }
     },
     "cpm_ete_consistency": {
       "ete_mismatch_n": {
         "expected": 178,
-        "actual": 178,
-        "pass": true
+        "actual": 176,
+        "pass": false
       },
       "n_joined": {
         "expected": null,
-        "actual": 4128,
+        "actual": 4012,
         "pass": true
       },
       "ete_match_n": {
         "expected": null,
-        "actual": 3950,
+        "actual": 3836,
         "pass": true
       }
     },
     "surgery_date_lineage": {
       "n_cohort": {
         "expected": 4128,
-        "actual": 4128,
-        "pass": true
+        "actual": 4012,
+        "pass": false
       },
       "surg_first_nonmissing": {
         "expected": 4128,
-        "actual": 4128,
-        "pass": true
+        "actual": 4012,
+        "pass": false
       },
       "surg_first_missing": {
         "expected": 0,
@@ -164,18 +188,18 @@
       },
       "surg_date_1999_2024_n": {
         "expected": 4090,
-        "actual": 4090,
-        "pass": true
+        "actual": 3976,
+        "pass": false
       },
       "surg_date_post_2024_n": {
         "expected": 35,
-        "actual": 35,
-        "pass": true
+        "actual": 33,
+        "pass": false
       },
       "surg_date_after_2024_06_04_n": {
         "expected": 245,
-        "actual": 245,
-        "pass": true
+        "actual": 236,
+        "pass": false
       },
       "calendar_partition_violations": {
         "expected": 0,
@@ -203,27 +227,27 @@
     "legacy_recurrence_audit": {
       "m044_cohort_n": {
         "expected": null,
-        "actual": 4128,
+        "actual": 4012,
         "pass": true
       },
       "legacy_any_recurrence_true_n": {
         "expected": null,
-        "actual": 503,
+        "actual": 498,
         "pass": true
       },
       "legacy_any_true_canonical_status_none_n": {
         "expected": null,
-        "actual": 316,
+        "actual": 314,
         "pass": true
       },
       "legacy_structural_recurrence_true_n": {
         "expected": null,
-        "actual": 1817,
+        "actual": 1816,
         "pass": true
       },
       "legacy_structural_true_canonical_status_none_n": {
         "expected": null,
-        "actual": 1659,
+        "actual": 1658,
         "pass": true
       },
       "canonical_recurrence_row_missing_n": {
@@ -235,8 +259,8 @@
     "table1b_tt_ete": {
       "tt_n_total": {
         "expected": 2798,
-        "actual": 2798,
-        "pass": true
+        "actual": 2748,
+        "pass": false
       },
       "tt_n_noneg": {
         "expected": 59,
@@ -245,13 +269,13 @@
       },
       "tt_n_microscopic": {
         "expected": 1732,
-        "actual": 1732,
-        "pass": true
+        "actual": 1708,
+        "pass": false
       },
       "tt_n_gross": {
         "expected": 956,
-        "actual": 956,
-        "pass": true
+        "actual": 954,
+        "pass": false
       },
       "tt_n_present_ungraded": {
         "expected": 23,
@@ -260,19 +284,19 @@
       },
       "tt_n_missing_other": {
         "expected": 28,
-        "actual": 28,
-        "pass": true
+        "actual": 4,
+        "pass": false
       }
     },
     "surgery_date_operative_v2": {
       "n_compared": {
         "expected": null,
-        "actual": 4128,
+        "actual": 4012,
         "pass": true
       },
       "n_mismatch_vs_first_surgery_date_v2": {
         "expected": null,
-        "actual": 87,
+        "actual": 88,
         "pass": true
       },
       "cohort_rows_with_null_first_surgery_date_v2": {
@@ -284,58 +308,58 @@
   },
   "snapshots": {
     "main_audit_row": {
-      "n_rows": 4128,
-      "distinct_research_id": 4128,
+      "n_rows": 4012,
+      "distinct_research_id": 4012,
       "duplicate_extra_rows": 0,
-      "ete_microscopic": 2576,
-      "ete_gross": 1266,
-      "ete_no_negative": 192,
+      "ete_microscopic": 2517,
+      "ete_gross": 1262,
+      "ete_no_negative": 190,
       "ete_present_ungraded": 29,
-      "ete_missing_other": 65,
-      "recurrence_path_proven_raw_n": 228,
+      "ete_missing_other": 14,
+      "recurrence_path_proven_raw_n": 227,
       "recurrence_path_proven_quarantined_n": 24,
-      "recurrence_path_proven_n": 204,
-      "recurrence_imaging_only_n": 24,
-      "recurrence_composite_n": 228,
+      "recurrence_path_proven_n": 203,
+      "recurrence_imaging_only_n": 14,
+      "recurrence_composite_n": 217,
       "primary_quarantined_n": 0,
       "primary_negative_days_n": 0,
-      "recurrence_path_proven_positive_fu_n": 199,
+      "recurrence_path_proven_positive_fu_n": 198,
       "recurrence_path_proven_zero_fu_n": 5,
-      "fu_zero_n": 1400,
-      "fu_positive_n": 2728
+      "fu_zero_n": 1338,
+      "fu_positive_n": 2674
     },
     "cohort_membership_row": {
-      "cpm_malignant_staged_n": 4128,
-      "cohort_n": 4128,
+      "cpm_malignant_staged_n": 4012,
+      "cohort_n": 4012,
       "cohort_rows_not_in_cpm_filter": 0,
       "cpm_filter_missing_from_cohort": 0
     },
     "cpm_ete_consistency_row": {
-      "n_joined": 4128,
-      "ete_match_n": 3950,
-      "ete_mismatch_n": 178
+      "n_joined": 4012,
+      "ete_match_n": 3836,
+      "ete_mismatch_n": 176
     },
     "surgery_date_lineage_row": {
-      "n_cohort": 4128,
-      "surg_first_nonmissing": 4128,
+      "n_cohort": 4012,
+      "surg_first_nonmissing": 4012,
       "surg_first_missing": 0,
       "surg_date_pre_1999_n": 3,
-      "surg_date_1999_2024_n": 4090,
-      "surg_date_post_2024_n": 35,
-      "surg_date_after_2024_06_04_n": 245,
+      "surg_date_1999_2024_n": 3976,
+      "surg_date_post_2024_n": 33,
+      "surg_date_after_2024_06_04_n": 236,
       "calendar_partition_violations": 0
     },
     "table1b_tt_ete_audit_row": {
-      "tt_n_total": 2798,
+      "tt_n_total": 2748,
       "tt_n_noneg": 59,
-      "tt_n_microscopic": 1732,
-      "tt_n_gross": 956,
+      "tt_n_microscopic": 1708,
+      "tt_n_gross": 954,
       "tt_n_present_ungraded": 23,
-      "tt_n_missing_other": 28
+      "tt_n_missing_other": 4
     },
     "surgery_date_vs_operative_v2_row": {
-      "n_compared": 4128,
-      "n_mismatch_vs_first_surgery_date_v2": 87,
+      "n_compared": 4012,
+      "n_mismatch_vs_first_surgery_date_v2": 88,
       "cohort_rows_with_null_first_surgery_date_v2": 0
     },
     "recurrence_coherence_row": {
@@ -344,30 +368,26 @@
       "v_none_but_evidence_bool": 0
     },
     "legacy_recurrence_audit_row": {
-      "m044_cohort_n": 4128,
-      "legacy_any_recurrence_true_n": 503,
-      "legacy_any_true_canonical_status_none_n": 316,
-      "legacy_structural_recurrence_true_n": 1817,
-      "legacy_structural_true_canonical_status_none_n": 1659,
+      "m044_cohort_n": 4012,
+      "legacy_any_recurrence_true_n": 498,
+      "legacy_any_true_canonical_status_none_n": 314,
+      "legacy_structural_recurrence_true_n": 1816,
+      "legacy_structural_true_canonical_status_none_n": 1658,
       "canonical_recurrence_row_missing_n": 0
     }
   },
   "ete_grade_final_distribution": [
     {
       "ete_grade_final_raw": "microscopic",
-      "n": 2576
+      "n": 2517
     },
     {
       "ete_grade_final_raw": "gross",
-      "n": 1266
+      "n": 1262
     },
     {
       "ete_grade_final_raw": "false",
-      "n": 176
-    },
-    {
-      "ete_grade_final_raw": null,
-      "n": 61
+      "n": 174
     },
     {
       "ete_grade_final_raw": "present_ungraded",
@@ -376,6 +396,10 @@
     {
       "ete_grade_final_raw": "absent",
       "n": 16
+    },
+    {
+      "ete_grade_final_raw": null,
+      "n": 10
     },
     {
       "ete_grade_final_raw": "true",
