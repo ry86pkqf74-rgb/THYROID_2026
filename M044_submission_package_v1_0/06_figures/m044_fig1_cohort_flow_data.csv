@@ -1,6 +1,6 @@
 step,n
-Total cohort,4128
-Excluded non-DTC / borderline,339
+Total cohort,4012
+Excluded non-DTC / borderline,223
 Strict-DTC subset,3789
 Excluded present-ungraded / missing,33
 Primary 3-level analytic,3756

@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-05-01T14:46:13Z",
-  "cohort_parquet_rows": 4128,
+  "generated_at_utc": "2026-05-04T03:18:59Z",
+  "cohort_parquet_rows": 4012,
   "crude_path_proven_or": {
     "crude_pp_gross_vs_microscopic_or": 2.7918353576181385,
     "crude_pp_gross_vs_microscopic_ci_low": 2.054194316632797,
@@ -32,17 +32,17 @@
     "events": 178,
     "coef_table_path": "/Users/ros/THyroid 2026/data/m044/m044_cox_primary_summary.csv",
     "gross_vs_microscopic_hr": {
-      "hr": 0.9102808635560813,
-      "hr_ci_low": 0.47913333888681914,
-      "hr_ci_high": 1.7293959390960676,
-      "p": 0.7740508906797761,
+      "hr": 0.9103037356162789,
+      "hr_ci_low": 0.47923951497127887,
+      "hr_ci_high": 1.729099678115261,
+      "p": 0.7740423569506414,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.Gross ETE]"
     },
     "noneg_vs_microscopic_hr": {
-      "hr": 2.443225068198415,
-      "hr_ci_low": 0.6478494195146004,
-      "hr_ci_high": 9.214099070036475,
-      "p": 0.18716625998772768,
+      "hr": 2.443341372260798,
+      "hr_ci_low": 0.6480998157458978,
+      "hr_ci_high": 9.21141607567116,
+      "p": 0.18703020836101486,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.No/negative ETE]"
     }
   }
