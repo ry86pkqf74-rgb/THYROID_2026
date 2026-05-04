@@ -1,0 +1,38 @@
+mig_277 start UTC 2026-05-04T02:47:06.913113+00:00
+
+=== 2.1 NIFTP by bethesda_final ===
+  (1, 2, 2, 2)
+  (2, 22, 0, 0)
+  (3, 23, 23, 23)
+  (4, 9, 9, 9)
+  (5, 3, 3, 3)
+  (6, 7, 7, 7)
+  (None, 51, 51, 49)
+  ROLLUP: n_total_niftp=117 n_malig=95 n_with_stage=93
+
+=== 2.2 targets: 95 ===
+
+=== 2.3 cohort overlap ===
+  cohort_m044_ajcc_ete_v1 (INNER JOIN targets): 93
+  cohort_m037_ln_metastasis_v1: SKIPPED — view binder TIMESTAMP vs DATE mismatch (pre-existing drift)
+
+PRE-APPLY malignant count: 4113
+
+=== 3a archive ===
+archive rows: 117
+
+=== 3b UPDATE ===
+
+=== 3c post-state (10871, 4018, 36.96, 0, 0) ===
+
+=== 3d signoff ===
+INSERT signoff OK
+
+=== 4 cohort view counts ===
+  manuscript_workspace.cohort_m044_ajcc_ete_v1: 4012
+  manuscript_workspace.cohort_m037_ln_metastasis_v1: ERROR BinderException
+  manuscript_workspace.cohort_m032_descriptive_25yr_v1: 10871
+  manuscript_workspace.cohort_m025_tirads_performance_v1: ERROR BinderException
+  manuscript_workspace.cohort_m004_graves_hashimoto_cancer_v1: 1761
+
+mig_277 COMPLETE
