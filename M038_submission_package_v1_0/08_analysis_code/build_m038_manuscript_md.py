@@ -8,8 +8,11 @@ US Letter + Arial styling.
 import re
 from pathlib import Path
 
-SRC = Path("/Users/loganglosser/THYROID_2026/manuscript_outputs/v1_0_20260501/M038_massive_goiter_DRAFT_v2_post_mig_252_253.md")
-OUT_MD = Path("/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/_manuscript_for_pandoc.md")
+# mig_299: portable paths — script lives at <REPO>/M038_submission_package_v1_0/08_analysis_code/<this>.py
+PKG = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]
+SRC = REPO / "manuscript_outputs" / "v1_0_20260501" / "M038_massive_goiter_DRAFT_v2_post_mig_252_253.md"
+OUT_MD = PKG / "_manuscript_for_pandoc.md"
 OUT_MD.parent.mkdir(parents=True, exist_ok=True)
 
 src = SRC.read_text()

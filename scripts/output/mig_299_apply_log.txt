@@ -1,0 +1,88 @@
+mig_299 apply log — M044/M038/M025/M032/M037 + scripts/ hardcoded path cleanup
+================================================================================
+Generated: 2026-05-04
+Actor:     cursor_composer_mig299
+HEAD at start: 50f8394 (mig_298 — M004 autoimmune × cancer cohort view)
+
+§1 PRE-AUDIT
+------------
+grep '/Users/loganglosser' across submission packages + scripts/ (.py + .md only):
+  M025_submission_package_v1_0/ : 0 hits
+  M032_submission_package_v1_0/ : 0 hits
+  M037_submission_package_v1_0/ : 0 hits
+  M044_submission_package_v1_0/ : 0 hits
+  M038_submission_package_v1_0/ : 7 hits across 7 files
+  scripts/                      : 8 hits across 7 files
+  TOTAL: 15 hits across 14 distinct code/doc files
+  (scripts/output/*.log/*.json: 73 hits — historical run logs, NOT touched.)
+
+§2 EDITS APPLIED
+----------------
+M038 submission package (6 .py + 1 .md):
+  build_m038_figures.py        : OUT_DIR     -> str(Path(__file__).resolve().parents[1] / "06_figures")
+  m038_docx_post.py            : DOCX, FIGS_DIR via PKG = parents[1]
+  split_m038_supporting.py     : SRC via env override (M038_SUPPORTING_DOCS_MD), PKG = parents[1]
+  build_m038_per_patient.py    : PKG = parents[1] (+ docstring example path made repo-relative)
+  build_m038_manuscript_md.py  : SRC, OUT_MD via PKG = parents[1], REPO = parents[2]
+  build_m038_tables.py         : OUT via PKG = parents[1] (added pathlib import)
+  CLOSEOUT_NOTES.md            : `cd /Users/loganglosser/THYROID_2026` -> `cd "$(git rev-parse --show-toplevel)"`
+
+scripts/ helpers (5 REPO/BASE constants + 2 Downloads inputs + 1 toml load):
+  nsqip_investigate_unmatched.py : REPO = Path(__file__).resolve().parents[1]
+  nsqip_case_details_linkage.py  : REPO = Path(__file__).resolve().parents[1]
+  nsqip_phase2_enrichment.py     : REPO = Path(__file__).resolve().parents[1]
+  nsqip_enrichment.py            : REPO = Path(__file__).resolve().parents[1]
+  flatten_tirads_us.py           : BASE = Path(__file__).resolve().parents[1]
+  retarget_mismatches.py         : MD_TOKEN load via _REPO_ROOT = parents[1] / "motherduck.local.toml"
+  nsqip_resolve_unmatched.py     : 2 Downloads paths via DOWNLOADS_DIR (env NSQIP_DOWNLOADS_DIR | ~/Downloads)
+  inspect_sources.py             : SOURCE_DIR via env THYROID_ACTIVE_MASTER_DIR | ~/Downloads/Active Master Files
+
+§3 POST-AUDIT
+-------------
+grep '/Users/loganglosser' (.py + .md, excluding scripts/output/) :
+  EMPTY — 0 hits remaining.
+
+§4 SYNTAX CHECK
+---------------
+.venv/bin/python -m py_compile <14 files>  -> OK_COMPILE (exit 0)
+
+§5 REGISTRY SIGNOFF (MotherDuck)
+---------------------------------
+Connected via scripts/_md_connect.connect_locked() (search path locked to
+thyroid_canonical_publication_v1_0).
+
+INSERT INTO main.signoff_migration (mig_id, signed_off_at, by_actor, summary)
+VALUES ('mig_299', CURRENT_TIMESTAMP, 'cursor_composer_mig299', '...');
+  -> insert OK
+
+Verification SELECT:
+  ('mig_299', 2026-05-04 02:18:31.804837, 'cursor_composer_mig299',
+   'mig_299: Replaced 14 hardcoded /Users/loganglosser/ paths with portable Path(__f...')
+
+§6 FILES TOUCHED (for surgical git add)
+---------------------------------------
+M038_submission_package_v1_0/08_analysis_code/build_m038_figures.py
+M038_submission_package_v1_0/08_analysis_code/m038_docx_post.py
+M038_submission_package_v1_0/08_analysis_code/split_m038_supporting.py
+M038_submission_package_v1_0/08_analysis_code/build_m038_per_patient.py
+M038_submission_package_v1_0/08_analysis_code/build_m038_manuscript_md.py
+M038_submission_package_v1_0/08_analysis_code/build_m038_tables.py
+M038_submission_package_v1_0/CLOSEOUT_NOTES.md
+scripts/nsqip_resolve_unmatched.py
+scripts/inspect_sources.py
+scripts/nsqip_investigate_unmatched.py
+scripts/nsqip_case_details_linkage.py
+scripts/nsqip_phase2_enrichment.py
+scripts/nsqip_enrichment.py
+scripts/retarget_mismatches.py
+scripts/flatten_tirads_us.py
+qc_framework_v1/migrations/299_pkg_path_cleanup_20260504.sql  (new)
+scripts/output/mig_299_apply_log.txt                          (new)
+cursor_prompts/CURSOR_PROMPT_MIG_299_M044_PKG_PATH_CLEANUP_20260504.md  (already tracked)
+
+§7 STATUS
+---------
+mig_299 COMPLETE.
+DB-side effects: signoff_migration row only.
+Reproducibility audit unblocked — submission package + scripts/ helpers now
+runnable on any user / any clone path.

@@ -8,6 +8,7 @@ Figure 4 — Component coverage by era (CT/MRI documentation expansion narrative
 PNG @ 300 DPI + underlying CSV. Saved to M038_submission_package_v1_0/06_figures/.
 """
 import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -15,7 +16,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
-OUT_DIR = "/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/06_figures"
+# mig_299: portable path — script lives at <PKG>/08_analysis_code/<this>.py
+PKG = Path(__file__).resolve().parents[1]
+OUT_DIR = str(PKG / "06_figures")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ============================================================

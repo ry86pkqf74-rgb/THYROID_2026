@@ -4,12 +4,15 @@ Mirrors M044 04_tables.xlsx structure: Cover + Table 1-5 (manuscript) +
 Supp S1-S5 + Data dictionary + QA. Values hard-coded from live SQL re-derivation
 performed during the 2026-05-01 audit (see audit doc + Excel build trail).
 """
+from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from datetime import datetime
 
-OUT = "/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/04_tables.xlsx"
+# mig_299: portable path — script lives at <PKG>/08_analysis_code/<this>.py
+PKG = Path(__file__).resolve().parents[1]
+OUT = str(PKG / "04_tables.xlsx")
 
 wb = Workbook(); wb.remove(wb.active)
 

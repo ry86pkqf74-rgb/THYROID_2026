@@ -11,8 +11,10 @@ from copy import deepcopy
 from pathlib import Path
 import re
 
-DOCX = "/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/02_manuscript.docx"
-FIGS_DIR = Path("/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/06_figures")
+# mig_299: portable paths — script lives at <PKG>/08_analysis_code/<this>.py
+PKG = Path(__file__).resolve().parents[1]
+DOCX = str(PKG / "02_manuscript.docx")
+FIGS_DIR = PKG / "06_figures"
 
 doc = Document(DOCX)
 

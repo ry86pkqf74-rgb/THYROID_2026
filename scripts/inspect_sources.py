@@ -1,7 +1,12 @@
 import pandas as pd
 import os
+from pathlib import Path
 
-SOURCE_DIR = "/Users/loganglosser/Downloads/Active Master Files"
+# mig_299: portable input path — override via THYROID_ACTIVE_MASTER_DIR
+SOURCE_DIR = os.environ.get(
+    "THYROID_ACTIVE_MASTER_DIR",
+    str(Path.home() / "Downloads" / "Active Master Files"),
+)
 FILES = [
     "Thyroid all_Complications 12_1_25.xlsx",
     "THYROSEQ_AFIRMA_12_5.xlsx",

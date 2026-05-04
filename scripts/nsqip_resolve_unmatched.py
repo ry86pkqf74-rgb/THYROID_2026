@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Resolve the 22 remaining unmatched/rejected NSQIP rows using all available sources."""
 
+import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import pickle
+
+# mig_299: portable input paths — override via NSQIP_DOWNLOADS_DIR if files moved
+DOWNLOADS_DIR = Path(os.environ.get("NSQIP_DOWNLOADS_DIR", str(Path.home() / "Downloads")))
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 350)
@@ -16,7 +21,7 @@ def fmt_age(val):
     return "{:.1f}".format(float(val))
 
 
-nsqip_df = pd.read_excel("/Users/loganglosser/Downloads/Thyroid NSQIP dataset 2010-2023.xlsx")
+nsqip_df = pd.read_excel(str(DOWNLOADS_DIR / "Thyroid NSQIP dataset 2010-2023.xlsx"))
 nsqip_df['IDN_str'] = nsqip_df['IDN'].astype(str).str.strip()
 thyroid_cpts = [60220, 60225, 60240, 60252, 60254, 60260, 60270, 60271]
 nsqip_thyroid = nsqip_df[nsqip_df['CPT Code'].isin(thyroid_cpts)].copy().reset_index(drop=True)
@@ -74,7 +79,7 @@ for _, r in pls_dedup.iterrows():
     }
 
 xref = pd.read_excel(
-    "/Users/loganglosser/Downloads/Case_Details_and_Custom_Fields_Report-14-Dec-2025-1204.xlsx"
+    str(DOWNLOADS_DIR / "Case_Details_and_Custom_Fields_Report-14-Dec-2025-1204.xlsx")
 )
 
 # Also load DOB from path_syn and op_sheet for independent age verification

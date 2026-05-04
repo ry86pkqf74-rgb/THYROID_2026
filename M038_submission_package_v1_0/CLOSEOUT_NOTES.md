@@ -29,7 +29,7 @@
 ## Push command (when ready to commit + push)
 
 ```bash
-cd /Users/loganglosser/THYROID_2026
+cd "$(git rev-parse --show-toplevel)"
 git add -- M038_submission_package_v1_0/
 git commit -m "manuscript(M038): v1.0 submission package + tables/figures + validation report"
 git push origin main

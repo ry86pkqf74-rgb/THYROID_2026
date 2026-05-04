@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-REPO = Path("/Users/loganglosser/THYROID_2026")
+REPO = Path(__file__).resolve().parents[1]  # mig_299: portable repo root
 LINKAGE = REPO / "studies" / "nsqip_linkage" / "nsqip_thyroid_linkage_final.csv"
 EXPORT_DIR = REPO / "exports" / "nsqip"
 EXPORT_DIR.mkdir(parents=True, exist_ok=True)

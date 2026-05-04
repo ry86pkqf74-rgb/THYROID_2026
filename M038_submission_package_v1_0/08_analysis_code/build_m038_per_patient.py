@@ -12,7 +12,7 @@ Prereq: local duckdb CLI must be authed as logan.glosser.eras@gmail.com
 
 Usage:
   python3 build_m038_per_patient.py
-  → writes /Users/loganglosser/THYROID_2026/M038_submission_package_v1_0/05b_per_patient_with_sources.xlsx
+  → writes <repo>/M038_submission_package_v1_0/05b_per_patient_with_sources.xlsx
 """
 import os, subprocess, sys
 from pathlib import Path
@@ -21,7 +21,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-PKG = Path("/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0")
+# mig_299: portable path — script lives at <PKG>/08_analysis_code/<this>.py
+PKG = Path(__file__).resolve().parents[1]
 OUT = PKG / "05b_per_patient_with_sources.xlsx"
 TMP_PARQUET = Path("/tmp/m038_per_patient_v1_0.parquet")
 

@@ -2,8 +2,15 @@
 from pathlib import Path
 import re, subprocess
 
-SRC = Path("/Users/loganglosser/Library/Application Support/Claude/local-agent-mode-sessions/46b48217-471c-440c-9c88-e09e16c0cdb0/59105ecc-e1bd-41b4-945f-690e25b3e108/local_66da72ef-9be4-4d36-a6dc-1473dacedc28/outputs/m038_supporting_docs.md")
-PKG = Path("/Users/loganglosser/THYROID_2026/M038_submission_package_v1_0")
+# mig_299: portable paths. SRC is a one-off Claude-session bundle from the
+# original 2026-05-01 build run — kept here for provenance only; override via env
+# var M038_SUPPORTING_DOCS_MD if the bundle was archived elsewhere.
+import os
+PKG = Path(__file__).resolve().parents[1]
+SRC = Path(os.environ.get(
+    "M038_SUPPORTING_DOCS_MD",
+    str(PKG / "_archive" / "m038_supporting_docs.md"),
+))
 
 src = SRC.read_text()
 sections = re.split(r"^# ", src, flags=re.MULTILINE)[1:]  # split on top-level # headings

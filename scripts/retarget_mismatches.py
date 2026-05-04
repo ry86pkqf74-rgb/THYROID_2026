@@ -11,7 +11,9 @@ from pathlib import Path
 from tqdm import tqdm
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-MD_TOKEN = toml.load("/Users/loganglosser/THYROID_2026/motherduck.local.toml")["MOTHERDUCK_TOKEN"]
+# mig_299: portable repo-root token path
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+MD_TOKEN = toml.load(_REPO_ROOT / "motherduck.local.toml")["MOTHERDUCK_TOKEN"]
 
 # Use Sonnet for the re-run (better reasoning on ambiguous cases)
 MODEL = "claude-sonnet-4-5"

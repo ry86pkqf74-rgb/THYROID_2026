@@ -14,7 +14,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', 400)
 pd.set_option('display.max_colwidth', 80)
 
-REPO = Path("/Users/loganglosser/THYROID_2026")
+REPO = Path(__file__).resolve().parents[1]  # mig_299: portable repo root
 NSQIP_PATH = REPO / "raw" / "Case_Details_and_Custom_Fields_Report-14-Dec-2025-1204.xlsx"
 
 # ════════════════════════════════════════════════════════════════════

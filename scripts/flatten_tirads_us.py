@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-BASE = Path("/Users/loganglosser/THYROID_2026")
+BASE = Path(__file__).resolve().parents[1]  # mig_299: portable repo root
 IN_PATH = BASE / "processed/us_nodules_tirads.parquet"
 OUT_PATH = BASE / "processed/remaining/tirads_us_reports.parquet"
 SOURCE_WORKBOOK = "US Nodules TIRADS 12_1_25.xlsx"
