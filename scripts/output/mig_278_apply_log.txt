@@ -1,0 +1,12 @@
+mig_278 verification:
+['comp', 'rollup_n', 'strict_n', 'drift']
+('chyle_leak', 3, 3, 0)
+('hematoma', 68, 68, 0)
+('hypoparathyroidism', 296, 296, 0)
+('rln_injury', 21, 21, 0)
+('seroma', 39, 39, 0)
+
+Existing signoff rows for mig_252: 0
+
+INSERT applied successfully.
+Post-insert count for mig_252: 1
