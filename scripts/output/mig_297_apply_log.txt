@@ -1,0 +1,4 @@
+mig_297 start
+inventory cohort_* views in manuscript_workspace = 64
+mig_297: Cohort view freshness audit. Probed 64 manuscript_workspace.cohort_* views; auto-repointed 0 via whole-word swap of legacy recurrence tables to canonical_recurrence_patient_rollup_v1; flagged 0 for manual repoint (column-level nlp_tirads_max_category -> tirads_resolved or compile/drift failure). Pre-snapshots in "Thyroid 2026 UPdated".archive_pub_v1_0 as view_def_<view>_pre_mig_297_20260504. Disposition: scripts/output/mig_297_disposition.md. Closes CF-mig283-COHORT-FRESHNESS.
+mig_297 complete
