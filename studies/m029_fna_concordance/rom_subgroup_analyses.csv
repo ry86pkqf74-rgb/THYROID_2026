@@ -1,0 +1,85 @@
+Stratifier,Stratum,Bethesda,Bethesda_num,N,Malignant,ROM_pct,ROM_CI_lo,ROM_CI_hi,ROM_excl_NIFTP_pct,ROM_excl_NIFTP_CI_lo,ROM_excl_NIFTP_CI_hi
+Year period,Pre-2015,All,All,635,635,100.0,99.4,100.0,100.0,99.4,100.0
+Year period,Pre-2015,I (Non-diagnostic),1,30,30,100.0,88.6,100.0,100.0,88.6,100.0
+Year period,Pre-2015,II (Benign),2,134,134,100.0,97.2,100.0,100.0,97.2,100.0
+Year period,Pre-2015,III (AUS/FLUS),3,37,37,100.0,90.6,100.0,100.0,90.6,100.0
+Year period,Pre-2015,IV (FN/SFN),4,79,79,100.0,95.4,100.0,100.0,95.4,100.0
+Year period,Pre-2015,V (Suspicious),5,56,56,100.0,93.6,100.0,100.0,93.6,100.0
+Year period,Pre-2015,VI (Malignant),6,299,299,100.0,98.7,100.0,100.0,98.7,100.0
+Year period,2015–2019,All,All,736,703,95.5,93.8,96.8,95.5,93.8,96.8
+Year period,2015–2019,I (Non-diagnostic),1,24,22,91.7,74.2,97.7,91.7,74.2,97.7
+Year period,2015–2019,II (Benign),2,117,109,93.2,87.1,96.5,93.2,87.1,96.5
+Year period,2015–2019,III (AUS/FLUS),3,103,91,88.3,80.7,93.2,88.3,80.7,93.2
+Year period,2015–2019,IV (FN/SFN),4,89,83,93.3,86.1,96.9,93.3,86.1,96.9
+Year period,2015–2019,V (Suspicious),5,98,96,98.0,92.9,99.4,98.0,92.9,99.4
+Year period,2015–2019,VI (Malignant),6,305,302,99.0,97.1,99.7,99.0,97.1,99.7
+Year period,2020+,All,All,1030,995,96.6,95.3,97.5,96.6,95.3,97.5
+Year period,2020+,I (Non-diagnostic),1,17,17,100.0,81.6,100.0,100.0,81.6,100.0
+Year period,2020+,II (Benign),2,133,117,88.0,81.4,92.5,88.0,81.4,92.5
+Year period,2020+,III (AUS/FLUS),3,187,176,94.1,89.8,96.7,94.1,89.8,96.7
+Year period,2020+,IV (FN/SFN),4,139,136,97.8,93.8,99.3,97.8,93.8,99.3
+Year period,2020+,V (Suspicious),5,89,88,98.9,93.9,99.8,98.9,93.9,99.8
+Year period,2020+,VI (Malignant),6,465,461,99.1,97.8,99.7,99.1,97.8,99.7
+Age group,45–65,All,All,1009,975,96.6,95.3,97.6,96.6,95.3,97.6
+Age group,45–65,I (Non-diagnostic),1,30,29,96.7,83.3,99.4,96.7,83.3,99.4
+Age group,45–65,II (Benign),2,172,161,93.6,88.9,96.4,93.6,88.9,96.4
+Age group,45–65,III (AUS/FLUS),3,142,130,91.5,85.8,95.1,91.5,85.8,95.1
+Age group,45–65,IV (FN/SFN),4,129,124,96.1,91.2,98.3,96.1,91.2,98.3
+Age group,45–65,V (Suspicious),5,100,98,98.0,93.0,99.4,98.0,93.0,99.4
+Age group,45–65,VI (Malignant),6,436,433,99.3,98.0,99.8,99.3,98.0,99.8
+Age group,<45,All,All,880,861,97.8,96.7,98.6,97.8,96.7,98.6
+Age group,<45,I (Non-diagnostic),1,26,25,96.2,81.1,99.3,96.2,81.1,99.3
+Age group,<45,II (Benign),2,135,129,95.6,90.6,97.9,95.6,90.6,97.9
+Age group,<45,III (AUS/FLUS),3,101,94,93.1,86.4,96.6,93.1,86.4,96.6
+Age group,<45,IV (FN/SFN),4,93,92,98.9,94.2,99.8,98.9,94.2,99.8
+Age group,<45,V (Suspicious),5,94,93,98.9,94.2,99.8,98.9,94.2,99.8
+Age group,<45,VI (Malignant),6,431,428,99.3,98.0,99.8,99.3,98.0,99.8
+Age group,>65,All,All,512,497,97.1,95.2,98.2,97.1,95.2,98.2
+Age group,>65,I (Non-diagnostic),1,15,15,100.0,79.6,100.0,100.0,79.6,100.0
+Age group,>65,II (Benign),2,77,70,90.9,82.4,95.5,90.9,82.4,95.5
+Age group,>65,III (AUS/FLUS),3,84,80,95.2,88.4,98.1,95.2,88.4,98.1
+Age group,>65,IV (FN/SFN),4,85,82,96.5,90.1,98.8,96.5,90.1,98.8
+Age group,>65,V (Suspicious),5,49,49,100.0,92.7,100.0,100.0,92.7,100.0
+Age group,>65,VI (Malignant),6,202,201,99.5,97.2,99.9,99.5,97.2,99.9
+Tumor size,2–4 cm,All,All,707,684,96.7,95.2,97.8,96.7,95.2,97.8
+Tumor size,2–4 cm,I (Non-diagnostic),1,14,13,92.9,68.5,98.7,92.9,68.5,98.7
+Tumor size,2–4 cm,II (Benign),2,71,65,91.5,82.8,96.1,91.5,82.8,96.1
+Tumor size,2–4 cm,III (AUS/FLUS),3,99,90,90.9,83.6,95.1,90.9,83.6,95.1
+Tumor size,2–4 cm,IV (FN/SFN),4,103,100,97.1,91.8,99.0,97.1,91.8,99.0
+Tumor size,2–4 cm,V (Suspicious),5,71,70,98.6,92.4,99.8,98.6,92.4,99.8
+Tumor size,2–4 cm,VI (Malignant),6,349,346,99.1,97.5,99.7,99.1,97.5,99.7
+Tumor size,1–2 cm,All,All,657,647,98.5,97.2,99.2,98.5,97.2,99.2
+Tumor size,1–2 cm,I (Non-diagnostic),1,17,17,100.0,81.6,100.0,100.0,81.6,100.0
+Tumor size,1–2 cm,II (Benign),2,69,68,98.6,92.2,99.7,98.6,92.2,99.7
+Tumor size,1–2 cm,III (AUS/FLUS),3,71,65,91.5,82.8,96.1,91.5,82.8,96.1
+Tumor size,1–2 cm,IV (FN/SFN),4,47,46,97.9,88.9,99.6,97.9,88.9,99.6
+Tumor size,1–2 cm,V (Suspicious),5,90,89,98.9,94.0,99.8,98.9,94.0,99.8
+Tumor size,1–2 cm,VI (Malignant),6,363,362,99.7,98.5,100.0,99.7,98.5,100.0
+Tumor size,>4 cm,All,All,458,439,95.9,93.6,97.3,95.9,93.6,97.3
+Tumor size,>4 cm,I (Non-diagnostic),1,14,13,92.9,68.5,98.7,92.9,68.5,98.7
+Tumor size,>4 cm,II (Benign),2,68,58,85.3,75.0,91.8,85.3,75.0,91.8
+Tumor size,>4 cm,III (AUS/FLUS),3,61,56,91.8,82.2,96.4,91.8,82.2,96.4
+Tumor size,>4 cm,IV (FN/SFN),4,84,82,97.6,91.7,99.3,97.6,91.7,99.3
+Tumor size,>4 cm,V (Suspicious),5,30,30,100.0,88.6,100.0,100.0,88.6,100.0
+Tumor size,>4 cm,VI (Malignant),6,201,200,99.5,97.2,99.9,99.5,97.2,99.9
+Tumor size,<1 cm,All,All,577,561,97.2,95.5,98.3,97.2,95.5,98.3
+Tumor size,<1 cm,I (Non-diagnostic),1,26,26,100.0,87.1,100.0,100.0,87.1,100.0
+Tumor size,<1 cm,II (Benign),2,176,169,96.0,92.0,98.1,96.0,92.0,98.1
+Tumor size,<1 cm,III (AUS/FLUS),3,96,93,96.9,91.2,98.9,96.9,91.2,98.9
+Tumor size,<1 cm,IV (FN/SFN),4,72,69,95.8,88.5,98.6,95.8,88.5,98.6
+Tumor size,<1 cm,V (Suspicious),5,52,51,98.1,89.9,99.7,98.1,89.9,99.7
+Tumor size,<1 cm,VI (Malignant),6,155,153,98.7,95.4,99.6,98.7,95.4,99.6
+Molecular testing,Molecular tested,All,All,653,619,94.8,92.8,96.3,94.8,92.8,96.3
+Molecular testing,Molecular tested,I (Non-diagnostic),1,6,5,83.3,43.6,97.0,83.3,43.6,97.0
+Molecular testing,Molecular tested,II (Benign),2,50,44,88.0,76.2,94.4,88.0,76.2,94.4
+Molecular testing,Molecular tested,III (AUS/FLUS),3,192,176,91.7,86.9,94.8,91.7,86.9,94.8
+Molecular testing,Molecular tested,IV (FN/SFN),4,141,136,96.5,92.0,98.5,96.5,92.0,98.5
+Molecular testing,Molecular tested,V (Suspicious),5,71,70,98.6,92.4,99.8,98.6,92.4,99.8
+Molecular testing,Molecular tested,VI (Malignant),6,193,188,97.4,94.1,98.9,97.4,94.1,98.9
+Molecular testing,Not molecular tested,All,All,1748,1714,98.1,97.3,98.6,98.1,97.3,98.6
+Molecular testing,Not molecular tested,I (Non-diagnostic),1,65,64,98.5,91.8,99.7,98.5,91.8,99.7
+Molecular testing,Not molecular tested,II (Benign),2,334,316,94.6,91.6,96.6,94.6,91.6,96.6
+Molecular testing,Not molecular tested,III (AUS/FLUS),3,135,128,94.8,89.7,97.5,94.8,89.7,97.5
+Molecular testing,Not molecular tested,IV (FN/SFN),4,166,162,97.6,94.0,99.1,97.6,94.0,99.1
+Molecular testing,Not molecular tested,V (Suspicious),5,172,170,98.8,95.9,99.7,98.8,95.9,99.7
+Molecular testing,Not molecular tested,VI (Malignant),6,876,874,99.8,99.2,99.9,99.8,99.2,99.9

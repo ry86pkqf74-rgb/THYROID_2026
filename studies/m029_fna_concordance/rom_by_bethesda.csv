@@ -1,0 +1,7 @@
+Bethesda_num,Bethesda,Total,Malignant,Benign_other,NIFTP,ROM_pct,ROM_CI_lo,ROM_CI_hi,ROM_excl_NIFTP_pct,ROM_excl_NIFTP_CI_lo,ROM_excl_NIFTP_CI_hi,Published_ROM_lo_pct,Published_ROM_hi_pct,Published_ROM_excl_NIFTP_lo_pct,Published_ROM_excl_NIFTP_hi_pct,Above_published_range
+1,I (Non-diagnostic),71,69,2,2,97.2,90.3,99.2,97.2,90.3,99.2,5,10,5,10,True
+2,II (Benign),384,360,24,22,93.8,90.9,95.8,93.8,90.9,95.8,0,3,0,3,True
+3,III (AUS/FLUS),327,304,23,23,93.0,89.7,95.3,93.0,89.7,95.3,6,18,4,16,True
+4,IV (FN/SFN),307,298,9,9,97.1,94.5,98.5,97.1,94.5,98.5,10,40,6,30,True
+5,V (Suspicious),243,240,3,3,98.8,96.4,99.6,98.8,96.4,99.6,45,60,40,55,True
+6,VI (Malignant),1069,1062,7,7,99.3,98.7,99.7,99.3,98.7,99.7,94,96,94,96,True

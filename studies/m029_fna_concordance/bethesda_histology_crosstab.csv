@@ -1,0 +1,8 @@
+Bethesda,PTC,FTC,MTC,NIFTP,FTUMP/HCC,PDTC,ATC,High-grade DTC,Other malignant,Benign,All
+I (Non-diagnostic),57,7,4,2,0,1,0,0,0,0,71
+II (Benign),289,54,6,22,6,2,1,1,1,2,384
+III (AUS/FLUS),204,84,1,23,11,3,0,1,0,0,327
+IV (FN/SFN),146,128,7,9,5,7,1,4,0,0,307
+V (Suspicious),231,3,3,3,1,1,0,0,1,0,243
+VI (Malignant),920,44,53,7,5,16,16,4,4,0,1069
+All,1847,320,74,66,28,30,18,10,6,2,2401

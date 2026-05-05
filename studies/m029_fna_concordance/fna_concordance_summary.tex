@@ -1,0 +1,74 @@
+% M029 FNA Concordance Analysis — LaTeX Tables
+% Generated: 20260504_232559
+% \usepackage{booktabs} required
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Risk of malignancy (ROM) by Bethesda category with 95\% Wilson confidence intervals. Published benchmarks from the 2017 Bethesda System (3rd Ed).}
+\label{tab:m029_rom_bethesda}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Bethesda Category & N & Malignant & ROM \\% & 95\\% CI lo & 95\\% CI hi & ROM (excl. NIFTP) \\% & Published lo \\% & Published hi \\% \\
+\midrule
+I (Non-diagnostic) & 71 & 69 & 97.2 & 90.3 & 99.2 & 97.2 & 5 & 10 \\
+II (Benign) & 384 & 360 & 93.8 & 90.9 & 95.8 & 93.8 & 0 & 3 \\
+III (AUS/FLUS) & 327 & 304 & 93.0 & 89.7 & 95.3 & 93.0 & 6 & 18 \\
+IV (FN/SFN) & 307 & 298 & 97.1 & 94.5 & 98.5 & 97.1 & 10 & 40 \\
+V (Suspicious) & 243 & 240 & 98.8 & 96.4 & 99.6 & 98.8 & 45 & 60 \\
+VI (Malignant) & 1069 & 1062 & 99.3 & 98.7 & 99.7 & 99.3 & 94 & 96 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Diagnostic performance of FNA cytology using Bethesda V--VI as positive threshold (including NIFTP as benign outcome).}
+\label{tab:m029_diag_perf_v56}
+\begin{tabular}{lrrrrr}
+\toprule
+Metric & Value (\\%) & 95\\% CI lo & 95\\% CI hi & Numerator & Denominator \\
+\midrule
+Sensitivity & 55.8 & 53.8 & 57.8 & 1302 & 2333 \\
+Specificity & 85.3 & 75.0 & 91.8 & 58 & 68 \\
+PPV & 99.2 & 98.6 & 99.6 & 1302 & 1312 \\
+NPV & 5.3 & 4.1 & 6.8 & 58 & 1089 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Cross-tabulation of Bethesda cytology category and final surgical histology group.}
+\label{tab:m029_bethesda_histology}
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Bethesda \ Histology & PTC & FTC & MTC & NIFTP & FTUMP/HCC & PDTC & ATC & High-grade DTC & Other malignant & Benign & All \\
+\midrule
+I (Non-diagnostic) & 57 & 7 & 4 & 2 & 0 & 1 & 0 & 0 & 0 & 0 & 71 \\
+II (Benign) & 289 & 54 & 6 & 22 & 6 & 2 & 1 & 1 & 1 & 2 & 384 \\
+III (AUS/FLUS) & 204 & 84 & 1 & 23 & 11 & 3 & 0 & 1 & 0 & 0 & 327 \\
+IV (FN/SFN) & 146 & 128 & 7 & 9 & 5 & 7 & 1 & 4 & 0 & 0 & 307 \\
+V (Suspicious) & 231 & 3 & 3 & 3 & 1 & 1 & 0 & 0 & 1 & 0 & 243 \\
+VI (Malignant) & 920 & 44 & 53 & 7 & 5 & 16 & 16 & 4 & 4 & 0 & 1069 \\
+All & 1847 & 320 & 74 & 66 & 28 & 30 & 18 & 10 & 6 & 2 & 2401 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Molecular testing rates and ROM impact for indeterminate FNA categories (Bethesda III--IV).}
+\label{tab:m029_indet_molecular}
+\begin{tabular}{lrrrrr}
+\toprule
+Bethesda & N & Molecular tested & \\% tested & ROM w/ molecular (\\%) & ROM w/o molecular (\\%) \\
+\midrule
+III (AUS/FLUS) & 327 & 192 & 58.7 & 91.7 & 94.8 \\
+IV (FN/SFN) & 307 & 141 & 45.9 & 96.5 & 97.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
