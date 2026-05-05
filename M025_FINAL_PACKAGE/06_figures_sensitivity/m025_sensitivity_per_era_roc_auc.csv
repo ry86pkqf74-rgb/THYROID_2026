@@ -1,0 +1,5 @@
+grain,era,n,n_positive,n_negative,roc_auc_tr_ordinal
+patient,pre_2017,422,169,253,0.6696
+patient,post_2017,2953,1310,1643,0.6427
+nodule_strict,pre_2017,381,96,285,0.6741
+nodule_strict,post_2017,3306,535,2771,0.6356

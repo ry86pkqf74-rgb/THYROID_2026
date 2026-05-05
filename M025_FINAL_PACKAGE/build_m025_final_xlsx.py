@@ -8,6 +8,7 @@ Pulls from MotherDuck thyroid_canonical_publication_v1_0:
   - manuscript_workspace.m025_threshold_metrics_v1         (6 rows)
   - manuscript_workspace.m025_rom_by_tr_v1                 (9 rows)
   - manuscript_workspace.m025_bethesda_x_tr_v1             (25 rows)
+  - manuscript_workspace.m025_sens_era_* / m025_sens_window_nodule_v1 (mig_307c)
 
 Produces:
   1. M025_FINAL_PACKAGE/M025_master_data.xlsx
@@ -15,11 +16,11 @@ Produces:
        threshold_metrics, rom_by_tr, bethesda_x_tr, run_snapshot,
        definitions, gates.
   2. M025_FINAL_PACKAGE/M025_tables_and_summary.xlsx
-       Cover, Table 1 (baseline by maxTR), Table 2 (thresholds),
-       Table 3 (patient vs nodule ROM), Table 4 (Bethesda x TR strict),
-       Table 5 (histology), Table 6 (FNA-path concordance),
-       Table 7 (race/era), Subgroup_age, Subgroup_sex, Subgroup_era,
-       Sensitivity_arms (placeholder labels), QA_gates.
+       Cover, Table 1–7, subgroups, sensitivity sheets (Wilson CIs via mig_307d), QA_gates.
+  3. M025_FINAL_PACKAGE/06_figures_sensitivity/
+       CSV sidecars + 300 DPI PNGs (forest + match-window line chart).
+
+After rebuild, INSERT signoff (once): .venv/bin/python M025_FINAL_PACKAGE/m025_sensitivity_mig_307d.py
 
 Usage:
   cd /Users/loganglosser/THYROID_2026
@@ -31,7 +32,6 @@ from __future__ import annotations
 import os
 import sys
 from datetime import datetime, timezone
-from math import sqrt
 
 import duckdb
 import pandas as pd
@@ -39,14 +39,28 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
-# Allow import of motherduck_client.py from repo root
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Allow import of motherduck_client.py from repo root + local package modules
+_PKG_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _PKG_DIR)
+sys.path.insert(0, os.path.dirname(_PKG_DIR))
 from motherduck_client import get_token  # type: ignore
 
+from m025_sensitivity_lib import (
+    add_rom_ci_lo_hi,
+    augment_window_table,
+    export_sensitivity_csv_bundle,
+    fetch_diagnostic_by_era,
+    fetch_per_era_auc,
+    render_forest_rom_by_era,
+    render_linechart_match_window,
+    wilson_ci,
+)
+
 DB = "thyroid_canonical_publication_v1_0"
-OUTDIR = os.path.dirname(os.path.abspath(__file__))
+OUTDIR = _PKG_DIR
 MASTER_PATH = os.path.join(OUTDIR, "M025_master_data.xlsx")
 TABLES_PATH = os.path.join(OUTDIR, "M025_tables_and_summary.xlsx")
+SENS_FIG_DIR = os.path.join(OUTDIR, "06_figures_sensitivity")
 
 HEADER_FILL = PatternFill(start_color="305496", end_color="305496", fill_type="solid")
 HEADER_FONT = Font(color="FFFFFF", bold=True, size=11)
@@ -54,16 +68,6 @@ TITLE_FONT = Font(bold=True, size=14, color="1F4E78")
 SUB_FONT = Font(italic=True, color="595959")
 THIN = Side(border_style="thin", color="D9D9D9")
 BORDER = Border(left=THIN, right=THIN, top=THIN, bottom=THIN)
-
-
-def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
-    if n <= 0:
-        return (float("nan"), float("nan"))
-    p = k / n
-    denom = 1 + z * z / n
-    centre = (p + z * z / (2 * n)) / denom
-    halfw = (z / denom) * sqrt(p * (1 - p) / n + z * z / (4 * n * n))
-    return (max(0.0, centre - halfw), min(1.0, centre + halfw))
 
 
 def connect():
@@ -336,7 +340,7 @@ def main():
         ("Nodule strict n", snapshot["nodule_strict_eligible"]),
         ("Nodule AUC", snapshot["nodule_auc_locked"]),
         ("Build UTC", snapshot["build_utc"]),
-        ("Sign-off", "mig_307 (manuscript closeout) + mig_307b (analytic spine refresh)"),
+        ("Sign-off", "mig_307b (analytic spine) + mig_307c (sensitivity tables) + mig_307d (sensitivity publication outputs)"),
     ]
     for i, (k, v) in enumerate(cover2, start=4):
         ws.cell(row=i, column=1, value=k).font = Font(bold=True)
@@ -558,7 +562,7 @@ def main():
     sens_df = pd.DataFrame(sens_rows, columns=["arm", "result"])
     ws = wb.create_sheet("Sensitivity_Arms")
     title_block(ws, "Sensitivity / supplementary analyses",
-                "Locked from cursor 1d4ecc1 and Cowork pre-bake + mig_307c sensitivity arms.")
+                "mig_307c sensitivity tables; mig_307d adds Wilson 95% CIs, diagnostics CSVs, and figures under 06_figures_sensitivity/.")
     write_dataframe(ws, sens_df, start_row=4)
 
     # ---------------- Era subset (patient grain) ----------------
@@ -567,9 +571,11 @@ def main():
         SELECT * FROM manuscript_workspace.m025_sens_era_patient_v1
         ORDER BY era, tr_category NULLS LAST
     """).df()
+    df_era_p = add_rom_ci_lo_hi(df_era_p)
     ws = wb.create_sheet("Sensitivity_Era_Patient")
     title_block(ws, "Sensitivity S2 — Patient cohort split by ACR-2017 era",
-                "Era boundary = surg_first_date < 2017-05-01 (ACR TI-RADS 2017 publication date).")
+                "Era boundary = surg_first_date < 2017-05-01 (ACR TI-RADS 2017 publication date). "
+                "lo_95 / hi_95 = Wilson 95% CI for ROM (n_malignant / n_total).")
     write_dataframe(ws, df_era_p, start_row=4)
 
     # ---------------- Era subset (nodule strict) ----------------
@@ -578,9 +584,10 @@ def main():
         SELECT * FROM manuscript_workspace.m025_sens_era_nodule_v1
         ORDER BY era, tr_category NULLS LAST
     """).df()
+    df_era_n = add_rom_ci_lo_hi(df_era_n)
     ws = wb.create_sheet("Sensitivity_Era_Nodule")
     title_block(ws, "Sensitivity S2 — Nodule strict cohort split by ACR-2017 era",
-                "Era boundary = exam_date < 2017-05-01.")
+                "Era boundary = exam_date < 2017-05-01. lo_95 / hi_95 = Wilson CI for ROM.")
     write_dataframe(ws, df_era_n, start_row=4)
 
     # ---------------- Time-window subset (nodule strict) ----------------
@@ -589,10 +596,28 @@ def main():
         SELECT * FROM manuscript_workspace.m025_sens_window_nodule_v1
         ORDER BY tr_category
     """).df()
+    df_win = augment_window_table(df_win)
     ws = wb.create_sheet("Sensitivity_Match_Window")
     title_block(ws, "Sensitivity S3 — Tighter US-to-surgery match-window (nodule strict)",
-                "Recomputes ROM at 365 / 180 / 90 / 30 day windows. Median US-to-malignant-surgery interval ~60–80 days.")
+                "ROM at 365 / 180 / 90 / 30 d: Wilson 95% CIs in rom_w*_lo_95 / rom_w*_hi_95 vs n_total.")
     write_dataframe(ws, df_win, start_row=4)
+
+    # ---------------- Sensitivity publication bundle (mig_307d) ----------------
+    print(" Sensitivity — CSVs + figures (06_figures_sensitivity) ...")
+    df_diag = fetch_diagnostic_by_era(con)
+    df_auc = fetch_per_era_auc(con)
+    export_sensitivity_csv_bundle(SENS_FIG_DIR, df_era_p, df_era_n, df_win, df_diag, df_auc)
+    render_forest_rom_by_era(
+        df_era_p,
+        df_era_n,
+        os.path.join(SENS_FIG_DIR, "M025_fig_sens_forest_tr4_tr5_rom_by_era.png"),
+        dpi=300,
+    )
+    render_linechart_match_window(
+        df_win,
+        os.path.join(SENS_FIG_DIR, "M025_fig_sens_rom_by_match_window.png"),
+        dpi=300,
+    )
 
     # ---------------- QA gates ----------------
     qa_df = pd.DataFrame([
