@@ -1,0 +1,633 @@
+research_id,mol_platform_original,mol_platform_family,mol_platform_resolved,mol_platform_version,mol_platform_evidence,mol_platform_confidence,n_episodes_used,n_episodes_distinct_resolved,has_inadequate_episode
+9340,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9530,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8372,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6465,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6306,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+6197,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5980,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,text:'ThyroSeq v2',high,1,1,False
+6271,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,text:'ThyroSeq v2',high,1,1,False
+9786,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10282,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11731,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9509,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,text:'ThyroSeq v2',high,2,2,False
+9560,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8894,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9176,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8760,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6770,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6920,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6835,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9968,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10895,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9846,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6463,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10509,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-07-27>2018-12,medium,1,1,False
+10093,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9997,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10558,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-11-17>2018-12,medium,2,1,False
+10933,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+12008,unknown,ThyroSeq,ThyroSeq_v3,v3,date:2024-02-20>2018-12,medium,2,2,False
+11360,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10729,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6759,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6436,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8105,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10559,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10049,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6659,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9398,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11319,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10343,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11191,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11935,unknown,ThyroSeq,ThyroSeq_v3,v3,date:2022-05-20>2018-12,medium,1,1,False
+9905,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11024,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-09-13>2018-12,medium,1,1,False
+10410,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10124,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10240,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10234,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-06-23>2018-12,medium,1,1,False
+8443,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8044,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-12-13>2018-12,medium,2,1,False
+8718,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9203,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7833,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9615,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9634,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9455,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9062,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9068,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9400,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8799,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9069,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7094,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7299,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8541,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8360,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10108,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10514,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9857,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10324,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9995,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10316,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9892,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11829,unknown,ThyroSeq,ThyroSeq_v3,v3,date:2022-10-28>2018-12,medium,1,1,False
+10573,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11077,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+12113,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10929,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,flag+date:2023-07-24>2018-12,medium,3,2,False
+11135,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10414,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-12-14>2018-12,medium,1,1,False
+11016,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11049,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9856,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11067,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10293,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11337,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2020-06-25>2018-12,medium,1,1,False
+10182,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11363,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10195,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10346,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11175,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9577,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10111,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2016-11-02<2017-06,medium,1,1,False
+10083,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7892,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7712,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9715,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10010,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10381,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10561,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8222,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-12-05>2018-12,medium,1,1,False
+7726,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-09-24>2018-12,medium,1,1,False
+7814,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9428,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10020,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-07-31>2018-12,medium,1,1,False
+9636,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10226,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2021-09-08>2018-12,medium,1,1,False
+11111,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10104,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-03-15>2018-12,medium,1,1,False
+8924,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8370,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+7924,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8958,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11196,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10335,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8889,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9541,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8108,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7484,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8961,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9794,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8311,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8110,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7953,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7840,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9674,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9691,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9195,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8570,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9119,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9712,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9589,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8870,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8501,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8700,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8622,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7865,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+8752,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8544,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8130,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7932,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9813,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8633,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9357,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8036,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5542,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6565,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7100,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10666,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10554,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11054,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11017,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10315,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9926,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9903,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10441,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11201,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10522,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10793,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9076,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7479,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11626,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10326,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10483,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-03-01>2018-12,medium,1,1,False
+11314,Afirma,ThyroSeq,ThyroSeq_v3,v3,date:2022-11-21>2018-12,medium,1,1,False
+10533,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-06-17>2018-12,medium,1,1,False
+7965,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6939,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8837,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9727,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9375,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9701,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7690,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7858,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7911,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9673,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8384,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8984,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9451,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9442,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9177,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10402,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10976,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8043,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10016,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9765,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9234,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8735,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10516,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10409,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9679,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8879,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10171,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10468,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10591,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-07-13>2018-12,medium,1,1,False
+10284,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7628,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9379,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9647,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9327,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9584,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9767,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+8495,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8289,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9364,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9742,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8645,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7916,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10295,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10160,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-02-06>2018-12,medium,1,1,False
+8491,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9473,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9104,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7826,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7716,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6916,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7657,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10499,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10505,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-09-18>2018-12,medium,1,1,False
+10259,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8599,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9296,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2021-01-08>2018-12,medium,1,1,False
+10963,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11445,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8111,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10723,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-12-07>2018-12,medium,1,1,False
+11046,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10756,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10839,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10367,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11092,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9751,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9613,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11139,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10406,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-05-01>2018-12,medium,1,1,False
+8119,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10138,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8726,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8732,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9422,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8218,Afirma,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11035,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10553,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8716,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11817,unknown,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9423,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11956,unknown,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9188,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2006-04-21<2017-06,medium,1,1,False
+9640,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+4908,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-03-17>2018-12,medium,1,1,False
+6722,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6872,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6644,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6727,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+2133,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+2176,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+2235,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-11-18>2018-12,medium,1,1,False
+2160,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+2217,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10320,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-06-03>2018-12,medium,1,1,False
+8008,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7923,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8802,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8523,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10944,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10147,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10374,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-04-04>2018-12,medium,1,1,False
+10447,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-08-14>2018-12,medium,1,1,False
+10886,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-01-03>2018-12,medium,1,1,False
+10833,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-05-24>2018-12,medium,1,1,False
+10972,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-01-10>2018-12,medium,1,1,False
+11095,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10782,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-08-16>2018-12,medium,1,1,False
+10056,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9966,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7752,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8147,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8833,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9602,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10889,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7240,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7695,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8818,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+1664,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+2169,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2021-01-25>2018-12,medium,1,1,False
+2214,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2025-06-18>2018-12,medium,1,1,False
+2248,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2021-10-21>2018-12,medium,1,1,False
+7926,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9600,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8181,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7906,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8015,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+8731,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9323,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7802,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8697,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8074,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9098,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6535,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7129,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6508,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6235,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6378,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6989,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6837,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6682,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6443,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6006,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,text:'ThyroSeq v2',high,1,1,False
+5974,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2017-04-19<2017-06,medium,1,1,False
+947,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+1517,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6247,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2016-11-09<2017-06,medium,1,1,False
+5936,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2016-07-25<2017-06,medium,1,1,False
+6239,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5539,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2016-06-15<2017-06,medium,1,1,False
+2227,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6057,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2017-04-19<2017-06,medium,1,1,False
+6457,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6510,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6168,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6163,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6433,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6387,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6648,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6655,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+2164,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7279,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10734,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11083,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10607,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-12-16>2018-12,medium,1,1,False
+10270,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-02-07>2018-12,medium,1,1,False
+11359,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-10-26>2018-12,medium,1,1,False
+6931,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7273,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9353,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+7985,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7838,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8097,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10145,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9747,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9644,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10418,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-10-07>2018-12,medium,1,1,False
+8903,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9248,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9734,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7954,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8821,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7881,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8600,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9158,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7329,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10473,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10185,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8766,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7653,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9317,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7314,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6903,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7301,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6802,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2025-06-06>2018-12,medium,1,1,False
+8286,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+651,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-05-31>2018-12,medium,1,1,True
+2229,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8836,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10015,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11781,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+2221,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7722,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8145,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-06-19>2018-12,medium,1,1,False
+3399,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+3189,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2020-10-14>2018-12,medium,1,1,False
+2148,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10011,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7779,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+1404,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7967,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9803,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11270,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8751,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9937,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9945,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-01-06>2018-12,medium,1,1,False
+7412,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10652,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8001,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8611,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6557,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8377,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8312,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10529,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10924,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9960,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8083,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+7205,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10253,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9958,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9666,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7395,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9775,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7573,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9681,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+9100,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9425,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9229,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7552,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7071,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7144,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11350,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11296,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9677,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8710,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7542,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10021,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-05-31>2018-12,medium,3,1,False
+10001,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10059,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-01-21>2018-12,medium,2,1,False
+8883,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9363,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9766,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10490,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-12-05>2018-12,medium,1,1,False
+9187,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7283,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10140,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-01-01>2018-12,medium,1,1,False
+8945,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+11400,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10880,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11634,unknown,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,2,1,False
+8017,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8183,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10936,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10251,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+12098,unknown,ThyroSeq,ThyroSeq_v3,v3,date:2022-11-10>2018-12,medium,1,1,False
+7742,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7593,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+8938,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8246,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9638,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9453,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2020-03-30>2018-12,medium,1,1,False
+8039,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+9637,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9299,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9471,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9683,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7041,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9576,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+8135,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7203,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7444,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7918,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8842,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10832,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11015,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10487,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10593,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10497,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11038,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11170,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9986,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7099,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8398,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7266,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6314,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7173,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9290,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7870,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7948,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7382,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-05-23>2018-12,medium,1,1,False
+7596,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7595,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7368,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7464,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+8000,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7138,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+7652,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8867,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+6806,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7819,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7372,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+8655,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+7186,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6996,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7620,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10649,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6880,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8430,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10153,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8765,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9015,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7901,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6981,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6227,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6435,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6511,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2012-01-17<2017-06,medium,1,1,False
+6711,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5469,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2016-04-29<2017-06,medium,1,1,False
+6871,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6961,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6179,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8345,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8918,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5842,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2017-01-18<2017-06,medium,1,1,False
+6512,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+3813,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2021-02-02>2018-12,medium,1,1,False
+6944,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9710,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+4940,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-05-03>2018-12,medium,2,1,False
+7132,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6651,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+6654,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7675,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6775,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7508,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7277,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6030,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,flag+date:2017-02-06<2017-06,medium,2,2,False
+6635,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7439,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6396,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6260,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+7497,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7145,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6312,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+5805,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,date_ambig:2017-12-13,ambiguous,1,1,False
+6216,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6951,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10477,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10543,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10458,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11211,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11204,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11189,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10638,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11939,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+11422,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10684,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10224,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10190,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11234,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9668,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9557,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7058,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,mol_has_thyroseq+no_date_signal,low,2,2,False
+8287,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7324,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8742,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10758,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-02-16>2018-12,medium,1,1,False
+9513,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10298,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10368,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-09-02>2018-12,medium,1,1,False
+11064,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9979,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7934,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7982,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9010,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8646,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8344,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+10236,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-06-17>2018-12,medium,1,1,False
+11310,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7553,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6699,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8699,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8724,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8332,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9046,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7950,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8390,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,3,1,False
+9520,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7051,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+10102,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10122,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-04-11>2018-12,medium,1,1,False
+9063,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9261,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9336,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10333,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2022-01-01>2018-12,medium,1,1,False
+8534,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2017-02-22<2017-06,medium,1,1,False
+8122,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7704,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6735,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10052,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2020-01-21>2018-12,medium,1,1,False
+10781,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-09-19>2018-12,medium,1,1,False
+8635,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8563,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7443,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7142,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date_ambig+fusion_present,medium,1,1,False
+11440,unknown,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11762,unknown,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+9686,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8637,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6864,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7587,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10528,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11063,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6817,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+1963,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6470,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8084,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10727,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8249,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8679,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6771,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7249,ThyroSeq,ThyroSeq,ThyroSeq_v2,v2,date:2002-05-19<2017-06,medium,1,1,False
+7859,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-10-23>2018-12,medium,1,1,False
+8595,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10995,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-10-13>2018-12,medium,1,1,False
+2144,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6089,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-10-28>2018-12,medium,1,1,False
+11156,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10743,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10369,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2023-07-25>2018-12,medium,1,1,False
+6858,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7584,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7834,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8494,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+7878,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6698,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7561,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+6787,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+4897,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,flag+date:2022-02-16>2018-12,medium,2,2,False
+9155,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7560,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-04-17>2018-12,medium,1,1,False
+9609,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11882,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10176,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8449,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+6760,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+7946,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+8392,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,3,1,False
+10227,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2024-04-12>2018-12,medium,1,1,False
+9871,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+11774,unknown,ThyroSeq,ThyroSeq_v3,v3,date:2023-10-18>2018-12,medium,2,2,False
+7448,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,1,1,False
+8848,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,text:'ThyroSeq v3',high,2,1,False
+5917,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+9883,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10732,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,no_date+fusion_present,low,1,1,False
+10762,ThyroSeq,ThyroSeq,ThyroSeq_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7566,ThyroSeq,ThyroSeq,ThyroSeq_v3,v3,date:2019-07-18>2018-12,medium,1,1,False

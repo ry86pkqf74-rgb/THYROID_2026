@@ -1,0 +1,198 @@
+research_id,mol_platform_original,mol_platform_family,mol_platform_resolved,mol_platform_version,mol_platform_evidence,mol_platform_confidence,n_episodes_used,n_episodes_distinct_resolved,has_inadequate_episode
+5063,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5743,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6285,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5933,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,2,1,False
+5157,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6295,Afirma,Afirma,Afirma_version_unknown,unknown,date_ambig:2017-07-25,ambiguous,2,1,False
+5035,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5609,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5123,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5253,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5329,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5423,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4891,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6360,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5143,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6066,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4207,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+4963,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+11309,Afirma,Afirma,Afirma_GSC,GSC,date:2022-11-10>2017-12,medium,1,1,False
+10856,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6664,Afirma,Afirma,Afirma_GEC,GEC,date:2016-04-08<2017-01,medium,1,1,False
+9165,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+4709,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4014,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5312,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9583,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+6846,Afirma,Afirma,Afirma_GSC,GSC,date:2025-07-29>2017-12,medium,1,1,False
+11884,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+12084,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10752,Afirma,Afirma,Afirma_GSC,GSC,date:2023-01-13>2017-12,medium,2,1,False
+4819,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+8323,Afirma,Afirma,Afirma_GSC,GSC,date:2020-01-04>2017-12,medium,1,1,False
+8880,Afirma,Afirma,Afirma_GSC,GSC,date:2021-02-24>2017-12,medium,1,1,False
+11233,Afirma,Afirma,Afirma_GSC,GSC,date:2024-08-01>2017-12,medium,1,1,False
+9221,Afirma,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10157,Afirma,Afirma,Afirma_GSC,GSC,date:2021-08-19>2017-12,medium,1,1,False
+7799,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+9298,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9258,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+8905,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+7433,Afirma,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+9038,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+12180,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10632,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10419,Afirma,Afirma,Afirma_GSC,GSC,date:2022-08-18>2017-12,medium,1,1,False
+9590,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11642,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10571,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,2,1,False
+11619,Afirma,Afirma,Afirma_GSC,GSC,date:2023-11-02>2017-12,medium,1,1,False
+9096,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11892,unknown,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+10337,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+10162,Afirma,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+9648,Afirma,Afirma,Afirma_GSC,GSC,date:2022-03-16>2017-12,medium,1,1,False
+10254,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11855,unknown,Afirma,Afirma_GSC,GSC,date:2024-06-24>2017-12,medium,1,1,False
+9235,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+8730,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+7643,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8192,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+9533,Afirma,Afirma,Afirma_GSC,GSC,date:2021-12-29>2017-12,medium,1,1,False
+8379,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+11099,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10513,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+7762,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9257,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+9810,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9163,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9542,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8476,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7680,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7827,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7818,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8719,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+8168,Afirma,Afirma,Afirma_GSC,GSC,flag+date:2020-05-13>2017-12,medium,0,0,False
+9193,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9705,Afirma,Afirma,Afirma_GEC,GEC,date:2008-12-21<2017-01,medium,1,1,False
+10370,Afirma,Afirma,Afirma_GSC,GSC,date:2024-02-02>2017-12,medium,1,1,False
+10428,Afirma,Afirma,Afirma_GSC,GSC,date:2022-05-01>2017-12,medium,1,1,False
+9267,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7842,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9181,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+5678,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+2129,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+1961,Afirma,Afirma,Afirma_GSC,GSC,date:2018-07-26>2017-12,medium,1,1,False
+5902,Afirma,Afirma,Afirma_GEC,GEC,date:2015-04-13<2017-01,medium,1,1,False
+6842,Afirma,Afirma,Afirma_GEC,GEC,date:2015-01-13<2017-01,medium,1,1,False
+6252,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6476,Afirma,Afirma,Afirma_version_unknown,unknown,date_ambig:2017-12-21,ambiguous,1,1,False
+5737,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4869,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4810,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6429,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+6187,Afirma,Afirma,Afirma_version_unknown,unknown,date_ambig:2017-07-11,ambiguous,1,1,False
+5972,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5230,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5738,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5377,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5095,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6567,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5500,Afirma,Afirma,Afirma_GEC,GEC,date:2016-03-03<2017-01,medium,1,1,False
+6451,Afirma,Afirma,Afirma_GEC,GEC,date:2016-11-10<2017-01,medium,1,1,False
+5147,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5174,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5376,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5233,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5343,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5752,Afirma,Afirma,Afirma_GEC,GEC,date:2016-07-15<2017-01,medium,1,1,False
+4990,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5212,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5538,Afirma,Afirma,Afirma_GEC,GEC,date:2016-06-27<2017-01,medium,1,1,False
+6051,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,3,1,False
+8725,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7478,Afirma,Afirma,Afirma_GSC,GSC,date:2019-05-13>2017-12,medium,1,1,False
+10585,Afirma,Afirma,Afirma_GSC,GSC,text:'Afirma GSC',high,1,1,False
+8456,Afirma,Afirma,Afirma_GSC,GSC,date:2020-11-02>2017-12,medium,1,1,False
+7693,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+5710,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10816,Afirma,Afirma,Afirma_GSC,GSC,date:2023-03-08>2017-12,medium,1,1,False
+10492,Afirma,Afirma,Afirma_GSC,GSC,date:2024-09-01>2017-12,medium,1,1,False
+2172,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8674,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9006,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+2225,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+8061,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7886,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10844,Afirma,Afirma,Afirma_GSC,GSC,date:2023-02-23>2017-12,medium,1,1,False
+9884,Afirma,Afirma,Afirma_GSC,GSC,date:2024-03-01>2017-12,medium,1,1,False
+5320,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6201,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+10503,Afirma,Afirma,Afirma_GSC,GSC,date:3023-07-01>2017-12,medium,1,1,False
+11578,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10087,Afirma,Afirma,Afirma_GSC,GSC,date:2024-07-24>2017-12,medium,2,1,False
+9582,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9066,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+9658,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8003,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11221,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+12039,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+9503,Afirma,Afirma,Afirma_GSC,GSC,date:2022-01-11>2017-12,medium,1,1,False
+9329,Afirma,Afirma,Afirma_GSC,GSC,date:2021-11-12>2017-12,medium,1,1,False
+5508,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+8481,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+5491,Afirma,Afirma,Afirma_GEC,GEC,date:2016-05-10<2017-01,medium,1,1,False
+6032,Afirma,Afirma,Afirma_version_unknown,unknown,date_ambig:2017-02-07,ambiguous,1,1,False
+5496,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5080,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6473,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5720,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5729,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5374,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+6763,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5696,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4927,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5086,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5601,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5588,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4989,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4925,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7667,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7374,Afirma,Afirma,Afirma_GSC,GSC,date:2019-05-27>2017-12,medium,1,1,False
+5725,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+11753,unknown,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+10964,Afirma,Afirma,Afirma_GSC,GSC,date:2024-10-11>2017-12,medium,1,1,False
+11952,unknown,Afirma,Afirma_GSC,GSC,date:2022-07-19>2017-12,medium,1,1,False
+9405,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7841,Afirma,Afirma,Afirma_GSC,GSC,text:'Xpression Atlas' (GSC add-on),high,1,1,False
+9213,Afirma,Afirma,Afirma_GSC,GSC,date:2021-01-05>2017-12,medium,1,1,False
+9212,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8470,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+8445,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9222,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7855,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+9807,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9725,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9117,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+5757,Afirma,Afirma,Afirma_GEC,GEC,date:2016-12-12<2017-01,medium,1,1,False
+8888,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7845,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+4884,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9950,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+9220,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,2,1,False
+10646,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+10327,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+8464,Afirma,Afirma,Afirma_GSC,GSC,date:2020-11-06>2017-12,medium,1,1,False
+8857,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+7674,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+5726,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4768,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5835,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+5337,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4857,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+7597,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+5950,Afirma,Afirma,Afirma_GEC,GEC,text:'Afirma GEC',high,1,1,False
+4921,Afirma,Afirma,Afirma_version_unknown,unknown,mol_has_afirma+no_date_signal,low,0,0,False
+8424,Afirma,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
+11414,unknown,Afirma,Afirma_version_unknown,unknown,no_signal,ambiguous,1,1,False
