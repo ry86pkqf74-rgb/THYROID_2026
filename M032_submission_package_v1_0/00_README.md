@@ -1,12 +1,16 @@
 # M032 — 25-Year Single-Institution Thyroid Surgery Cohort
 ## Submission Package v1.0
 
-**Generated:** 2026-05-04 | mig_290 | Cursor Composer  
-**DB:** `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)  
-**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)  
-**Cohort view:** `manuscript_workspace.cohort_m032_descriptive_25yr_v1`  
-**Cohort lock:** mig_281 + mig_285 (post-2026-05-03, commit `590acb5`)  
+**Generated:** 2026-05-04 | mig_290 | Cursor Composer
+**v2 numerical refresh:** 2026-05-05 | mig_321 | Cowork (post-mig_313 M-stage repair)
+**Submission target:** Thyroid (not yet submitted as of 2026-05-05)
+**DB:** `thyroid_canonical_publication_v1_0` (release `pub_v1_1_20260504`)
+**Release:** `pub_v1_1_20260504` (post-NLP-augmentation milestone; successor to `pub_v1_0_20260430` after mig_281–mig_300)
+**Cohort view:** `manuscript_workspace.cohort_m032_descriptive_25yr_v1`
+**Cohort lock:** mig_281 + mig_285 (post-2026-05-03, commit `590acb5`)
 **Pattern follows:** M044_submission_package_v1_0 / M038_submission_package_v1_0
+
+> **READ BEFORE SUBMISSION:** Era × stage numbers in `02_manuscript.docx`, `04_tables.xlsx` (Table 3), and `06_figures/Figure3_StageDistributionByEra.png` reflect **pre-mig_313 staging**. Run the three rebuild scripts (see Rebuild Instructions below) before sending to Thyroid. The corrected cohort view already reflects v2; rebuilds pick it up automatically. Full v1 → v2 delta + new locked numbers in `08_analysis_outputs/M032_v2_post_mig313_REFRESH_NOTE.md`.
 
 ---
 
@@ -88,6 +92,7 @@ Requires: MotherDuck RW token in `motherduck.local.toml`.
 3. **Era F_unknown:** Small number of patients with undatable surgery; excluded from era-stratified tables
 4. **smoking_status_combined vs pmhx_nlp_smoking_status:** Combined field (4,232 known) includes structured EHR + NLP; locked report (3,022) used NLP-only. Table 5 uses combined field; abstract numbers use NLP-only
 5. **AJCC8 IVB collapse (mig_263):** CPM uses IVB for all M1 disease; IVA/IVC granularity available in `ajcc8_stage_group_resolved`
+6. **v1 era × stage numbers were inflated by pre-mig_313 M-stage corruption.** Era 2020–2025 Stage IV = 3.51% post-fix vs 41.70% pre-fix. See `08_analysis_outputs/M032_v2_post_mig313_REFRESH_NOTE.md` and `06_figures/Fig3_stage_distribution_data_v2.csv`. Rebuild scripts produce v2 numbers automatically against the post-mig_313 cohort view.
 
 ---
 

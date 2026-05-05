@@ -1,9 +1,25 @@
 # M032 Submission Package — Closeout Notes
 **mig_290 | 2026-05-04 | Cursor Composer**
+**v2 numerical refresh: mig_321 | 2026-05-05 | Cowork**
 
 ---
 
-## Status: READY FOR WRITING
+## Status: READY FOR SUBMISSION TO THYROID — after rebuild scripts run
+
+**Per Logan 2026-05-05:** journal target = **Thyroid**, M032 v1 has not been submitted. The v2 numerical refresh (post-mig_313 M-stage repair) replaces v1 numbers directly in the working package — no published correction notice needed.
+
+**Before submission:**
+1. Run the three rebuild scripts in §"Rebuild if numbers drift" below — they regenerate Tables, Figures, and the manuscript number sheet from the post-mig_313 cohort view
+2. Hand-review `02_manuscript.docx` Results §Stage migration and any Discussion sentences referencing "Stage IV temporal trends"
+3. Verify `04_tables.xlsx` Table 3 cells reflect v2 numbers
+4. Verify Fig 3 regenerates cleanly with v2 data (`06_figures/Fig3_stage_distribution_data_v2.csv`)
+5. Update Abstract if any era × stage % changed by >5 pp
+
+Full delta exhibit: `08_analysis_outputs/M032_v2_post_mig313_REFRESH_NOTE.md`.
+
+---
+
+## Original status (mig_290): READY FOR WRITING
 
 The M032 submission package v1.0 is complete and ready for PI review and manuscript writing.
 
@@ -33,6 +49,7 @@ The M032 submission package v1.0 is complete and ready for PI review and manuscr
 | ID | Status | Notes |
 |---|---|---|
 | CF-M032-READY-FOR-WRITING | **CLOSED** | Package complete; writing chat can begin |
+| CF-M032-CORRECTION-NOTICE | **CLOSED** (mig_321) | Recategorized as pre-submission v2 numerical refresh — M032 not yet submitted, so no published correction needed; v2 numbers added in this commit |
 | CF-M032-LOGREG-MULTIVARIABLE | **OPEN** | If manuscript expands to multivariable (era × outcomes), open new Cowork session |
 | CF-mig265-NLP-SOCHX-FAMHX-REFRESH-SCOPE | **OPEN** | Smoking/family-hx 72.2% unknown; dedicated NLP extraction pass needed for full coverage |
 

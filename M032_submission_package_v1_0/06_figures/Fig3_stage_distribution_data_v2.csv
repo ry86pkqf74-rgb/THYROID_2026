@@ -1,0 +1,26 @@
+surgery_era,stage_group,n
+A_1999_2004,Stage I,190
+A_1999_2004,Stage II,44
+A_1999_2004,Stage III,8
+A_1999_2004,Stage IV,5
+A_1999_2004,Unknown/Unstaged,14
+B_2005_2009,Stage I,269
+B_2005_2009,Stage II,84
+B_2005_2009,Stage III,10
+B_2005_2009,Stage IV,8
+B_2005_2009,Unknown/Unstaged,27
+C_2010_2014,Stage I,430
+C_2010_2014,Stage II,175
+C_2010_2014,Stage III,16
+C_2010_2014,Stage IV,14
+C_2010_2014,Unknown/Unstaged,19
+D_2015_2019,Stage I,624
+D_2015_2019,Stage II,402
+D_2015_2019,Stage III,18
+D_2015_2019,Stage IV,32
+D_2015_2019,Unknown/Unstaged,30
+E_2020_2025,Stage I,998
+E_2020_2025,Stage II,453
+E_2020_2025,Stage III,29
+E_2020_2025,Stage IV,56
+E_2020_2025,Unknown/Unstaged,61
