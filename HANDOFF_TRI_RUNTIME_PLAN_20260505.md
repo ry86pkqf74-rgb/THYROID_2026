@@ -48,7 +48,7 @@ SNOWFLAKE_PAT=$SNOWFLAKE_PAT \
 |---|---|
 | **mig_310 v2 full pipeline** (above) | NLP pipeline + Cortex compute time |
 | **mig_315 — `cohort_m044_ajcc_ete_v1` rebuild** | Table currently has duplicate columns (every column appears twice — JOIN that wasn't column-projected). Needs explicit column selection rebuild + dependency cascade audit (Cortex Analyst will choke on dupes). Multi-step DDL with verification. |
-| **mig_316 — `cohort_m037_ln_predictors_v1` materialization** | Brief references cohort_m037; only `cohort_m043_ln_predictors_v1` exists. Either materialize a real M037 subset or correct the reference everywhere. Naming-drift fix touches multiple downstream views. |
+| **mig_316 — `cohort_m037_ln_predictors_v1`** | **DONE** — TABLE materialized (n=2,234) = M043 filtered by mig_280 LN eligibility; matches `cohort_m037_ln_metastasis_v1` rids exactly. |
 | **M032 era × stage refresh** | M032 is shipped; era-stratified counts had pre-2008 IVB inflation. Re-run produces a v2 numerical patch to the submission package (potentially deltas to multiple table cells + figure regeneration). |
 
 For each, deliver via `cursor_prompts/CURSOR_PROMPT_MIG_<N>_*.md` with the standard template (problem, recipe, validation gates, signoff SQL).
@@ -100,7 +100,7 @@ For each, deliver via `cursor_prompts/CURSOR_PROMPT_MIG_<N>_*.md` with the stand
 | `CF-FNA-SIZE-CM-NULL` | OPEN | cursor (mig_310 Phase A→G) | imaging_fna_linkage_v4 built + signed off |
 | `CF-mig_305-SP-V3-HANG` | CLOSED | (cowork mig_309) | already closed |
 | `CF-M044-DUP-COLS` | OPEN (new) | cursor (mig_315) | cohort flat rebuilt with explicit projection |
-| `CF-M037-COHORT-MISSING` | OPEN (new) | cursor (mig_316) | cohort_m037 materialized or naming reconciled |
+| `CF-M037-COHORT-MISSING` | **CLOSED** (mig_316) | cursor | `cohort_m037_ln_predictors_v1` TABLE = M037 LN-eligible subset of M043 |
 
 ---
 

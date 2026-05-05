@@ -158,7 +158,7 @@ M025 v2, M038, and M044 v5 are all already in submission state (M025 v2 is being
 ## 8. New data-quality issues surfaced this session
 
 1. **M044 cohort flat duplicate-column structural defect** — see §6. Mitigation: explicit column selection on next rebuild. Open as `CF-M044-DUP-COLS`.
-2. **No M037-named cohort exists in workspace.** Brief references `cohort_m037_ln_predictors_v1`; what exists is `cohort_m043_ln_predictors_v1` (n=4,019). Either M037 is a downstream subset of M043 not yet materialized, or naming drift since the M037 submission package froze. Worth resolving before M037 is touched again. Open as `CF-M037-COHORT-MISSING`.
+2. **`CF-M037-COHORT-MISSING` — CLOSED (mig_316).** `manuscript_workspace.cohort_m037_ln_predictors_v1` is now a **TABLE** (n=2,234): subset of `cohort_m043_ln_predictors_v1` with the same eligibility rule as `cohort_m037_ln_metastasis_v1` / mig_280 — malignant with `ln_total_examined > 0` OR `ln_positive_flag = CAST('t' AS BOOLEAN)` — *not* LN-positive-only. Canonical name for the frozen M037 v1 package remains `cohort_m037_ln_metastasis_v1`; the new object fixes handoff references to the missing `_predictors_v1` alias. SQL: `qc_framework_v1/migrations/316_m037_cohort_ln_predictors_reconcile_20260505.sql`.
 3. **86 high:distant_metastasis vs 114 CPM M1.** Small gap (28 patients), most likely non-DTC histology that drops out of the ATA classifier (anaplastic, MTC, PDTC, FTUMP). Worth a chart-level audit before the M036 manuscript prose claims "true M1 prevalence ≈2.1%". Audit query is in the M036 brief.
 
 ---
@@ -171,7 +171,7 @@ M025 v2, M038, and M044 v5 are all already in submission state (M025 v2 is being
 | `CF-FNA-SIZE-CM-NULL` | OPEN (waits on mig_310 v2) |
 | `CF-mig_305-SP-V3-HANG` | CLOSED (mig_309) |
 | `CF-M044-DUP-COLS` | NEW (this session) |
-| `CF-M037-COHORT-MISSING` | NEW (this session) |
+| `CF-M037-COHORT-MISSING` | **CLOSED** (mig_316 — `cohort_m037_ln_predictors_v1` TABLE) |
 
 ---
 
