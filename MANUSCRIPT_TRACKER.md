@@ -1,6 +1,6 @@
 # THYROID_2026 — Manuscript Tracker
 
-> **Last updated:** 2026-03-18
+> **Last updated:** 2026-05-05
 
 ## Active Manuscripts
 
@@ -133,6 +133,32 @@
 
 | # | Title | Status | Study Dir |
 |---|-------|--------|-----------|
+| M025 | Diagnostic Performance of ACR TI-RADS in a 25-Year Operative Thyroid Cohort: Patient-Level Analysis with Nodule-Level Sister Validation | **Complete — ready for Thyroid submission (v2.1 FINAL, 2026-05-05)** | `M025_FINAL_PACKAGE/` (final pkg: `THYROID_M025_v2.1_FINAL.zip`) |
 | — | ETE Staging & Recurrence (PSM) | Submitted | `studies/proposal2_ete_staging/` |
 | H1 | Central LN Dissection in Lobectomy | Analysis complete | `studies/hypothesis1_cln_lobectomy/` |
 | H2 | Goiter, Race & SDOH Disparities | Analysis complete | `studies/hypothesis2_goiter_sdoh/` |
+
+---
+
+## M025 — ACR TI-RADS Operative Cohort (Thyroid submission, v2.1 FINAL)
+
+**Status:** Complete — ready for submission to *Thyroid* (Mary Ann Liebert).
+
+**Aim:** Quantify the contribution of multinodular attribution error to operative-cohort ROM elevation previously attributed solely to selection bias, using a 25-year single-institution thyroidectomy cohort with paired patient-level and nodule-level analyses.
+
+| Milestone | Status | Date |
+|-----------|--------|------|
+| Cohort assembly + ACR 2017 re-scoring | Done | 2026-05-04 |
+| Patient-level + nodule-level analyses | Done | 2026-05-04 |
+| Pre-specified sensitivity arms (S1A–S3) | Done | 2026-05-05 |
+| Manuscript draft v2.0 | Done | 2026-05-05 |
+| Final editorial pass + verification vs. M025 Excel | Done | 2026-05-05 |
+| Submission package v2.1 FINAL bundled | Done | 2026-05-05 |
+| Senior-author sign-off (IRB #, authors, ORCIDs, funding) | **Pending** | — |
+| Submission via Editorial Manager | **Pending senior-author sign-off** | — |
+
+**Key results:** Patient AUC 0.648 (95% CI 0.630–0.667); Youden-optimal TR≥TR4 (J=0.271); patient-level ROM exceeds ACR-expected bands at TR1–TR4; nodule-level analysis recovers within-band calibration at TR4 (18.7%) and TR5 (26.1%); patient-vs-nodule inflation +28.6 pp at TR4 and +32.6 pp at TR5.
+
+**Final package:** `THYROID_M025_v2.1_FINAL.zip` (cover letter, title page, manuscript, tables, figures with legends, highlights, suggested reviewers, submission checklist, supplementary xlsx, README, CHANGES_FROM_v2.0.txt).
+
+**Outstanding TODOs (senior-author):** confirm full author list / ORCID iDs / order, IRB protocol number, funding statement, institutional name, and final disposition of two Elicit evidence reports.

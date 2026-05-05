@@ -1,0 +1,58 @@
+M025 v2.1 FINAL — Changes from v2.0 submission package
+Prepared 2026-05-05 (final pre-submission polish)
+
+This release applies a light editorial pass on top of the v2.0 package.
+All headline statistics, tables, figures, and references are unchanged
+except as listed below.
+
+NUMERICAL CORRECTIONS (verified against M025_tables_and_summary.xlsx
+and M025_master_data.xlsx)
+
+  TR4 patient-vs-nodule inflation: rounded to +28.6 pp throughout
+    (exact value 28.64; v2.0 had stray "+28.7 pp" in abstract,
+    discussion, cover letter, highlights, and README).
+
+  Median age at surgery: corrected to 54 years (verified n=3,375;
+    median 54.0; mean 53.57). v2.0 reported 53.
+
+  ACR FNA-eligibility audit denominator harmonized:
+    - 1,553 below-threshold cases  = 46.0% of the 3,375-patient cohort.
+    - 472 cancers below threshold  = 31.9% of 1,479 malignant patients
+                                     (= 14.0% of total cohort).
+    v2.0 reported "15.0% of malignancies" — a denominator error
+    (472/3,140 ≈ 15%). Corrected in main manuscript, highlights,
+    Supplementary Table S6, Figure 4 legend, and README.
+
+PROSE POLISH
+  - Tightened methods and results sections; removed redundancy.
+  - Reframed ACR FNA-eligibility audit as a rules-based audit, not
+    proof of avoidable real-world biopsies.
+  - Reframed two Elicit reports as unpublished evidence reports
+    supplied as source material.
+  - Added brief plain-language explanations of "analysis grain" and
+    "multinodular attribution error" for clinician readers.
+
+DOCUMENTS UPDATED
+  manuscript/02_Manuscript_Main.docx          [polished + corrections]
+  manuscript/03_Tables.docx                   [S6 denominator fix]
+  manuscript/04_Figures_with_Legends.docx     [Figure 4 legend update]
+  cover_and_admin/00_Cover_Letter.docx        [+28.7 → +28.6]
+  cover_and_admin/02_Highlights.docx          [+28.7 → +28.6; FNA fix]
+  README.docx                                 [+28.7 → +28.6; FNA fix]
+
+DOCUMENTS UNCHANGED
+  manuscript/01_Title_Page.docx
+  cover_and_admin/01_Suggested_Reviewers.docx
+  cover_and_admin/03_Submission_Checklist.docx
+  supplementary/M025_master_data.xlsx
+  supplementary/M025_tables_and_summary.xlsx
+
+OUTSTANDING TODOs FOR SENIOR-AUTHOR INPUT
+  - Confirm full author list, degrees, ORCID iDs, author order.
+  - Confirm IRB protocol number and ethics statement.
+  - Confirm funding source / "no external funding" wording.
+  - Confirm institutional name (currently "Emory University").
+  - Confirm whether Elicit evidence reports may be cited as unpublished
+    supplementary evidence reports, or whether those claims should be
+    converted into a conventional author-led literature review table.
+  - Generate combined Supplementary Material .docx after final edits.
