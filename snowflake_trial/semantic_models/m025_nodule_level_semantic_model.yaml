@@ -99,27 +99,32 @@ tables:
         expr: COUNT(*)
         synonyms: [count, number of nodules]
         default_aggregation: count
+        data_type: number
 
       - name: n_patients
         description: Distinct patient count.
         expr: COUNT(DISTINCT research_id)
         synonyms: [number of patients]
         default_aggregation: count_distinct
+        data_type: number
 
       - name: n_path_malignant_nodules
         description: Count of nodules with same-side path-proven malignancy within 365d post-US.
         expr: COUNT_IF(nodule_path_proven_malignant)
         synonyms: [malignant nodules, cancers]
+        data_type: number
 
       - name: rom_per_nodule
         description: Risk of malignancy at nodule grain (n_path_malignant_nodules / n_nodules).
         expr: COUNT_IF(nodule_path_proven_malignant) * 1.0 / NULLIF(COUNT(*), 0)
         synonyms: [risk of malignancy, malignancy rate, ROM]
+        data_type: number
 
       - name: nodule_size_cm_max
         description: Per-nodule maximum US dimension in cm.
         expr: AVG(size_cm_max)
         synonyms: [size, mean size]
+        data_type: number
 
 verified_queries:
   - name: per_tr_rom_strict_cohort
