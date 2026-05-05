@@ -24,6 +24,60 @@ python scripts/225_promote_canonical_version.py --candidate v1_1_rc --release v1
 
 **Analyst quick-start:** [`MANUSCRIPT_DATA_START_HERE.md`](MANUSCRIPT_DATA_START_HERE.md) — exact tables, views, and rules for citing data in manuscripts.
 
+---
+
+## Project tracking & manuscript pipeline (Airtable + Linear + Claude)
+
+> **Anyone editing this repo, drafting a manuscript, or modifying `thyroid_master.duckdb` must read [`CLAUDE.md`](CLAUDE.md) and [`INTEGRATION_PROPOSAL.md`](INTEGRATION_PROPOSAL.md) before making changes.** The integration described there is the audit trail of record for cohort decisions, override evidence, manuscript drafts, and verification checks.
+
+### Architecture in one paragraph
+
+`thyroid_master.duckdb` and the parquets in `processed/` remain the analytical source of truth. **Airtable** holds the structured inventory of every Source File, every Column with verification status, every Verification Check from the reconciliation matrix, every gold-standard Override Decision, every Cohort Patient (de-identified `research_id` only), and every Manuscript (90+ planned, 19+ active). **Linear** ([team `Thyroid Database`, key `THY`](https://linear.app/rostemp/team/THY/all)) holds work-in-flight: per-manuscript projects, QA findings, override-review tasks, drafting issues. **Claude** orchestrates a daily sync that creates Linear issues from new Airtable findings, mirrors closed issues back to advance Airtable lifecycle, snapshots evidence on submission, and appends to the immutable Issue Ledger.
+
+### IDs at a glance
+
+| Resource | Identifier |
+|---|---|
+| Airtable workspace | `wspDGHtW2HNuT20GQ` |
+| Airtable base — Data Registry (9 tables) | `appTGeB1jIizZbjnw` |
+| Airtable base — Manuscript (7 tables) | `appJYOnUb7KrHKwpV` |
+| Linear team | Thyroid Database / `THY` / `c4afb51b-8bca-413a-a53e-15eb825cffbd` |
+| Daily-sync anchor issue | [THY-6](https://linear.app/rostemp/issue/THY-6/) |
+| Scheduled daily sync | `thyroid-daily-sync` (07:04 local) |
+| Cowork skill | `.cowork/skills/thyroid-integration/` (v1.4.0) |
+
+### Hard rules (full list in [`CLAUDE.md`](CLAUDE.md))
+
+1. **No PHI in Airtable or Linear, ever.** `research_id` only. Pathology text, op notes, MRNs, and dates of service narrower than year stay in DuckDB / local files. Override Decision evidence is Claude-summarized 1–2 sentences, never raw text.
+2. **Nothing is ever deleted.** Linear issues close, never delete. Airtable records archive (`lifecycle = Archived`). `Manuscript-Locked` records cannot be edited at all without explicit unlock.
+3. **Every change at user request gets logged BEFORE the change.** Manuscript edits → row in `Manuscript Feedback Log`. Data/registry edits → row in `Data Feedback Log`. The log row is created first; if logging fails, the edit doesn't happen.
+4. **Pending Auto-Close, not auto-close.** When a Verification Check or Section reaches Verified/Finalized, the linked Linear issue moves to state `In Review` + label `auto-close:pending`. After 48h with no `/keep-open` it transitions to Done. `/close-now` skips the wait.
+
+### Where to find the full architecture
+
+| Doc | Purpose |
+|---|---|
+| [`INTEGRATION_PROPOSAL.md`](INTEGRATION_PROPOSAL.md) | v3 architecture proposal — schema, lifecycle, daily-sync prompt, execution sequence |
+| [`CLAUDE.md`](CLAUDE.md) | Project context loaded automatically by Claude — hard rules, Session Opening Protocol, IDs |
+| [`.cowork/skills/thyroid-integration/SKILL.md`](.cowork/skills/thyroid-integration/SKILL.md) | Operational playbook (auto-loads in Claude/Cowork on thyroid keywords) |
+| [`.cowork/skills/thyroid-integration/references/airtable_schema.md`](.cowork/skills/thyroid-integration/references/airtable_schema.md) | Full Airtable schema (16 tables, all field IDs) |
+| [`.cowork/skills/thyroid-integration/references/linear_schema.md`](.cowork/skills/thyroid-integration/references/linear_schema.md) | Full Linear schema (projects, labels, states, templates) |
+| [`.cowork/skills/thyroid-integration/references/airtable_ids.md`](.cowork/skills/thyroid-integration/references/airtable_ids.md) | Live Airtable IDs (base/table/field/record) for direct API use |
+| [`.cowork/skills/thyroid-integration/references/linear_ids.md`](.cowork/skills/thyroid-integration/references/linear_ids.md) | Live Linear IDs (team/projects/labels/initial issues) |
+| [`.cowork/skills/thyroid-integration/references/daily_sync_prompt.md`](.cowork/skills/thyroid-integration/references/daily_sync_prompt.md) | Verbatim 11-phase daily sync prompt |
+| [`.cowork/skills/thyroid-integration/references/manuscript_inventory.md`](.cowork/skills/thyroid-integration/references/manuscript_inventory.md) | Snapshot of all manuscripts (active + dormant + planned) |
+| [`.cowork/skills/thyroid-integration/references/CHANGELOG.md`](.cowork/skills/thyroid-integration/references/CHANGELOG.md) | Skill version history |
+| [`.cowork/skills/thyroid-integration.skill`](.cowork/skills/thyroid-integration.skill) | Packaged `.skill` bundle for Cowork installation |
+
+### What this means in practice
+
+- **Modifying a column or running a reconciliation** → expect a Verification Check row in Airtable, and a Linear issue in `Database Reconciliation & QA` once the daily sync runs.
+- **Drafting a manuscript section** → expect a Manuscript Feedback Log row capturing the diff before the file changes; section status transitions reflected in the matching Linear project.
+- **Submitting a paper** → status flip to `Submitted` automatically creates a Manuscript Snapshot freezing all linked records as `Manuscript-Locked`.
+- **Future Claude / Cowork sessions** are required to run the Session Opening Protocol (verify connectors, read target record state, check lifecycle gates, pull recent ledger, sanity-check status) before responding to any thyroid-related request — see SKILL.md.
+
+---
+
 ## Source of truth — live MotherDuck publication gate (2026-04-14)
 
 **Canonical contract (read first):** [`docs/final_source_of_truth_contract.md`](docs/final_source_of_truth_contract.md) — live MotherDuck **`main`** (analytics) and **`qa`** (governance); **`qa.release_manifest`** is the release ledger; analyst surfaces **`main.master_fact_long_verified_v1`**, **`main.master_patient_rollup_verified_v1`**, **`main.master_source_lineage_v1`**; machine-generated repo mirror [`studies/CURRENT_MOTHERDUCK_REPO_STATE.md`](studies/CURRENT_MOTHERDUCK_REPO_STATE.md) via [`scripts/144_md_repo_current_state_summary.py`](scripts/144_md_repo_current_state_summary.py). **Same top-level story** as [`truth_sync_summary.md`](truth_sync_summary.md) and [`docs/REPO_STATUS.md`](docs/REPO_STATUS.md). **Historical only:** checked-in `exports/release_manifests/` JSON (see [`exports/release_manifests/README.md`](exports/release_manifests/README.md)), March-era evidence packs, local freeze snapshots — **not** interchangeable with live counts without regenerating `144` + `119`.

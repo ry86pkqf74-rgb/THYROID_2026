@@ -1,0 +1,182 @@
+---
+name: thyroid-integration
+metadata:
+  version: 1.4.0
+description: |
+  MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies thyroid_master.duckdb or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, thyroid_master, parquet, MIG_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
+---
+
+# THYROID_2026 Integration Skill
+
+You are operating inside Logan's THYROID_2026 research program. This skill is the authoritative source for how data, manuscripts, and tasks flow between Airtable, Linear, and the local DuckDB / parquet / notebook stack. Read it carefully before acting on any thyroid-related request.
+
+## Session Opening Protocol — RUN BEFORE ANY OTHER RESPONSE
+
+When this skill triggers in a fresh session, the very first thing you do — before answering, planning, or generating any output for the user — is run this checklist silently and concisely. Do NOT skip it, even when the request looks trivial.
+
+1. **Verify connectors.** Confirm both MCP connectors are alive:
+   - Airtable: call `list_workspaces` (or any cheap read). If it errors, surface to user and stop.
+   - Linear: call `list_teams`. If it errors, surface to user and stop.
+   If a connector is missing, tell the user how to reconnect (Cowork Settings → MCP / Connectors) before continuing.
+
+2. **Identify the target manuscript and lifecycle state.** Parse the user's request to determine which Manuscripts row(s), Verification Check(s), Override Decision(s), or Column(s) are being touched. For each:
+   - Read the Airtable record (use the IDs in `references/airtable_ids.md`).
+   - Note its `lifecycle` value. If `Manuscript-Locked`, stop and require explicit unlock before any edit.
+   - Note its `linked_linear_issue_id` and `linked_linear_project`.
+
+3. **Check recent activity.** Pull the last 24h of Issue Ledger entries for any record you're about to touch — gives you context on what the daily sync just did.
+
+4. **Status sanity check.** For each target manuscript:
+   - Read its current `status` field. If the user's request implies a status change (e.g. they say "the M025 abstract is final" but Airtable still says `Drafting`), surface the discrepancy and ask whether to advance status before editing.
+   - Check if any pending Verification Check would block the change.
+
+5. **Confirm scope additions.** Skim the Manuscripts table. If the user mentions a manuscript code or topic NOT yet in the Manuscripts table, flag it and ask if they want a new row created (`status = Idea` by default).
+
+6. **Pre-write the feedback log row, then act.** Once steps 1-5 are clean, append the appropriate Feedback Log row (Manuscript or Data) BEFORE making the actual edit. Then make the edit. Then update the linked Linear issue.
+
+This protocol takes ~15 seconds and prevents 95% of audit-trail breaks. If the user explicitly says "skip the protocol, just do X," still run steps 1-2 silently and tell them you skipped 3-6 at their request.
+
+## Decision tree: what counts as "touching" the project
+
+| User says... | Skill triggers? | Open protocol runs? |
+|---|---|---|
+| "fix this typo in M025 methods" | yes | yes (a manuscript edit needs Manuscript Feedback Log) |
+| "what's the cohort N for M044?" | yes | yes (a read still needs to confirm record state) |
+| "regenerate Table 2 for M048" | yes | yes |
+| "let's brainstorm a new paper on TI-RADS reproducibility" | yes | yes — likely creates a new Manuscripts row |
+| "rebuild the parquet for ultrasound" | yes | yes — Source Files row update + drift detection |
+| "explain Bethesda categories" (general medical knowledge) | no | no — pure educational answer, no project state involved |
+| "what does FNAB stand for" | no | no |
+| "show me a code example for OAuth" | no | no |
+
+## Why this exists
+
+Logan runs ~90+ planned manuscripts at varying maturity, an evolving DuckDB master with dozens of source tables, and a multi-year reconciliation effort between manuscripts and database. To prevent drift, every column, verification check, override decision, manuscript section, and cohort metadata record lives in a structured Airtable system. Active work-in-flight lives in Linear. Claude orchestrates daily sync, drift detection, and feedback logging.
+
+If you bypass this system — e.g. silently edit a manuscript without logging the change, close a Linear issue without updating Airtable, or push raw clinical text into either tool — you break the audit trail and potentially the HIPAA posture. Don't do that.
+
+## Hard rules (in order of importance)
+
+1. **No PHI in Airtable or Linear, ever.** `research_id` is fine (de-identified per HIPAA Safe Harbor). Pathology text excerpts, operative notes, MRNs, dates of service narrower than year, names, and DOB beyond year all stay in DuckDB and local files. If a finding cites evidence, the field stores a Claude-summarized 1–2 sentence summary, not the source text.
+
+2. **Nothing is ever deleted.** Linear issues close, never delete. Airtable records archive (`lifecycle = Archived`), never delete. Manuscript-Locked records cannot be edited at all without explicit unlock. The Issue Ledger and the Manuscript/Data Feedback Logs are append-only.
+
+3. **Every change you make at the user's request gets logged.** Before completing an edit to a manuscript section, append a row to **Manuscript Feedback Log**. Before completing an edit to data/columns/verification/overrides/cohort, append a row to **Data Feedback Log**. Both rows capture: timestamp, target record, your_request_summary (1-line paraphrase of what they asked), my_action_summary, before/after excerpts, source chat. The log row is created **before** the edit completes — if logging fails, the edit doesn't happen.
+
+4. **Pending Auto-Close, not auto-close.** When a Verification Check or Section reaches Verified/Finalized, move the linked Linear issue to state `In Review` and add label `auto-close:pending` with a Claude comment explaining what changed. After 48h with the label still attached and no `/keep-open` comment, transition to Done with `resolution:resolved-verified`. `/close-now` skips the wait. Don't close issues directly. (Label-based mechanism replaces the originally-planned custom workflow state, which Linear's MCP doesn't expose. See THY-10.)
+
+5. **Manuscripts table = canonical inventory of all 90+.** Linear projects only exist for *active* manuscripts (status ∈ {Cohort Definition, Analysis, Drafting, Internal Review, Submitted, Revisions}). When a manuscript advances from Idea/Planned/Backlog → an active status, auto-create the Linear project. When it reaches Accepted/Published/Withdrawn, archive the Linear project (don't delete).
+
+## System layout
+
+### Airtable
+
+Two bases. See `references/airtable_schema.md` for full field list.
+
+**THYROID_DATA_REGISTRY** — Source Files, Columns, Verification Checks, Override Decisions, Cohort Patients, Reconciliation Runs, Issue Ledger, Manuscript Snapshots.
+
+**THYROID_MANUSCRIPT** — Manuscripts, Sections, Tables & Figures, References, Co-Authors, Submission Targets, Manuscript Feedback Log, Data Feedback Log.
+
+### Linear
+
+Single team **THYROID**. Workstream projects (Database Reconciliation & QA, Data Pipeline & Tooling, LLM Extraction & Refinement, Cohort Curation, Submissions & Reviewer Defense, Manuscript Backlog Triage) plus per-active-manuscript projects.
+
+Workflow states: Linear defaults (Backlog → Todo → In Progress → In Review → Done / Canceled). Three "wait" semantics layer on as labels:
+
+- `awaiting:chart-review` (use with state `Backlog`)
+- `awaiting:coauthor` (use with state `In Review`)
+- `auto-close:pending` (use with state `In Review` — daily sync watches this for the 48h auto-close buffer)
+
+Labels: `type:*`, `severity:*`, `source:*`, `section:*`, `stage:*`. See `references/linear_schema.md`.
+
+### Lifecycle field (applies to Columns, Verification Checks, Override Decisions, Cohort Patients, Manuscript Sections)
+
+`Active → In QA → Verified → Finalized → Manuscript-Locked` (plus `Archived` as a parallel terminal state)
+
+- **Active**: working state, fully editable
+- **In QA**: open Linear issue exists
+- **Verified**: QA closed, match confirmed
+- **Finalized**: signed off, no further changes expected
+- **Manuscript-Locked**: frozen as part of a Manuscript Snapshot — Airtable automation prevents AI Fields and non-admin users from overwriting. Unlock requires explicit user request that names the manuscript and the reason.
+
+## Daily sync prompt
+
+Run via scheduled task. Full prompt is in `references/daily_sync_prompt.md`. Phases:
+
+1. AUTO-LOG (Airtable → Linear): new findings/sections/overrides/columns spawn issues
+2. PENDING AUTO-RESOLVE (Airtable → Linear): lifecycle advance moves issue to Pending Auto-Close
+3. PENDING AUTO-RESOLVE TIMEOUT: issues in Pending Auto-Close ≥48h transition to Done
+4. AUTO-RESOLVE (Linear → Airtable): closed issues with `resolved-verified` advance lifecycle
+5. ISSUE LEDGER: every transition appended (immutable)
+6. MANUSCRIPT LIFECYCLE: status changes create/archive Linear projects
+7. DRIFT DETECTION: parquet/DuckDB schema vs Columns table
+8. AI JOURNAL REC REFRESH: top-5 hierarchy for active manuscripts
+9. MANUSCRIPT SNAPSHOT (event): freezes evidence base on Submitted/Accepted
+10. DIGEST: comment to "Daily Sync" issue with counts
+
+## Behavior in chat (every session) — after Session Opening Protocol
+
+When the user asks you to change something in this system:
+
+1. **Identify which logs apply.**
+   - Manuscript content edit → Manuscript Feedback Log
+   - Column / Verification Check / Override Decision / Cohort Patient / data registry edit → Data Feedback Log
+   - Both apply if the edit spans manuscript + data (e.g. updating a Results section because a Verification Check changed)
+
+2. **Append the log row first.** Capture the user's request verbatim or paraphrased, your planned action, the before-state, and the after-state. Include a link to the source chat if you have one.
+
+3. **Check lifecycle gates.** If the target record is `Manuscript-Locked`, refuse the edit and explain: "M025 was locked when it was submitted on YYYY-MM-DD. Editing requires you to first unlock by saying 'unlock M025 because [reason]'." Do NOT edit through.
+
+4. **Make the edit.**
+
+5. **Update the linked Linear issue.** If the change resolves an issue, move it to Pending Auto-Close. If it creates new work, file a new issue.
+
+6. **Acknowledge.** Tell the user what you did, link the Airtable record, link the Linear issue, link the log entry.
+
+## Behavior in chat: when the user reports a finding
+
+E.g. "I just noticed M044 is using the wrong cohort definition." Don't fix silently — open a Verification Check with severity, link it to M044, the daily sync will spawn a Linear issue. Then ask the user what evidence to attach (no PHI), and update the Verification Check with the summary.
+
+## Versioning
+
+This skill is at v1.0.0. Bump:
+- **patch** (1.0.x) for clarification edits
+- **minor** (1.x.0) for new tables, fields, or sync phases
+- **major** (x.0.0) for changes to the hard rules or lifecycle states
+
+When you change anything, also bump the `version` in the YAML frontmatter and append a one-line CHANGELOG entry to `references/CHANGELOG.md`.
+
+## Files in this skill
+
+- `SKILL.md` (this file) — operational playbook
+- `references/airtable_schema.md` — full Airtable schema
+- `references/linear_schema.md` — full Linear schema (projects, labels, states, templates)
+- `references/daily_sync_prompt.md` — the verbatim sync prompt
+- `references/CHANGELOG.md` — version history
+- `references/manuscript_inventory.md` — current best-known list of all manuscripts on disk
+
+## Quick reference: M-code → likely manuscript map (as of v1.0.0)
+
+| Code | Status | Source |
+|---|---|---|
+| M025 | Pending sign-off → *Thyroid* submission | THYROID_M025_v2.1_FINAL/ |
+| M032 | Submission package staged | M032_submission_package_v1_0/ |
+| M036 | Ready for writing | (no dir yet) |
+| M037 | Submission scaffold | studies/m037*/ |
+| M038 | Submission package v1 | M038_submission_package_v1_0/ |
+| M044 | Final package v6 | M044_FINAL_PACKAGE_v6/ |
+| M048 | v3 active | studies/m048_racial_disparities_tirads/v3/ |
+| M083 | Active, parser-bug 5/5 | studies/m083_braf_discordance/ |
+| Mo36 | Manuscript v1 draft | Mo36/Mo36_Manuscript_v1.md |
+| H1 | Analysis complete | studies/hypothesis1_cln_lobectomy/ |
+| H2 | Analysis complete | studies/hypothesis2_goiter_sdoh/ |
+| TGDC primary | Reconciliation done; drafting? | TGDC_*_REPORT.md |
+| Multimodal Prediction | Modeling complete, draft pending | studies/proposal_multimodal_prediction_20260318/ |
+| Mol+Imaging Discordance | Planned | studies/proposal_mol_imaging_discordance/ |
+| Surgeon Variability | Planned | studies/proposal_surgeon_variability/ |
+| ETE Staging (PSM) | Submitted | studies/proposal2_ete_staging/ |
+| 2–4cm Extent / Molecular | Draft v1 | studies/proposal_2to4cm_extent_molecular_20260326/ |
+| NSQIP-PTH Protocol | Active | studies/nsqip_pth_protocol_manuscript/ |
+| Lobectomy Molecular | Drafting | studies/lobectomy_molecular_202603/ |
+
+Other M-codes mentioned on disk but not yet given Linear projects: M004, M019, M027, M028, M029, M033, M043, M047. Treat as Manuscripts records in `Idea` / `Planned` until the user tells you otherwise.
