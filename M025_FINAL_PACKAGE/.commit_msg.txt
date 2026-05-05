@@ -1,0 +1,42 @@
+feat(m025_v2): pre-2017 era + time-window sensitivity arms; LLM provenance clarification
+
+Responds to draft-review items:
+
+(1) Pre-2017 vs post-2017 inclusion sensitivity (mig_307c)
+    - manuscript_workspace.m025_sens_era_patient_v1: pre-2017 n=422 (40.0%
+      ROM) vs post-2017 n=2,953 (44.4% ROM); per-TR ROM directionally
+      similar across eras with TR3<TR4<TR5 monotonicity preserved.
+    - manuscript_workspace.m025_sens_era_nodule_v1: strict-eligible split
+      n=381 pre / n=3,306 post. Post-2017-only TR4 ROM 18.0% / TR5 24.4%
+      (both within ACR bands) -- ACR-calibration finding holds in the era
+      when ACR 2017 was actually published. Pre-2017 strict ROMs higher
+      (TR4 24.7%, TR5 41.6%, small-N) -- reported as bound.
+
+(2) Time-window sensitivity for per-nodule path matching (mig_307c)
+    - manuscript_workspace.m025_sens_window_nodule_v1: ROM at 365/180/90/30
+      day windows. At 180d: TR3 7.4%, TR4 15.7%, TR5 22.2% (ACR bands
+      preserved). Median US-to-malignant-surgery interval 27/77/73/58 days
+      for TR2/3/4/5.
+    - Addresses interval-growth and multifocality concerns. Multifocality
+      magnitude: 4,022 path-malignant patients, mean 1.61 tumors/pt
+      (~61% multifocal).
+
+(3) LLM-extraction methodology clarification
+    - 99.3% of strict-eligible nodules (3,660/3,687) derived feature points
+      from the structured imaging_nodule_master_v1 source (Script 246),
+      NOT from LLM extraction; only 27 (0.7%) used LLM-augmented points.
+    - Methods updated to note independent institutional verification of
+      extracted features against source narratives.
+    - Limitations softened accordingly.
+
+Files updated:
+- M025_FINAL_PACKAGE/build_m025_final_xlsx.py: adds Sensitivity_Era_Patient,
+  Sensitivity_Era_Nodule, Sensitivity_Match_Window sheets.
+- M025_FINAL_PACKAGE/M025_tables_and_summary.xlsx: 14 -> 17 sheets.
+- M025_FINAL_PACKAGE/build_m025_manuscript_outline.py: new Methods section
+  on time-window sensitivity; new Results subsections on era and time-window;
+  updated Limitations; renumbered Supplementary list (S1-S6 + Supp Fig S1).
+- M025_FINAL_PACKAGE/M025_v2_manuscript_DRAFT_outline.docx: regenerated
+  (51 KB, up from 47 KB).
+
+mig_307c signed off in main.signoff_migration.

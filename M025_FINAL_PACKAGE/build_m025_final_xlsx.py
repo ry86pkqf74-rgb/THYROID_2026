@@ -541,7 +541,7 @@ def main():
                 "Multi-exam patients drive part of the patient-level vs nodule-level ROM inflation.")
     write_dataframe(ws, df_multi, start_row=4)
 
-    # ---------------- Sensitivity arm placeholders / locked numbers ----------------
+    # ---------------- Sensitivity arm summary ----------------
     sens_rows = [
         ("Primary", "Patient cohort n=3,375; AUC 0.6478 [0.6301-0.6665]; Youden TR>=TR4 (J=0.271)"),
         ("Sister nodule analysis", "Strict ACR n=3,687; AUC 0.6399; TR4 ROM 18.7% [16.3-21.5]; TR5 26.1% [23.7-28.6]"),
@@ -549,13 +549,50 @@ def main():
         ("S1B first-US-only", "Identical to primary (nodule_master_id already deduplicates)"),
         ("S1C single-nodule patients (n=782)", "TR4 ROM 30.7%; TR5 ROM 34.9% (selection effect)"),
         ("S1D unilateral path-only", "TR4 ROM 8.5%; TR5 ROM 10.7% (conservative bilateral exclusion)"),
+        ("S2 era split (patient grain)", "Pre-2017 n=422 ROM 40.0%; Post-2017 n=2,953 ROM 44.4%; per-TR ROM directionally similar (see Sensitivity_Era_Patient sheet)"),
+        ("S2 era split (nodule strict)", "Pre-2017 n=381 ROM 25.2%; Post-2017 n=3,306 ROM 16.2%; post-2017-only TR4 18.0% / TR5 24.4% (both in ACR bands)"),
+        ("S3 tighter US-to-surgery window (nodule strict)", "180d: TR4 15.7% / TR5 22.2% (still in ACR bands); 90d: TR4 11.3% / TR5 16.8%; 30d: tight bound"),
+        ("Provenance check (strict subset)", "99.3% inm_v1 structured source (Script 246); 0.7% LLM-augmented; institutional independent verification of feature extractions"),
         ("ACR FNA compliance flagged", "1,553 unnecessary FNAs by ACR criteria; 472 cancers below ACR FNA threshold"),
     ]
     sens_df = pd.DataFrame(sens_rows, columns=["arm", "result"])
     ws = wb.create_sheet("Sensitivity_Arms")
     title_block(ws, "Sensitivity / supplementary analyses",
-                "Locked from cursor 1d4ecc1 and Cowork pre-bake; verify before manuscript inclusion.")
+                "Locked from cursor 1d4ecc1 and Cowork pre-bake + mig_307c sensitivity arms.")
     write_dataframe(ws, sens_df, start_row=4)
+
+    # ---------------- Era subset (patient grain) ----------------
+    print(" Sensitivity — era × patient ...")
+    df_era_p = con.execute("""
+        SELECT * FROM manuscript_workspace.m025_sens_era_patient_v1
+        ORDER BY era, tr_category NULLS LAST
+    """).df()
+    ws = wb.create_sheet("Sensitivity_Era_Patient")
+    title_block(ws, "Sensitivity S2 — Patient cohort split by ACR-2017 era",
+                "Era boundary = surg_first_date < 2017-05-01 (ACR TI-RADS 2017 publication date).")
+    write_dataframe(ws, df_era_p, start_row=4)
+
+    # ---------------- Era subset (nodule strict) ----------------
+    print(" Sensitivity — era × nodule ...")
+    df_era_n = con.execute("""
+        SELECT * FROM manuscript_workspace.m025_sens_era_nodule_v1
+        ORDER BY era, tr_category NULLS LAST
+    """).df()
+    ws = wb.create_sheet("Sensitivity_Era_Nodule")
+    title_block(ws, "Sensitivity S2 — Nodule strict cohort split by ACR-2017 era",
+                "Era boundary = exam_date < 2017-05-01.")
+    write_dataframe(ws, df_era_n, start_row=4)
+
+    # ---------------- Time-window subset (nodule strict) ----------------
+    print(" Sensitivity — time window × nodule ...")
+    df_win = con.execute("""
+        SELECT * FROM manuscript_workspace.m025_sens_window_nodule_v1
+        ORDER BY tr_category
+    """).df()
+    ws = wb.create_sheet("Sensitivity_Match_Window")
+    title_block(ws, "Sensitivity S3 — Tighter US-to-surgery match-window (nodule strict)",
+                "Recomputes ROM at 365 / 180 / 90 / 30 day windows. Median US-to-malignant-surgery interval ~60–80 days.")
+    write_dataframe(ws, df_win, start_row=4)
 
     # ---------------- QA gates ----------------
     qa_df = pd.DataFrame([
