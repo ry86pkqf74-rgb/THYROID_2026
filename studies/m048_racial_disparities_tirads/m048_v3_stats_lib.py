@@ -70,9 +70,26 @@ def fit_logit(
     formula: str,
     df: pd.DataFrame,
     cluster_col: str | None = None,
+    outcome_col: str | None = None,
 ) -> Any:
-    """Fit logistic; cluster-robust SE if cluster_col set."""
-    use = df.dropna(subset=["is_malignant"]).copy()
+    """Fit logistic; cluster-robust SE if cluster_col set.
+
+    outcome_col: dropna() target; defaults to "is_malignant" but the nodule-grain
+    Model F-Nodule passes "nodule_path_proven_malignant" so the dropna step
+    doesn't wipe the entire frame.
+    """
+    if outcome_col is None:
+        # Try to parse the outcome from the formula's LHS so callers don't
+        # have to remember to pass it. Falls back to "is_malignant" if parsing
+        # fails (preserves the historical default for patient-level fits).
+        try:
+            lhs = formula.split("~", 1)[0].strip()
+            outcome_col = lhs if lhs and lhs in df.columns else "is_malignant"
+        except Exception:
+            outcome_col = "is_malignant"
+    if outcome_col not in df.columns:
+        outcome_col = "is_malignant"
+    use = df.dropna(subset=[outcome_col]).copy()
     try:
         if cluster_col and cluster_col in use.columns:
             res = logit(formula, data=use).fit(
@@ -238,9 +255,24 @@ def bootstrap_mediation_product(
     if not coefs:
         return {"race_target": race_target, "indirect_mean": np.nan, "ci_lo": np.nan, "ci_hi": np.nan}
     arr = np.array(coefs)
+    # Issue 4 fix: bootstrap inner fits occasionally return huge a*b products
+    # when a binary mediator's b-path is fit on a near-separated subsample
+    # (e.g. tiny had_any_genetics=1 cell within a bootstrap draw).
+    # np.mean() then mixes those outliers into the central tendency, producing
+    # implausible magnitudes (e.g. -8.37 for had_any_genetics on Black). Use
+    # the median for a robust point estimate; keep the percentile CIs (they
+    # already report distribution spread). Also winsorise at 1st/99th percentile
+    # before computing the mean so a sanity-check mean is reported alongside.
+    if len(arr) >= 20:
+        lo_clip, hi_clip = np.percentile(arr, [1.0, 99.0])
+        arr_winsor = np.clip(arr, lo_clip, hi_clip)
+        winsor_mean = float(np.mean(arr_winsor))
+    else:
+        winsor_mean = float(np.mean(arr))
     return {
         "race_target": race_target,
-        "indirect_mean": float(np.mean(arr)),
+        "indirect_mean": float(np.median(arr)),
+        "indirect_winsor_mean": winsor_mean,
         "ci_lo": float(np.percentile(arr, 2.5)),
         "ci_hi": float(np.percentile(arr, 97.5)),
     }

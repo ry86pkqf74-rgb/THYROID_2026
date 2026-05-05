@@ -587,9 +587,11 @@ def main():
 
     # F-Nodule
     df_nod = con.execute("SELECT * FROM manuscript_workspace.m048_v3_nodule_master_v1").df()
+    # Bug A equivalent for nodule grain: cast to int(0/1) so Patsy treats endog
+    # as numeric, not 2-column categorical. Same fix Bug A applied to is_malignant.
     df_nod["nodule_path_proven_malignant"] = df_nod["nodule_path_proven_malignant"].apply(
-        lambda v: True if v in (True, "true", 1, "1") else False
-    )
+        lambda v: 1 if v in (True, "true", "True", 1, "1") else 0
+    ).astype(int)
     df_nod["acr2017_tirads_int"] = df_nod["acr2017_tirads_category"].apply(tr_to_int)
     mask_col = "analytic_eligible_strict_acr_pernodule"
     if mask_col in df_nod.columns:
@@ -612,7 +614,17 @@ def main():
         "+ days_us_to_surg_approx + age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
     try:
-        nod_res = fit_logit(nod_formula, df_nod, cluster_col="research_id")
+        # Issue 1 fix: pass outcome_col explicitly so fit_logit's dropna() targets
+        # nodule_path_proven_malignant rather than the default is_malignant
+        # (which doesn't exist on the nodule frame and was wiping every row).
+        # Also drop rows where the nodule outcome is null before fitting.
+        df_nod_fit = df_nod.dropna(subset=["nodule_path_proven_malignant"]).copy()
+        nod_res = fit_logit(
+            nod_formula,
+            df_nod_fit,
+            cluster_col="research_id",
+            outcome_col="nodule_path_proven_malignant",
+        )
         race_or_table(nod_res).to_csv(os.path.join(V3_DIR, "m048_v3_nodule_model_race_OR.csv"), index=False)
     except Exception as e:
         pd.DataFrame([{"error": str(e)}]).to_csv(os.path.join(V3_DIR, "m048_v3_nodule_model_race_OR.csv"), index=False)
@@ -643,7 +655,9 @@ def main():
                 race_target=race_target,
             )
             med_rows.append({"mediator": med, "type": mtype, "race_target": r["race_target"], "scope": scope,
-                              "indirect_mean": r["indirect_mean"], "ci_lo": r["ci_lo"], "ci_hi": r["ci_hi"]})
+                              "indirect_mean": r["indirect_mean"],
+                              "indirect_winsor_mean": r.get("indirect_winsor_mean", float("nan")),
+                              "ci_lo": r["ci_lo"], "ci_hi": r["ci_hi"]})
     pd.DataFrame(med_rows).to_csv(os.path.join(V3_DIR, "m048_v3_mediation.csv"), index=False)
 
     # Sensitivity arms

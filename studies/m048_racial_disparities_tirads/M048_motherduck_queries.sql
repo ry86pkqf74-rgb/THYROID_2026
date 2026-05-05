@@ -701,14 +701,34 @@ ORDER  BY race_strat, fna_path_concordance_category;
 --     Restricted to malignant patients (is_malignant = TRUE).
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE TABLE m048_tumor_biology_descriptors_by_race_v1 AS
-WITH path_per_patient AS (
+-- Issue 2 fix: canonical_path_malignant_events_v1.multifocality_flag is NULL
+-- for the entire 6469-row table and number_of_tumors is also NULL. The
+-- M048-specific cohort_m048_tnm_multifocal_v1 in manuscript_workspace has
+-- the correct patient-grain multifocal_flag_path (39.6% True among malignant
+-- M048 patients) plus n_tumors and tumor_size_cm. Source tumour-size and
+-- multifocality from there; keep size_greatest_dimension_cm as a fallback.
+WITH multifoc AS (
     SELECT research_id,
-           COUNT(*)                                          AS n_malignant_tumors,
-           MAX(CASE WHEN multifocality_flag IS TRUE           THEN 1 ELSE 0 END) AS multifocal_flag,
+           CASE WHEN multifocal_flag_path IS TRUE THEN 1 ELSE 0 END AS multifocal_flag,
+           n_tumors                                                AS n_malignant_tumors,
+           tumor_size_cm                                            AS m048_tumor_size_cm
+    FROM   manuscript_workspace.cohort_m048_tnm_multifocal_v1
+),
+path_size_fallback AS (
+    SELECT research_id,
            MAX(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS max_tumor_size_cm,
            MIN(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS min_tumor_size_cm
     FROM   main.canonical_path_malignant_events_v1
     GROUP  BY research_id
+),
+path_per_patient AS (
+    SELECT  m.research_id,
+            COALESCE(m.n_malignant_tumors, 0)                       AS n_malignant_tumors,
+            COALESCE(m.multifocal_flag, 0)                          AS multifocal_flag,
+            COALESCE(m.m048_tumor_size_cm, p.max_tumor_size_cm)     AS max_tumor_size_cm,
+            COALESCE(p.min_tumor_size_cm, m.m048_tumor_size_cm)     AS min_tumor_size_cm
+    FROM    multifoc m
+    FULL OUTER JOIN path_size_fallback p USING (research_id)
 )
 SELECT
     p.race_strat,
@@ -824,13 +844,29 @@ us_first AS (
     WHERE  exam_date IS NOT NULL
     GROUP  BY research_id
 ),
-path_per_patient AS (
+-- Issue 2 fix (mirror): pull multifocality + n_tumors from
+-- manuscript_workspace.cohort_m048_tnm_multifocal_v1 (the canonical event
+-- table has all-NULL multifocality_flag). Keep canonical size as a fallback.
+multifoc_join AS (
     SELECT research_id,
-           COUNT(*) AS n_malignant_tumors,
-           MAX(CASE WHEN multifocality_flag IS TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
+           CASE WHEN multifocal_flag_path IS TRUE THEN 1 ELSE 0 END AS multifocal_flag,
+           n_tumors                                                AS n_malignant_tumors,
+           tumor_size_cm                                            AS m048_tumor_size_cm
+    FROM   manuscript_workspace.cohort_m048_tnm_multifocal_v1
+),
+size_fallback AS (
+    SELECT research_id,
            MAX(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS max_tumor_size_cm
     FROM   main.canonical_path_malignant_events_v1
     GROUP  BY research_id
+),
+path_per_patient AS (
+    SELECT  m.research_id,
+            COALESCE(m.n_malignant_tumors, 0)                       AS n_malignant_tumors,
+            COALESCE(m.multifocal_flag, 0)                          AS multifocal_flag,
+            COALESCE(m.m048_tumor_size_cm, s.max_tumor_size_cm)     AS max_tumor_size_cm
+    FROM    multifoc_join m
+    FULL OUTER JOIN size_fallback s USING (research_id)
 )
 SELECT
     em.*,                                          -- all v2 covariates + surg_first_date
