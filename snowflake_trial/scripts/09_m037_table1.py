@@ -8,7 +8,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from _sf_client import get_cursor
 
-OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/m037_table1.md")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+OUT = REPO_ROOT / "snowflake_trial" / "reports" / "m037_table1.md"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 ctx, cur = get_cursor()
 

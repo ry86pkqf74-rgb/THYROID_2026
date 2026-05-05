@@ -5,6 +5,19 @@ from pathlib import Path
 import snowflake.connector
 import snowflake.connector.network as _net
 
+
+def _load_repo_dotenv_for_pat() -> None:
+    """Populate os.environ from repo-root .env (gitignored) if python-dotenv is available."""
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        return
+    repo = Path(__file__).resolve().parents[2]
+    load_dotenv(repo / ".env", override=False)
+
+
+_load_repo_dotenv_for_pat()
+
 DOTTED = "qcc02515.us-east-1"
 
 _orig = _net.SnowflakeRestful._post_request

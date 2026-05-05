@@ -11,6 +11,12 @@ import snowflake.connector
 import snowflake.connector.network as _net
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(REPO_ROOT / ".env", override=False)
+except ImportError:
+    pass
 PARQUET_DIR = REPO_ROOT / "snowflake_trial" / "parquet"
 PAT = os.environ["SNOWFLAKE_PAT"]
 DOTTED = "qcc02515.us-east-1"
