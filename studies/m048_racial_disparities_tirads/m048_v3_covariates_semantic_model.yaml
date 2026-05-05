@@ -1,0 +1,34 @@
+# Draft semantic bindings for Cortex Analyst (mig_317) — extend with full warehouse map as needed.
+version: 1
+study: M048_v3
+database: thyroid_canonical_publication_v1_0
+schema: manuscript_workspace
+primary_table: m048_v3_patient_master_v1
+columns:
+  research_id: { role: primary_key }
+  race_strat: { role: stratum, reference_level: White }
+  is_malignant: { role: outcome_binary }
+  max_tr_int: { role: predictor_ordinal, label: ACR TI-RADS numeric }
+  max_tirads_category_ever: { role: predictor_categorical }
+  had_any_fna: { role: adjuster_binary }
+  had_repeat_fna: { role: adjuster_binary }
+  n_fnas_total: { role: adjuster_continuous }
+  bethesda_bucket: { role: adjuster_categorical }
+  days_us_to_surg_approx: { role: adjuster_continuous }
+  n_nodules_total: { role: adjuster_continuous }
+  nodule_burden_cat: { role: adjuster_categorical }
+  had_any_genetics: { role: adjuster_binary }
+  had_any_nm: { role: adjuster_binary }
+  has_clt: { role: adjuster_binary }
+  has_mng: { role: adjuster_binary }
+  has_graves: { role: adjuster_binary }
+  has_niftp: { role: adjuster_binary }
+  has_ftump: { role: adjuster_binary }
+  surg_procedure_type: { role: adjuster_categorical }
+  age_at_surgery: { role: adjuster_continuous }
+  sex: { role: adjuster_categorical }
+  surg_year: { role: adjuster_continuous }
+descriptive_only:
+  max_tumor_size_cm: post_surgery_descriptor
+  multifocal_flag: post_surgery_descriptor
+  histology_category: post_surgery_descriptor

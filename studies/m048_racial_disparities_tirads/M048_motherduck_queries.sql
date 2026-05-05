@@ -326,14 +326,16 @@ ORDER  BY p.race_strat;
 CREATE OR REPLACE TABLE m048_genetics_access_by_race_v1 AS
 WITH genetics AS (
     SELECT research_id,
-           MAX(CASE WHEN assay_type ILIKE '%afirma%'   THEN 1 ELSE 0 END) AS had_afirma,
-           MAX(CASE WHEN assay_type ILIKE '%thyroseq%' THEN 1 ELSE 0 END) AS had_thyroseq,
-           MAX(CASE WHEN assay_type ILIKE '%mutation%'
-                     OR assay_type ILIKE '%panel%'      THEN 1 ELSE 0 END) AS had_mutation_panel,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%afirma%' THEN 1 ELSE 0 END) AS had_afirma,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%thyroseq%' THEN 1 ELSE 0 END) AS had_thyroseq,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%mutation%'
+                     OR COALESCE(platform, platform_raw) ILIKE '%panel%' THEN 1 ELSE 0 END) AS had_mutation_panel,
            MAX(1)                                                          AS had_any_genetics,
-           MAX(CASE WHEN result_category ILIKE '%suspicious%'
-                     OR result_category ILIKE '%positive%' THEN 1 ELSE 0 END) AS had_suspicious_result
-    FROM   canonical_molecular_genetics_v2
+           MAX(CASE WHEN overall_result_class ILIKE '%suspicious%'
+                     OR overall_result_class ILIKE '%positive%'
+                     OR overall_result_class ILIKE '%malignant%'
+                     OR high_risk_marker_flag IS TRUE THEN 1 ELSE 0 END) AS had_suspicious_result
+    FROM   main.canonical_molecular_genetics_v2
     GROUP  BY research_id
 )
 SELECT
@@ -361,12 +363,16 @@ CREATE OR REPLACE TABLE m048_imaging_utilization_by_race_v1 AS
 WITH nm AS (
     SELECT research_id,
            1                                                AS had_any_nm,
-           MAX(CASE WHEN scan_type ILIKE '%RAI%'
-                     OR scan_type ILIKE '%I-123%'
-                     OR scan_type ILIKE '%I-131%'           THEN 1 ELSE 0 END) AS had_radioiodine,
-           MAX(CASE WHEN scan_type ILIKE '%uptake%'         THEN 1 ELSE 0 END) AS had_uptake,
-           MAX(CASE WHEN scan_type ILIKE '%scinti%'         THEN 1 ELSE 0 END) AS had_scintigraphy
-    FROM   nuclear_med
+           MAX(CASE WHEN scantype ILIKE '%RAI%'
+                     OR scantype ILIKE '%I-123%'
+                     OR scantype ILIKE '%I-131%'
+                     OR radiotracer ILIKE '%I-131%'
+                     OR radiotracer ILIKE '%I-123%'       THEN 1 ELSE 0 END) AS had_radioiodine,
+           MAX(CASE WHEN scantype ILIKE '%uptake%'
+                     OR indication_text ILIKE '%uptake%'  THEN 1 ELSE 0 END) AS had_uptake,
+           MAX(CASE WHEN scantype ILIKE '%scinti%'
+                     OR findings_text ILIKE '%scintigraph%' THEN 1 ELSE 0 END) AS had_scintigraphy
+    FROM   main.nuclear_med
     GROUP  BY research_id
 )
 SELECT
@@ -456,6 +462,7 @@ SELECT
     p.age_at_surgery,
     p.sex,
     p.surg_year,
+    p.surg_first_date,
     p.surg_procedure_type,
     p.max_tirads_category_ever,
     TRY_CAST(regexp_extract(CAST(p.max_tirads_category_ever AS VARCHAR), '[0-9]+') AS INTEGER) AS max_tr_int,
@@ -497,22 +504,25 @@ FROM   m048_patient_master_v1 p
 LEFT   JOIN m048_nodule_count_per_patient_v1 nc USING (research_id)
 LEFT   JOIN (
     SELECT research_id,
-           MAX(CASE WHEN assay_type ILIKE '%afirma%'   THEN 1 ELSE 0 END) AS had_afirma,
-           MAX(CASE WHEN assay_type ILIKE '%thyroseq%' THEN 1 ELSE 0 END) AS had_thyroseq,
-           MAX(CASE WHEN assay_type ILIKE '%mutation%'
-                     OR assay_type ILIKE '%panel%'      THEN 1 ELSE 0 END) AS had_mutation_panel,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%afirma%' THEN 1 ELSE 0 END) AS had_afirma,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%thyroseq%' THEN 1 ELSE 0 END) AS had_thyroseq,
+           MAX(CASE WHEN COALESCE(platform, platform_raw) ILIKE '%mutation%'
+                     OR COALESCE(platform, platform_raw) ILIKE '%panel%' THEN 1 ELSE 0 END) AS had_mutation_panel,
            MAX(1)                                                          AS had_any_genetics,
-           MAX(CASE WHEN result_category ILIKE '%suspicious%'
-                     OR result_category ILIKE '%positive%' THEN 1 ELSE 0 END) AS had_suspicious_result
-    FROM   canonical_molecular_genetics_v2
+           MAX(CASE WHEN overall_result_class ILIKE '%suspicious%'
+                     OR overall_result_class ILIKE '%positive%'
+                     OR overall_result_class ILIKE '%malignant%'
+                     OR high_risk_marker_flag IS TRUE THEN 1 ELSE 0 END) AS had_suspicious_result
+    FROM   main.canonical_molecular_genetics_v2
     GROUP  BY research_id
 ) g USING (research_id)
 LEFT   JOIN (
     SELECT research_id,
            1 AS had_any_nm,
-           MAX(CASE WHEN scan_type ILIKE '%RAI%' OR scan_type ILIKE '%I-123%'
-                     OR scan_type ILIKE '%I-131%' THEN 1 ELSE 0 END) AS had_radioiodine
-    FROM   nuclear_med
+           MAX(CASE WHEN scantype ILIKE '%RAI%' OR scantype ILIKE '%I-123%'
+                     OR scantype ILIKE '%I-131%' OR radiotracer ILIKE '%I-131%'
+                     OR radiotracer ILIKE '%I-123%' THEN 1 ELSE 0 END) AS had_radioiodine
+    FROM   main.nuclear_med
     GROUP  BY research_id
 ) nm USING (research_id);
 
@@ -595,14 +605,14 @@ CREATE OR REPLACE TABLE m048_fna_pattern_by_race_v1 AS
 WITH fna AS (
     SELECT research_id,
            COUNT(*)                                          AS n_fnas_total,
-           COUNT(DISTINCT fna_event_date)                    AS n_distinct_fna_dates,
-           MAX(CASE WHEN bethesda_final IN (1, 'I')        THEN 1 ELSE 0 END) AS ever_b1,
-           MAX(CASE WHEN bethesda_final IN (3, 'III')      THEN 1 ELSE 0 END) AS ever_b3,
-           MAX(CASE WHEN bethesda_final IN (4, 'IV')       THEN 1 ELSE 0 END) AS ever_b4,
-           MAX(CASE WHEN bethesda_final IN (5, 'V')        THEN 1 ELSE 0 END) AS ever_b5,
-           MAX(CASE WHEN bethesda_final IN (6, 'VI')       THEN 1 ELSE 0 END) AS ever_b6,
+           COUNT(DISTINCT fna_date_resolved)                 AS n_distinct_fna_dates,
+           MAX(CASE WHEN bethesda_final_num = 1             THEN 1 ELSE 0 END) AS ever_b1,
+           MAX(CASE WHEN bethesda_final_num = 3             THEN 1 ELSE 0 END) AS ever_b3,
+           MAX(CASE WHEN bethesda_final_num = 4             THEN 1 ELSE 0 END) AS ever_b4,
+           MAX(CASE WHEN bethesda_final_num = 5             THEN 1 ELSE 0 END) AS ever_b5,
+           MAX(CASE WHEN bethesda_final_num = 6             THEN 1 ELSE 0 END) AS ever_b6,
            CASE WHEN COUNT(*) >= 2 THEN 1 ELSE 0 END         AS had_repeat_fna
-    FROM   canonical_fna_events_v1
+    FROM   main.canonical_fna_events_v1
     GROUP  BY research_id
 )
 SELECT
@@ -629,8 +639,9 @@ ORDER  BY p.race_strat;
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE TABLE m048_fna_to_surgery_interval_by_race_v1 AS
 WITH fna_first AS (
-    SELECT research_id, MIN(fna_event_date) AS first_fna_date
-    FROM   canonical_fna_events_v1
+    SELECT research_id, MIN(TRY_CAST(fna_date_resolved AS DATE)) AS first_fna_date
+    FROM   main.canonical_fna_events_v1
+    WHERE  fna_date_resolved IS NOT NULL
     GROUP  BY research_id
 )
 SELECT
@@ -675,10 +686,10 @@ CREATE OR REPLACE TABLE m048_tumor_biology_descriptors_by_race_v1 AS
 WITH path_per_patient AS (
     SELECT research_id,
            COUNT(*)                                          AS n_malignant_tumors,
-           MAX(CASE WHEN is_multifocal = TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
-           MAX(tumor_size_cm)                                AS max_tumor_size_cm,
-           MIN(tumor_size_cm)                                AS min_tumor_size_cm
-    FROM   canonical_path_malignant_events_v1
+           MAX(CASE WHEN multifocality_flag IS TRUE           THEN 1 ELSE 0 END) AS multifocal_flag,
+           MAX(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS max_tumor_size_cm,
+           MIN(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS min_tumor_size_cm
+    FROM   main.canonical_path_malignant_events_v1
     GROUP  BY research_id
 )
 SELECT
@@ -720,15 +731,15 @@ CREATE OR REPLACE TABLE m048_aggressive_features_by_race_v1 AS
 SELECT
     p.race_strat,
     COUNT(*)                                                 AS n_malignant,
-    SUM(CASE WHEN ete.ete_grade_resolved IN ('microscopic', 'gross') THEN 1 ELSE 0 END) AS n_any_ete,
-    SUM(CASE WHEN ete.ete_grade_resolved = 'microscopic' THEN 1 ELSE 0 END) AS n_micro_ete,
-    SUM(CASE WHEN ete.ete_grade_resolved = 'gross'       THEN 1 ELSE 0 END) AS n_gross_ete,
-    SUM(CASE WHEN ln.any_ln_metastasis = TRUE             THEN 1 ELSE 0 END) AS n_ln_positive,
-    ROUND(100.0 * SUM(CASE WHEN ete.ete_grade_resolved IN ('microscopic', 'gross') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_any_ete,
-    ROUND(100.0 * SUM(CASE WHEN ln.any_ln_metastasis = TRUE THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_ln_positive
+    SUM(CASE WHEN ete.ete_grade IN ('microscopic', 'gross') THEN 1 ELSE 0 END) AS n_any_ete,
+    SUM(CASE WHEN ete.ete_grade = 'microscopic' THEN 1 ELSE 0 END) AS n_micro_ete,
+    SUM(CASE WHEN ete.ete_grade = 'gross'       THEN 1 ELSE 0 END) AS n_gross_ete,
+    SUM(CASE WHEN ln.ln_any_positive IS TRUE    THEN 1 ELSE 0 END) AS n_ln_positive,
+    ROUND(100.0 * SUM(CASE WHEN ete.ete_grade IN ('microscopic', 'gross') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_any_ete,
+    ROUND(100.0 * SUM(CASE WHEN ln.ln_any_positive IS TRUE THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_ln_positive
 FROM   m048_patient_master_v1 p
-LEFT   JOIN canonical_ete_event_resolved_v1 ete USING (research_id)
-LEFT   JOIN ln_master_rollup_v1            ln  USING (research_id)
+LEFT   JOIN main.canonical_ete_event_resolved_v1 ete USING (research_id)
+LEFT   JOIN ln_master_rollup_v1                   ln  USING (research_id)
 WHERE  p.is_malignant = TRUE
 GROUP  BY p.race_strat
 ORDER  BY p.race_strat;
@@ -745,7 +756,7 @@ SELECT
     ROUND(100.0 * SUM(CASE WHEN fs.research_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_with_frozen
 FROM   m048_patient_master_v1 p
 LEFT   JOIN (
-    SELECT DISTINCT research_id FROM canonical_frozen_section_events
+    SELECT DISTINCT research_id FROM main.canonical_frozen_section_events_v1
 ) fs USING (research_id)
 GROUP  BY p.race_strat
 ORDER  BY p.race_strat;
@@ -756,8 +767,9 @@ ORDER  BY p.race_strat;
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE TABLE m048_us_to_surgery_interval_by_race_v1 AS
 WITH us_first AS (
-    SELECT research_id, MIN(exam_date) AS first_us_date
-    FROM   canonical_us_nodule_v2
+    SELECT research_id, MIN(TRY_CAST(exam_date AS DATE)) AS first_us_date
+    FROM   main.canonical_us_nodule_v2
+    WHERE  exam_date IS NOT NULL
     GROUP  BY research_id
 )
 SELECT
@@ -784,32 +796,33 @@ WITH fna AS (
     SELECT research_id,
            COUNT(*) AS n_fnas_total,
            CASE WHEN COUNT(*) >= 2 THEN 1 ELSE 0 END AS had_repeat_fna,
-           MIN(fna_event_date) AS first_fna_date
-    FROM   canonical_fna_events_v1
+           MIN(TRY_CAST(fna_date_resolved AS DATE)) AS first_fna_date
+    FROM   main.canonical_fna_events_v1
     GROUP  BY research_id
 ),
 us_first AS (
-    SELECT research_id, MIN(exam_date) AS first_us_date
-    FROM   canonical_us_nodule_v2
+    SELECT research_id, MIN(TRY_CAST(exam_date AS DATE)) AS first_us_date
+    FROM   main.canonical_us_nodule_v2
+    WHERE  exam_date IS NOT NULL
     GROUP  BY research_id
 ),
 path_per_patient AS (
     SELECT research_id,
            COUNT(*) AS n_malignant_tumors,
-           MAX(CASE WHEN is_multifocal = TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
-           MAX(tumor_size_cm) AS max_tumor_size_cm
-    FROM   canonical_path_malignant_events_v1
+           MAX(CASE WHEN multifocality_flag IS TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
+           MAX(COALESCE(size_greatest_dimension_cm, tumor_size_cm_per_surgery)) AS max_tumor_size_cm
+    FROM   main.canonical_path_malignant_events_v1
     GROUP  BY research_id
 )
 SELECT
-    em.*,                                          -- all v2 covariates
+    em.*,                                          -- all v2 covariates + surg_first_date
     -- FNA pattern (PRE-SURGERY; eligible regression adjuster)
     COALESCE(f.n_fnas_total, 0)                                AS n_fnas_total,
     COALESCE(f.had_repeat_fna, 0)                              AS had_repeat_fna,
     CASE WHEN f.research_id IS NOT NULL THEN 1 ELSE 0 END      AS had_any_fna,
-    DATE_DIFF('day', f.first_fna_date, em.surg_year::INTEGER * 1)        AS days_fna_to_surg_approx,
+    DATE_DIFF('day', f.first_fna_date, em.surg_first_date)     AS days_fna_to_surg_approx,
     -- US-to-surgery interval (PRE-SURGERY; pathway proxy)
-    DATE_DIFF('day', uf.first_us_date,  em.surg_year::INTEGER * 1)       AS days_us_to_surg_approx,
+    DATE_DIFF('day', uf.first_us_date, em.surg_first_date)    AS days_us_to_surg_approx,
     -- Tumor biology DESCRIPTORS (POST-SURGERY; DO NOT use as adjusters)
     pp.n_malignant_tumors,
     pp.multifocal_flag,
@@ -824,27 +837,58 @@ LEFT   JOIN us_first        uf USING (research_id)
 LEFT   JOIN path_per_patient pp USING (research_id);
 
 -- ----------------------------------------------------------------------------
--- 26. v3 QA gates (additional coverage checks)
+-- 25b. Nodule grain + v3 patient-level covariates (Model F-Nodule)
 -- ----------------------------------------------------------------------------
-SELECT 'v3_master_n'              AS gate, COUNT(*)            AS n FROM m048_v3_patient_master_v1
+CREATE OR REPLACE TABLE m048_v3_nodule_master_v1 AS
+SELECT
+    n.*,
+    v3.race_strat,
+    v3.age_at_surgery,
+    v3.sex,
+    v3.surg_year,
+    v3.surg_first_date,
+    v3.surg_procedure_type,
+    v3.max_tr_int,
+    v3.nodule_burden_cat,
+    v3.had_any_genetics,
+    v3.had_any_nm,
+    v3.has_clt,
+    v3.has_graves,
+    v3.has_mng,
+    v3.has_niftp,
+    v3.has_ftump,
+    v3.n_fnas_total,
+    v3.had_repeat_fna,
+    v3.had_any_fna,
+    v3.days_fna_to_surg_approx,
+    v3.days_us_to_surg_approx,
+    v3.bethesda_bucket AS patient_bethesda_bucket
+FROM   m025_analytic_master_nodule_v1 n
+LEFT   JOIN m048_v3_patient_master_v1 v3 USING (research_id);
+
+-- ----------------------------------------------------------------------------
+-- 26. v3 QA gates (additional coverage checks; materialized for CSV audit)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_v3_sql_qa_counts_v1 AS
+SELECT 'v3_master_n'              AS gate, CAST(COUNT(*) AS BIGINT)            AS n FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_any_fna',             SUM(had_any_fna)             FROM m048_v3_patient_master_v1
+SELECT 'with_any_fna',             CAST(SUM(had_any_fna) AS BIGINT)             FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_repeat_fna',          SUM(had_repeat_fna)          FROM m048_v3_patient_master_v1
+SELECT 'with_repeat_fna',          CAST(SUM(had_repeat_fna) AS BIGINT)          FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_n_fnas_ge_3',         SUM(CASE WHEN n_fnas_total >= 3 THEN 1 ELSE 0 END) FROM m048_v3_patient_master_v1
+SELECT 'with_n_fnas_ge_3',         CAST(SUM(CASE WHEN n_fnas_total >= 3 THEN 1 ELSE 0 END) AS BIGINT) FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_multifocal',          SUM(COALESCE(multifocal_flag, 0)) FROM m048_v3_patient_master_v1
+SELECT 'with_multifocal',          CAST(SUM(CASE WHEN multifocal_flag IS TRUE THEN 1 ELSE 0 END) AS BIGINT) FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_tumor_size_known',    SUM(CASE WHEN max_tumor_size_cm IS NOT NULL THEN 1 ELSE 0 END) FROM m048_v3_patient_master_v1
+SELECT 'with_tumor_size_known',    CAST(SUM(CASE WHEN max_tumor_size_cm IS NOT NULL THEN 1 ELSE 0 END) AS BIGINT) FROM m048_v3_patient_master_v1
 UNION ALL
-SELECT 'with_ete_canonical',       (SELECT COUNT(*) FROM canonical_ete_event_resolved_v1
-                                     WHERE research_id IN (SELECT research_id FROM m048_v3_patient_master_v1))
+SELECT 'with_ete_canonical',       CAST((SELECT COUNT(*) FROM main.canonical_ete_event_resolved_v1
+                                     WHERE CAST(research_id AS VARCHAR) IN (SELECT research_id FROM m048_v3_patient_master_v1)) AS BIGINT)
 UNION ALL
-SELECT 'with_frozen_section',      (SELECT COUNT(DISTINCT research_id) FROM canonical_frozen_section_events
-                                     WHERE research_id IN (SELECT research_id FROM m048_v3_patient_master_v1))
+SELECT 'with_frozen_section',      CAST((SELECT COUNT(DISTINCT CAST(research_id AS VARCHAR)) FROM main.canonical_frozen_section_events_v1
+                                     WHERE CAST(research_id AS VARCHAR) IN (SELECT research_id FROM m048_v3_patient_master_v1)) AS BIGINT)
 UNION ALL
 SELECT 'reconciles_v3_to_v2',
-       CASE WHEN (SELECT COUNT(*) FROM m048_v3_patient_master_v1)
+       CAST(CASE WHEN (SELECT COUNT(*) FROM m048_v3_patient_master_v1)
                  = (SELECT COUNT(*) FROM m048_extended_patient_master_v1)
-            THEN 1 ELSE 0 END;
+            THEN 1 ELSE 0 END AS BIGINT);
