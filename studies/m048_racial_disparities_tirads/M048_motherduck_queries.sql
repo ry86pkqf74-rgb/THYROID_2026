@@ -564,3 +564,287 @@ UNION ALL
 SELECT 'reconciles_with_m025_patient_n',
        CASE WHEN (SELECT COUNT(*) FROM m048_extended_patient_master_v1) = 3375
             THEN 1 ELSE 0 END;
+
+
+-- ============================================================================
+-- M048 v3 EXPANSION (added 2026-05-05): FNA pattern, tumor biology
+-- descriptors, presentation context.
+--
+-- IMPORTANT CAUSAL NOTE:
+--   * Sections 17-19 are PRE-SURGERY variables (FNA pattern, Bethesda,
+--     concordance, US-to-surgery interval) — eligible to be adjusters in
+--     primary regression models alongside the v2 covariates.
+--   * Sections 20-22 are POST-SURGERY tumor-biology DESCRIPTORS (size,
+--     multifocality, histology subtype, ETE, LN, frozen section findings).
+--     These are CONSEQUENCES of the surgery, not predictors of it. They
+--     MUST NOT be added as adjusters to the malignancy-outcome regression
+--     (that would be adjusting for the outcome). Instead they are reported
+--     as a per-race × per-TR interpretive table that distinguishes
+--     "over-referral of indolent disease" (Black-TR5 → smaller, lower-stage
+--     tumors) from "under-referral until aggressive presentation"
+--     (Asian-TR5 → larger, higher-stage tumors).
+--   * Sections 23-25 are mixed pre-/post-surgery and are descriptive only.
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- 17. FNA pattern by race (eligible adjuster)
+--     Counts FNAs per patient, categorizes Bethesda distribution, flags
+--     repeat FNA workups (a marker of indeterminate-cytology pathway).
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_fna_pattern_by_race_v1 AS
+WITH fna AS (
+    SELECT research_id,
+           COUNT(*)                                          AS n_fnas_total,
+           COUNT(DISTINCT fna_event_date)                    AS n_distinct_fna_dates,
+           MAX(CASE WHEN bethesda_final IN (1, 'I')        THEN 1 ELSE 0 END) AS ever_b1,
+           MAX(CASE WHEN bethesda_final IN (3, 'III')      THEN 1 ELSE 0 END) AS ever_b3,
+           MAX(CASE WHEN bethesda_final IN (4, 'IV')       THEN 1 ELSE 0 END) AS ever_b4,
+           MAX(CASE WHEN bethesda_final IN (5, 'V')        THEN 1 ELSE 0 END) AS ever_b5,
+           MAX(CASE WHEN bethesda_final IN (6, 'VI')       THEN 1 ELSE 0 END) AS ever_b6,
+           CASE WHEN COUNT(*) >= 2 THEN 1 ELSE 0 END         AS had_repeat_fna
+    FROM   canonical_fna_events_v1
+    GROUP  BY research_id
+)
+SELECT
+    p.race_strat,
+    COUNT(*)                                                 AS n_patients,
+    SUM(CASE WHEN f.research_id IS NOT NULL THEN 1 ELSE 0 END) AS n_with_fna,
+    ROUND(100.0 * SUM(CASE WHEN f.research_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_with_fna,
+    ROUND(AVG(COALESCE(f.n_fnas_total, 0)), 2)               AS mean_fnas_per_patient,
+    SUM(COALESCE(f.had_repeat_fna, 0))                       AS n_repeat_fna,
+    ROUND(100.0 * SUM(COALESCE(f.had_repeat_fna, 0))
+                  / NULLIF(SUM(CASE WHEN f.research_id IS NOT NULL THEN 1 ELSE 0 END), 0), 2) AS pct_repeat_fna_among_biopsied,
+    SUM(COALESCE(f.ever_b1, 0))                              AS n_ever_b1,
+    SUM(COALESCE(f.ever_b3, 0))                              AS n_ever_b3,
+    SUM(COALESCE(f.ever_b4, 0))                              AS n_ever_b4,
+    SUM(COALESCE(f.ever_b5, 0))                              AS n_ever_b5,
+    SUM(COALESCE(f.ever_b6, 0))                              AS n_ever_b6
+FROM   m048_patient_master_v1 p
+LEFT   JOIN fna f USING (research_id)
+GROUP  BY p.race_strat
+ORDER  BY p.race_strat;
+
+-- ----------------------------------------------------------------------------
+-- 18. FNA-to-surgery interval by race (workup-pathway speed proxy)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_fna_to_surgery_interval_by_race_v1 AS
+WITH fna_first AS (
+    SELECT research_id, MIN(fna_event_date) AS first_fna_date
+    FROM   canonical_fna_events_v1
+    GROUP  BY research_id
+)
+SELECT
+    p.race_strat,
+    COUNT(CASE WHEN ff.first_fna_date IS NOT NULL THEN 1 END) AS n_with_dated_fna,
+    ROUND(AVG(DATE_DIFF('day', ff.first_fna_date, p.surg_first_date)), 1)        AS mean_days_fna_to_surg,
+    MEDIAN(DATE_DIFF('day', ff.first_fna_date, p.surg_first_date))               AS median_days_fna_to_surg,
+    QUANTILE_CONT(DATE_DIFF('day', ff.first_fna_date, p.surg_first_date), 0.75)  AS q75_days,
+    QUANTILE_CONT(DATE_DIFF('day', ff.first_fna_date, p.surg_first_date), 0.95)  AS q95_days,
+    SUM(CASE WHEN DATE_DIFF('day', ff.first_fna_date, p.surg_first_date) <= 30  THEN 1 ELSE 0 END) AS n_30d_or_less,
+    SUM(CASE WHEN DATE_DIFF('day', ff.first_fna_date, p.surg_first_date) BETWEEN 31 AND 90  THEN 1 ELSE 0 END) AS n_31_to_90d,
+    SUM(CASE WHEN DATE_DIFF('day', ff.first_fna_date, p.surg_first_date) BETWEEN 91 AND 365 THEN 1 ELSE 0 END) AS n_91_to_365d,
+    SUM(CASE WHEN DATE_DIFF('day', ff.first_fna_date, p.surg_first_date) > 365 THEN 1 ELSE 0 END)  AS n_over_365d
+FROM   m048_patient_master_v1 p
+LEFT   JOIN fna_first ff USING (research_id)
+WHERE  p.surg_first_date IS NOT NULL
+GROUP  BY p.race_strat
+ORDER  BY p.race_strat;
+
+-- ----------------------------------------------------------------------------
+-- 19. FNA-path concordance by race (pre-surgery cytology agreement with
+--     final operative pathology — relevant interpretive variable)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_fna_path_concordance_by_race_v1 AS
+SELECT
+    race_strat,
+    fna_path_concordance_category,
+    COUNT(*)                                                 AS n,
+    SUM(is_malignant::INT)                                   AS n_malignant,
+    ROUND(100.0 * SUM(is_malignant::INT) / COUNT(*), 2)      AS rom_pct
+FROM   m048_patient_master_v1
+WHERE  fna_path_concordance_category IS NOT NULL
+GROUP  BY race_strat, fna_path_concordance_category
+ORDER  BY race_strat, fna_path_concordance_category;
+
+-- ----------------------------------------------------------------------------
+-- 20. Tumor biology DESCRIPTORS by race (POST-SURGERY; for interpretive
+--     'over- vs under-referral' table — NOT for adjustment regressions)
+--     Restricted to malignant patients (is_malignant = TRUE).
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_tumor_biology_descriptors_by_race_v1 AS
+WITH path_per_patient AS (
+    SELECT research_id,
+           COUNT(*)                                          AS n_malignant_tumors,
+           MAX(CASE WHEN is_multifocal = TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
+           MAX(tumor_size_cm)                                AS max_tumor_size_cm,
+           MIN(tumor_size_cm)                                AS min_tumor_size_cm
+    FROM   canonical_path_malignant_events_v1
+    GROUP  BY research_id
+)
+SELECT
+    p.race_strat,
+    p.max_tirads_category_ever                               AS tr_category,
+    COUNT(*)                                                 AS n_malignant_in_cell,
+    ROUND(AVG(pp.max_tumor_size_cm), 2)                      AS mean_tumor_size_cm,
+    MEDIAN(pp.max_tumor_size_cm)                             AS median_tumor_size_cm,
+    SUM(CASE WHEN pp.max_tumor_size_cm < 1.0  THEN 1 ELSE 0 END) AS n_micro_lt_1cm,
+    SUM(CASE WHEN pp.max_tumor_size_cm BETWEEN 1.0 AND 4.0 THEN 1 ELSE 0 END) AS n_1_to_4cm,
+    SUM(CASE WHEN pp.max_tumor_size_cm > 4.0 THEN 1 ELSE 0 END) AS n_gt_4cm,
+    SUM(pp.multifocal_flag)                                  AS n_multifocal,
+    ROUND(AVG(pp.n_malignant_tumors), 2)                     AS mean_malignant_tumors_per_patient
+FROM   m048_patient_master_v1 p
+JOIN   path_per_patient pp USING (research_id)
+WHERE  p.is_malignant = TRUE
+GROUP  BY p.race_strat, p.max_tirads_category_ever
+ORDER  BY p.race_strat, p.max_tirads_category_ever;
+
+-- ----------------------------------------------------------------------------
+-- 21. Histologic subtype distribution by race (DESCRIPTIVE)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_histology_subtype_by_race_v1 AS
+SELECT
+    race_strat,
+    histology_category,
+    COUNT(*)                                                 AS n_patients,
+    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (PARTITION BY race_strat), 2) AS pct_within_race
+FROM   m048_patient_master_v1
+WHERE  is_malignant = TRUE
+   AND histology_category IS NOT NULL
+GROUP  BY race_strat, histology_category
+ORDER  BY race_strat, n_patients DESC;
+
+-- ----------------------------------------------------------------------------
+-- 22. ETE + LN involvement by race (DESCRIPTIVE; M044 ETE canonical)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_aggressive_features_by_race_v1 AS
+SELECT
+    p.race_strat,
+    COUNT(*)                                                 AS n_malignant,
+    SUM(CASE WHEN ete.ete_grade_resolved IN ('microscopic', 'gross') THEN 1 ELSE 0 END) AS n_any_ete,
+    SUM(CASE WHEN ete.ete_grade_resolved = 'microscopic' THEN 1 ELSE 0 END) AS n_micro_ete,
+    SUM(CASE WHEN ete.ete_grade_resolved = 'gross'       THEN 1 ELSE 0 END) AS n_gross_ete,
+    SUM(CASE WHEN ln.any_ln_metastasis = TRUE             THEN 1 ELSE 0 END) AS n_ln_positive,
+    ROUND(100.0 * SUM(CASE WHEN ete.ete_grade_resolved IN ('microscopic', 'gross') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_any_ete,
+    ROUND(100.0 * SUM(CASE WHEN ln.any_ln_metastasis = TRUE THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_ln_positive
+FROM   m048_patient_master_v1 p
+LEFT   JOIN canonical_ete_event_resolved_v1 ete USING (research_id)
+LEFT   JOIN ln_master_rollup_v1            ln  USING (research_id)
+WHERE  p.is_malignant = TRUE
+GROUP  BY p.race_strat
+ORDER  BY p.race_strat;
+
+-- ----------------------------------------------------------------------------
+-- 23. Frozen section utilization by race (presentation context; surgical
+--     decision-making proxy)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_frozen_section_by_race_v1 AS
+SELECT
+    p.race_strat,
+    COUNT(*)                                                 AS n_patients,
+    SUM(CASE WHEN fs.research_id IS NOT NULL THEN 1 ELSE 0 END) AS n_with_frozen,
+    ROUND(100.0 * SUM(CASE WHEN fs.research_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_with_frozen
+FROM   m048_patient_master_v1 p
+LEFT   JOIN (
+    SELECT DISTINCT research_id FROM canonical_frozen_section_events
+) fs USING (research_id)
+GROUP  BY p.race_strat
+ORDER  BY p.race_strat;
+
+-- ----------------------------------------------------------------------------
+-- 24. Time from index US to surgery by race (workup-pathway proxy;
+--     short = direct-to-OR, long = surveillance pathway)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_us_to_surgery_interval_by_race_v1 AS
+WITH us_first AS (
+    SELECT research_id, MIN(exam_date) AS first_us_date
+    FROM   canonical_us_nodule_v2
+    GROUP  BY research_id
+)
+SELECT
+    p.race_strat,
+    COUNT(CASE WHEN uf.first_us_date IS NOT NULL THEN 1 END) AS n_with_dated_us,
+    ROUND(AVG(DATE_DIFF('day', uf.first_us_date, p.surg_first_date)), 1)        AS mean_days_us_to_surg,
+    MEDIAN(DATE_DIFF('day', uf.first_us_date, p.surg_first_date))               AS median_days_us_to_surg,
+    QUANTILE_CONT(DATE_DIFF('day', uf.first_us_date, p.surg_first_date), 0.75)  AS q75_days,
+    SUM(CASE WHEN DATE_DIFF('day', uf.first_us_date, p.surg_first_date) <= 90  THEN 1 ELSE 0 END) AS n_le_90d,
+    SUM(CASE WHEN DATE_DIFF('day', uf.first_us_date, p.surg_first_date) BETWEEN 91 AND 365  THEN 1 ELSE 0 END) AS n_91_to_365d,
+    SUM(CASE WHEN DATE_DIFF('day', uf.first_us_date, p.surg_first_date) > 365 THEN 1 ELSE 0 END)  AS n_gt_365d
+FROM   m048_patient_master_v1 p
+LEFT   JOIN us_first uf USING (research_id)
+WHERE  p.surg_first_date IS NOT NULL
+GROUP  BY p.race_strat
+ORDER  BY p.race_strat;
+
+-- ----------------------------------------------------------------------------
+-- 25. v3 EXTENDED-EXTENDED patient master (joins FNA pattern, intervals,
+--     and tumor-biology descriptors onto v2 master)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_v3_patient_master_v1 AS
+WITH fna AS (
+    SELECT research_id,
+           COUNT(*) AS n_fnas_total,
+           CASE WHEN COUNT(*) >= 2 THEN 1 ELSE 0 END AS had_repeat_fna,
+           MIN(fna_event_date) AS first_fna_date
+    FROM   canonical_fna_events_v1
+    GROUP  BY research_id
+),
+us_first AS (
+    SELECT research_id, MIN(exam_date) AS first_us_date
+    FROM   canonical_us_nodule_v2
+    GROUP  BY research_id
+),
+path_per_patient AS (
+    SELECT research_id,
+           COUNT(*) AS n_malignant_tumors,
+           MAX(CASE WHEN is_multifocal = TRUE THEN 1 ELSE 0 END) AS multifocal_flag,
+           MAX(tumor_size_cm) AS max_tumor_size_cm
+    FROM   canonical_path_malignant_events_v1
+    GROUP  BY research_id
+)
+SELECT
+    em.*,                                          -- all v2 covariates
+    -- FNA pattern (PRE-SURGERY; eligible regression adjuster)
+    COALESCE(f.n_fnas_total, 0)                                AS n_fnas_total,
+    COALESCE(f.had_repeat_fna, 0)                              AS had_repeat_fna,
+    CASE WHEN f.research_id IS NOT NULL THEN 1 ELSE 0 END      AS had_any_fna,
+    DATE_DIFF('day', f.first_fna_date, em.surg_year::INTEGER * 1)        AS days_fna_to_surg_approx,
+    -- US-to-surgery interval (PRE-SURGERY; pathway proxy)
+    DATE_DIFF('day', uf.first_us_date,  em.surg_year::INTEGER * 1)       AS days_us_to_surg_approx,
+    -- Tumor biology DESCRIPTORS (POST-SURGERY; DO NOT use as adjusters)
+    pp.n_malignant_tumors,
+    pp.multifocal_flag,
+    pp.max_tumor_size_cm,
+    CASE WHEN pp.max_tumor_size_cm < 1.0 THEN 'micro'
+         WHEN pp.max_tumor_size_cm BETWEEN 1.0 AND 4.0 THEN '1-4cm'
+         WHEN pp.max_tumor_size_cm > 4.0 THEN '>4cm'
+         ELSE 'unknown' END                                    AS tumor_size_band
+FROM   m048_extended_patient_master_v1 em
+LEFT   JOIN fna             f  USING (research_id)
+LEFT   JOIN us_first        uf USING (research_id)
+LEFT   JOIN path_per_patient pp USING (research_id);
+
+-- ----------------------------------------------------------------------------
+-- 26. v3 QA gates (additional coverage checks)
+-- ----------------------------------------------------------------------------
+SELECT 'v3_master_n'              AS gate, COUNT(*)            AS n FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_any_fna',             SUM(had_any_fna)             FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_repeat_fna',          SUM(had_repeat_fna)          FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_n_fnas_ge_3',         SUM(CASE WHEN n_fnas_total >= 3 THEN 1 ELSE 0 END) FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_multifocal',          SUM(COALESCE(multifocal_flag, 0)) FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_tumor_size_known',    SUM(CASE WHEN max_tumor_size_cm IS NOT NULL THEN 1 ELSE 0 END) FROM m048_v3_patient_master_v1
+UNION ALL
+SELECT 'with_ete_canonical',       (SELECT COUNT(*) FROM canonical_ete_event_resolved_v1
+                                     WHERE research_id IN (SELECT research_id FROM m048_v3_patient_master_v1))
+UNION ALL
+SELECT 'with_frozen_section',      (SELECT COUNT(DISTINCT research_id) FROM canonical_frozen_section_events
+                                     WHERE research_id IN (SELECT research_id FROM m048_v3_patient_master_v1))
+UNION ALL
+SELECT 'reconciles_v3_to_v2',
+       CASE WHEN (SELECT COUNT(*) FROM m048_v3_patient_master_v1)
+                 = (SELECT COUNT(*) FROM m048_extended_patient_master_v1)
+            THEN 1 ELSE 0 END;
