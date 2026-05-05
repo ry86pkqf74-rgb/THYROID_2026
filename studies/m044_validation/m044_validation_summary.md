@@ -1,6 +1,6 @@
 # M044 validation + output regeneration summary
 
-- **Generated (UTC):** 2026-05-04T03:19:01Z
+- **Generated (UTC):** 2026-05-05T07:36:22Z
 - **Canonical validation status:** `FAIL` (23 failures)
 
 ## Expected counts (manuscript-frozen registry)
@@ -12,8 +12,8 @@ Values in `expected_counts_registry` match `m044_validate_canonical_v1_runner.py
 ```json
 {
   "path": "data/m044/analytic_file_v1.parquet",
-  "rows": 4012,
-  "distinct_research_id": 4012
+  "rows": 3868,
+  "distinct_research_id": 3868
 }
 ```
 
@@ -21,50 +21,50 @@ Values in `expected_counts_registry` match `m044_validate_canonical_v1_runner.py
 
 ```json
 {
-  "generated_at_utc": "2026-05-04T03:18:59Z",
-  "cohort_parquet_rows": 4012,
+  "generated_at_utc": "2026-05-05T07:35:54Z",
+  "cohort_parquet_rows": 3868,
   "crude_path_proven_or": {
-    "crude_pp_gross_vs_microscopic_or": 2.7918353576181385,
-    "crude_pp_gross_vs_microscopic_ci_low": 2.054194316632797,
-    "crude_pp_gross_vs_microscopic_ci_high": 3.7943560650207457,
-    "crude_pp_noneg_vs_microscopic_or": 3.3654306220015022,
-    "crude_pp_noneg_vs_microscopic_ci_low": 1.9405979868845002,
-    "crude_pp_noneg_vs_microscopic_ci_high": 5.836408853380678
+    "crude_pp_gross_vs_microscopic_or": 2.5294384057971233,
+    "crude_pp_gross_vs_microscopic_ci_low": 1.7670030196936026,
+    "crude_pp_gross_vs_microscopic_ci_high": 3.6208532625093715,
+    "crude_pp_noneg_vs_microscopic_or": 2.7512315270936103,
+    "crude_pp_noneg_vs_microscopic_ci_low": 1.3751171472987755,
+    "crude_pp_noneg_vs_microscopic_ci_high": 5.504458242370562
   },
   "primary_strict_no_rai": {
-    "n_obs": 3750,
-    "n_events": 193,
-    "pseudo_r2_mcfadden": 0.14040257814284918,
-    "lr_vs_null_chi2": 213.65318930815624,
+    "n_obs": 3614,
+    "n_events": 136,
+    "pseudo_r2_mcfadden": 0.14597151217994864,
+    "lr_vs_null_chi2": 169.23018060170625,
     "gross_vs_microscopic": {
-      "or": 2.076021874744788,
-      "or_ci_low": 1.4785836095356497,
-      "or_ci_high": 2.914861761366597,
-      "pvalue": 2.4582090879533184e-05
+      "or": 1.7200817072162256,
+      "or_ci_low": 1.1549121021306452,
+      "or_ci_high": 2.561823600290921,
+      "pvalue": 0.0076168728422891865
     },
     "noneg_vs_microscopic": {
-      "or": 0.6669255032178935,
-      "or_ci_low": 0.3177659954934816,
-      "or_ci_high": 1.3997395352252677,
-      "pvalue": 0.28420806003042576
+      "or": 0.5524765530770338,
+      "or_ci_low": 0.2305492981731137,
+      "or_ci_high": 1.3239265706664207,
+      "pvalue": 0.183297870332655
     }
   },
   "cox_strict_no_rai": {
-    "n": 2511,
-    "events": 178,
-    "coef_table_path": "/Users/ros/THyroid 2026/data/m044/m044_cox_primary_summary.csv",
+    "n": 2431,
+    "events": 132,
+    "coef_table_path": "/Users/loganglosser/THYROID_2026/data/m044/m044_cox_primary_summary.csv",
     "gross_vs_microscopic_hr": {
-      "hr": 0.9103037356162789,
-      "hr_ci_low": 0.47923951497127887,
-      "hr_ci_high": 1.729099678115261,
-      "p": 0.7740423569506414,
+      "hr": 1.3402360628323684,
+      "hr_ci_low": 0.9073993089820943,
+      "hr_ci_high": 1.9795394225408793,
+      "p": 0.14111782850255308,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.Gross ETE]"
     },
     "noneg_vs_microscopic_hr": {
-      "hr": 2.443341372260798,
-      "hr_ci_low": 0.6480998157458978,
-      "hr_ci_high": 9.21141607567116,
-      "p": 0.18703020836101486,
+      "hr": 0.9723481503072717,
+      "hr_ci_low": 0.44585922630245495,
+      "hr_ci_high": 2.1205368637243494,
+      "p": 0.9438054455510679,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.No/negative ETE]"
     }
   }
@@ -73,9 +73,9 @@ Values in `expected_counts_registry` match `m044_validate_canonical_v1_runner.py
 
 ## Inclusion flow QC (last 3 rows)
 
-- {'step_order': 7, 'criterion': 'Tumor size known (cm; Cox covariate complete-case)', 'n': 2511, 'excluded_at_step': 4, 'cum_excluded_from_cohort': 1501, 'path_proven_events': nan}
-- {'step_order': 8, 'criterion': 'Age at surgery known (Cox covariate complete-case)', 'n': 2511, 'excluded_at_step': 0, 'cum_excluded_from_cohort': 1501, 'path_proven_events': nan}
-- {'step_order': 9, 'criterion': 'Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6)', 'n': 2511, 'excluded_at_step': 0, 'cum_excluded_from_cohort': 1501, 'path_proven_events': 178.0}
+- {'step_order': 7, 'criterion': 'Tumor size known (cm; Cox covariate complete-case)', 'n': 2431, 'excluded_at_step': 3, 'cum_excluded_from_cohort': 1437, 'path_proven_events': nan}
+- {'step_order': 8, 'criterion': 'Age at surgery known (Cox covariate complete-case)', 'n': 2431, 'excluded_at_step': 0, 'cum_excluded_from_cohort': 1437, 'path_proven_events': nan}
+- {'step_order': 9, 'criterion': 'Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6)', 'n': 2431, 'excluded_at_step': 0, 'cum_excluded_from_cohort': 1437, 'path_proven_events': 132.0}
 
 ## Package sync
 
@@ -83,27 +83,27 @@ Values in `expected_counts_registry` match `m044_validate_canonical_v1_runner.py
 {
   "04_tables.xlsx": {
     "path": "M044_submission_package_v1_0/04_tables.xlsx",
-    "sha256": "a183bb6749e42f3e94546ae72ff925eac1dc2d9a57bec8835d789eecca36b242"
+    "sha256": "2babcb7f6e0e30cad2b6be042a5f21b38e5259d0fd150462dc99764fbfa3e937"
   },
   "m044_cox_primary_summary.csv": {
     "path": "M044_submission_package_v1_0/08_analysis_outputs/m044_cox_primary_summary.csv",
-    "sha256": "3f060a92dd420266153164f2f9b123b4875939cdd59338fa29e63178407a36e3"
+    "sha256": "422c019d33f939ddc5c975ef460799a423ee0b314a36bd855627111101e6545e"
   },
   "m044_cox_primary_with_rai_summary.csv": {
     "path": "M044_submission_package_v1_0/08_analysis_outputs/m044_cox_primary_with_rai_summary.csv",
-    "sha256": "bfef49a72c5b1daf74c05f8cd4a40ea55af08346e0d166100d74d389849c0150"
+    "sha256": "f8c79d6538ade5a50a85e4d3b367cb60d8787d234c373a41b2e15daed6951d05"
   },
   "m044_inclusion_flow_qc.csv": {
     "path": "M044_submission_package_v1_0/08_analysis_outputs/m044_inclusion_flow_qc.csv",
-    "sha256": "7ac3857b5054e2a123dd58c012753c67198b61e000d8e248f8ea2ba69f460175"
+    "sha256": "cc3e3773348cba242fc787bbb654ada1a0d38518d3a1aef8d154155712713dda"
   },
   "m044_run_snapshot.json": {
     "path": "M044_submission_package_v1_0/08_analysis_outputs/m044_run_snapshot.json",
-    "sha256": "325084eed835652a7f5ed68b25eff08c6b0b7624834c023c9ae4d1e9fe86faef"
+    "sha256": "f7c1e95e7518a52811487180e96dbc557c1ba641ef3fbde11c73754bf7816260"
   },
   "analytic_file_v1.parquet": {
     "path": "M044_submission_package_v1_0/08_analysis_outputs/analytic_file_v1.parquet",
-    "sha256": "b54c51fa912d778a7a3e07eaf7634d859c98e68e7c3cd52c870a8e4178c71aa0"
+    "sha256": "2ec039cf05e7c234947378da1bb767c5eec170ca5ee39736d6bbd70f68305356"
   },
   "figures_copied": 18
 }

@@ -1,11 +1,11 @@
 step_order,criterion,n,excluded_at_step,cum_excluded_from_cohort,path_proven_events
-0,M044 analytic extract (cohort_m044_ajcc_ete_v1 + recurrence join),4012,0,0,
-1,Strict-DTC histology (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list),3789,223,223,
-2,Three-level ETE (No/negative vs Microscopic vs Gross),3756,33,256,
-3,Sex known female/male (same frame as primary logistic/Cox categoricals),3756,0,256,
-4,Positive analytic follow-up (followup_years > 0),2525,1231,1487,
-5,Known surgery date (CPM surg_first_date; mig_258/mig_254 lineage),2525,0,1487,
-6,Finite positive Cox time_days (path-proven TTE if event else censor at FU×365.25),2515,10,1497,
-7,Tumor size known (cm; Cox covariate complete-case),2511,4,1501,
-8,Age at surgery known (Cox covariate complete-case),2511,0,1501,
-9,Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6),2511,0,1501,178
+0,M044 analytic extract (cohort_m044_ajcc_ete_v1 + recurrence join),3868,0,0,
+1,Strict-DTC histology (exclude MTC/anaplastic/NIFTP/FTUMP/benign-neoplasm list),3648,220,220,
+2,Three-level ETE (No/negative vs Microscopic vs Gross),3619,29,249,
+3,Sex known female/male (same frame as primary logistic/Cox categoricals),3619,0,249,
+4,Positive analytic follow-up (followup_years > 0),2437,1182,1431,
+5,Known surgery date (CPM surg_first_date; mig_258/mig_254 lineage),2437,0,1431,
+6,Finite positive Cox time_days (path-proven TTE if event else censor at FU×365.25),2434,3,1434,
+7,Tumor size known (cm; Cox covariate complete-case),2431,3,1437,
+8,Age at surgery known (Cox covariate complete-case),2431,0,1437,
+9,Final Cox PH + Kaplan–Meier rows (lifelines sample; aligns Figure 6),2431,0,1437,132

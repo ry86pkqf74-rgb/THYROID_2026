@@ -32,7 +32,7 @@ WITH cohort AS (
   SELECT
     c.*,
     CASE
-      WHEN c.ete_grade_final IN ('false','absent')   THEN 'No/negative ETE'
+      WHEN c.ete_grade_final IN ('no_negative','false','absent','none') THEN 'No/negative ETE'
       WHEN c.ete_grade_final = 'microscopic'       THEN 'Microscopic ETE'
       WHEN c.ete_grade_final = 'gross'               THEN 'Gross ETE'
       WHEN c.ete_grade_final = 'present_ungraded'  THEN 'Present ungraded'
@@ -703,7 +703,7 @@ def size_panel_clean(frame: pd.DataFrame) -> pd.DataFrame:
         if pd.isna(gf):
             return None
         s = str(gf).strip().lower()
-        if s in {"false", "absent"}:
+        if s in {"no_negative", "false", "absent", "none"}:
             return "No/negative ETE"
         if s == "microscopic":
             return "Microscopic ETE"
@@ -1131,7 +1131,9 @@ def run_all_models(df_merged: pd.DataFrame) -> dict[str, Any]:
         ),
     }
 
-    dm6 = dm_strict.loc[dm_strict["ete_grade_final"].astype(str) != "true"].copy()
+    # S6: drop artifact 'true' rows (post-mig_315 these are normalized to 'gross' in view;
+    # this sensitivity check will produce n_removed=0 but is kept for auditability)
+    dm6 = dm_strict.loc[~dm_strict["ete_grade_final"].astype(str).isin({"true"})].copy()
     m_s6 = smf.glm(f_strict_no_rai, data=dm6, family=sm.families.Binomial()).fit()
     out["S6_drop_ete_grade_true"] = {
         "n": len(dm6),

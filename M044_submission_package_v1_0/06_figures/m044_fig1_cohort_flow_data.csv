@@ -1,7 +1,7 @@
 step,n
-Total cohort,4012
-Excluded non-DTC / borderline,223
-Strict-DTC subset,3789
-Excluded present-ungraded / missing,33
-Primary 3-level analytic,3756
-Cox PH / KM analytic (aligned),2511
+Total cohort,3868
+Excluded non-DTC / borderline,220
+Strict-DTC subset,3648
+Excluded present-ungraded / missing,29
+Primary 3-level analytic,3619
+Cox PH / KM analytic (aligned),2431

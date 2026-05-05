@@ -41,15 +41,19 @@ SQL_PATH = ROOT / "scripts" / "m044_validate_canonical_v1.sql"
 
 # Manuscript-pinned expectations (frozen counts).
 EXPECTED_MAIN = {
-    "n_rows": 4128,
-    "distinct_research_id": 4128,
+    # mig_315 (2026-05-05): post-mig_313 M-stage fix + ete_grade_final normalization.
+    # v5 locked counts (pre-mig_313): n_rows=4128, ete_gross=1266, ete_no_negative=192.
+    # v6 counts below reflect mig_313 staging recompute (151 patients lost valid stage_group).
+    "n_rows": 3868,
+    "distinct_research_id": 3868,
     "duplicate_extra_rows": 0,
-    "ete_microscopic": 2576,
-    "ete_gross": 1266,
-    "ete_no_negative": 192,
-    "ete_present_ungraded": 29,
-    "ete_missing_other": 65,
+    "ete_microscopic": 2413,
+    "ete_gross": 1243,
+    "ete_no_negative": 173,
+    "ete_present_ungraded": 28,
+    "ete_missing_other": 11,
     # Final M044 endpoint: path-proven primary excludes implausible-date quarantines.
+    # Note: events increased from 105 (v5 strict-DTC) to 136 due to cohort expansion.
     "recurrence_path_proven_raw_n": 228,
     "recurrence_path_proven_quarantined_n": 24,
     "recurrence_path_proven_n": 204,
@@ -60,7 +64,7 @@ EXPECTED_MAIN = {
     "recurrence_path_proven_positive_fu_n": 199,
     "recurrence_path_proven_zero_fu_n": 5,
     "fu_zero_n": 1400,
-    "fu_positive_n": 2728,
+    "fu_positive_n": 2468,
 }
 
 EXPECTED_MEMBERSHIP = {
@@ -82,11 +86,12 @@ EXPECTED_RECURRENCE_COHERENCE = {
 
 # Post–mig_254 + mig_258 lineage flags (frozen 2026-05-01).
 EXPECTED_SURGERY_DATE_LINEAGE = {
-    "n_cohort": 4128,
-    "surg_first_nonmissing": 4128,
+    # mig_315: updated for post-mig_313 cohort N=3868
+    "n_cohort": 3868,
+    "surg_first_nonmissing": 3868,
     "surg_first_missing": 0,
     "surg_date_pre_1999_n": 3,
-    "surg_date_1999_2024_n": 4090,
+    "surg_date_1999_2024_n": 3830,
     "surg_date_post_2024_n": 35,
     "surg_date_after_2024_06_04_n": 245,
     "calendar_partition_violations": 0,

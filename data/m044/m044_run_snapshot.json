@@ -1,48 +1,48 @@
 {
-  "generated_at_utc": "2026-05-04T03:18:59Z",
-  "cohort_parquet_rows": 4012,
+  "generated_at_utc": "2026-05-05T07:35:54Z",
+  "cohort_parquet_rows": 3868,
   "crude_path_proven_or": {
-    "crude_pp_gross_vs_microscopic_or": 2.7918353576181385,
-    "crude_pp_gross_vs_microscopic_ci_low": 2.054194316632797,
-    "crude_pp_gross_vs_microscopic_ci_high": 3.7943560650207457,
-    "crude_pp_noneg_vs_microscopic_or": 3.3654306220015022,
-    "crude_pp_noneg_vs_microscopic_ci_low": 1.9405979868845002,
-    "crude_pp_noneg_vs_microscopic_ci_high": 5.836408853380678
+    "crude_pp_gross_vs_microscopic_or": 2.5294384057971233,
+    "crude_pp_gross_vs_microscopic_ci_low": 1.7670030196936026,
+    "crude_pp_gross_vs_microscopic_ci_high": 3.6208532625093715,
+    "crude_pp_noneg_vs_microscopic_or": 2.7512315270936103,
+    "crude_pp_noneg_vs_microscopic_ci_low": 1.3751171472987755,
+    "crude_pp_noneg_vs_microscopic_ci_high": 5.504458242370562
   },
   "primary_strict_no_rai": {
-    "n_obs": 3750,
-    "n_events": 193,
-    "pseudo_r2_mcfadden": 0.14040257814284918,
-    "lr_vs_null_chi2": 213.65318930815624,
+    "n_obs": 3614,
+    "n_events": 136,
+    "pseudo_r2_mcfadden": 0.14597151217994864,
+    "lr_vs_null_chi2": 169.23018060170625,
     "gross_vs_microscopic": {
-      "or": 2.076021874744788,
-      "or_ci_low": 1.4785836095356497,
-      "or_ci_high": 2.914861761366597,
-      "pvalue": 2.4582090879533184e-05
+      "or": 1.7200817072162256,
+      "or_ci_low": 1.1549121021306452,
+      "or_ci_high": 2.561823600290921,
+      "pvalue": 0.0076168728422891865
     },
     "noneg_vs_microscopic": {
-      "or": 0.6669255032178935,
-      "or_ci_low": 0.3177659954934816,
-      "or_ci_high": 1.3997395352252677,
-      "pvalue": 0.28420806003042576
+      "or": 0.5524765530770338,
+      "or_ci_low": 0.2305492981731137,
+      "or_ci_high": 1.3239265706664207,
+      "pvalue": 0.183297870332655
     }
   },
   "cox_strict_no_rai": {
-    "n": 2511,
-    "events": 178,
-    "coef_table_path": "/Users/ros/THyroid 2026/data/m044/m044_cox_primary_summary.csv",
+    "n": 2431,
+    "events": 132,
+    "coef_table_path": "/Users/loganglosser/THYROID_2026/data/m044/m044_cox_primary_summary.csv",
     "gross_vs_microscopic_hr": {
-      "hr": 0.9103037356162789,
-      "hr_ci_low": 0.47923951497127887,
-      "hr_ci_high": 1.729099678115261,
-      "p": 0.7740423569506414,
+      "hr": 1.3402360628323684,
+      "hr_ci_low": 0.9073993089820943,
+      "hr_ci_high": 1.9795394225408793,
+      "p": 0.14111782850255308,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.Gross ETE]"
     },
     "noneg_vs_microscopic_hr": {
-      "hr": 2.443341372260798,
-      "hr_ci_low": 0.6480998157458978,
-      "hr_ci_high": 9.21141607567116,
-      "p": 0.18703020836101486,
+      "hr": 0.9723481503072717,
+      "hr_ci_low": 0.44585922630245495,
+      "hr_ci_high": 2.1205368637243494,
+      "p": 0.9438054455510679,
       "covariate_row": "C(ete_group, Treatment(reference='Microscopic ETE'))[T.No/negative ETE]"
     }
   }

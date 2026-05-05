@@ -2,7 +2,7 @@ WITH cohort AS (
   SELECT
     c.*,
     CASE
-      WHEN c.ete_grade_final IN ('false','absent')  THEN 'No/negative ETE'
+      WHEN c.ete_grade_final IN ('no_negative','false','absent','none') THEN 'No/negative ETE'
       WHEN c.ete_grade_final = 'microscopic'        THEN 'Microscopic ETE'
       WHEN c.ete_grade_final = 'gross'              THEN 'Gross ETE'
       WHEN c.ete_grade_final = 'present_ungraded'   THEN 'Present ungraded'
