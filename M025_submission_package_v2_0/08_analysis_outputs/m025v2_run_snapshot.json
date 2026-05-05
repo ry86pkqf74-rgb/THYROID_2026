@@ -1,18 +1,12 @@
 {
-  "generated_utc": "2026-05-04T22:45:00Z",
+  "generated_utc": "2026-05-05T03:22:08.774435+00:00",
   "view": "manuscript_workspace.cohort_m025_nodule_level_v1",
   "build_mig": "mig_306",
   "n_total_rows": 37438,
-  "n_distinct_patients": 6523,
-  "n_distinct_nodule_master_ids": 34755,
-  "n_distinct_exams": 13963,
   "n_strict_acr_analytic_eligible": 3687,
-  "n_with_fna_bethesda": 2216,
-  "n_path_malignant_at_nodule_grain": 3973,
-  "n_patients_with_path_malignant_nodule": 1230,
-  "primary_cohort_for_q1": "analytic_eligible_strict_acr_pernodule = TRUE (n=3,687)",
-  "primary_outcome": "nodule_path_proven_malignant (same-side path tumor within 365d post-US)",
-  "primary_predictor": "acr2017_tirads_category (strict ACR 2017 from acr2017_tirads_points)",
-  "auc_ordinal_rank": 0.6399,
-  "ci_method": "Wilson 95%"
+  "n_distinct_patients_all": 6523,
+  "patient_cohort_n": 3375,
+  "n_tr_rank_known_strict": 3687,
+  "n_malignant_nodules_strict": 631,
+  "roc_auc_ordinal_rank_strict": 0.6399
 }

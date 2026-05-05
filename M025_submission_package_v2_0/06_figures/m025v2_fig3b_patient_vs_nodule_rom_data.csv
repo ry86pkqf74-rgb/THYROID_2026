@@ -1,5 +1,4 @@
 tirads,patient_n,patient_k,patient_rom_pct,patient_lo_95,patient_hi_95,nodule_n,nodule_k,nodule_rom_pct,nodule_lo_95,nodule_hi_95,inflation_pp,acr_expected_band,nodule_in_acr_band
-TR1,340,96,28.2,23.7,33.2,,,,,,,<2%,
 TR2,299,96,32.1,27.1,37.6,31.0,4.0,12.9,5.1,28.9,19.2,<2%,no
 TR3,845,233,27.6,24.7,30.7,1555.0,142.0,9.1,7.8,10.7,18.5,<5%,no
 TR4,492,233,47.4,43.0,51.8,860.0,161.0,18.7,16.3,21.5,28.7,5–20%,YES
