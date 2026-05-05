@@ -41,84 +41,126 @@ if _utils_str not in sys.path:
 os.environ.setdefault("MOTHERDUCK_DATABASE", "thyroid_canonical_publication_v1_0")
 
 _ROLLUP_TABLE = "manuscript_workspace.nlp_fna_size_rollup_v1"
-_V3_VIEW = "manuscript_workspace.imaging_fna_linkage_v3"
+# v3 linkage object is in ``main`` on publication MotherDuck (fallback: manuscript_workspace).
+_V3_MAIN = "main.imaging_fna_linkage_v3"
+_V3_MWS = "manuscript_workspace.imaging_fna_linkage_v3"
 _V4_VIEW = "manuscript_workspace.imaging_fna_linkage_v4"
 _SIGNOFF_MIG_ID = "mig_310"
+
+
+def _resolve_v3_ref(md) -> str:
+    """Return qualified ref to imaging_fna_linkage_v3 (view or base table)."""
+    for ref in (_V3_MAIN, _V3_MWS):
+        sch, _, name = ref.partition(".")
+        try:
+            for rel in ("views", "tables"):
+                cnt = md.execute(
+                    f"SELECT COUNT(*) FROM information_schema.{rel} "
+                    f"WHERE table_schema = '{sch}' "
+                    f"  AND table_name = '{name}'"
+                ).fetchone()[0]
+                if cnt and int(cnt) > 0:
+                    md.execute(f"SELECT 1 FROM {ref} LIMIT 1")
+                    return ref
+        except Exception:
+            continue
+    return _V3_MAIN
+
 
 # ---------------------------------------------------------------------------
 # SQL — imaging_fna_linkage_v4
 # ---------------------------------------------------------------------------
-_V4_VIEW_SQL = f"""
-CREATE OR REPLACE VIEW {_V4_VIEW} AS
-SELECT
-    l.*,
+def _v4_view_sql(v3_ref: str) -> str:
+    """Build v4 DDL (v3 catalog resolved at runtime).
 
-    -- NLP-resolved FNA size (prefer existing structured value, then NLP)
+    One row per v3 linkage: ``LEFT JOIN`` to NLP rollup may match multiple events
+    within ±14 days; retain the closest ``fna_date`` tie-broken by size score.
+    """
+    return f"""
+CREATE OR REPLACE VIEW {_V4_VIEW} AS
+SELECT * EXCLUDE (rn),
     COALESCE(
-        l.fna_size_cm,
+        fna_size_cm,
         CASE
-            WHEN n.extracted_size_cm BETWEEN 0.1 AND 15.0
-                 AND n.extraction_confidence IN ('high', 'medium')
-            THEN n.extracted_size_cm
-            WHEN n.extracted_size_cm BETWEEN 0.1 AND 15.0
-            THEN n.extracted_size_cm
+            WHEN nlp_extracted_size_cm BETWEEN 0.1 AND 15.0
+                 AND nlp_extraction_confidence IN ('high', 'medium')
+            THEN nlp_extracted_size_cm
+            WHEN nlp_extracted_size_cm BETWEEN 0.1 AND 15.0
+            THEN nlp_extracted_size_cm
             ELSE NULL
         END
     )                                           AS fna_size_cm_resolved,
 
-    -- NLP-resolved laterality (prefer existing structured value)
-    COALESCE(l.fna_laterality, n.extracted_laterality)
+    COALESCE(fna_laterality, nlp_extracted_laterality)
                                                 AS fna_laterality_resolved,
 
-    -- Source provenance for the resolved size
     CASE
-        WHEN l.fna_size_cm IS NOT NULL          THEN 'structured'
-        WHEN n.extracted_size_cm IS NOT NULL
-             AND n.extraction_confidence = 'high'  THEN 'nlp_high'
-        WHEN n.extracted_size_cm IS NOT NULL
-             AND n.extraction_confidence = 'medium' THEN 'nlp_medium'
-        WHEN n.extracted_size_cm IS NOT NULL    THEN 'nlp_low'
+        WHEN fna_size_cm IS NOT NULL          THEN 'structured'
+        WHEN nlp_extracted_size_cm IS NOT NULL
+             AND nlp_extraction_confidence = 'high'  THEN 'nlp_high'
+        WHEN nlp_extracted_size_cm IS NOT NULL
+             AND nlp_extraction_confidence = 'medium' THEN 'nlp_medium'
+        WHEN nlp_extracted_size_cm IS NOT NULL    THEN 'nlp_low'
         ELSE 'missing'
     END                                         AS fna_size_source_v4,
 
-    -- Updated size_score: replaces the constant 0.5 prior in v3
     CASE
-        WHEN l.fna_size_cm IS NOT NULL          THEN 1.00  -- exact structured
-        WHEN n.extracted_size_cm IS NOT NULL
-             AND n.extraction_confidence = 'high'  THEN 0.85
-        WHEN n.extracted_size_cm IS NOT NULL
-             AND n.extraction_confidence = 'medium' THEN 0.70
-        WHEN n.extracted_size_cm IS NOT NULL    THEN 0.50  -- low confidence NLP
-        ELSE 0.50                                          -- no-data prior (unchanged)
-    END                                         AS size_score_v4,
+        WHEN fna_size_cm IS NOT NULL          THEN 1.00
+        WHEN nlp_extracted_size_cm IS NOT NULL
+             AND nlp_extraction_confidence = 'high'  THEN 0.85
+        WHEN nlp_extracted_size_cm IS NOT NULL
+             AND nlp_extraction_confidence = 'medium' THEN 0.70
+        WHEN nlp_extracted_size_cm IS NOT NULL    THEN 0.50
+        ELSE 0.50
+    END                                         AS size_score_v4
 
-    -- Raw NLP fields for audit / downstream
-    n.extracted_size_cm                         AS nlp_extracted_size_cm,
-    n.extracted_laterality                      AS nlp_extracted_laterality,
-    n.extracted_nodule_count                    AS nlp_extracted_nodule_count,
-    -- Bethesda cross-validation: NLP-extracted vs canonical bethesda_final_num
-    -- Use for QA only; canonical Bethesda is the primary field.
-    n.extracted_bethesda                        AS nlp_extracted_bethesda,
-    n.extraction_confidence                     AS nlp_extraction_confidence,
-    n.max_size_score                            AS nlp_size_extract_score,
-    n.max_lat_score                             AS nlp_lat_extract_score
+FROM (
+    SELECT
+        l.*,
 
-FROM {_V3_VIEW} l
-LEFT JOIN {_ROLLUP_TABLE} n
-    ON CAST(l.research_id AS VARCHAR) = CAST(n.research_id AS VARCHAR)
-   AND ABS(
-         DATEDIFF(
-             'day',
-             TRY_CAST(l.fna_date_resolved AS DATE),
-             TRY_CAST(n.fna_date          AS DATE)
-         )
-       ) <= 14;
+        n.extracted_size_cm                         AS nlp_extracted_size_cm,
+        n.extracted_laterality                      AS nlp_extracted_laterality,
+        n.extracted_nodule_count                    AS nlp_extracted_nodule_count,
+        n.extracted_bethesda                        AS nlp_extracted_bethesda,
+        n.extraction_confidence                     AS nlp_extraction_confidence,
+        n.max_size_score                            AS nlp_size_extract_score,
+        n.max_lat_score                             AS nlp_lat_extract_score,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                l.research_id,
+                l.nodule_id,
+                l.imaging_exam_id,
+                l.fna_episode_id
+            ORDER BY
+                CASE WHEN n.research_id IS NULL THEN 1 ELSE 0 END,
+                ABS(
+                    DATEDIFF(
+                        'day',
+                        TRY_CAST(l.fna_date AS DATE),
+                        TRY_CAST(n.fna_date AS DATE)
+                    )
+                ) NULLS LAST,
+                n.max_size_score DESC NULLS LAST
+        ) AS rn
+
+    FROM {v3_ref} l
+    LEFT JOIN {_ROLLUP_TABLE} n
+        ON CAST(l.research_id AS VARCHAR) = CAST(n.research_id AS VARCHAR)
+       AND ABS(
+             DATEDIFF(
+                 'day',
+                 TRY_CAST(l.fna_date AS DATE),
+                 TRY_CAST(n.fna_date AS DATE)
+             )
+           ) <= 14
+) s
+WHERE s.rn = 1;
 """
 
-# ---------------------------------------------------------------------------
-# SQL — coverage delta report
-# ---------------------------------------------------------------------------
-_COVERAGE_SQL = """
+
+def _coverage_sql(v3_ref: str) -> str:
+    return f"""
 SELECT
     'v3' AS linkage_version,
     COUNT(*)                                              AS total_links,
@@ -126,7 +168,7 @@ SELECT
     ROUND(100.0 * COUNT(fna_size_cm) / COUNT(*), 1)      AS size_fill_pct,
     COUNT(fna_laterality)                                 AS lat_populated,
     ROUND(100.0 * COUNT(fna_laterality) / COUNT(*), 1)   AS lat_fill_pct
-FROM manuscript_workspace.imaging_fna_linkage_v3
+FROM {v3_ref}
 
 UNION ALL
 
@@ -137,10 +179,13 @@ SELECT
     ROUND(100.0 * COUNT(fna_size_cm_resolved) / COUNT(*), 1) AS size_fill_pct,
     COUNT(fna_laterality_resolved)                        AS lat_populated,
     ROUND(100.0 * COUNT(fna_laterality_resolved) / COUNT(*), 1) AS lat_fill_pct
-FROM manuscript_workspace.imaging_fna_linkage_v4
+FROM {_V4_VIEW}
 
 ORDER BY linkage_version;
 """
+
+
+# Coverage SQL is built via ``_coverage_sql(v3_ref)`` after resolving v3 location.
 
 _SIZE_SCORE_SQL = """
 SELECT
@@ -164,21 +209,17 @@ def _check_rollup(md) -> int:
         sys.exit(1)
 
 
-def _check_v3_exists(md) -> bool:
+def _check_v3_exists(md, v3_ref: str) -> bool:
     try:
-        r = md.execute(
-            "SELECT COUNT(*) FROM information_schema.views "
-            "WHERE table_schema = 'manuscript_workspace' "
-            "  AND table_name = 'imaging_fna_linkage_v3'"
-        ).fetchone()[0]
-        return r > 0
+        md.execute(f"SELECT 1 FROM {v3_ref} LIMIT 1")
+        return True
     except Exception:
         return False
 
 
-def _print_coverage(md) -> None:
+def _print_coverage(md, v3_ref: str) -> None:
     try:
-        rows = md.execute(_COVERAGE_SQL).fetchall()
+        rows = md.execute(_coverage_sql(v3_ref)).fetchall()
         print("\n  Coverage delta (v3 → v4):")
         print(f"  {'Version':<8} {'Links':>8} {'SizePop':>8} {'Size%':>7} {'LatPop':>8} {'Lat%':>7}")
         for version, total, sz_pop, sz_pct, lt_pop, lt_pct in rows:
@@ -234,7 +275,7 @@ def main() -> int:
 
     if args.dry_run:
         print("=== DRY-RUN: would execute ===")
-        print(_V4_VIEW_SQL)
+        print(_v4_view_sql(_V3_MAIN))
         return 0
 
     from utils.md_connect import connect_md_fail_closed  # noqa: E402
@@ -254,23 +295,26 @@ def main() -> int:
             return 1
         print(f"  nlp_fna_size_rollup_v1: {n_rollup:,} rows — OK")
 
-        # Gate 2 — v3 linkage view must exist
-        if not _check_v3_exists(md):
+        v3_ref = _resolve_v3_ref(md)
+        print(f"  imaging_fna_linkage_v3 base: {v3_ref}")
+
+        # Gate 2 — v3 linkage must be readable
+        if not _check_v3_exists(md, v3_ref):
             print(
-                "WARN: imaging_fna_linkage_v3 view not found in manuscript_workspace. "
-                "v4 will be created but LEFT JOIN base will be empty.",
+                f"WARN: cannot read {v3_ref}; v4 creation will likely fail.",
+                file=sys.stderr,
             )
 
         # Create v4 view
         print(f"\n  Creating {_V4_VIEW}...")
-        md.execute(_V4_VIEW_SQL)
+        md.execute(_v4_view_sql(v3_ref))
         n_v4 = md.execute(
             f"SELECT COUNT(*) FROM {_V4_VIEW}"
         ).fetchone()[0]
         print(f"  {_V4_VIEW}: {n_v4:,} rows")
 
         # Coverage delta
-        _print_coverage(md)
+        _print_coverage(md, v3_ref)
 
         # Pull v4 fill rates for signoff
         try:

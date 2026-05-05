@@ -16,7 +16,35 @@ def _load_repo_dotenv_for_pat() -> None:
     load_dotenv(repo / ".env", override=False)
 
 
+def _ensure_snowflake_pat() -> None:
+    """Resolve SNOWFLAKE_PAT from env, ``SNOWFLAKE_PAT_FILE``, or ~/.snowflake/config.toml."""
+    if (os.environ.get("SNOWFLAKE_PAT") or "").strip():
+        return
+    path = (os.environ.get("SNOWFLAKE_PAT_FILE") or "").strip()
+    if path:
+        fp = Path(path).expanduser()
+        if fp.is_file():
+            os.environ["SNOWFLAKE_PAT"] = fp.read_text(encoding="utf-8").strip("\n\r\t ")
+            return
+    cfg = Path.home() / ".snowflake" / "config.toml"
+    if cfg.is_file():
+        try:
+            import tomllib
+
+            data = tomllib.loads(cfg.read_text(encoding="utf-8"))
+            pw = (
+                data.get("connections", {})
+                .get("thyroid_2026", {})
+                .get("password")
+            )
+            if pw:
+                os.environ["SNOWFLAKE_PAT"] = str(pw).strip()
+        except Exception:
+            pass
+
+
 _load_repo_dotenv_for_pat()
+_ensure_snowflake_pat()
 
 DOTTED = "qcc02515.us-east-1"
 
@@ -36,6 +64,7 @@ _net.SnowflakeRestful._post_request = _patched
 
 
 def get_cursor():
+    _ensure_snowflake_pat()
     pat = os.environ.get("SNOWFLAKE_PAT")
     if not pat:
         raise RuntimeError("SNOWFLAKE_PAT is not set")

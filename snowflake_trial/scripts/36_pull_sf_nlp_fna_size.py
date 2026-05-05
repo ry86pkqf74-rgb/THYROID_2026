@@ -467,6 +467,7 @@ def _run_extraction(cur) -> None:
         "Return NULL if not mentioned."
     )
 
+    lo_cm, hi_cm = _PLAUSIBLE_SIZE_RANGE
     cur.execute(
         f"""
         CREATE OR REPLACE TABLE {_SF_RESULTS_TABLE} AS
@@ -483,6 +484,20 @@ def _run_extraction(cur) -> None:
                 CURRENT_TIMESTAMP AS extracted_at,
                 'cortex_extract_answer_mig_310_v2' AS extraction_source
             FROM {_SF_FNA_TABLE}
+        ),
+        parsed AS (
+            SELECT
+                e.*,
+                TRY_TO_DOUBLE(
+                    NULLIF(TRIM(e._size_raw[0]:answer::VARCHAR), '')
+                ) AS _size_try,
+                TRY_TO_NUMBER(
+                    NULLIF(TRIM(e._bethesda_raw[0]:answer::VARCHAR), ''), 1, 0
+                ) AS _beth_try,
+                TRY_TO_NUMBER(
+                    NULLIF(TRIM(e._count_raw[0]:answer::VARCHAR), ''), 10, 0
+                ) AS _count_try
+            FROM extracted AS e
         )
         SELECT
             RESEARCH_ID,
@@ -490,9 +505,10 @@ def _run_extraction(cur) -> None:
             NOTE_TYPE,
             NOTE_DATE,
 
-            TRY_TO_DOUBLE(
-                NULLIF(TRIM(_size_raw[0]:answer::VARCHAR), '')
-            )                                                       AS extracted_size_cm,
+            CASE
+                WHEN _size_try BETWEEN {lo_cm} AND {hi_cm} THEN _size_try
+                ELSE NULL
+            END                                                     AS extracted_size_cm,
 
             CASE
                 WHEN LOWER(TRIM(_lat_raw[0]:answer::VARCHAR)) LIKE '%right%'     THEN 'right'
@@ -502,13 +518,15 @@ def _run_extraction(cur) -> None:
                 ELSE NULL
             END                                                     AS extracted_laterality,
 
-            TRY_TO_NUMBER(
-                NULLIF(TRIM(_count_raw[0]:answer::VARCHAR), ''), 10, 0
-            )                                                       AS extracted_nodule_count,
+            CASE
+                WHEN _count_try BETWEEN 1 AND 40 THEN _count_try
+                ELSE NULL
+            END                                                     AS extracted_nodule_count,
 
-            TRY_TO_NUMBER(
-                NULLIF(TRIM(_bethesda_raw[0]:answer::VARCHAR), ''), 1, 0
-            )                                                       AS extracted_bethesda,
+            CASE
+                WHEN _beth_try BETWEEN 1 AND 6 THEN _beth_try
+                ELSE NULL
+            END                                                     AS extracted_bethesda,
 
             CASE
                 WHEN _size_raw[0]:score::FLOAT  > 0.80
@@ -526,7 +544,7 @@ def _run_extraction(cur) -> None:
             extracted_at,
             extraction_source
 
-        FROM extracted
+        FROM parsed
         """
     )
     elapsed = (datetime.now() - t0).total_seconds()
