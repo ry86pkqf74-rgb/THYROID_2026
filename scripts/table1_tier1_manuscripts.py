@@ -136,7 +136,14 @@ def surgery_decade(y: object) -> str:
 
 
 def tirads_label(row: pd.Series) -> str:
-    for col in ("preop_tirads_category", "tirads_worst_category_v12", "tirads_best_category_v12"):
+    # mig_260: SSOT = canonical_us_patient_master_VIEW_v2.max_tirads_category_ever
+    # (exposed on cohort_m025 as max_tirads_category_ever and as tirads_worst_category_v12).
+    for col in (
+        "max_tirads_category_ever",
+        "preop_tirads_category",
+        "tirads_worst_category_v12",
+        "tirads_best_category_v12",
+    ):
         v = row.get(col)
         if v is not None and str(v).strip() and str(v).lower() not in ("nan", "none"):
             return str(v).strip()
@@ -174,6 +181,7 @@ MANUSCRIPTS: dict[str, ManuscriptSpec] = {
         code="M025",
         cohort_view="manuscript_workspace.cohort_m025_tirads_performance_v1",
         extra_select="""
+        , co.max_tirads_category_ever
         , co.preop_tirads_category
         , co.tirads_best_category_v12
         , co.tirads_worst_category_v12
