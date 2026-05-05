@@ -1,0 +1,6 @@
+metric,value,numerator,denominator
+nri_events_component,0.16533864541832669,83.0,502
+nri_nonevents_component,-0.17856127381290873,-628.0,3517
+nri_total,-0.013222628394582048,,4019
+c_statistic_2015_including_uncalculable,0.4636738799705924,,4019
+c_statistic_2025_including_uncalculable,0.45037931866506103,,4019
