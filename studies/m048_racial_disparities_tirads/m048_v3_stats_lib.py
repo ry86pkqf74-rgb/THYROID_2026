@@ -176,8 +176,9 @@ MEDIATORS: list[tuple[str, str]] = [
     ("n_nodules_total", "continuous"),
     ("had_any_genetics", "binary"),
     ("had_any_nm", "binary"),
-    ("has_clt", "binary"),
-    ("has_mng", "binary"),
+    # has_clt / has_mng dropped (Bug C): both columns are all-zero in this cohort
+    # because the SQL extracts them via histology_final ILIKE patterns and
+    # histology_final only carries malignant categorisations.
     ("n_fnas_total", "continuous"),
     ("days_us_to_surg_approx", "continuous"),
 ]

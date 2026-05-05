@@ -313,7 +313,7 @@ def write_handoff_readme_v3(v3_dir: str, git_sha: str, mig_id: str, ts: str) -> 
         lines += [
             "## Race OR vs White (patient grain)",
             f"- Black M0: {_or('m0_race_only', 'Black')}",
-            f"- Black M4 ( + v2 background): {_or('m4_background', 'Black')}",
+            f"- Black M3 ( + genetics + NM, last pre-FNA step after Bug C drop): {_or('m3_genetics_nm', 'Black')}",
             f"- Black M6 (full v3): {_or('m6_full', 'Black')}",
             f"- Asian M6: {_or('m6_full', 'Asian')}",
             "",
@@ -490,7 +490,9 @@ def main():
 
     pd.DataFrame(cascade_rows).to_csv(os.path.join(V3_DIR, "m048_v3_attenuation_cascade.csv"), index=False)
 
-    full_formula = cascade_specs[6][1]
+    # m6_full is the last entry in cascade_specs (Bug C removed m4_background, so
+    # the list is now [m0, m1, m2, m3, m5, m6] -> use [-1] rather than fixed index).
+    full_formula = cascade_specs[-1][1]
     full_res = fit_logit(full_formula, df_model)
     params_tbl = pd.DataFrame({
         "param": full_res.params.index,
@@ -661,11 +663,23 @@ def main():
         except Exception as e:
             sens_rows.append({"arm": label, "n": len(sub), "error": str(e)})
 
-    if "surg_first_date" in df_raw.columns:
-        sdf = df_model.merge(df_raw[["research_id", "surg_first_date"]], on="research_id", how="left")
+    # Bug E: df_model already carries surg_first_date through prepare_v3_frame, so
+    # the original merge produced surg_first_date_x/_y suffixes and the bare-name
+    # lookup raised KeyError. Use df_model directly; fall back to a derived
+    # mid-year datetime from surg_year if the date column happens to be absent.
+    sdf = df_model.copy()
+    if "surg_first_date" in sdf.columns:
+        sdf["surg_dt"] = pd.to_datetime(sdf["surg_first_date"], errors="coerce")
+    elif "surg_year" in sdf.columns:
+        # surg_year is centred (Bug D); recover the absolute year by adding back
+        # the median that prepare_v3_frame subtracted (median of original years
+        # was 2020 for this cohort).
+        sdf["surg_dt"] = pd.to_datetime(
+            (sdf["surg_year"].astype(float) + 2020).round().astype("Int64").astype(str) + "-07-01",
+            errors="coerce",
+        )
     else:
-        sdf = df_model.copy()
-    sdf["surg_dt"] = pd.to_datetime(sdf["surg_first_date"], errors="coerce")
+        sdf["surg_dt"] = pd.NaT
     sens_fit("S048v2_A_post2017", sdf[sdf["surg_dt"] >= "2017-05-01"])
     sens_fit("S048v2_B_single_nodule", sdf[sdf["n_nodules_total"] == 1])
     sens_fit("S048v2_C_genetics_tested", sdf[sdf["had_any_genetics"] == 1])
