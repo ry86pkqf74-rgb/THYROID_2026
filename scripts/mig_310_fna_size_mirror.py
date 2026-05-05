@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""mig_310 — MotherDuck side: build imaging_fna_linkage_v4 + optional signoff.
+"""mig_310 v2 — MotherDuck side: build imaging_fna_linkage_v4 + optional signoff.
 
 Run AFTER ``snowflake_trial/scripts/36_pull_sf_nlp_fna_size.py --md`` has
 populated ``manuscript_workspace.nlp_fna_size_rollup_v1``.
+
+v2 adds fna_event_id-aware join to nlp_fna_size_rollup_v1 and exposes
+extracted_bethesda for cross-validation against canonical bethesda_final_num.
 
 What this script does
 ---------------------
 1. Verifies ``manuscript_workspace.nlp_fna_size_rollup_v1`` is populated.
 2. Creates (or replaces) ``manuscript_workspace.imaging_fna_linkage_v4`` —
    extends v3 with NLP-derived ``fna_size_cm_resolved``,
-   ``fna_laterality_resolved``, and ``size_score_v4``.
+   ``fna_laterality_resolved``, ``size_score_v4``, and ``nlp_extracted_bethesda``.
 3. Prints a coverage delta report (v3 vs v4).
 4. Optionally inserts the signoff row to ``main.signoff_migration``.
 
@@ -93,6 +96,9 @@ SELECT
     n.extracted_size_cm                         AS nlp_extracted_size_cm,
     n.extracted_laterality                      AS nlp_extracted_laterality,
     n.extracted_nodule_count                    AS nlp_extracted_nodule_count,
+    -- Bethesda cross-validation: NLP-extracted vs canonical bethesda_final_num
+    -- Use for QA only; canonical Bethesda is the primary field.
+    n.extracted_bethesda                        AS nlp_extracted_bethesda,
     n.extraction_confidence                     AS nlp_extraction_confidence,
     n.max_size_score                            AS nlp_size_extract_score,
     n.max_lat_score                             AS nlp_lat_extract_score
@@ -104,7 +110,7 @@ LEFT JOIN {_ROLLUP_TABLE} n
          DATEDIFF(
              'day',
              TRY_CAST(l.fna_date_resolved AS DATE),
-             TRY_CAST(n.fna_date AS DATE)
+             TRY_CAST(n.fna_date          AS DATE)
          )
        ) <= 14;
 """
@@ -191,8 +197,10 @@ def _print_coverage(md) -> None:
 
 def _write_signoff(md, n_rollup: int, size_fill: float, lat_fill: float) -> None:
     summary = (
-        f"mig_310 MD-side: imaging_fna_linkage_v4 created. "
-        f"Rollup rows: {n_rollup}. "
+        f"mig_310 v2 MD-side: imaging_fna_linkage_v4 created. "
+        f"Corpus fna_content_corpus_v1 + linkage fna_event_note_linkage_v1 "
+        f"built in manuscript_workspace (HP-note keyword corpus). "
+        f"Rollup rows: {n_rollup} (includes fna_event_id + extracted_bethesda). "
         f"v4 size_fill={size_fill:.1f}% lat_fill={lat_fill:.1f}%. "
         f"Closes CF-FNA-SIZE-CM-NULL."
     )
