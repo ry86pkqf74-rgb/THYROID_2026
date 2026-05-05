@@ -1,0 +1,20 @@
+category,value,n_total,n_rai,pct_rai
+ajcc_stage,I,1537,192,12.5
+ajcc_stage,II,1651,311,18.8
+ajcc_stage,III,9,1,11.1
+ajcc_stage,IVB,816,146,17.9
+histology,PTC,3075,517,16.8
+histology,follicular carcinoma,486,61,12.6
+histology,MTC,149,5,3.4
+histology,metastatic PTC,144,43,29.9
+histology,poorly differentiated thyroid carcinoma,37,8,21.6
+histology,FTUMP,34,0,0.0
+histology,anaplastic carcinoma,22,0,0.0
+histology,differentiated high grade thyroid carcinoma,10,1,10.0
+histology,metastatic MTC,10,0,0.0
+histology,metastatic PTC tall cell variant,5,1,20.0
+histology,recurrent/metastatic PTC,5,1,20.0
+histology,metastatic PTC with tall cell features,4,1,25.0
+histology,metastatic PTC classical,4,3,75.0
+histology,metastatic thyroid carcinoma,4,2,50.0
+histology,metastatic follicular carcinoma,3,1,33.3

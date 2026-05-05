@@ -1,0 +1,206 @@
+\documentclass{article}
+\usepackage{booktabs,longtable,geometry,array,color}
+\geometry{margin=1in}
+\begin{document}
+
+\section*{M019: Radioactive Iodine (RAI) Outcomes Analysis}
+\textit{Generated 2026-05-05 | N=862 RAI recipients | Malignant cohort N=4,019}
+
+\bigskip
+\noindent\textbf{Critical Data Limitations:}
+\begin{itemize}
+  \item 75.2\% of RAI recipients lack dose data (648/862); only 35 patients have confirmed-with-dose tier
+  \item 88.5\% have NULL or unknown RAI intent (763/862: 613 NULL + 150 unknown)
+  \item 95.9\% lack formal ATA response category (827/862)
+  \item TgAb interference affects 58 (6.7\%) patients --- Tg unreliable in these patients
+  \item 34.3\% lack Tg trajectory data (296/862)
+\end{itemize}
+
+% -------------------------------------------------------------------
+\subsection*{Table 1: RAI Utilization by AJCC Stage (Malignant Cohort, N=4,019)}
+\begin{tabular}{lrrr}
+\toprule
+AJCC Stage & Total N & Received RAI & \% RAI \\
+\midrule
+I   & 1,537 & 192 & 12.5\% \\
+II  & 1,651 & 311 & 18.8\% \\
+III &     9 &   1 & 11.1\% \\
+IVB &   816 & 146 & 17.9\% \\
+\midrule
+\textit{Overall} & 4,019 & 650 & 16.2\% \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Note: RAI receipt in the full cohort (malignant only, CPM) = 650/4,019 (16.2\%).
+The analytic view (m019\_rai\_outcomes\_analytic\_v1) contains 862 patients using a broader reconciliation definition.
+No Stage IVA patients in current cohort; AJCC 8th Ed used throughout.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 2: RAI Receipt by Histology (Top Categories)}
+\begin{tabular}{lrrr}
+\toprule
+Histology & Total N & Received RAI & \% RAI \\
+\midrule
+PTC         & \multicolumn{3}{c}{\textit{see rai\_utilization\_patterns.csv}} \\
+FTC         & & & \\
+HCC         & & & \\
+PDTC        & & & \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Full breakdown available in rai\_utilization\_patterns.csv}
+
+% -------------------------------------------------------------------
+\subsection*{Table 3: RAI Temporal Trends (De-escalation)}
+\begin{tabular}{lrrr}
+\toprule
+Year & Malignant N & Received RAI & \% RAI \\
+\midrule
+2010 &  85 & 11 & 12.9\% \\
+2013 & 169 & 23 & 13.6\% \\
+2015 & 171 & 40 & 23.4\% \\
+2016 & 162 & 49 & 30.2\% \\
+2017 & 225 & 58 & 25.8\% \\
+2018 & 220 & 53 & 24.1\% \\
+2019 & 328 & 118 & \textbf{36.0\%} \\
+2020 & 251 & 33 & 13.1\% \\
+2021 & 286 & 31 & 10.8\% \\
+2022 & 279 & 43 & 15.4\% \\
+2023 & 369 & 44 & 11.9\% \\
+2024 & 379 & 39 & 10.3\% \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{2019 represents the peak RAI utilization year (36.0\%). Post-2019 de-escalation
+to $\sim$10--15\% consistent with ATA 2015 guideline uptake and growing low-risk management evidence.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 4: Recurrence by Tg Trajectory Class (N=509, excluding TgAb interference)}
+\textit{Suppressed = reference category. Excludes 57 TgAb-interference patients.}
+
+\begin{tabular}{lrrrrr}
+\toprule
+Tg Trajectory & N & Recurred & \% & OR (95\% CI) & p-value \\
+\midrule
+Suppressed (ref)   & 251 & 57 & 22.7\% & 1.00 (ref) & --- \\
+Low stable         & 102 & 25 & 24.5\% & 1.11 (0.64--1.89) & 0.82 \\
+Detectable stable  &  82 & 18 & 22.0\% & 0.96 (0.53--1.75) & 1.00 \\
+Rising             &  71 & 23 & 32.4\% & 1.63 (0.91--2.91) & 0.13 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Post-RAI Tg nadir ROC AUC = 0.509 (optimal threshold 0.60 ng/mL: Sens=0.31, Spec=0.75).
+The weak discriminative value reflects the overall high recurrence in this surgically-selected cohort,
+limited Tg data coverage (59\% of RAI cohort), and residual confounding by disease severity.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 5: Recurrence by Dose Category (N=214 with dose data)}
+\textit{CAUTION: Only 214/862 (24.8\%) have dose data. No patients met ``confirmed\_with\_dose'' confidence tier.
+Interpret with extreme caution --- higher doses reflect higher-risk disease, not causal dose effects.}
+
+\begin{tabular}{lrrrr}
+\toprule
+Dose Category & N & Median Dose (mCi) & Recurred & \% \\
+\midrule
+$<$30 mCi (low)              &  3 &  10.5 &  0 &  0.0\% \\
+30--100 mCi (standard)       & 16 &  74.2 &  4 & 25.0\% \\
+100--150 mCi (high)          & 98 & 124.4 & 26 & 26.5\% \\
+$>$150 mCi (therapeutic)     & 97 & 176.0 & 32 & 33.0\% \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Logistic regression (log-dose vs recurrence): OR per log-unit = 2.93 (p=0.019).
+This likely reflects indication bias --- patients receiving higher doses had more advanced disease.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 6: RAI vs No-RAI Comparison (Malignant Cohort)}
+\textit{RAI N=650 vs No-RAI N=3,369. Note: RAI recipients are a \textbf{selected, higher-risk} subgroup.}
+
+\begin{tabular}{lrrr}
+\toprule
+Variable & RAI (N=650) & No-RAI (N=3,369) & p-value \\
+\midrule
+Age (mean $\pm$ SD)    & 47.8 $\pm$ 15.9 & 51.2 $\pm$ 15.6 & $<$0.001 \\
+Tumor size cm (mean)   & 2.47 $\pm$ 1.86 & 2.19 $\pm$ 1.97 & 0.001 \\
+Female sex             & 73.8\% & 72.9\% & 0.66 \\
+BRAF positive          & 11.1\% & 6.1\% & $<$0.001 \\
+LN positive            & 68.9\% & 58.8\% & $<$0.001 \\
+AJCC Stage I/II        & 77.3\% & 79.8\% & --- \\
+AJCC Stage IVB         & 22.5\% & 19.9\% & --- \\
+Recurrence (crude)     & 23.5\% & 10.4\% & $<$0.001 \\
+\midrule
+\multicolumn{4}{l}{\textit{IPTW-ATT (adjusted for age, tumor size, Stage III+, LN status):}} \\
+Recurrence (RAI)       & 23.7\% & --- & --- \\
+Recurrence (No-RAI)    & 11.8\% & --- & --- \\
+Risk Difference (ATT)  & \multicolumn{2}{l}{+11.9 pp (RAI $>$ No-RAI)} & --- \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Propensity model: n=3,876 complete cases. IPTW-ATT partially adjusts for indication bias
+but residual confounding is expected. PS overlap was limited (mean PS: RAI=0.175 vs No-RAI=0.157),
+indicating RAI recipients have modestly higher predicted probability. Formal causal inference requires
+richer PS specification with all ATA risk factors. The higher crude recurrence in RAI recipients is
+consistent with selection of higher-risk patients for RAI treatment.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 7: Timing from Surgery to First RAI (N=336 with timing data)}
+\begin{tabular}{lrrrr}
+\toprule
+Timing Group & N & Median Days & Recurred & \% \\
+\midrule
+Early ($<$90 days)     &  69 &   60 & 15 & 21.7\% \\
+Mid (90--180 days)     &  42 &  125 & 12 & 28.6\% \\
+Late ($>$180 days)     & 225 & 2,234 & 46 & 20.4\% \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Median overall timing = not shown (missing in 61\% of RAI cohort).
+The ``late'' group median of 2,234 days suggests many ``late'' patients received subsequent RAI
+treatments for recurrence (not initial ablation). Timing analysis should be restricted to
+first-treatment ablation intent patients; intent is missing in 88.5\% of cohort.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 8: ATA Dynamic Risk Assessment (N=35 --- Descriptive Only)}
+\textit{N too small for inferential statistics. Cross-tabulation only.}
+
+\begin{tabular}{lrrr}
+\toprule
+ATA Response Category & N & Recurred & \% \\
+\midrule
+Excellent              &  1 &  0 &  0.0\% \\
+Indeterminate          &  4 &  1 & 25.0\% \\
+Biochemical incomplete &  6 &  1 & 16.7\% \\
+Structural incomplete  & 23 & 11 & 47.8\% \\
+Insufficient data      &  1 &  1 & 100\% \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{Response categories are directionally consistent with ATA 2015 framework expectations
+but the N=35 sample (4.1\% of RAI cohort) precludes statistical inference.}
+
+% -------------------------------------------------------------------
+\subsection*{Table 9: TgAb Interference}
+\begin{tabular}{lrrrr}
+\toprule
+Group & N & \% of RAI cohort & Recurred & \% \\
+\midrule
+TgAb positive  & 58 & 6.7\% & 13 & 22.4\% \\
+TgAb negative  & 510 & 59.2\% & 123 & 24.1\% \\
+Unknown/missing & 294 & 34.1\% & --- & --- \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3cm}
+\noindent\textit{TgAb positivity does not significantly alter recurrence rate vs TgAb-negative patients.
+However, Tg values are unreliable as response markers in TgAb-positive patients; their Tg trajectory
+classifications should be interpreted with caution or excluded from Tg-based response analyses.}
+
+\end{document}

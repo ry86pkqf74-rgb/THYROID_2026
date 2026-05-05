@@ -1,0 +1,2 @@
+n_analyzed,n_rai,n_no_rai,crude_recurrence_rai,crude_recurrence_no_rai,iptw_att_recurrence_rai,iptw_att_recurrence_no_rai,att_risk_difference_pct,ps_mean_rai,ps_mean_no_rai,note
+3876,620,3256,23.71,10.44,23.71,11.76,11.95,0.175,0.157,"IPTW-ATT: treat=RAI group, covariates=age/tumor_size/stage_III/LN_pos (complete-case)"

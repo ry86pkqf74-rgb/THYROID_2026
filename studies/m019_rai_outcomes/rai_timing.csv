@@ -1,0 +1,4 @@
+timing_group,n,n_recurred,median_days,pct_recurred
+early_lt90d,69,15,60.0,21.7
+late_gt180d,225,46,2234.0,20.4
+mid_90_180d,42,12,124.5,28.6

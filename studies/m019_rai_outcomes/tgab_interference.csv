@@ -1,0 +1,3 @@
+group,n,pct_of_rai_cohort,n_recurred,pct_recurred,median_tgab_last,has_dose_data,p_vs_other_group
+TgAb positive,58,6.7,13,22.4,5.8,19,--
+TgAb negative,510,59.2,123,24.1,,184,0.8999

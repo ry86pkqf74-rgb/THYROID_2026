@@ -1,0 +1,5 @@
+dose_category,n,n_recurred,median_dose,mean_dose,pct_recurred
+<30 mCi (low),3,0,10.5,16.7,0.0
+30-100 mCi (standard),16,4,74.2,67.8,25.0
+100-150 mCi (high),98,26,124.4,121.6,26.5
+>150 mCi (therapeutic),97,32,176.0,183.8,33.0

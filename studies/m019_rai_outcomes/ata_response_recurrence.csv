@@ -1,0 +1,6 @@
+ata_response_category,n,n_recurred,pct_recurred
+biochemical_incomplete,6,1,16.7
+excellent,1,0,0.0
+indeterminate,4,1,25.0
+insufficient_data,1,1,100.0
+structural_incomplete,23,11,47.8

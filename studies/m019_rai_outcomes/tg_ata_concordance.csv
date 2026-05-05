@@ -1,0 +1,5 @@
+tg_trajectory_class,biochemical_incomplete,excellent,indeterminate,structural_incomplete
+detectable_stable,0,0,0,2
+low_stable,2,0,2,1
+rising,1,0,2,5
+suppressed,3,1,0,15

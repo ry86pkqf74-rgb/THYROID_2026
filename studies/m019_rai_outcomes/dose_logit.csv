@@ -1,0 +1,2 @@
+predictor,OR,CI_low,CI_high,p_value,n
+log(dose+1),2.927,1.191,7.193,0.0192,214
