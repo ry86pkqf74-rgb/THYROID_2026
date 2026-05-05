@@ -421,7 +421,7 @@ def main():
 
     controls_tail = (
         "C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
+        "+ has_niftp + has_ftump + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
         "+ days_us_to_surg_approx + age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
 
@@ -443,13 +443,13 @@ def main():
             "m5_fna_path",
             "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
             "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
-            "+ had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx",
+            "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx",
         ),
         (
             "m6_full",
             "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
             "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
-            "+ had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
+            "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
             "+ age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)",
         ),
     ]
@@ -514,7 +514,7 @@ def main():
     m_formula = (
         "is_malignant ~ C(race_strat, Treatment('White')) * C(nodule_burden_cat) + max_tr_int "
         "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
-        "+ had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
+        "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
         "+ age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
     m_res = fit_logit(m_formula, df_model)
@@ -600,7 +600,7 @@ def main():
     nod_formula = (
         "nodule_path_proven_malignant ~ C(race_strat, Treatment('White')) + acr2017_tirads_int + "
         "C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
+        "+ has_niftp + has_ftump + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
         "+ days_us_to_surg_approx + age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
     try:
@@ -613,7 +613,7 @@ def main():
     med_rows = []
     med_controls = (
         "max_tr_int + C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_any_fna + had_repeat_fna + C(bethesda_bucket) + age_at_surgery "
+        "+ has_niftp + has_ftump + had_repeat_fna + C(bethesda_bucket) + age_at_surgery "
         "+ C(sex) + surg_year + C(surg_procedure_type)"
     )
     race_targets = ("Black", "Asian")
