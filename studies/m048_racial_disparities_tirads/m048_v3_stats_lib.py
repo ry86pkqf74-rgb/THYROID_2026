@@ -156,8 +156,19 @@ def prepare_v3_frame(raw: pd.DataFrame) -> pd.DataFrame:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
     if "days_us_to_surg_approx" in df.columns:
-        med = df["days_us_to_surg_approx"].median()
-        df["days_us_to_surg_approx"] = df["days_us_to_surg_approx"].fillna(med)
+        # Bug D: clip negative values (US-after-surgery coding errors) to 0 and
+        # convert to years so the variable lives on roughly the same numerical
+        # scale as the other regressors. The unscaled day-count (range -10582
+        # to 8019) caused lbfgs to overflow the linear predictor and fall back
+        # to all-zero coefficients, collapsing race ORs to 1.000.
+        days = pd.to_numeric(df["days_us_to_surg_approx"], errors="coerce").clip(lower=0) / 365.0
+        df["days_us_to_surg_approx"] = days.fillna(days.median())
+    if "surg_year" in df.columns:
+        # Bug D: centre surg_year so it does not contribute a 2000+ baseline
+        # term to the linear predictor. The Patsy expression `surg_year` in
+        # the formulas now picks up this centred copy directly.
+        sy = pd.to_numeric(df["surg_year"], errors="coerce")
+        df["surg_year"] = sy - sy.median()
     return df
 
 

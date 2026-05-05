@@ -419,9 +419,15 @@ def main():
     df = prepare_v3_frame(df_raw)
     df_model = df.dropna(subset=["max_tr_int"]).copy()
 
+    # NOTE (Bug C): has_clt/has_mng/has_graves are extracted from histology_final
+    # ILIKE patterns and are all-zero in this cohort because histology_final only
+    # carries malignant categorisations. has_niftp/has_ftump are perfect-separation
+    # path-diagnostic indicators (NIFTP -> always benign, FTUMP -> always malignant)
+    # that are derivative of is_malignant rather than valid predictors. All five
+    # are dropped to avoid singular design matrices.
     controls_tail = (
-        "C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
+        "C(nodule_burden_cat) + had_any_genetics + had_any_nm "
+        "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
         "+ days_us_to_surg_approx + age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
 
@@ -434,21 +440,21 @@ def main():
             "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
             "+ had_any_genetics + had_any_nm",
         ),
-        (
-            "m4_background",
-            "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
-            "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump",
-        ),
+        # m4_background previously added has_clt/has_mng/has_graves/has_niftp/has_ftump
+        # (Bug C: dropped — see controls_tail comment above). With those removed, M4
+        # would be identical to M3, so we keep M3 as the last pre-FNA-pattern step
+        # and skip the duplicate. m5_fna_path and m6_full retain the FNA-pattern and
+        # demographic blocks but drop the same five problematic indicators.
         (
             "m5_fna_path",
             "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
-            "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
+            "+ had_any_genetics + had_any_nm "
             "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx",
         ),
         (
             "m6_full",
             "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
-            "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
+            "+ had_any_genetics + had_any_nm "
             "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
             "+ age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)",
         ),
@@ -513,7 +519,7 @@ def main():
     # Model M: race × nodule burden
     m_formula = (
         "is_malignant ~ C(race_strat, Treatment('White')) * C(nodule_burden_cat) + max_tr_int "
-        "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
+        "+ had_any_genetics + had_any_nm "
         "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
         "+ age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
@@ -599,8 +605,8 @@ def main():
         df_nod.rename(columns={"patient_bethesda_bucket": "bethesda_bucket"}, inplace=True)
     nod_formula = (
         "nodule_path_proven_malignant ~ C(race_strat, Treatment('White')) + acr2017_tirads_int + "
-        "C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
+        "C(nodule_burden_cat) + had_any_genetics + had_any_nm "
+        "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) "
         "+ days_us_to_surg_approx + age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
     try:
@@ -612,8 +618,8 @@ def main():
     # Mediation: Black vs White AND Asian vs White indirect effects
     med_rows = []
     med_controls = (
-        "max_tr_int + C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
-        "+ has_niftp + has_ftump + had_repeat_fna + C(bethesda_bucket) + age_at_surgery "
+        "max_tr_int + C(nodule_burden_cat) + had_any_genetics + had_any_nm "
+        "+ had_repeat_fna + C(bethesda_bucket) + age_at_surgery "
         "+ C(sex) + surg_year + C(surg_procedure_type)"
     )
     race_targets = ("Black", "Asian")
