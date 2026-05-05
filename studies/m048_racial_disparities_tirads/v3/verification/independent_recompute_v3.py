@@ -41,10 +41,14 @@ def main() -> int:
     df = prepare_v3_frame(pd.read_csv(args.patient_csv))
     df_m = df.dropna(subset=["max_tr_int"]).copy()
 
+    # Bugs B/C: had_any_fna collinear with C(bethesda_bucket)=='missing'; the
+    # has_clt/has_mng/has_graves columns are all-zero in this cohort and
+    # has_niftp/has_ftump are perfect-separation path-diagnostic indicators.
+    # Mirror m6_full from m048_run_analysis_v3.py exactly.
     full_formula = (
         "is_malignant ~ C(race_strat, Treatment('White')) + max_tr_int + C(nodule_burden_cat) "
-        "+ had_any_genetics + had_any_nm + has_clt + has_mng + has_graves + has_niftp + has_ftump "
-        "+ had_any_fna + had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
+        "+ had_any_genetics + had_any_nm "
+        "+ had_repeat_fna + n_fnas_total + C(bethesda_bucket) + days_us_to_surg_approx "
         "+ age_at_surgery + C(sex) + surg_year + C(surg_procedure_type)"
     )
     res_full = fit_logit(full_formula, df_m)
