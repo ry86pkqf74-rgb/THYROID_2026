@@ -137,7 +137,7 @@ def prepare_v3_frame(raw: pd.DataFrame) -> pd.DataFrame:
     df = raw.copy()
     df["race_strat"] = df["race_strat"].astype(str)
     df = df[df["race_strat"].isin(PRIMARY_RACES)].copy()
-    df["is_malignant"] = df["is_malignant"].apply(lambda v: True if v in (True, "true", "True", 1, "1") else False)
+    df["is_malignant"] = df["is_malignant"].apply(lambda v: 1 if v in (True, "true", "True", 1, "1") else 0).astype(int)
     for c in [
         "had_any_genetics", "had_any_nm", "has_clt", "has_mng", "has_graves", "has_niftp", "has_ftump",
         "had_any_fna", "had_repeat_fna",
