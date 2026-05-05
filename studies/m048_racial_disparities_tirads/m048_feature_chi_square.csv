@@ -1,0 +1,6 @@
+feature,chi2,df,p_raw,p_bonferroni_adj,cramers_v,bonferroni_alpha,significant_bonferroni,n_race_strata,n_score_levels
+composition,7.2031,4,0.125536,0.627681,0.0324,0.01,False,3,3
+echogenicity,116.0677,2,0.0,0.0,0.1837,0.01,True,3,2
+shape,69.6393,2,0.0,0.0,0.1423,0.01,True,3,2
+margin,97.2614,2,0.0,0.0,0.1682,0.01,True,3,2
+foci,115.9489,6,0.0,0.0,0.1299,0.01,True,3,4

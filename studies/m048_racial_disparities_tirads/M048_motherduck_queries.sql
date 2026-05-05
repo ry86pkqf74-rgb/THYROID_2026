@@ -61,7 +61,7 @@ SELECT
         ELSE                                                          'Unknown'
     END AS race_strat
 FROM m025_analytic_master_nodule_v1 n
-JOIN m025_analytic_master_patient_v1 p USING (research_id);
+LEFT JOIN m025_analytic_master_patient_v1 p USING (research_id);
 
 -- ----------------------------------------------------------------------------
 -- 1. Per-race patient-level ROM by max TI-RADS category (mirrors M025 Table 3)
@@ -102,14 +102,15 @@ ORDER  BY race_strat, acr2017_tirads_category;
 CREATE OR REPLACE TABLE m048_threshold_metrics_v1 AS
 WITH base AS (
     SELECT 'patient' AS grain, race_strat,
-           max_tirads_category_ever AS tr,
+           TRY_CAST(regexp_extract(CAST(max_tirads_category_ever AS VARCHAR), '[0-9]+') AS INTEGER) AS tr,
            is_malignant::INT        AS y,
            1                        AS one
     FROM   m048_patient_master_v1
     WHERE  max_tirads_category_ever IS NOT NULL
     UNION ALL
     SELECT 'nodule', race_strat,
-           acr2017_tirads_category, nodule_path_proven_malignant::INT, 1
+           TRY_CAST(regexp_extract(CAST(acr2017_tirads_category AS VARCHAR), '[0-9]+') AS INTEGER),
+           nodule_path_proven_malignant::INT, 1
     FROM   m048_nodule_master_v1
     WHERE  analytic_eligible_strict_acr_pernodule = TRUE
        AND acr2017_tirads_category IS NOT NULL
@@ -146,13 +147,13 @@ ORDER  BY grain, race_strat, thr_label;
 CREATE OR REPLACE TABLE m048_auc_v1 AS
 WITH long AS (
     SELECT 'patient' AS grain, race_strat,
-           max_tirads_category_ever::DOUBLE AS pred,
+           TRY_CAST(regexp_extract(CAST(max_tirads_category_ever AS VARCHAR), '[0-9]+') AS DOUBLE) AS pred,
            is_malignant::INT                AS y
     FROM   m048_patient_master_v1
     WHERE  max_tirads_category_ever IS NOT NULL
     UNION ALL
     SELECT 'nodule', race_strat,
-           acr2017_tirads_category::DOUBLE,
+           TRY_CAST(regexp_extract(CAST(acr2017_tirads_category AS VARCHAR), '[0-9]+') AS DOUBLE),
            nodule_path_proven_malignant::INT
     FROM   m048_nodule_master_v1
     WHERE  analytic_eligible_strict_acr_pernodule = TRUE

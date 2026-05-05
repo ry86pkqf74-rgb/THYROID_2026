@@ -1,0 +1,12 @@
+metric,derived_value,csv_value,abs_diff_pct,tolerance_pct,passed
+patient_auc_black,0.6138,0.6138,0.0,0.01,True
+patient_auc_white,0.6441,0.6441,0.0,0.01,True
+patient_auc_asian,0.6601,0.6601,0.0,0.01,True
+nodule_tr4_rom_black,9.322,9.32,0.002,0.01,True
+nodule_tr4_rom_white,24.0506,24.05,0.0006,0.01,True
+nodule_tr4_rom_asian,30.3571,30.36,0.0029,0.01,True
+nodule_tr5_rom_black,14.5161,14.52,0.0039,0.01,True
+nodule_tr5_rom_white,30.7061,30.71,0.0039,0.01,True
+nodule_tr5_rom_asian,54.023,54.02,0.003,0.01,True
+patient_auc_pooled,0.6478,0.6478,0.0,0.01,True
+nodule_tr4_rom_pooled,18.7209,18.7209,0.0,0.01,True

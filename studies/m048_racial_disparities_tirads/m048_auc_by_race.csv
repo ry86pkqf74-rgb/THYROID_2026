@@ -1,0 +1,13 @@
+grain,race_strat,n,n_positive,n_negative,auc,auc_ci_lo_95,auc_ci_hi_95,ci_includes_0_5
+patient,Asian,204,128,76,0.6601,0.5843,0.7275,False
+patient,Black,1535,441,1094,0.6138,0.5805,0.6424,False
+patient,Other,87,55,32,0.6139,0.4969,0.7304,True
+patient,Unknown,167,81,86,0.6165,0.5362,0.6924,False
+patient,White,1382,774,608,0.6441,0.6184,0.6714,False
+patient,POOLED,3375,1479,1896,0.6478,0.6307,0.6656,False
+nodule_strict,Asian,205,77,128,0.6661,0.5984,0.7333,False
+nodule_strict,Black,1701,144,1557,0.631,0.5852,0.6782,False
+nodule_strict,Other,87,24,63,0.4894,0.375,0.6154,True
+nodule_strict,Unknown,162,31,131,0.6018,0.5014,0.6996,False
+nodule_strict,White,1532,355,1177,0.6078,0.5772,0.6369,False
+nodule_strict,POOLED,3687,631,3056,0.6399,0.6175,0.6625,False

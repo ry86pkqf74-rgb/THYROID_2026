@@ -1,0 +1,7 @@
+race_strat,tr_category,patient_n_total,patient_n_malignant,patient_rom_pct,patient_rom_lo_95,patient_rom_hi_95,nodule_n_total,nodule_n_malignant,nodule_rom_pct,nodule_rom_lo_95,nodule_rom_hi_95,inflation_pp
+Black,TR4,207,71,34.3,28.17,41.0,354,33,9.32,6.71,12.8,24.98
+Black,TR5,497,199,40.04,35.82,44.41,434,63,14.52,11.51,18.14,25.52
+White,TR4,215,116,53.95,47.28,60.49,395,95,24.05,20.1,28.5,29.9
+White,TR5,675,464,68.74,65.15,72.12,609,187,30.71,27.17,34.48,38.03
+Asian,TR4,33,26,78.79,62.25,89.32,56,17,30.36,19.9,43.34,48.43
+Asian,TR5,103,76,73.79,64.55,81.31,87,47,54.02,43.6,64.1,19.77

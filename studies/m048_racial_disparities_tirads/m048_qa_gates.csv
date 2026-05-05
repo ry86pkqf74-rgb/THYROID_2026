@@ -1,0 +1,9 @@
+gate,status,actual,expected,note
+patient_black_n,PASS,1535,1535,
+patient_white_n,PASS,1382,1382,
+patient_asian_n,PASS,204,204,
+patient_total_n,PASS,3375,3375,
+nodule_strict_total_n,PASS,3687,3687,
+pooled_patient_auc_matches_m025,PASS,0.6478,0.6478,diff=0.000000
+pooled_nodule_auc_matches_m025,PASS,0.6399,0.6399,diff=0.000000
+wilson_ci_bounds_valid,PASS,0,0,"lo>=0, hi<=100, lo<=hi"
