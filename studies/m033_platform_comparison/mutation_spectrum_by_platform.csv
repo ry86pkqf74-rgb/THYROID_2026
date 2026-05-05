@@ -1,0 +1,8 @@
+platform,n,n_malignant,malignancy_rate_pct,n_braf_positive,braf_rate_pct,n_ras_positive,ras_rate_pct,ras_NRAS,ras_HRAS,ras_KRAS,n_fusion,fusion_rate_pct,median_genes_tested,tier_high,tier_intermediate,tier_low_intermediate,tier_wild_type,tier_unknown_missing
+Afirma,197,105,53.3,55,27.9,5,2.5,0,0,0,81,41.1,0.0,1,54,5,79,58
+Quest,1,1,100.0,0,0.0,0,0.0,0,0,0,0,0.0,,0,0,0,1,0
+ThyroSeq,632,382,60.4,96,15.2,176,27.8,83,43,18,359,56.8,1.0,41,80,148,194,169
+ThyroSeq+Afirma,167,111,66.5,132,79.0,36,21.6,16,12,2,139,83.2,0.0,34,99,17,16,1
+multi_panel_unknown,66,62,93.9,38,57.6,2,3.0,0,0,0,1,1.5,0.0,0,38,0,24,4
+single_gene,55,49,89.1,55,100.0,10,18.2,0,0,0,0,0.0,,0,55,0,0,0
+unknown,168,111,66.1,0,0.0,63,37.5,0,0,0,0,0.0,,0,0,63,85,20

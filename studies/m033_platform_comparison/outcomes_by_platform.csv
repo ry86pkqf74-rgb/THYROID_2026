@@ -1,0 +1,3 @@
+platform,n,n_recurrent,recurrence_rate_pct,recurrence_ci_lo,recurrence_ci_hi,n_rai,rai_rate_pct,rai_ci_lo,rai_ci_hi,n_ln_positive,ln_positive_rate_pct,ln_ci_lo,ln_ci_hi,n_complication,complication_rate_pct,proc_total_thyroidectomy_pct,proc_hemi_pct,ata_high,ata_intermediate,ata_low
+ThyroSeq,632,45,7.1,5.4,9.4,91,14.4,11.9,17.4,51,8.1,6.2,10.5,58,9.2,51.1,48.1,224,32,11
+Afirma,197,12,6.1,3.5,10.3,21,10.7,7.1,15.7,14,7.1,4.3,11.6,4,2.0,54.6,44.4,51,23,3

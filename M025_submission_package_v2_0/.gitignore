@@ -1,0 +1,10 @@
+# 4 docx placeholders contained M044 ETE manuscript carryover content (verified
+# 2026-05-04 by Cowork). They have been zeroed in place but the VM that ran the
+# review couldn't unlink them. Excluding them from git so M044 content cannot
+# accidentally land under M025 v2.0. See *_DELETED.txt tombstones in this dir
+# and qc_framework_v1/migrations/307_m025_v2_submission_package_20260504.sql
+# header for full context. Final M025 docx will be authored separately.
+01_title_page.docx
+02_manuscript.docx
+03_supplement.docx
+07_response_to_reviewers_template.docx

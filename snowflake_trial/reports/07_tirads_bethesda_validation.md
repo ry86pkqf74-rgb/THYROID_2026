@@ -1,6 +1,6 @@
 # Snowflake Cortex Validation — Prompt 7: TIRADS / Bethesda Diagnostic Accuracy
-**Generated:** 2026-05-01 11:36:00
-**Sources:** CANONICAL_PATIENT_MASTER_FLAT + CANONICAL_FNA_EVENTS_V1_FLAT
+**Generated:** 2026-05-04 22:07:40
+**Sources:** CANONICAL_PATIENT_MASTER_FLAT (Bethesda / malignancy) + CANONICAL_US_PATIENT_MASTER_VIEW_V2_FLAT (MAX_TIRADS_CATEGORY_EVER)
 
 ---
 ## Bethesda category × Risk of Malignancy (ROM)
@@ -9,12 +9,12 @@
 
 | BETHESDA | N | N_MALIGNANT | ROM_PCT |
 | --- | --- | --- | --- |
-| 1.0 | 233 | 71 | 30.5 |
-| 2.0 | 2033 | 385 | 18.9 |
-| 3.0 | 642 | 327 | 50.9 |
-| 4.0 | 624 | 306 | 49.0 |
-| 5.0 | 273 | 243 | 89.0 |
-| 6.0 | 1221 | 1069 | 87.6 |
+| 1.0 | 233 | 69 | 29.6 |
+| 2.0 | 2032 | 360 | 17.7 |
+| 3.0 | 642 | 304 | 47.4 |
+| 4.0 | 625 | 298 | 47.7 |
+| 5.0 | 273 | 240 | 87.9 |
+| 6.0 | 1221 | 1062 | 87.0 |
 
 ## TIRADS × malignancy
 
@@ -22,12 +22,15 @@
 
 | TIRADS | N | N_MALIGNANT | RATE_PCT |
 | --- | --- | --- | --- |
-| False | 653 | 245 | 37.5 |
-| True | 1061 | 549 | 51.7 |
+| TR1 | 346 | 96 | 27.7 |
+| TR2 | 300 | 97 | 32.3 |
+| TR3 | 852 | 237 | 27.8 |
+| TR4 | 495 | 235 | 47.5 |
+| TR5 | 1403 | 824 | 58.7 |
 
 ## Bethesda VI patients with benign final histology
 
-**N flagged:** 152
+**N flagged:** 159
 
 | RESEARCH_ID | BETHESDA | IS_MALIGNANT | HISTOLOGY_FINAL |
 | --- | --- | --- | --- |
@@ -49,7 +52,7 @@
 
 ## Bethesda II patients with malignant final histology
 
-**N flagged:** 385
+**N flagged:** 360
 
 | RESEARCH_ID | BETHESDA | IS_MALIGNANT | HISTOLOGY_FINAL |
 | --- | --- | --- | --- |
@@ -73,6 +76,9 @@
 
 | tirads | n | observed_rate_pct | ai_verdict |
 | --- | --- | --- | --- |
-| False | 653 | 37.5 | Above ACR expected range (over-malignant) |
-| True | 1061 | 51.7 | Within ACR expected range |
+| TR1 | 346 | 27.7 | Within ACR expected range |
+| TR2 | 300 | 32.3 | Within ACR expected range |
+| TR3 | 852 | 27.8 | Within ACR expected range |
+| TR4 | 495 | 47.5 | Within ACR expected range |
+| TR5 | 1403 | 58.7 | Within ACR expected range |
 

@@ -1,0 +1,25 @@
+DELETED 2026-05-04 by Cowork review.
+
+The placeholder .docx in this package contained M044 (Microscopic vs Gross
+Extrathyroidal Extension) manuscript carryover content from a prior package
+scaffold copy, NOT M025 TI-RADS content. The .docx file was zeroed in place
+because this VM cannot unlink files in the THYROID_2026 mount.
+
+The .docx is excluded from git via M025_submission_package_v2_0/.gitignore.
+Final M025 v2.0 docx (title page, manuscript, supplement,
+response-to-reviewers) to be authored separately from:
+  - 00_README.md (working title, primary endpoints)
+  - 08_analysis_code/METHODS_DRAFT.md (Methods prose, IRB, software/repro)
+  - 08_analysis_outputs/m025v2_run_snapshot.json + tirads_diagnostic_performance.csv
+    + rom_by_tirads.csv + nodule_size_analysis.csv + unnecessary_fna_analysis.csv
+    (patient-level outputs from cursor 1d4ecc1; see also studies/m025_tirads_performance/)
+  - 08_analysis_outputs/m025v2_threshold_metrics_per_nodule.csv +
+    m025v2_auc_summary.csv + m025v2_supp_S1*.csv (nodule-level sister analysis from mig_306)
+  - 06_figures/*.png (5 finished figures)
+
+Manuscript headline (patient-level): n=3,375; AUC 0.6478 [0.6301-0.6665];
+optimal threshold TR>=TR4 (Youden J 0.271). Sister nodule-level analysis
+(mig_306): per-nodule AUC 0.6399; per-nodule TR4 18.7% / TR5 26.1% inside
+ACR bands; included as evidence multinodular attribution explains part of
+patient-level inflation.
+

@@ -1,0 +1,4 @@
+detection_method,n_braf_positive,pct_of_all_braf_positive
+NGS,268,71.3
+NLP_entity_confirmed,103,27.4
+NGS_or_unknown,5,1.3

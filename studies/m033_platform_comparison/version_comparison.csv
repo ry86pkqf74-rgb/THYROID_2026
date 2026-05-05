@@ -1,0 +1,7 @@
+version_key,label,n,n_malignant,rom_pct,rom_ci_lo,rom_ci_hi,n_braf,braf_rate_pct,n_fusion,fusion_rate_pct,n_recurrent,recurrence_rate_pct,n_benign,specificity_proxy_pct,specificity_proxy_ci_lo,specificity_proxy_ci_hi
+Afirma_GEC,Afirma GEC (pre-2017),72,33,45.8,34.8,57.3,44,61.1,63,87.5,3,4.2,39,0.0,0.0,9.0
+Afirma_GSC,Afirma GSC (post-2017),53,33,62.3,48.8,74.1,5,9.4,7,13.2,5,9.4,20,5.0,0.9,23.6
+ThyroSeq_v2,ThyroSeq v2 (pre-2018),17,10,58.8,36.0,78.4,8,47.1,13,76.5,1,5.9,7,42.9,15.8,75.0
+ThyroSeq_v3,ThyroSeq v3 (post-2018),533,316,59.3,55.1,63.4,75,14.1,343,64.4,40,7.5,217,26.7,21.3,33.0
+Afirma_version_unknown,Afirma (version unknown),72,39,54.2,42.7,65.2,6,8.3,11,15.3,4,5.6,33,9.1,3.1,23.6
+ThyroSeq_version_unknown,ThyroSeq (version unknown),82,56,68.3,57.6,77.4,13,15.9,3,3.7,4,4.9,26,30.8,16.5,50.0

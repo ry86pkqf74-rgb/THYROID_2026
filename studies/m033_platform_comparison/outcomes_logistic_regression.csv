@@ -1,0 +1,2 @@
+metric,value,n,events,covariates
+adjusted_OR_thyroseq_recurrence,1.005,829,57,"['age_f', 'sex_m', 'sz_f', 'malig_f']"
