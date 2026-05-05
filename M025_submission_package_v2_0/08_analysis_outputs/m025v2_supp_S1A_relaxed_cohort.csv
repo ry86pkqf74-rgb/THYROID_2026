@@ -1,0 +1,4 @@
+arm,threshold,tp,fp,fn,tn,sens_pct,sens_lo_95,sens_hi_95,spec_pct,spec_lo_95,spec_hi_95,ppv_pct,npv_pct,note
+arm_a_relaxed,TR>=TR3,1275,6384,693,6957,64.8,62.6,66.9,52.1,51.3,53.0,16.6,90.9,Drops ACR feature-points-complete requirement; n total = 15309 nodules
+arm_a_relaxed,TR>=TR4,877,2934,1091,10407,44.6,42.4,46.8,78.0,77.3,78.7,23.0,90.5,
+arm_a_relaxed,TR>=TR5,451,1320,1517,12021,22.9,21.1,24.8,90.1,89.6,90.6,25.5,88.8,
