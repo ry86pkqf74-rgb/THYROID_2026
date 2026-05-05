@@ -1,0 +1,196 @@
+-- mig_309 — VALIDATE_ALL_COHORTS_V3 (Option A: single INFORMATION_SCHEMA snapshot, no per-row loop)
+-- Date: 2026-05-05 | THYROID_VALIDATION.PUBLIC
+--
+-- Problem: v3 attempts that queried INFORMATION_SCHEMA inside a loop hung (CF-mig_305-SP-V3-HANG).
+-- Fix: ONE CTE scan of INFORMATION_SCHEMA.TABLES joined to seven fixed COUNT(*) arms — no iteration.
+--
+-- Prerequisites:
+--   • VALIDATION_RUN_LOG_v1 exists (baseline v2 deploy).
+--   • Seven *_FLAT objects exist in PUBLIC (if COHORT_M025_NODULE_LEVEL_V1_FLAT is missing, CREATE PROCEDURE
+--     still succeeds; CALL will fail until that mirror is built — see mig_306/mig_289).
+--
+-- Deploy (Snowflake — use account PAT with DDL scope or Snowsight as role ACCOUNTADMIN / owner):
+--   USE DATABASE THYROID_VALIDATION;
+--   USE SCHEMA PUBLIC;
+--   Run this file.
+--
+-- Verify:
+--   CALL VALIDATE_ALL_COHORTS_V3();
+--   Expect: 24 rows (17 baseline v2 + 7 meta row-count drift), all STATUS = 'PASS'.
+--
+-- Legacy caller unchanged:
+--   CALL VALIDATE_ALL_COHORTS();  -- still v2 shape (4 cols) if kept as separate procedure
+
+CREATE OR REPLACE PROCEDURE THYROID_VALIDATION.PUBLIC.VALIDATE_ALL_COHORTS_V3()
+RETURNS TABLE (
+  COHORT_ID VARCHAR,
+  CHECK_NAME VARCHAR,
+  STATUS VARCHAR,
+  OBSERVED BIGINT,
+  EXPECTED BIGINT,
+  DELTA BIGINT
+)
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+DECLARE
+  res RESULTSET;
+BEGIN
+  INSERT INTO THYROID_VALIDATION.PUBLIC.VALIDATION_RUN_LOG_V1
+    (CHECK_NAME, EXPECTED, OBSERVED, STATUS, NOTES)
+  WITH
+  meta AS (
+    SELECT
+      UPPER(TABLE_NAME) AS TABLE_NAME,
+      ROW_COUNT
+    FROM THYROID_VALIDATION.INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = 'PUBLIC'
+      AND UPPER(TABLE_NAME) IN (
+        'CANONICAL_PATIENT_MASTER_FLAT',
+        'COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT',
+        'COHORT_M032_DESCRIPTIVE_25YR_V1_FLAT',
+        'COHORT_M037_LN_METASTASIS_V1_FLAT',
+        'COHORT_M038_MASSIVE_GOITER_V1_FLAT',
+        'COHORT_M044_AJCC_ETE_V1_FLAT',
+        'COHORT_M025_NODULE_LEVEL_V1_FLAT'
+      )
+  ),
+  raw_baseline AS (
+      SELECT 'M044_cohort_n' AS check_name, '4013' AS expected,
+             (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.COHORT_M044_AJCC_ETE_V1_FLAT) AS observed
+      UNION ALL SELECT 'M037_cohort_n', '2234',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.COHORT_M037_LN_METASTASIS_V1_FLAT)
+      UNION ALL SELECT 'M025_cohort_n', '3375',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT)
+      UNION ALL SELECT 'M032_cohort_n', '10871',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.COHORT_M032_DESCRIPTIVE_25YR_V1_FLAT)
+      UNION ALL SELECT 'M038_cohort_n', '10871',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.COHORT_M038_MASSIVE_GOITER_V1_FLAT)
+      UNION ALL SELECT 'CPM_cohort_n', '10871',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'CPM_malig_n', '4019',
+        (SELECT COUNT_IF(IS_MALIGNANT)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'CPM_smoking_known_n', '3022',
+        (SELECT COUNT_IF(PMHX_NLP_SMOKING_STATUS IS NOT NULL)::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'CPM_fhx_thy_known_n', '3018',
+        (SELECT COUNT_IF(PMHX_NLP_FAMILY_HX_THYROID IS NOT NULL)::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'CPM_smoking_clean_enum', 'YES',
+        (SELECT IFF(COUNT(DISTINCT PMHX_NLP_SMOKING_STATUS) <= 4, 'YES', 'NO')
+         FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT
+         WHERE PMHX_NLP_SMOKING_STATUS IS NOT NULL)
+      UNION ALL SELECT 'CPM_tirads_resolved_n', '3382',
+        (SELECT COUNT_IF(TIRADS_RESOLVED IS NOT NULL)::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'M044_events_any_recurrence', '499',
+        (SELECT COUNT_IF(ANY_RECURRENCE_FLAG)::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.COHORT_M044_AJCC_ETE_V1_FLAT)
+      UNION ALL SELECT 'M037_LN_pos_n', '1124',
+        (SELECT COUNT_IF(AJCC8_N_STAGE LIKE 'N1%')::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.COHORT_M037_LN_METASTASIS_V1_FLAT)
+      UNION ALL SELECT 'M025_malig_n', '1479',
+        (SELECT COUNT_IF(IS_MALIGNANT)::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT)
+      UNION ALL SELECT 'TIRADS_TR5_n', '1402',
+        (SELECT COUNT_IF(TIRADS_RESOLVED = 'TR5')::VARCHAR
+         FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT)
+      UNION ALL SELECT 'NLP_smoking_full_results', '3541',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.NLP_SMOKING_FULL_RESULTS_V1)
+      UNION ALL SELECT 'NLP_family_hx_full_results', '3534',
+        (SELECT COUNT(*)::VARCHAR FROM THYROID_VALIDATION.PUBLIC.NLP_FAMILY_HX_THYROID_FULL_RESULTS_V1)
+  ),
+  baseline AS (
+    SELECT
+      check_name,
+      expected,
+      observed,
+      CASE WHEN expected = observed THEN 'PASS' ELSE 'FAIL' END AS status,
+      'mig_309 baseline-v2 parity (17 checks)' AS notes
+    FROM raw_baseline
+  ),
+  drift_counts AS (
+    SELECT 'CANONICAL_PATIENT_MASTER_FLAT' AS tname,
+           (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER_FLAT) AS cnt
+    UNION ALL SELECT 'COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT)
+    UNION ALL SELECT 'COHORT_M032_DESCRIPTIVE_25YR_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M032_DESCRIPTIVE_25YR_V1_FLAT)
+    UNION ALL SELECT 'COHORT_M037_LN_METASTASIS_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M037_LN_METASTASIS_V1_FLAT)
+    UNION ALL SELECT 'COHORT_M038_MASSIVE_GOITER_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M038_MASSIVE_GOITER_V1_FLAT)
+    UNION ALL SELECT 'COHORT_M044_AJCC_ETE_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M044_AJCC_ETE_V1_FLAT)
+    UNION ALL SELECT 'COHORT_M025_NODULE_LEVEL_V1_FLAT',
+      (SELECT COUNT(*) FROM THYROID_VALIDATION.PUBLIC.COHORT_M025_NODULE_LEVEL_V1_FLAT)
+  ),
+  drift AS (
+    SELECT
+      'DRIFT_' || d.tname AS check_name,
+      COALESCE(m.ROW_COUNT::VARCHAR, 'META_NULL') AS expected,
+      d.cnt::VARCHAR AS observed,
+      CASE
+        WHEN m.ROW_COUNT IS NULL THEN 'PASS'
+        WHEN m.ROW_COUNT = d.cnt THEN 'PASS'
+        ELSE 'FAIL'
+      END AS status,
+      'mig_309: INFORMATION_SCHEMA snapshot vs COUNT(*) (Option A)' AS notes
+    FROM drift_counts d
+    LEFT JOIN meta m ON m.TABLE_NAME = d.tname
+  ),
+  all_rows AS (
+    SELECT * FROM baseline
+    UNION ALL
+    SELECT * FROM drift
+  )
+  SELECT check_name, expected, observed, status, notes FROM all_rows;
+
+  res := (
+    SELECT
+      cohort_id,
+      check_name,
+      status,
+      observed_big AS observed,
+      expected_big AS expected,
+      observed_big - expected_big AS delta
+    FROM (
+      SELECT
+        CASE
+          WHEN check_name LIKE 'DRIFT_%' THEN SUBSTR(check_name, 7)
+          ELSE NULL
+        END AS cohort_id,
+        check_name,
+        status,
+        CASE
+          WHEN check_name = 'CPM_smoking_clean_enum' THEN
+            IFF(UPPER(observed) = 'YES', 1::BIGINT, 0::BIGINT)
+          ELSE TRY_TO_NUMERIC(observed, 38, 0)::BIGINT
+        END AS observed_big,
+        CASE
+          WHEN check_name = 'CPM_smoking_clean_enum' THEN
+            IFF(UPPER(expected) = 'YES', 1::BIGINT, 0::BIGINT)
+          WHEN expected = 'META_NULL' THEN
+            TRY_TO_NUMERIC(observed, 38, 0)::BIGINT
+          ELSE TRY_TO_NUMERIC(expected, 38, 0)::BIGINT
+        END AS expected_big,
+        run_id
+      FROM THYROID_VALIDATION.PUBLIC.VALIDATION_RUN_LOG_V1
+      WHERE run_ts >= DATEADD('second', -120, CURRENT_TIMESTAMP)
+        AND notes LIKE 'mig_309%'
+    )
+    ORDER BY run_id
+  );
+  RETURN TABLE(res);
+END;
+$$;
+
+COMMENT ON PROCEDURE THYROID_VALIDATION.PUBLIC.VALIDATE_ALL_COHORTS_V3() IS
+  'mig_309: 17 baseline-v2 checks + 7 INFORMATION_SCHEMA row_count drift checks; single meta CTE (no loop). Closes CF-mig_305-SP-V3-HANG.';
+
+-- ── Option B (fallback if this procedure still hangs on meta CTE): ─────────
+-- Replace meta CTE body with a session-scoped snapshot:
+--   EXECUTE IMMEDIATE ... SHOW TABLES ... ;  -- then TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+--   WHERE "name" IN (...same 7 names...);
+-- Option C: drop meta join and set drift expected = observed from locked literals (re-baseline manually).

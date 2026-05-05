@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Pull Snowflake VALIDATION_RUN_LOG_V1 into MotherDuck ``main.cowork_sf_validation_log_v1``.
 
-Source: ``THYROID_VALIDATION.PUBLIC.VALIDATION_RUN_LOG_V1`` (17 checks per run, baseline v2).
+Source: ``THYROID_VALIDATION.PUBLIC.VALIDATION_RUN_LOG_V1`` (17 rows per ``VALIDATE_ALL_COHORTS()``;
+24 rows per ``VALIDATE_ALL_COHORTS_V3()`` — see ``snowflake_trial/sql_drops/mig_309_sp_v3.sql``).
 
 Requires ``SNOWFLAKE_PAT``. With ``--md``: MotherDuck RW token via ``motherduck.local.toml`` or
 ``MD_SA_TOKEN`` / ``MOTHERDUCK_TOKEN``; catalog locked to ``thyroid_canonical_publication_v1_0``.

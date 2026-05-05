@@ -25,9 +25,10 @@
 - `NLP_FAMILY_HX_THYROID_FULL_RESULTS_v1` — 3,534 notes, 84% actionable
 - `NLP_VASC_INVASION_FULL_RESULTS_v1` — 806 notes, 52% actionable
 
-### Validation infrastructure (baseline v2)
-- `VALIDATION_RUN_LOG_v1` (table) — audit log; 17 checks per run
-- `VALIDATE_ALL_COHORTS()` (procedure) — **17/17 PASS as of 2026-05-04**; INSERT to log + RETURN results
+### Validation infrastructure (baseline v2 + optional v3)
+- `VALIDATION_RUN_LOG_v1` (table) — audit log; 17 checks per `VALIDATE_ALL_COHORTS()` run; **24 rows** per `VALIDATE_ALL_COHORTS_V3()` run (mig_309–tagged notes)
+- `VALIDATE_ALL_COHORTS()` (procedure) — **17/17 PASS as of 2026-05-04**; INSERT to log + RETURN results (4 columns)
+- `VALIDATE_ALL_COHORTS_V3()` (procedure) — **staged** in `snowflake_trial/sql_drops/mig_309_sp_v3.sql`; 17 v2 parity checks + 7 `INFORMATION_SCHEMA.TABLES` row-count drift checks; single meta CTE (no per-row `INFORMATION_SCHEMA` loop — fixes CF-mig_305-SP-V3-HANG); RETURNS 7 columns (`COHORT_ID`, `CHECK_NAME`, `STATUS`, `OBSERVED`, `EXPECTED`, `DELTA`)
 - `COHORT_SUMMARY_DASHBOARD` (view) — cross-manuscript cohort sizes at a glance
 
 ### Search + AI
@@ -68,6 +69,9 @@
 
 ### `CALL VALIDATE_ALL_COHORTS()`
 Sub-second. Re-runs 17 checks. Returns table of PASS/FAIL + writes to `VALIDATION_RUN_LOG_v1` for audit history. Run anytime as a sanity check after MD migration rounds.
+
+### `CALL VALIDATE_ALL_COHORTS_V3()` (mig_309)
+After deploying `snowflake_trial/sql_drops/mig_309_sp_v3.sql`: runs the same 17 baseline checks plus 7 drift checks (catalog `ROW_COUNT` vs `COUNT(*)` on the seven `*_FLAT` cohort mirrors). Expect **24/24 PASS**. Mirror log to MotherDuck with `snowflake_trial/scripts/35_pull_sf_validation_log.py --md` (same destination table; filter by `notes LIKE 'mig_309%'` if you need only the v3 batch).
 
 ### `SELECT * FROM COHORT_SUMMARY_DASHBOARD`
 At-a-glance manuscript denominators + event counts.
