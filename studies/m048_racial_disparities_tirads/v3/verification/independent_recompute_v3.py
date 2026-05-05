@@ -57,6 +57,17 @@ def main() -> int:
     recv_black_or = float(rt.loc["Black", "or"])
     ok_black = rel_diff(exp_black_or, recv_black_or) <= 0.02
 
+    # Asian full OR assertion
+    m6_asian = cascade[(cascade["model_step"] == "m6_full") & (cascade["race_level"] == "Asian")]
+    if not m6_asian.empty and "Asian" in rt.index:
+        exp_asian_or = float(m6_asian.iloc[0]["or"])
+        recv_asian_or = float(rt.loc["Asian", "or"])
+        ok_asian = rel_diff(exp_asian_or, recv_asian_or) <= 0.02
+    else:
+        exp_asian_or = np.nan
+        recv_asian_or = np.nan
+        ok_asian = False
+
     m0_or = float(m0["or"])
     atten_obs = 100.0 * (1.0 - recv_black_or / m0_or) if m0_or and np.isfinite(recv_black_or) else np.nan
     cas_atten = 100.0 * (1.0 - float(m6["or"]) / float(m0["or"]))
@@ -89,12 +100,15 @@ def main() -> int:
         recv_b4 = np.nan
         ok_b4 = True
 
+    asian_or_rel_diff = rel_diff(exp_asian_or, recv_asian_or) if np.isfinite(exp_asian_or) else np.inf
     lines = [
         f"recompute_black_full_or_rel_diff={rel_diff(exp_black_or, recv_black_or):.4f} pass={ok_black}",
         f"stored_black_full_or={exp_black_or:.5f} refit_black_full_or={recv_black_or:.5f}",
         f"atten_pct_recomputed={atten_obs:.2f} cascade_atten_pct={cas_atten:.2f} pass={ok_atten}",
         f"asian_tr5_mean_tumor_csv={asian_tr5_sz:.4f} disparity_table={exp_sz:.4f} pass={ok_sz}",
         f"bethesda_IV_black_or_stored={exp_b4_black} refit={recv_b4} pass={ok_b4}",
+        f"asian_full_or_rel_diff={asian_or_rel_diff:.4f} pass={ok_asian}",
+        f"stored_asian_full_or={exp_asian_or:.5f} refit_asian_full_or={recv_asian_or:.5f}",
     ]
     out_md = os.path.join(os.path.dirname(__file__), "independent_recompute_v3_report.md")
     with open(out_md, "w") as f:
@@ -102,7 +116,7 @@ def main() -> int:
         for ln in lines:
             f.write(ln + "\n")
     print("\n".join(lines))
-    return 0 if all([ok_black, ok_atten, ok_sz, ok_b4]) else 1
+    return 0 if all([ok_black, ok_atten, ok_sz, ok_b4, ok_asian]) else 1
 
 
 if __name__ == "__main__":

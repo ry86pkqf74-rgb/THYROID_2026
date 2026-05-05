@@ -237,27 +237,91 @@ def figure_12_bethesda() -> None:
     save_fig(fig, "Figure_12_Bethesda_Stratified_TR_ROM")
 
 
+def figure_12b_bethesda_rom_heatmap() -> None:
+    """ROM% heatmap faceted by race (x = TR category, y = Bethesda bucket)."""
+    df = load("m048_v3_bethesda_x_race_x_tr_rom.csv")
+    if df.empty:
+        return
+    races = [r for r in PRIMARY_RACES if r in df["race_strat"].unique()]
+    if not races:
+        return
+    fig, axes = plt.subplots(1, len(races), figsize=(5 * len(races), 5), sharey=True)
+    if len(races) == 1:
+        axes = [axes]
+    tr_order = sorted(df["tr_category"].dropna().astype(str).unique())
+    beth_order = sorted(df["bethesda_bucket"].dropna().astype(str).unique())
+    for ax, race in zip(axes, races):
+        sub = df[df["race_strat"] == race].copy()
+        mat = pd.DataFrame(index=beth_order, columns=tr_order, dtype=float)
+        for _, row in sub.iterrows():
+            b = str(row["bethesda_bucket"])
+            t = str(row["tr_category"])
+            v = pd.to_numeric(row.get("rom_pct", np.nan), errors="coerce")
+            if b in mat.index and t in mat.columns:
+                mat.loc[b, t] = v
+        mat_arr = mat.values.astype(float)
+        im = ax.imshow(mat_arr, aspect="auto", cmap="YlOrRd", vmin=0, vmax=100)
+        ax.set_xticks(range(len(tr_order)))
+        ax.set_xticklabels(tr_order, rotation=30, ha="right")
+        ax.set_yticks(range(len(beth_order)))
+        ax.set_yticklabels(beth_order if ax is axes[0] else [])
+        ax.set_title(race, color=RACE_COLORS.get(race, "#333"))
+        for i in range(len(beth_order)):
+            for j in range(len(tr_order)):
+                val = mat_arr[i, j]
+                if np.isfinite(val):
+                    n_cell = sub[
+                        (sub["bethesda_bucket"].astype(str) == beth_order[i])
+                        & (sub["tr_category"].astype(str) == tr_order[j])
+                    ]["n"]
+                    n_val = int(n_cell.iloc[0]) if len(n_cell) else 0
+                    txt = f"{val:.0f}%\n(n={n_val})" if n_val >= 10 else f"({n_val})"
+                    ax.text(j, i, txt, ha="center", va="center", fontsize=7,
+                            color="white" if val > 60 else "black")
+    fig.colorbar(im, ax=axes[-1], label="ROM %", shrink=0.8)
+    fig.suptitle("Figure 12b — Bethesda × race × TR ROM % (cell-level)", fontsize=11)
+    add_footer(fig)
+    save_fig(fig, "Figure_12b_Bethesda_x_Race_x_TR_ROM")
+
+
 def figure_13_fna_pattern() -> None:
     df = load("m048_v3_fna_pattern_by_race.csv")
     if df.empty:
         return
     df = df[df["race_strat"].isin(PRIMARY_RACES)].copy()
-    metrics = ["pct_with_fna", "mean_fnas_per_patient", "pct_repeat_fna_among_biopsied"]
-    fig, ax = plt.subplots(figsize=(9, 5))
-    x = np.arange(len(metrics))
+    subplot_specs = [
+        ("pct_with_fna", "% with any FNA", "Percentage (%)"),
+        ("mean_fnas_per_patient", "Mean FNAs / patient", "Count"),
+        ("pct_repeat_fna_among_biopsied", "% repeat FNA (among biopsied)", "Percentage (%)"),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
     width = 0.25
-    for i, race in enumerate(PRIMARY_RACES):
-        row = df[df["race_strat"] == race]
-        if row.empty:
-            continue
-        vals = [float(row.iloc[0].get(k, 0) or 0) for k in metrics]
-        ax.bar(x + (i - 1) * width, vals, width, label=race, color=RACE_COLORS[race])
-    ax.set_xticks(x)
-    ax.set_xticklabels(["% with any FNA", "Mean FNAs / patient", "% repeat FNA (among biopsied)"])
-    ax.set_ylabel("Value")
-    ax.set_title("Figure 13 — FNA pattern by race")
-    ax.legend()
+    x = np.arange(len(PRIMARY_RACES))
+    for ax, (metric, subtitle, ylabel) in zip(axes, subplot_specs):
+        vals = []
+        colors = []
+        for race in PRIMARY_RACES:
+            row = df[df["race_strat"] == race]
+            v = float(row.iloc[0].get(metric, 0) or 0) if not row.empty else 0.0
+            vals.append(v)
+            colors.append(RACE_COLORS[race])
+        bars = ax.bar(x, vals, width * 2, color=colors)
+        ax.set_xticks(x)
+        ax.set_xticklabels(PRIMARY_RACES, rotation=15, ha="right")
+        ax.set_ylabel(ylabel)
+        ax.set_title(subtitle, fontsize=9)
+        if "pct" in metric:
+            ax.set_ylim(0, 100)
+        for bar, val in zip(bars, vals):
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.5,
+                    f"{val:.1f}", ha="center", va="bottom", fontsize=8)
+    fig.suptitle("Figure 13 — FNA pattern by race", fontsize=11)
+    # Single legend for the whole figure
+    from matplotlib.patches import Patch
+    handles = [Patch(facecolor=RACE_COLORS[r], label=r) for r in PRIMARY_RACES]
+    fig.legend(handles=handles, loc="upper right", fontsize=8, bbox_to_anchor=(0.99, 0.95))
     add_footer(fig)
+    fig.tight_layout(rect=[0, 0, 0.88, 1])
     save_fig(fig, "Figure_13_FNA_Pattern_by_Race")
 
 
@@ -272,6 +336,7 @@ def main() -> None:
     figure_10_love()
     figure_11_quadrant()
     figure_12_bethesda()
+    figure_12b_bethesda_rom_heatmap()
     figure_13_fna_pattern()
     meta = {"figures_dir": FIG_DIR, "generated_utc": TS, "inputs": V3_DIR}
     with open(os.path.join(FIG_DIR, "figure_build_meta_v3.json"), "w") as f:

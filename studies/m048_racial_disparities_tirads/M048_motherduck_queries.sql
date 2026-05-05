@@ -244,6 +244,24 @@ GROUP  BY race_strat, bethesda_bucket, max_tirads_category_ever
 ORDER  BY race_strat, bethesda_bucket, max_tirads_category_ever;
 
 -- ----------------------------------------------------------------------------
+-- 7b. Bethesda x race x TR cell-level ROM (for v3 supplementary heatmap)
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE TABLE m048_bethesda_x_race_x_tr_rom_v1 AS
+SELECT race_strat,
+       bethesda_bucket,
+       max_tirads_category_ever AS tr_category,
+       COUNT(*)                 AS n,
+       SUM(is_malignant::INT)   AS n_malignant,
+       CASE WHEN COUNT(*) > 0
+            THEN ROUND(100.0 * SUM(is_malignant::INT) / COUNT(*), 2)
+            ELSE NULL END       AS rom_pct
+FROM   m048_patient_master_v1
+WHERE  max_tirads_category_ever IS NOT NULL
+   AND bethesda_bucket IS NOT NULL
+GROUP  BY race_strat, bethesda_bucket, max_tirads_category_ever
+ORDER  BY race_strat, bethesda_bucket, max_tirads_category_ever;
+
+-- ----------------------------------------------------------------------------
 -- 8. QA gates (race coverage, strict-eligible nodule counts per race)
 -- ----------------------------------------------------------------------------
 SELECT 'patient_total'           AS gate,

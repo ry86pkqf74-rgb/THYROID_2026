@@ -388,6 +388,7 @@ def main():
         "m048_nodule_count_by_race_v1",
         "m048_genetics_access_by_race_v1",
         "m048_v3_sql_qa_counts_v1",
+        "m048_bethesda_x_race_x_tr_rom_v1",
     ]
     print("[DUMP] v3 CSV exports ...")
     rename_map = {
@@ -409,6 +410,8 @@ def main():
             dump_table(con, t, os.path.join(V3_DIR, "m048_v3_nodule_master_full.csv"))
         elif t == "m048_v3_sql_qa_counts_v1":
             dump_table(con, t, os.path.join(V3_DIR, "m048_v3_sql_qa_counts.csv"))
+        elif t == "m048_bethesda_x_race_x_tr_rom_v1":
+            dump_table(con, t, os.path.join(V3_DIR, "m048_v3_bethesda_x_race_x_tr_rom.csv"))
         else:
             dump_table(con, t, os.path.join(V3_DIR, f"{t}.csv"))
 
@@ -522,9 +525,57 @@ def main():
         "p": m_res.pvalues.values,
     }).to_csv(os.path.join(V3_DIR, "m048_v3_interaction_race_x_nodulect.csv"), index=False)
 
-    # Bethesda stratified
+    # Bethesda stratified (primary additive Model B)
     df_bstrat = run_bethesda_stratified(df_model)
     df_bstrat.to_csv(os.path.join(V3_DIR, "m048_v3_bethesda_stratified_TR_ROM.csv"), index=False)
+
+    # Bethesda × TR interaction secondary model
+    # Formula: is_malignant ~ C(race_strat, Treatment('White')) * max_tr_int
+    # One fit per Bethesda stratum; Bonferroni-adjusted across (n_strata * 2 race interaction terms)
+    from m048_v3_stats_lib import fit_logit_regularized  # noqa: E402 (already imported as fit_logit)
+    bstr_strata = sorted(df_model["bethesda_bucket"].dropna().unique())
+    n_bonf = len(bstr_strata) * 2  # 2 race interaction terms (Black, Asian) per stratum
+    inter_rows = []
+    for b in bstr_strata:
+        sub = df_model[df_model["bethesda_bucket"] == b].dropna(subset=["max_tr_int"]).copy()
+        if len(sub) < 30:
+            continue
+        formula_inter = "is_malignant ~ C(race_strat, Treatment('White')) * max_tr_int"
+        try:
+            res = fit_logit(formula_inter, sub)
+        except Exception:
+            try:
+                res = fit_logit_regularized(formula_inter, sub)
+            except Exception as e2:
+                inter_rows.append({"bethesda_bucket": b, "interaction_term": "ERROR", "coef": np.nan,
+                                    "or": np.nan, "ci_lo": np.nan, "ci_hi": np.nan, "p": np.nan,
+                                    "p_bonf": np.nan, "n": len(sub), "n_events": int(sub["is_malignant"].sum()),
+                                    "error": str(e2)})
+                continue
+        ci = res.conf_int()
+        pv = getattr(res, "pvalues", pd.Series(dtype=float))
+        for pname in res.params.index:
+            if ":" not in pname or "race_strat" not in pname:
+                continue
+            coef = float(res.params[pname])
+            lo = float(ci.loc[pname, 0]) if pname in ci.index else np.nan
+            hi = float(ci.loc[pname, 1]) if pname in ci.index else np.nan
+            p_raw = float(pv[pname]) if pname in pv.index else np.nan
+            inter_rows.append({
+                "bethesda_bucket": b,
+                "interaction_term": pname,
+                "coef": coef,
+                "or": np.exp(coef),
+                "ci_lo": np.exp(lo),
+                "ci_hi": np.exp(hi),
+                "p": p_raw,
+                "p_bonf": float(min(p_raw * n_bonf, 1.0)) if np.isfinite(p_raw) else np.nan,
+                "n": len(sub),
+                "n_events": int(sub["is_malignant"].sum()),
+            })
+    pd.DataFrame(inter_rows).to_csv(
+        os.path.join(V3_DIR, "m048_v3_bethesda_stratified_TR_interaction.csv"), index=False
+    )
 
     # F-Nodule
     df_nod = con.execute("SELECT * FROM manuscript_workspace.m048_v3_nodule_master_v1").df()
@@ -558,27 +609,33 @@ def main():
     except Exception as e:
         pd.DataFrame([{"error": str(e)}]).to_csv(os.path.join(V3_DIR, "m048_v3_nodule_model_race_OR.csv"), index=False)
 
-    # Mediation (Black indirect; Asian parallel rows optional)
+    # Mediation: Black vs White AND Asian vs White indirect effects
     med_rows = []
     med_controls = (
         "max_tr_int + C(nodule_burden_cat) + had_any_genetics + had_any_nm + has_clt + has_mng + has_graves "
         "+ has_niftp + has_ftump + had_any_fna + had_repeat_fna + C(bethesda_bucket) + age_at_surgery "
         "+ C(sex) + surg_year + C(surg_procedure_type)"
     )
-    for med, mtype in MEDIATORS:
-        if med not in df_model.columns:
-            continue
-        r = bootstrap_mediation_product(
-            df_model.assign(is_malignant=df_model["is_malignant"].astype(int)),
-            med,
-            mtype,
-            "race_strat",
-            "is_malignant",
-            med_controls,
-            n_boot=max(50, args.mediation_boot),
-            seed=42,
-        )
-        med_rows.append({"mediator": med, "type": mtype, "scope": "univariate_black_vs_white", **r})
+    race_targets = ("Black", "Asian")
+    df_med_input = df_model.assign(is_malignant=df_model["is_malignant"].astype(int))
+    for race_target in race_targets:
+        scope = f"univariate_{race_target.lower()}_vs_white"
+        for med, mtype in MEDIATORS:
+            if med not in df_model.columns:
+                continue
+            r = bootstrap_mediation_product(
+                df_med_input,
+                med,
+                mtype,
+                "race_strat",
+                "is_malignant",
+                med_controls,
+                n_boot=max(50, args.mediation_boot),
+                seed=42,
+                race_target=race_target,
+            )
+            med_rows.append({"mediator": med, "type": mtype, "race_target": r["race_target"], "scope": scope,
+                              "indirect_mean": r["indirect_mean"], "ci_lo": r["ci_lo"], "ci_hi": r["ci_hi"]})
     pd.DataFrame(med_rows).to_csv(os.path.join(V3_DIR, "m048_v3_mediation.csv"), index=False)
 
     # Sensitivity arms
@@ -707,6 +764,32 @@ def main():
         "actual": int((tr4_tr5_mal >= 10).sum()),
         "expected": ">=6 of 9 cells",
     })
+
+    # New QA gate: mediation has Asian rows
+    try:
+        med_df = pd.read_csv(os.path.join(V3_DIR, "m048_v3_mediation.csv"))
+        has_asian_med = "race_target" in med_df.columns and int((med_df["race_target"] == "Asian").sum()) >= 1
+        gates.append({
+            "gate": "mediation_has_asian_rows",
+            "status": "PASS" if has_asian_med else "FAIL",
+            "actual": int((med_df["race_target"] == "Asian").sum()) if "race_target" in med_df.columns else 0,
+            "expected": ">=1 row with race_target==Asian",
+        })
+    except Exception as e:
+        gates.append({"gate": "mediation_has_asian_rows", "status": "FAIL", "actual": str(e), "expected": ">=1 row"})
+
+    # New QA gate: Bethesda × race × TR ROM table has reportable cells
+    try:
+        brom_df = pd.read_csv(os.path.join(V3_DIR, "m048_v3_bethesda_x_race_x_tr_rom.csv"))
+        n_reportable = int((pd.to_numeric(brom_df["n"], errors="coerce").fillna(0) >= 10).sum())
+        gates.append({
+            "gate": "bethesda_rom_table_complete",
+            "status": "PASS" if n_reportable >= 6 else "FAIL",
+            "actual": n_reportable,
+            "expected": ">=6 cells with n>=10",
+        })
+    except Exception as e:
+        gates.append({"gate": "bethesda_rom_table_complete", "status": "FAIL", "actual": str(e), "expected": ">=6 cells"})
 
     pd.DataFrame(gates).to_csv(os.path.join(V3_DIR, "m048_v3_qa_gates.csv"), index=False)
 

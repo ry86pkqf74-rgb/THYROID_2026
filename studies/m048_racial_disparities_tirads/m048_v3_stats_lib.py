@@ -181,34 +181,37 @@ def bootstrap_mediation_product(
     controls_formula_tail: str,
     n_boot: int = 1000,
     seed: int = 42,
+    race_target: str = "Black",
 ) -> dict[str, float]:
     """
-    Approximate indirect effect for Black vs White (dummy) using product-of-coefficients.
+    Approximate indirect effect for race_target vs White using product-of-coefficients.
     a_path: mediator ~ C(race_strat) + controls
     b_path: y ~ C(race_strat) + mediator + controls
-    IE ≈ a_Black * b_med (same for Asian in separate calls if needed).
+    IE ≈ a_<race_target> * b_med.
+    Returns dict including race_target for caller stacking.
     """
     rng = np.random.default_rng(seed)
     rids = df["research_id"].astype(str).values
     u_rid = np.unique(rids)
     coefs = []
+    a_key = f"C({race_col}, Treatment('White'))[T.{race_target}]"
 
-    def one_fit(bs_df: pd.DataFrame) -> float | float:
+    def one_fit(bs_df: pd.DataFrame) -> float:
         try:
             if med_type == "binary":
                 ma = f"{mediator} ~ C({race_col}, Treatment('White')) + {controls_formula_tail}"
                 ra = logit(ma, data=bs_df).fit(disp=False, method="lbfgs", maxiter=150)
-                a_black = float(ra.params.get(f"C({race_col}, Treatment('White'))[T.Black]", np.nan))
+                a_race = float(ra.params.get(a_key, np.nan))
             else:
                 ma = f"{mediator} ~ C({race_col}, Treatment('White')) + {controls_formula_tail}"
                 ra = sm.OLS.from_formula(ma, data=bs_df).fit()
-                a_black = float(ra.params.get(f"C({race_col}, Treatment('White'))[T.Black]", np.nan))
+                a_race = float(ra.params.get(a_key, np.nan))
             yf = f"{y_col} ~ C({race_col}, Treatment('White')) + {mediator} + {controls_formula_tail}"
             ry = logit(yf, data=bs_df).fit(disp=False, method="lbfgs", maxiter=150)
             b_med = float(ry.params.get(mediator, np.nan))
-            if np.isnan(a_black) or np.isnan(b_med):
+            if np.isnan(a_race) or np.isnan(b_med):
                 return np.nan
-            return a_black * b_med
+            return a_race * b_med
         except Exception:
             return np.nan
 
@@ -221,9 +224,10 @@ def bootstrap_mediation_product(
         coefs.append(one_fit(bs_df))
     coefs = [c for c in coefs if c == c]
     if not coefs:
-        return {"indirect_mean": np.nan, "ci_lo": np.nan, "ci_hi": np.nan}
+        return {"race_target": race_target, "indirect_mean": np.nan, "ci_lo": np.nan, "ci_hi": np.nan}
     arr = np.array(coefs)
     return {
+        "race_target": race_target,
         "indirect_mean": float(np.mean(arr)),
         "ci_lo": float(np.percentile(arr, 2.5)),
         "ci_hi": float(np.percentile(arr, 97.5)),
