@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{booktabs,longtable,array,geometry,caption}
+\geometry{margin=1in}
+\begin{document}
+\begin{table}[h]
+\caption{Univariate Predictors of Lymph Node Metastasis (M043, N=4,019)}
+\centering
+\begin{tabular}{llrrr}
+\toprule
+Predictor & N & OR & 95\% CI & p-value \\
+\midrule
+Age (continuous, per year) & 4019 & 0.98 & (0.97–0.98) & $<$0.001 \\
+Sex (male vs female) & 4019 & 1.68 & (1.45–1.96) & $<$0.001 \\
+Tumor size (continuous, per cm) & 3871 & 1.11 & (1.07–1.15) & $<$0.001 \\
+PTC vs non-PTC & 4019 & 2.84 & (2.29–3.53) & $<$0.001 \\
+Multifocal (yes vs no) & 4019 & 1.87 & (1.62–2.15) & $<$0.001 \\
+ETE microscopic vs none & 2723 & 0.30 & (0.22–0.40) & $<$0.001 \\
+ETE gross vs none & 1467 & 0.76 & (0.56–1.02) & 0.078 \\
+Vascular invasion (any vs none) & 4019 & 3.86 & (3.33–4.47) & $<$0.001 \\
+BRAF+ vs BRAF− (among tested) & 4019 & 1.02 & (0.77–1.33) & 0.966 \\
+RAS+ vs RAS− (among tested) & 4019 & 0.13 & (0.07–0.25) & $<$0.001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\vspace{1em}
+\begin{table}[h]
+\caption{Multivariate Logistic Regression: Predictors of LN Metastasis}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Predictor & N & Adj.\ OR & 95\% CI & p-value \\
+\midrule
+Age (per year) & 3871 & 0.98 & (0.97--0.98) & $<$0.001 \\
+Male sex & 3871 & 1.69 & (1.42--2.03) & $<$0.001 \\
+Tumor size (per cm) & 3871 & 1.09 & (1.04--1.14) & $<$0.001 \\
+PTC histology & 3871 & 5.46 & (4.14--7.19) & $<$0.001 \\
+Multifocal & 3871 & 1.81 & (1.54--2.13) & $<$0.001 \\
+ETE microscopic & 3871 & 0.59 & (0.38--0.92) & 0.019 \\
+ETE gross & 3871 & 1.07 & (0.68--1.68) & 0.767 \\
+Vascular invasion & 3871 & 4.65 & (3.90--5.54) & $<$0.001 \\
+\midrule
+\multicolumn{5}{l}{C-statistic: 0.784 (95\% CI: 0.768--0.800); Optimism-corrected: 0.782} \\
+\multicolumn{5}{l}{Hosmer--Lemeshow: $\chi^2$=13.78, p=0.088} \\
+\bottomrule
+\end{tabular}
+\end{table}
+\vspace{1em}
+\begin{table}[h]
+\caption{Impact of Central Neck Dissection on LN Detection}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Characteristic & CND (n=1831) & No CND (n=2188) & p-value \\
+\midrule
+LN positive, \% & 47.2 & 11.7 & — \\
+Mean LN examined & 11.6 & 3.5 & — \\
+Mean LN positive & 3.2 & 1.4 & — \\
+Recurrence, \% & 13.8 & 11.4 & — \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{document}
