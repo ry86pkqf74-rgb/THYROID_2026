@@ -1,0 +1,6 @@
+race_strat,n_malignant,n_any_ete,n_micro_ete,n_gross_ete,n_ln_positive,pct_any_ete,pct_ln_positive
+Asian,272,257.0,192.0,65.0,188.0,94.49,69.12
+Black,712,649.0,434.0,215.0,540.0,91.15,75.84
+Other,107,104.0,82.0,22.0,71.0,97.2,66.36
+Unknown,141,138.0,99.0,39.0,91.0,97.87,64.54
+White,1509,1413.0,990.0,423.0,1033.0,93.64,68.46

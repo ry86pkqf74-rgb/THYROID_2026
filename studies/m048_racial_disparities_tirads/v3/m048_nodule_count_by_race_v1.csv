@@ -1,0 +1,6 @@
+race_strat,n_patients,mean_nodules,median_nodules,q75_nodules,max_nodules,n_solitary,n_2to4,n_5plus
+Asian,204,8.37,4.0,8.0,99,31.0,75.0,98.0
+Black,1535,11.33,6.0,14.0,119,108.0,505.0,922.0
+Other,87,6.74,4.0,7.0,68,17.0,31.0,39.0
+Unknown,167,6.74,4.0,6.5,84,28.0,70.0,69.0
+White,1382,8.85,5.0,10.0,105,166.0,494.0,722.0

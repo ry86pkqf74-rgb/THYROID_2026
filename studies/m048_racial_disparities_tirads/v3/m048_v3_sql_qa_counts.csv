@@ -1,0 +1,10 @@
+gate,n
+v3_master_n,3375
+with_any_fna,2419
+with_repeat_fna,1010
+with_n_fnas_ge_3,324
+with_multifocal,0
+with_tumor_size_known,1465
+with_ete_canonical,2525
+with_frozen_section,755
+reconciles_v3_to_v2,1

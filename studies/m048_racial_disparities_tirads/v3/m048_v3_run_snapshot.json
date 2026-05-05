@@ -1,0 +1,14 @@
+{
+  "study_id": "M048_v3",
+  "run_timestamp_utc": "2026-05-05T17:03:21.386671+00:00",
+  "db_name": "thyroid_canonical_publication_v1_0",
+  "db_tag": "pub_v1_1",
+  "mig_id": "mig_317",
+  "git_sha": "61624d9",
+  "n_patient_v3": 3375,
+  "attenuation_pct_black_m0_to_m6": -36.41,
+  "paths": {
+    "v3_dir": "/Users/loganglosser/THYROID_2026/studies/m048_racial_disparities_tirads/v3",
+    "figures_v3": "/Users/loganglosser/THYROID_2026/M048_submission_package/figures/v3"
+  }
+}

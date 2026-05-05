@@ -1,0 +1,11 @@
+mediator,type,race_target,scope,indirect_mean,ci_lo,ci_hi
+n_nodules_total,continuous,Black,univariate_black_vs_white,-0.012812776677670924,-0.024513160568547708,-0.0036683696926886225
+had_any_genetics,binary,Black,univariate_black_vs_white,-8.372569193004294,-24.949678273676668,-2.5295791270586876
+had_any_nm,binary,Black,univariate_black_vs_white,-4.616274553071602,-12.536742912292146,-1.1589520350298876
+n_fnas_total,continuous,Black,univariate_black_vs_white,-0.0014586235390245971,-0.007985194416337221,0.0052738345207662685
+days_us_to_surg_approx,continuous,Black,univariate_black_vs_white,-0.03687758283452687,-0.057318978970884615,-0.02111979966989709
+n_nodules_total,continuous,Asian,univariate_asian_vs_white,-0.006835977809990095,-0.021840480305659122,0.004770388428978545
+had_any_genetics,binary,Asian,univariate_asian_vs_white,-0.2044404176906531,-1.7293417586997157,0.6813242118124301
+had_any_nm,binary,Asian,univariate_asian_vs_white,-1.3444285401601745,-3.118525222070729,-0.1244581868224709
+n_fnas_total,continuous,Asian,univariate_asian_vs_white,0.00128399060590487,-0.004322958394671476,0.008628138131276924
+days_us_to_surg_approx,continuous,Asian,univariate_asian_vs_white,-0.006179110133266124,-0.02433467099881251,0.009881203791986712

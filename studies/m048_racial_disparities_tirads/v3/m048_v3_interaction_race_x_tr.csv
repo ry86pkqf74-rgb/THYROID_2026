@@ -1,0 +1,3 @@
+param,coef,p,p_bonf
+"C(race_strat, Treatment('White'))[T.Asian]:max_tr_int",-0.041670747142023165,0.7640467197104146,1.0
+"C(race_strat, Treatment('White'))[T.Black]:max_tr_int",-0.07371834528859258,0.2960943872862466,1.0
