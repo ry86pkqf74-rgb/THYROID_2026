@@ -1,0 +1,4 @@
+arm,n_total,n_TR4,n_TR5,k_TR4,k_TR5,rom_TR4_pct,rom_TR5_pct,note
+arm_b_first_us_only,3687,860,1241,161,324,18.7,26.1,Identical to primary because nodule_master_id already deduplicates across exams
+arm_c_single_nodule_pts,782,150,298,46,104,30.7,34.9,Higher ROM: single-nodule patients reach surgery via direct biopsy referral (selection effect)
+arm_d_unilateral_path_only,3687,860,1241,73,133,8.5,10.7,Lower ROM: counts only unilateral path matches (excludes bilateral) — likely UNDERESTIMATE of true per-nodule malignancy
