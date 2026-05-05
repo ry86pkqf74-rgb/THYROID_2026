@@ -278,11 +278,57 @@ def main():
              "specimen, yielding the analytic cohort of n=3,375.")
     add_todo(doc, "Confirm institution name and data warehouse description for the journal.")
 
+    add_heading(doc, "ACR TI-RADS 2017 re-scoring across the full era of the cohort", level=2)
+    add_para(doc,
+             "Because the cohort spans 1994 through 2025, including a substantial volume of "
+             "ultrasound reports issued before the ACR TI-RADS 2017 lexicon was published, ACR "
+             "2017 categories were not extracted from reporter-assigned TR labels in the "
+             "narrative report. Instead, ACR 2017 categories were re-scored uniformly across "
+             "the entire cohort from raw nodule-level feature descriptions, using the following "
+             "pipeline:")
+    add_para(doc,
+             "First, a structured large-language-model extraction (Qwen2.5-32B-Instruct-AWQ, "
+             "served via vLLM) parsed each ultrasound report at the per-nodule grain to assign "
+             "discrete categorical values to each of the five ACR 2017 features — composition, "
+             "echogenicity, shape, margins, and calcifications/echogenic foci — from the "
+             "freetext nodule descriptions. Per-nodule echogenic-foci sub-types and a sixth "
+             "feature (vascularity) were also extracted for sensitivity analysis but did not "
+             "contribute to the ACR 2017 score. Second, the Tessler 2017 ACR algorithm was "
+             "applied programmatically (canonical pipeline Script 376) to convert each "
+             "extracted feature value to its ACR 2017 point assignment "
+             "(composition_pts, echogenicity_pts, shape_pts, margin_pts, foci_pts), summed to "
+             "an integer total (acr2017_tirads_points), and mapped to the categorical TR tier "
+             "(TR1 = 0 points, TR2 = 2, TR3 = 3, TR4 = 4–6, TR5 ≥ 7). Third, the strict "
+             "analytic subset required complete five-feature scoring per nodule "
+             "(acr2017_feature_points_complete = TRUE), which guarantees that the analytic "
+             "ACR 2017 category derives from re-scored features rather than from any "
+             "reporter-assigned label.")
+    add_para(doc,
+             "Where the original report did happen to include a reporter-assigned TR category "
+             "(typically post-2017 reports), that label was retained as a separate audit "
+             "column (tirads_reported_in_text) but did not drive the analytic predictor at "
+             "either grain. This design harmonizes pre- and post-2017 reports under a single "
+             "uniformly-applied lexicon and avoids the bias that would arise from mixing "
+             "reporter-assigned categories (where present) with re-scored categories (where "
+             "no reporter assignment existed). Of the 35,207 nodules with an exam date and a "
+             "computed ACR 2017 category, 33,267 (94.5%) also carried a reporter-assigned text "
+             "TR; 970 (2.8%) had a computed category without any reporter label, predominantly "
+             "from pre-2017 reports. Pre- vs post-ACR 2017 era distribution: 5,186 nodules "
+             "predate 2017-05 (the ACR 2017 publication date), of which 381 (7.4%) entered "
+             "the strict analytic subset; 30,021 are post-2017 with 3,306 (11.0%) strict-"
+             "eligible. Strict-eligibility rates are similar between eras, confirming that "
+             "feature extraction was applied uniformly regardless of report vintage.")
+    add_todo(doc, "Confirm with Senior Author: cite Tessler 2017 ACR 2017 White Paper for the "
+                  "scoring algorithm; cite Qwen2.5-32B model card; cite institutional NLP-pipeline "
+                  "publication if any (canonical_us_nodule_v2 build documentation, mig_xx).")
+
     add_heading(doc, "Patient-level predictor and outcome (primary analysis)", level=2)
     add_para(doc,
-             "The primary patient-level predictor was the maximum ACR TI-RADS 2017 category "
-             "across all preoperative US exams (max_tirads_category_ever). When multiple US "
-             "exams existed, the patient was assigned the highest TR observed; this is the "
+             "The primary patient-level predictor was the maximum re-scored ACR TI-RADS 2017 "
+             "category across all preoperative US exams (max_tirads_category_ever, derived from "
+             "canonical_us_patient_master_VIEW_v2 post-mig_260; in turn derived from the per-"
+             "nodule re-scored acr2017_tirads_category described above). When multiple US exams "
+             "existed, the patient was assigned the highest re-scored TR observed; this is the "
              "convention used in most published operative-cohort validations and matches "
              "clinical practice in which the worst nodule drives FNA and surgical decisions. "
              "The reference standard was any pathology-proven thyroid malignancy on the "
@@ -533,15 +579,24 @@ def main():
 
     add_heading(doc, "Limitations", level=2)
     add_para(doc,
-             "Limitations include (1) operative cohort restricts inference to surgically resected "
-             "patients; non-operative TI-RADS-stratified surveillance cohorts at the same "
-             "institution were not analyzed; (2) per-nodule FNA size is not yet linked at the "
-             "nodule grain (carry-forward CF-FNA-SIZE-CM-NULL), limiting per-nodule size-aware ACR "
-             "FNA-compliance analysis to the patient grain; (3) Bethesda coverage at the patient "
+             "Limitations include: (1) the operative cohort restricts inference to surgically "
+             "resected patients; non-operative TI-RADS-stratified surveillance cohorts at the same "
+             "institution were not analyzed; (2) ACR TI-RADS 2017 categories were re-scored via "
+             "structured large-language-model extraction of the five ACR features from US report "
+             "narratives followed by programmatic application of the Tessler 2017 algorithm — "
+             "this approach harmonizes pre- and post-2017 reports under a single lexicon but "
+             "introduces extraction-model dependence in the predictor; the strict-eligibility "
+             "gate (5-feature complete scoring) excluded ~89% of all nodules and ~93% of pre-2017 "
+             "nodules, which limits sample size and may favor lesions described in greater "
+             "narrative detail; (3) per-nodule FNA size is not yet linked at the nodule grain "
+             "(carry-forward CF-FNA-SIZE-CM-NULL), limiting per-nodule size-aware ACR FNA-"
+             "compliance analysis to the patient grain; (4) Bethesda coverage at the patient "
              "level is 70.5% — patients without FNA were brought directly to surgery on imaging "
-             "criteria; (4) institutional pathology referent uses WHO 2022 classification; "
+             "criteria; (5) institutional pathology referent uses WHO 2022 classification; "
              "results may not generalize to centers using older WHO classifications without "
-             "reclassification of FTUMP/NIFTP; (5) no prospective external validation cohort.")
+             "reclassification of FTUMP/NIFTP; (6) no prospective external validation cohort. "
+             "Sensitivity arm A (relaxed feature-completeness gate; n=15,309 nodules) is "
+             "reported in Supplementary Table S1 to bound the influence of the strict gate.")
 
     add_heading(doc, "Conclusions", level=1)
     add_para(doc,
