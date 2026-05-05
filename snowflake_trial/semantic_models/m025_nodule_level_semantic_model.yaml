@@ -1,0 +1,166 @@
+# Cortex Analyst semantic model for the M025 v2.0 nodule-level cohort.
+# Bind in Snowsight: Snowflake AI Studio → Cortex Analyst → Add semantic model → upload this file.
+# Once bound, queries like `cortex analyst query "..."` work against the new view.
+name: m025_nodule_level
+description: >
+  Per-nodule TI-RADS performance analytic spine (M025 v2.0). One row per
+  analytic ultrasound nodule. Joins per-nodule TI-RADS scoring to FNA
+  Bethesda and to same-side path tumor (≤365d post-US). Built by
+  cowork mig_306 on 2026-05-04.
+
+tables:
+  - name: nodule_cohort
+    description: >
+      Per-nodule analytic spine. Filter analytic_eligible_strict_acr_pernodule = TRUE
+      for the publication cohort (n=3,687). nodule_path_proven_malignant is the
+      gold-standard outcome (same-side path tumor within 365 days post-US).
+    base_table:
+      database: THYROID_VALIDATION
+      schema: PUBLIC
+      table: COHORT_M025_NODULE_LEVEL_V1_FLAT  # to be created in SF mirror per mig_289 pattern
+
+    primary_key:
+      columns: [research_id, nodule_id, exam_date]
+
+    dimensions:
+      - name: research_id
+        synonyms: [patient id, patient]
+        description: De-identified patient identifier.
+        expr: research_id
+        data_type: integer
+
+      - name: nodule_master_id
+        synonyms: [nodule id stable]
+        description: Stable nodule identifier across exams (longitudinal nodule tracking).
+        expr: nodule_master_id
+        data_type: bigint
+
+      - name: laterality
+        synonyms: [side, lobe]
+        description: Per-nodule laterality (left, right, isthmus).
+        expr: laterality_norm
+        data_type: text
+        sample_values: [left, right, isthmus]
+
+      - name: tirads_category
+        synonyms: [TR, TIRADS, ACR TI-RADS, TI-RADS category]
+        description: Strict ACR 2017 TI-RADS category from acr2017_tirads_points.
+        expr: acr2017_tirads_category
+        data_type: text
+        sample_values: [TR1, TR2, TR3, TR4, TR5]
+
+      - name: bethesda_2023
+        synonyms: [bethesda category, FNA category]
+        description: Per-nodule FNA Bethesda 2023 category, when FNA-linked via legacy bridge.
+        expr: bethesda_2023_num
+        data_type: integer
+
+      - name: histology
+        synonyms: [tumor histology, primary histology]
+        description: Primary path histology when same-side malignant tumor matched.
+        expr: primary_histology
+        data_type: text
+
+      - name: histology_variant
+        description: Histologic variant of matched same-side tumor.
+        expr: histology_variant
+        data_type: text
+
+      - name: ajcc8_t_stage
+        description: AJCC 8 T-stage (resolved overlay) of matched same-side tumor.
+        expr: path_t_stage
+        data_type: text
+
+      - name: analytic_eligible_strict_acr
+        synonyms: [strict ACR cohort, publication cohort]
+        description: TRUE for the publication-grade strict ACR 2017 per-nodule cohort (n=3,687).
+        expr: analytic_eligible_strict_acr_pernodule
+        data_type: boolean
+
+      - name: multi_nodule_attribution_unresolved
+        description: Lane F flag — TRUE when nodule belongs to a US exam where multi-nodule attribution is unresolved.
+        expr: multi_nodule_attribution_unresolved
+        data_type: boolean
+
+    time_dimensions:
+      - name: exam_date
+        description: US exam date.
+        expr: exam_date
+        data_type: date
+
+      - name: surgery_date
+        description: Surgery date for matched same-side path tumor.
+        expr: surgery_date
+        data_type: date
+
+    measures:
+      - name: n_nodules
+        description: Count of nodules.
+        expr: COUNT(*)
+        synonyms: [count, number of nodules]
+        default_aggregation: count
+
+      - name: n_patients
+        description: Distinct patient count.
+        expr: COUNT(DISTINCT research_id)
+        synonyms: [number of patients]
+        default_aggregation: count_distinct
+
+      - name: n_path_malignant_nodules
+        description: Count of nodules with same-side path-proven malignancy within 365d post-US.
+        expr: COUNT_IF(nodule_path_proven_malignant)
+        synonyms: [malignant nodules, cancers]
+
+      - name: rom_per_nodule
+        description: Risk of malignancy at nodule grain (n_path_malignant_nodules / n_nodules).
+        expr: COUNT_IF(nodule_path_proven_malignant) * 1.0 / NULLIF(COUNT(*), 0)
+        synonyms: [risk of malignancy, malignancy rate, ROM]
+
+      - name: nodule_size_cm_max
+        description: Per-nodule maximum US dimension in cm.
+        expr: AVG(size_cm_max)
+        synonyms: [size, mean size]
+
+verified_queries:
+  - name: per_tr_rom_strict_cohort
+    question: What is the per-nodule risk of malignancy by TI-RADS category in the strict ACR cohort?
+    sql: |
+      SELECT acr2017_tirads_category AS tirads,
+             COUNT(*) AS n_nodules,
+             COUNT_IF(nodule_path_proven_malignant) AS n_malignant,
+             100.0 * COUNT_IF(nodule_path_proven_malignant) / NULLIF(COUNT(*),0) AS rom_pct
+      FROM COHORT_M025_NODULE_LEVEL_V1_FLAT
+      WHERE analytic_eligible_strict_acr_pernodule = TRUE
+      GROUP BY 1
+      ORDER BY 1;
+
+  - name: bethesda_x_tirads_cross_strat
+    question: How many nodules are at each Bethesda × TIRADS combination, and what's the ROM in each cell?
+    sql: |
+      SELECT bethesda_2023_num, acr2017_tirads_category,
+             COUNT(*) AS n,
+             COUNT_IF(nodule_path_proven_malignant) AS n_malig,
+             100.0 * COUNT_IF(nodule_path_proven_malignant) / NULLIF(COUNT(*),0) AS rom_pct
+      FROM COHORT_M025_NODULE_LEVEL_V1_FLAT
+      WHERE analytic_eligible_strict_acr_pernodule = TRUE
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  - name: tirads_4_or_higher_test_performance
+    question: At the TR≥TR4 threshold, what is the sensitivity, specificity, PPV, and NPV?
+    sql: |
+      WITH cells AS (
+        SELECT
+          COUNT_IF(acr2017_tirads_category IN ('TR4','TR5') AND nodule_path_proven_malignant) AS tp,
+          COUNT_IF(acr2017_tirads_category IN ('TR4','TR5') AND NOT nodule_path_proven_malignant) AS fp,
+          COUNT_IF(acr2017_tirads_category NOT IN ('TR4','TR5') AND nodule_path_proven_malignant) AS fn,
+          COUNT_IF(acr2017_tirads_category NOT IN ('TR4','TR5') AND NOT nodule_path_proven_malignant) AS tn
+        FROM COHORT_M025_NODULE_LEVEL_V1_FLAT
+        WHERE analytic_eligible_strict_acr_pernodule = TRUE
+      )
+      SELECT tp, fp, fn, tn,
+             100.0*tp/NULLIF(tp+fn,0) AS sens_pct,
+             100.0*tn/NULLIF(tn+fp,0) AS spec_pct,
+             100.0*tp/NULLIF(tp+fp,0) AS ppv_pct,
+             100.0*tn/NULLIF(tn+fn,0) AS npv_pct
+      FROM cells;
