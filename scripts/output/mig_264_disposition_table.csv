@@ -1,386 +1,361 @@
-research_id,bethesda_index_nodule_linkage_source,histology_final,n_fna,max_bethesda_num,days_fna_to_surg,multi_tumor_path_synoptics,flag_fna_chain_has_gt2,flag_multi_fna,flag_multi_tumor,flag_gt_365d,flag_linkage_text_suspect,suggested_disposition_bucket
-41,surgery,follicular carcinoma,1,2,211,False,False,False,False,False,False,heuristic_default_review
-65,surgery,follicular carcinoma,1,2,27,False,False,False,False,False,False,heuristic_default_review
-156,surgery,metastatic thyroid carcinoma,2,2,61,False,False,True,False,False,False,heuristic_default_review
-166,surgery,PTC,2,2,176,False,False,True,False,False,False,heuristic_default_review
-252,surgery,follicular carcinoma,1,2,178,False,False,False,False,False,False,heuristic_default_review
-263,surgery,metastatic PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review
-318,surgery,PTC,1,2,17,False,False,False,False,False,False,heuristic_default_review
-325,surgery,PTC,1,2,2278,True,False,False,True,True,False,heuristic_long_interval
-343,surgery,PTC,1,2,235,False,False,False,False,False,False,heuristic_default_review
-388,surgery,PTC,1,2,61,False,False,False,False,False,False,heuristic_default_review
-418,surgery,PTC,1,2,91,True,False,False,True,False,False,heuristic_default_review
-440,surgery,PTC,1,2,1266,False,False,False,False,True,False,heuristic_long_interval
-452,surgery,PTC,1,2,278,False,False,False,False,False,False,heuristic_default_review
-475,surgery,PTC,2,2,-3172,False,False,True,False,False,False,heuristic_default_review
-575,surgery,PTC,2,2,177,False,False,True,False,False,False,heuristic_default_review
-628,surgery,PTC,3,6,-784,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-701,surgery,PTC,1,2,43,True,False,False,True,False,False,heuristic_default_review
-706,surgery,PTC,3,2,127,False,False,True,False,False,False,heuristic_default_review
-710,surgery,PTC,12,2,587,False,False,True,False,True,False,heuristic_long_interval
-712,surgery,PTC,2,2,719,True,False,True,True,True,False,heuristic_long_interval
-734,surgery,PTC,3,2,-1719,False,False,True,False,False,False,heuristic_default_review
-768,surgery,PTC,3,2,-434,True,False,True,True,False,False,heuristic_default_review
-788,surgery,PTC,6,2,138,False,False,True,False,False,False,heuristic_default_review
-790,surgery,PTC,7,2,2111,False,False,True,False,True,False,heuristic_long_interval
-813,surgery,PTC,2,2,152,False,False,True,False,False,False,heuristic_default_review
-846,surgery,PTC,2,6,43,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-880,surgery,follicular carcinoma,1,2,11,False,False,False,False,False,False,heuristic_default_review
-927,surgery,PTC,1,2,36,False,False,False,False,False,False,heuristic_default_review
-939,surgery,PTC,1,2,190,False,False,False,False,False,False,heuristic_default_review
-948,surgery,PTC,1,2,209,False,False,False,False,False,False,heuristic_default_review
-964,surgery,PTC,1,2,46,False,False,False,False,False,False,heuristic_default_review
-978,surgery,PTC,1,2,6,False,False,False,False,False,False,heuristic_default_review
-1071,surgery,PTC,2,6,161,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-1074,surgery,PTC,3,2,286,False,False,True,False,False,False,heuristic_default_review
-1124,surgery,PTC,1,2,41,False,False,False,False,False,False,heuristic_default_review
-1152,surgery,PTC,1,2,335,False,False,False,False,False,False,heuristic_default_review
-1171,surgery,PTC,2,2,272,False,False,True,False,False,False,heuristic_default_review
-1190,surgery,PTC,1,2,26,False,False,False,False,False,False,heuristic_default_review
-1216,surgery,PTC,2,2,-1494,False,False,True,False,False,False,heuristic_default_review
-1224,surgery,FTUMP,1,2,285,False,False,False,False,False,False,heuristic_default_review
-1225,surgery,follicular carcinoma,1,2,131,False,False,False,False,False,False,heuristic_default_review
-1239,surgery,follicular carcinoma,1,2,34,False,False,False,False,False,False,heuristic_default_review
-1280,surgery,PTC,4,2,300,False,False,True,False,False,False,heuristic_default_review
-1309,surgery,follicular carcinoma,2,2,559,False,False,True,False,True,False,heuristic_long_interval
-1328,surgery,PTC,1,2,104,False,False,False,False,False,False,heuristic_default_review
-1350,surgery,follicular carcinoma,1,2,476,False,False,False,False,True,False,heuristic_long_interval
-1370,surgery,PTC,1,2,644,False,False,False,False,True,False,heuristic_long_interval
-1382,surgery,PTC,3,2,81,False,False,True,False,False,False,heuristic_default_review
-1390,surgery,follicular carcinoma,2,2,118,False,False,True,False,False,False,heuristic_default_review
-1395,surgery,PTC,1,2,159,False,False,False,False,False,False,heuristic_default_review
-1460,surgery,PTC,1,2,226,False,False,False,False,False,False,heuristic_default_review
-1488,surgery,follicular carcinoma,1,2,171,False,False,False,False,False,False,heuristic_default_review
-1504,surgery,PTC,1,2,845,False,False,False,False,True,False,heuristic_long_interval
-1549,surgery,PTC,2,6,53,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-1617,surgery,PTC,1,2,112,True,False,False,True,False,False,heuristic_default_review
-1630,surgery,PTC,1,2,126,False,False,False,False,False,False,heuristic_default_review
-1656,surgery,PTC,1,2,1408,False,False,False,False,True,False,heuristic_long_interval
-1659,surgery,PTC,3,3,177,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-1666,surgery,PTC,1,2,351,False,False,False,False,False,False,heuristic_default_review
-1676,surgery,PTC,1,2,1248,False,False,False,False,True,False,heuristic_long_interval
-1679,surgery,PTC,2,6,78,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-1682,surgery,PTC,2,2,146,False,False,True,False,False,False,heuristic_default_review
-1684,surgery,PTC,1,2,181,False,False,False,False,False,False,heuristic_default_review
-1688,surgery,PTC,2,2,512,True,False,True,True,True,False,heuristic_long_interval
-1710,surgery,PTC,1,2,787,False,False,False,False,True,False,heuristic_long_interval
-1734,surgery,PTC,2,3,183,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-1748,surgery,follicular carcinoma,1,2,121,False,False,False,False,False,False,heuristic_default_review
-1766,surgery,PTC,1,2,67,False,False,False,False,False,False,heuristic_default_review
-1779,surgery,PTC,1,2,1682,False,False,False,False,True,False,heuristic_long_interval
-1883,surgery,PTC,1,2,672,False,False,False,False,True,False,heuristic_long_interval
-1889,surgery,PTC,1,2,301,False,False,False,False,False,False,heuristic_default_review
-1941,surgery,PTC,2,4,4,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-1946,surgery,PTC,1,2,253,False,False,False,False,False,False,heuristic_default_review
-2001,surgery,PTC,3,2,-79,False,False,True,False,False,False,heuristic_default_review
-2012,surgery,PTC,2,2,103,False,False,True,False,False,False,heuristic_default_review
-2045,surgery,PTC,1,2,126,False,False,False,False,False,False,heuristic_default_review
-2078,surgery,PTC,2,6,28,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-2159,surgery,PTC,1,2,2324,False,False,False,False,True,False,heuristic_long_interval
-2164,surgery,PTC,2,3,25,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-2213,surgery,PTC,2,2,1067,False,False,True,False,True,False,heuristic_long_interval
-2226,surgery,PTC,1,2,1001,False,False,False,False,True,False,heuristic_long_interval
-2765,surgery,PTC,1,2,65,False,False,False,False,False,False,heuristic_default_review
-2775,surgery,PTC,1,2,30,True,False,False,True,False,False,heuristic_default_review
-2778,surgery,PTC,2,2,29,True,False,True,True,False,False,heuristic_default_review
-2892,surgery,follicular carcinoma,1,2,75,True,False,False,True,False,False,heuristic_default_review
-2894,surgery,PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review
-2906,surgery,follicular carcinoma,1,2,35,False,False,False,False,False,False,heuristic_default_review
-2966,surgery,PTC,1,2,364,False,False,False,False,False,False,heuristic_default_review
-2982,surgery,PTC,1,2,805,False,False,False,False,True,False,heuristic_long_interval
-3002,surgery,PTC,2,2,47,True,False,True,True,False,False,heuristic_default_review
-3037,surgery,metastatic PTC,3,3,-1018,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-3066,surgery,PTC,1,2,2241,False,False,False,False,True,False,heuristic_long_interval
-3084,surgery,PTC,2,3,73,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-3086,surgery,PTC,1,2,362,False,False,False,False,False,False,heuristic_default_review
-3137,surgery,PTC,2,2,388,False,False,True,False,True,False,heuristic_long_interval
-3222,surgery,PTC,1,2,21,False,False,False,False,False,False,heuristic_default_review
-3248,surgery,PTC,1,2,20,False,False,False,False,False,False,heuristic_default_review
-3269,surgery,PTC,1,2,168,False,False,False,False,False,False,heuristic_default_review
-3298,surgery,PTC,1,2,11,False,False,False,False,False,False,heuristic_default_review
-3318,surgery,PTC,1,2,659,False,False,False,False,True,False,heuristic_long_interval
-3321,surgery,follicular carcinoma,1,2,55,True,False,False,True,False,False,heuristic_default_review
-3400,surgery,PTC,1,2,33,True,False,False,True,False,False,heuristic_default_review
-3408,surgery,PTC,1,2,299,True,False,False,True,False,False,heuristic_default_review
-3436,surgery,follicular carcinoma,1,2,20,False,False,False,False,False,False,heuristic_default_review
-3441,surgery,PTC,1,2,63,False,False,False,False,False,False,heuristic_default_review
-3456,surgery,PTC,1,2,1596,False,False,False,False,True,False,heuristic_long_interval
-3462,surgery,follicular carcinoma,1,2,41,False,False,False,False,False,False,heuristic_default_review
-3471,surgery,PTC,1,2,1296,False,False,False,False,True,False,heuristic_long_interval
-3565,surgery,PTC,1,2,69,True,False,False,True,False,False,heuristic_default_review
-3595,surgery,PTC,1,2,40,True,False,False,True,False,False,heuristic_default_review
-3597,surgery,PTC,4,6,28,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-3601,surgery,PTC,3,6,15,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-3640,surgery,PTC,2,2,433,False,False,True,False,True,False,heuristic_long_interval
-3732,surgery,PTC,1,2,60,False,False,False,False,False,False,heuristic_default_review
-3751,surgery,PTC,2,2,329,True,False,True,True,False,False,heuristic_default_review
-3773,surgery,follicular carcinoma,2,2,56,False,False,True,False,False,False,heuristic_default_review
-3849,surgery,PTC,2,6,14,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-3896,surgery,PTC,2,6,1,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-3987,surgery,PTC,2,3,38,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-4127,surgery,PTC,2,2,4290,False,False,True,False,True,False,heuristic_long_interval
-4145,surgery,PTC,2,2,294,False,False,True,False,False,False,heuristic_default_review
-4185,surgery,PTC,1,2,762,False,False,False,False,True,False,heuristic_long_interval
-4208,surgery,PTC,2,2,51,False,False,True,False,False,False,heuristic_default_review
-4242,surgery,PTC,1,2,301,False,False,False,False,False,False,heuristic_default_review
-4267,surgery,PTC,1,2,16,True,False,False,True,False,False,heuristic_default_review
-4293,surgery,PTC,3,6,43,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-4336,surgery,PTC,1,2,618,False,False,False,False,True,False,heuristic_long_interval
-4352,surgery,PTC,1,2,52,True,False,False,True,False,False,heuristic_default_review
-4378,surgery,PTC,2,2,134,True,False,True,True,False,False,heuristic_default_review
-4414,surgery,PTC,3,2,75,False,False,True,False,False,False,heuristic_default_review
-4467,surgery,PTC,2,2,145,False,False,True,False,False,False,heuristic_default_review
-4479,surgery,PTC,1,2,1205,False,False,False,False,True,False,heuristic_long_interval
-4526,surgery,PTC,1,2,240,False,False,False,False,False,False,heuristic_default_review
-4564,surgery,PTC,4,6,-1227,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-4594,surgery,follicular carcinoma,1,2,583,False,False,False,False,True,False,heuristic_long_interval
-4606,surgery,PTC,2,2,904,True,False,True,True,True,False,heuristic_long_interval
-4610,surgery,PTC,1,2,365,False,False,False,False,False,False,heuristic_default_review
-4612,surgery,PTC,1,2,36,True,False,False,True,False,False,heuristic_default_review
-4649,surgery,PTC,2,3,76,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-4679,surgery,PTC,2,2,149,True,False,True,True,False,False,heuristic_default_review
-4744,surgery,PTC,3,2,559,True,False,True,True,True,False,heuristic_long_interval
-4759,surgery,PTC,2,6,85,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-4769,surgery,PTC,1,2,1141,False,False,False,False,True,False,heuristic_long_interval
-4889,surgery,PTC,2,2,412,False,False,True,False,True,False,heuristic_long_interval
-4901,surgery,PTC,1,2,29,True,False,False,True,False,False,heuristic_default_review
-4911,surgery,PTC,2,2,144,True,False,True,True,False,False,heuristic_default_review
-4936,surgery,PTC,3,2,-240,False,False,True,False,False,False,heuristic_default_review
-4943,surgery,PTC,1,2,146,False,False,False,False,False,False,heuristic_default_review
-4946,surgery,follicular carcinoma,2,2,397,False,False,True,False,True,False,heuristic_long_interval
-4958,surgery,PTC,1,2,322,False,False,False,False,False,False,heuristic_default_review
-4960,surgery,PTC,2,2,30,True,False,True,True,False,False,heuristic_default_review
-4995,surgery,PTC,2,2,3024,False,False,True,False,True,False,heuristic_long_interval
-5001,surgery,PTC,1,2,29,False,False,False,False,False,False,heuristic_default_review
-5053,surgery,PTC,1,2,17,False,False,False,False,False,False,heuristic_default_review
-5064,surgery,PTC,1,2,162,True,False,False,True,False,False,heuristic_default_review
-5100,surgery,PTC,3,3,-1045,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-5101,surgery,PTC,2,2,261,False,False,True,False,False,False,heuristic_default_review
-5103,surgery,PTC,1,2,165,True,False,False,True,False,False,heuristic_default_review
-5110,surgery,PTC,2,6,56,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-5185,surgery,PTC,2,2,26,False,False,True,False,False,False,heuristic_default_review
-5187,surgery,follicular carcinoma,4,6,-1804,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-5197,surgery,PTC,5,6,-333,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-5265,surgery,PTC,1,2,40,False,False,False,False,False,False,heuristic_default_review
-5271,surgery,PTC,2,2,-224,True,False,True,True,False,False,heuristic_default_review
-5366,surgery,PTC,2,2,27,False,False,True,False,False,False,heuristic_default_review
-5416,surgery,PTC,4,3,377,False,True,True,False,True,False,heuristic_stale_bethesda2_vs_events
-5447,surgery,PTC,2,2,37,True,False,True,True,False,False,heuristic_default_review
-5465,surgery,NIFTP,1,2,92,False,False,False,False,False,False,heuristic_default_review
-5472,surgery,follicular carcinoma,1,2,232,False,False,False,False,False,False,heuristic_default_review
-5491,surgery,PTC,3,3,92,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-5501,surgery,follicular carcinoma,2,2,72,True,False,True,True,False,False,heuristic_default_review
-5532,surgery,NIFTP,3,3,758,False,True,True,False,True,False,heuristic_stale_bethesda2_vs_events
-5556,surgery,PTC,1,2,784,False,False,False,False,True,False,heuristic_long_interval
-5628,surgery,follicular carcinoma,1,2,231,False,False,False,False,False,False,heuristic_default_review
-5715,surgery,PTC,1,2,105,False,False,False,False,False,False,heuristic_default_review
-5726,surgery,metastatic PTC,2,3,94,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-5751,surgery,PTC,1,2,617,False,False,False,False,True,False,heuristic_long_interval
-5761,surgery,PTC,2,2,248,False,False,True,False,False,False,heuristic_default_review
-5767,surgery,PTC,3,2,140,True,False,True,True,False,False,heuristic_default_review
-5770,surgery,PTC,1,2,2884,False,False,False,False,True,False,heuristic_long_interval
-5785,surgery,PTC,1,2,156,False,False,False,False,False,False,heuristic_default_review
-5787,surgery,follicular carcinoma,4,2,94,False,False,True,False,False,False,heuristic_default_review
-5805,surgery,PTC,3,6,-301,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-5820,surgery,PTC,2,6,1314,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events
-5839,surgery,follicular carcinoma,4,2,-384,False,False,True,False,False,False,heuristic_default_review
-5859,surgery,PTC,1,2,718,False,False,False,False,True,False,heuristic_long_interval
-5867,surgery,PTC,4,2,128,False,False,True,False,False,False,heuristic_default_review
-5871,surgery,PTC,2,6,1387,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events
-5959,surgery,PTC,2,6,1321,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events
-5981,surgery,PTC,2,2,1052,True,False,True,True,True,False,heuristic_long_interval
-6013,surgery,PTC,2,2,107,False,False,True,False,False,False,heuristic_default_review
-6043,surgery,follicular carcinoma,1,2,98,True,False,False,True,False,False,heuristic_default_review
-6060,surgery,PTC,4,5,87,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6130,surgery,PTC,2,2,390,True,False,True,True,True,False,heuristic_long_interval
-6144,surgery,PTC,1,2,732,False,False,False,False,True,False,heuristic_long_interval
-6146,surgery,PTC,2,2,17,True,False,True,True,False,False,heuristic_default_review
-6159,surgery,PTC,1,2,225,False,False,False,False,False,False,heuristic_default_review
-6168,surgery,PTC,2,3,78,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-6188,surgery,PTC,2,4,96,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6195,surgery,PTC,1,2,1261,True,False,False,True,True,False,heuristic_long_interval
-6214,surgery,PTC,2,6,-1351,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6216,surgery,NIFTP,2,4,164,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6238,surgery,MTC,2,5,34,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-6251,surgery,PTC,2,6,57,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6266,surgery,PTC,4,5,63,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6270,surgery,PTC,1,2,918,False,False,False,False,True,False,heuristic_long_interval
-6293,surgery,PTC,1,2,7,False,False,False,False,False,False,heuristic_default_review
-6356,surgery,PTC,1,2,69,False,False,False,False,False,False,heuristic_default_review
-6361,surgery,PTC,2,2,314,False,False,True,False,False,False,heuristic_default_review
-6374,surgery,PTC,3,3,180,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-6403,surgery,PTC,5,2,178,False,False,True,False,False,False,heuristic_default_review
-6422,surgery,PTC,2,6,323,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-6447,surgery,PTC,1,2,14,False,False,False,False,False,False,heuristic_default_review
-6457,surgery,anaplastic carcinoma,2,3,27,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6481,surgery,PTC,2,2,41,True,False,True,True,False,False,heuristic_default_review
-6514,surgery,MTC,2,6,79,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6522,surgery,PTC,2,6,84,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6565,surgery,NIFTP,2,2,35,False,False,True,False,False,False,heuristic_default_review
-6670,surgery,PTC,1,2,92,False,False,False,False,False,False,heuristic_default_review
-6682,surgery,PTC,1,2,48,False,False,False,False,False,False,heuristic_default_review
-6709,surgery,follicular carcinoma,1,2,1330,False,False,False,False,True,False,heuristic_long_interval
-6713,surgery,PTC,2,2,37,True,False,True,True,False,False,heuristic_default_review
-6723,surgery,PTC,1,2,24,False,False,False,False,False,False,heuristic_default_review
-6727,surgery,PTC,2,3,62,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6731,surgery,PTC,2,2,126,False,False,True,False,False,False,heuristic_default_review
-6751,surgery,PTC,1,2,57,False,False,False,False,False,False,heuristic_default_review
-6788,surgery,PTC,3,2,982,False,False,True,False,True,False,heuristic_long_interval
-6814,surgery,PTC,1,2,95,True,False,False,True,False,False,heuristic_default_review
-6865,surgery,PTC,4,3,92,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-6936,surgery,PTC,5,2,417,False,False,True,False,True,False,heuristic_long_interval
-6941,surgery,PTC,1,2,949,True,False,False,True,True,False,heuristic_long_interval
-6977,surgery,MTC,2,2,1873,False,False,True,False,True,False,heuristic_long_interval
-6998,surgery,PTC,2,2,1167,False,False,True,False,True,False,heuristic_long_interval
-7025,surgery,PTC,2,3,938,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events
-7113,surgery,NIFTP,1,2,57,False,False,False,False,False,False,heuristic_default_review
-7181,surgery,PTC,1,2,2165,False,False,False,False,True,False,heuristic_long_interval
-7188,surgery,PTC,2,2,96,False,False,True,False,False,False,heuristic_default_review
-7193,surgery,PTC,1,2,68,False,False,False,False,False,False,heuristic_default_review
-7280,surgery,PTC,1,2,1689,True,False,False,True,True,False,heuristic_long_interval
-7354,surgery,PTC,1,2,457,True,False,False,True,True,False,heuristic_long_interval
-7374,surgery,PTC,2,3,89,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-7386,surgery,NIFTP,1,2,13,True,False,False,True,False,False,heuristic_default_review
-7393,surgery,PTC,1,2,1322,False,False,False,False,True,False,heuristic_long_interval
-7445,surgery,PTC,2,5,6,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-7491,surgery,PTC,2,2,797,True,False,True,True,True,False,heuristic_long_interval
-7689,surgery,PTC,1,2,199,False,False,False,False,False,False,heuristic_default_review
-7696,surgery,follicular adenoma,1,2,90,False,False,False,False,False,False,heuristic_default_review
-7731,surgery,MTC,1,2,16,False,False,False,False,False,False,heuristic_default_review
-7737,surgery,PTC,1,2,3389,False,False,False,False,True,False,heuristic_long_interval
-7742,surgery,metastatic follicular carcinoma,2,6,-855,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-7745,surgery,PTC,1,2,515,False,False,False,False,True,False,heuristic_long_interval
-7851,surgery,NIFTP,1,2,643,False,False,False,False,True,False,heuristic_long_interval
-7884,surgery,PTC,1,2,1162,True,False,False,True,True,False,heuristic_long_interval
-7888,surgery,PTC,1,2,69,False,False,False,False,False,False,heuristic_default_review
-7894,surgery,PTC,2,2,135,True,False,True,True,False,False,heuristic_default_review
-7924,surgery,NIFTP,2,6,133,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-7962,surgery,PTC,2,2,1709,True,False,True,True,True,False,heuristic_long_interval
-8008,surgery,PTC,2,3,34,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-8010,surgery,PTC,3,2,1802,True,False,True,True,True,False,heuristic_long_interval
-8063,surgery,PTC,1,2,657,False,False,False,False,True,False,heuristic_long_interval
-8072,surgery,NIFTP,1,2,3553,False,False,False,False,True,False,heuristic_long_interval
-8097,surgery,PTC,1,2,593,False,False,False,False,True,False,heuristic_long_interval
-8104,surgery,PTC,1,2,515,True,False,False,True,True,False,heuristic_long_interval
-8110,surgery,follicular carcinoma,1,2,118,False,False,False,False,False,False,heuristic_default_review
-8137,surgery,PTC,1,2,1050,False,False,False,False,True,False,heuristic_long_interval
-8155,surgery,follicular carcinoma,1,2,168,False,False,False,False,False,False,heuristic_default_review
-8197,surgery,PTC,1,2,832,False,False,False,False,True,False,heuristic_long_interval
-8233,surgery,NIFTP,1,2,287,False,False,False,False,False,False,heuristic_default_review
-8287,surgery,PTC,1,2,208,True,False,False,True,False,False,heuristic_default_review
-8323,surgery,follicular carcinoma,1,2,241,False,False,False,False,False,False,heuristic_default_review
-8343,surgery,PTC,2,2,1843,False,False,True,False,True,False,heuristic_long_interval
-8375,surgery,NIFTP,1,2,314,False,False,False,False,False,False,heuristic_default_review
-8381,surgery,PTC,1,2,1101,False,False,False,False,True,False,heuristic_long_interval
-8404,surgery,PTC,1,2,916,False,False,False,False,True,False,heuristic_long_interval
-8473,surgery,follicular adenoma,1,2,52,False,False,False,False,False,False,heuristic_default_review
-8553,surgery,PTC,1,2,14,True,False,False,True,False,False,heuristic_default_review
-8628,surgery,follicular carcinoma,1,2,2097,False,False,False,False,True,False,heuristic_long_interval
-8806,surgery,PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review
-8901,surgery,PTC,1,2,75,False,False,False,False,False,False,heuristic_default_review
-9071,surgery,PTC,2,6,35,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-9085,surgery,MTC,1,2,61,False,False,False,False,False,False,heuristic_default_review
-9090,surgery,poorly differentiated thyroid carcinoma,1,2,3550,False,False,False,False,True,False,heuristic_long_interval
-9107,surgery,PTC,1,2,85,False,False,False,False,False,False,heuristic_default_review
-9110,surgery,PTC,1,2,2555,False,False,False,False,True,False,heuristic_long_interval
-9136,surgery,PTC,2,2,24,True,False,True,True,False,False,heuristic_default_review
-9149,surgery,follicular carcinoma,1,2,302,False,False,False,False,False,False,heuristic_default_review
-9239,surgery,follicular carcinoma,1,2,57,False,False,False,False,False,False,heuristic_default_review
-9258,surgery,follicular carcinoma,1,2,36,False,False,False,False,False,False,heuristic_default_review
-9298,surgery,NIFTP,1,2,2177,False,False,False,False,True,False,heuristic_long_interval
-9300,surgery,PTC,1,2,20,True,False,False,True,False,False,heuristic_default_review
-9313,surgery,PTC,1,2,414,False,False,False,False,True,False,heuristic_long_interval
-9319,surgery,PTC,1,2,69,True,False,False,True,False,False,heuristic_default_review
-9323,surgery,NIFTP,1,2,52,False,False,False,False,False,False,heuristic_default_review
-9328,surgery,PTC,1,2,71,True,False,False,True,False,False,heuristic_default_review
-9345,surgery,NIFTP,1,2,58,False,False,False,False,False,False,heuristic_default_review
-9371,surgery,follicular carcinoma,2,2,41,False,False,True,False,False,False,heuristic_default_review
-9378,surgery,NIFTP,1,2,2215,False,False,False,False,True,False,heuristic_long_interval
-9424,surgery,PTC,1,2,38,True,False,False,True,False,False,heuristic_default_review
-9455,surgery,PTC,2,5,63,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-9462,surgery,follicular carcinoma,1,2,878,False,False,False,False,True,False,heuristic_long_interval
-9508,surgery,PTC,1,2,56,False,False,False,False,False,False,heuristic_default_review
-9544,surgery,PTC,1,2,27,False,False,False,False,False,False,heuristic_default_review
-9588,surgery,follicular carcinoma,1,2,286,True,False,False,True,False,False,heuristic_default_review
-9596,surgery,PTC,2,6,43,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-9605,surgery,PTC,1,2,461,False,False,False,False,True,False,heuristic_long_interval
-9674,surgery,PTC,2,3,56,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events
-9715,surgery,follicular carcinoma,1,2,90,False,False,False,False,False,False,heuristic_default_review
-9729,surgery,follicular carcinoma,1,2,1202,True,False,False,True,True,False,heuristic_long_interval
-9735,surgery,PTC,2,2,251,False,False,True,False,False,False,heuristic_default_review
-9741,surgery,MTC,2,2,141,False,False,True,False,False,False,heuristic_default_review
-9754,surgery,NIFTP,1,2,197,False,False,False,False,False,False,heuristic_default_review
-9798,surgery,metastatic PTC,1,2,94,True,False,False,True,False,False,heuristic_default_review
-9831,surgery,follicular carcinoma,1,2,1073,False,False,False,False,True,False,heuristic_long_interval
-9843,surgery,PTC,1,2,1681,False,False,False,False,True,False,heuristic_long_interval
-9859,surgery,PTC,1,2,1879,False,False,False,False,True,False,heuristic_long_interval
-9861,surgery,PTC,1,2,1322,False,False,False,False,True,False,heuristic_long_interval
-9893,surgery,PTC,1,2,83,False,False,False,False,False,False,heuristic_default_review
-9934,surgery,PTC,2,2,27,True,False,True,True,False,False,heuristic_default_review
-9953,surgery,PTC,1,2,1511,False,False,False,False,True,False,heuristic_long_interval
-9970,surgery,PTC,1,2,10,False,False,False,False,False,False,heuristic_default_review
-9986,surgery,FTUMP,1,2,2383,False,False,False,False,True,False,heuristic_long_interval
-9988,surgery,follicular carcinoma,2,2,1778,False,False,True,False,True,False,heuristic_long_interval
-10023,surgery,follicular carcinoma,1,2,2197,False,False,False,False,True,False,heuristic_long_interval
-10100,surgery,PTC,5,2,176,False,False,True,False,False,False,heuristic_default_review
-10112,surgery,follicular carcinoma,1,2,3053,False,False,False,False,True,False,heuristic_long_interval
-10128,surgery,follicular carcinoma,2,2,545,False,False,True,False,True,False,heuristic_long_interval
-10143,surgery,PTC,1,2,43,False,False,False,False,False,False,heuristic_default_review
-10246,surgery,poorly differentiated thyroid carcinoma,2,2,452,False,False,True,False,True,False,heuristic_long_interval
-10266,surgery,PTC,1,2,109,False,False,False,False,False,False,heuristic_default_review
-10313,surgery,PTC,1,2,70,False,False,False,False,False,False,heuristic_default_review
-10344,surgery,FTUMP,2,2,894,False,False,True,False,True,False,heuristic_long_interval
-10401,surgery,PTC,2,2,-423,False,False,True,False,False,False,heuristic_default_review
-10443,surgery,follicular carcinoma,2,2,1823,False,False,True,False,True,False,heuristic_long_interval
-10450,surgery,PTC,1,2,1214,False,False,False,False,True,False,heuristic_long_interval
-10461,surgery,NIFTP,2,2,1438,True,False,True,True,True,False,heuristic_long_interval
-10464,surgery,PTC,3,2,217,False,False,True,False,False,False,heuristic_default_review
-10512,surgery,PTC,2,2,42,False,False,True,False,False,False,heuristic_default_review
-10546,surgery,PTC,2,2,2696,False,False,True,False,True,False,heuristic_long_interval
-10551,surgery,NIFTP,3,2,205,False,False,True,False,False,False,heuristic_default_review
-10596,surgery,NIFTP,1,2,76,False,False,False,False,False,False,heuristic_default_review
-10679,surgery,follicular carcinoma,2,2,210,False,False,True,False,False,False,heuristic_default_review
-10681,surgery,PTC,3,2,183,False,False,True,False,False,False,heuristic_default_review
-10719,surgery,PTC,1,2,4585,False,False,False,False,True,False,heuristic_long_interval
-10720,surgery,follicular carcinoma,2,2,163,False,False,True,False,False,False,heuristic_default_review
-10730,surgery,PTC,1,2,81,False,False,False,False,False,False,heuristic_default_review
-10823,surgery,follicular carcinoma,2,2,170,True,False,True,True,False,False,heuristic_default_review
-10838,surgery,PTC,1,2,33,False,False,False,False,False,False,heuristic_default_review
-10851,surgery,differentiated high grade thyroid carcinoma,1,2,32,False,False,False,False,False,False,heuristic_default_review
-10961,surgery,follicular carcinoma,2,2,22,True,False,True,True,False,False,heuristic_default_review
-11001,surgery,follicular carcinoma,1,2,3616,False,False,False,False,True,False,heuristic_long_interval
-11030,surgery,PTC,1,2,100,True,False,False,True,False,False,heuristic_default_review
-11203,surgery,PTC,1,2,564,True,False,False,True,True,False,heuristic_long_interval
-11238,surgery,PTC,3,5,-16,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events
-11248,surgery,PTC,1,2,37,False,False,False,False,False,False,heuristic_default_review
-11265,surgery,PTC,2,2,24,False,False,True,False,False,False,heuristic_default_review
-11277,surgery,NIFTP,1,2,22,False,False,False,False,False,False,heuristic_default_review
-11283,surgery,FTUMP,1,2,2047,False,False,False,False,True,False,heuristic_long_interval
-11317,surgery,FTUMP,1,2,66,False,False,False,False,False,False,heuristic_default_review
-11329,surgery,follicular carcinoma,1,2,246,False,False,False,False,False,False,heuristic_default_review
-11393,surgery,PTC,1,2,71,False,False,False,False,False,False,heuristic_default_review
-11402,surgery,FTUMP,1,2,532,False,False,False,False,True,False,heuristic_long_interval
-11408,surgery,PTC,1,2,3634,True,False,False,True,True,False,heuristic_long_interval
-11573,surgery,PTC,1,2,235,True,False,False,True,False,False,heuristic_default_review
-11574,surgery,PTC,1,2,2195,False,False,False,False,True,False,heuristic_long_interval
-11592,surgery,PTC,1,2,53,False,False,False,False,False,False,heuristic_default_review
-11598,surgery,PTC,2,2,69,False,False,True,False,False,False,heuristic_default_review
-11607,surgery,follicular carcinoma,4,2,3399,False,False,True,False,True,False,heuristic_long_interval
-11698,surgery,PTC,2,2,5,False,False,True,False,False,False,heuristic_default_review
-11703,surgery,follicular carcinoma,1,2,116,False,False,False,False,False,False,heuristic_default_review
-11721,surgery,PTC,1,2,2645,False,False,False,False,True,False,heuristic_long_interval
-11763,surgery,PTC,3,2,187,False,False,True,False,False,False,heuristic_default_review
-11795,surgery,PTC,1,2,427,False,False,False,False,True,False,heuristic_long_interval
-11838,surgery,PTC,1,2,147,True,False,False,True,False,False,heuristic_default_review
-11917,surgery,PTC,1,2,495,False,False,False,False,True,False,heuristic_long_interval
-11954,surgery,PTC,1,2,566,False,False,False,False,True,False,heuristic_long_interval
-11960,surgery,PTC,1,2,64,False,False,False,False,False,False,heuristic_default_review
-11989,surgery,PTC,1,2,2851,False,False,False,False,True,False,heuristic_long_interval
-12018,surgery,PTC,1,2,1528,False,False,False,False,True,False,heuristic_long_interval
-12027,surgery,NIFTP,1,2,1624,False,False,False,False,True,False,heuristic_long_interval
-12031,surgery,NIFTP,3,2,50,False,False,True,False,False,False,heuristic_default_review
-12057,surgery,PTC,1,2,1833,False,False,False,False,True,False,heuristic_long_interval
-12063,surgery,PTC,4,2,583,False,False,True,False,True,False,heuristic_long_interval
-12065,surgery,PTC,2,2,178,True,False,True,True,False,False,heuristic_default_review
-12083,surgery,PTC,2,2,117,False,False,True,False,False,False,heuristic_default_review
-12131,surgery,PTC,1,2,2022,False,False,False,False,True,False,heuristic_long_interval
+research_id,bethesda_index_nodule_linkage_source,histology_final,n_fna,max_bethesda_num,days_fna_to_surg,multi_tumor_path_synoptics,flag_fna_chain_has_gt2,flag_multi_fna,flag_multi_tumor,flag_gt_365d,flag_linkage_text_suspect,suggested_disposition_bucket,m025_bridge_pattern
+41,surgery,follicular carcinoma,1,2,211,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+65,surgery,follicular carcinoma,1,2,27,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+156,surgery,metastatic thyroid carcinoma,2,2,61,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+166,surgery,PTC,2,2,176,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+252,surgery,follicular carcinoma,1,2,178,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+263,surgery,metastatic PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+318,surgery,PTC,1,2,17,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+325,surgery,PTC,1,2,2278,True,False,False,True,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+343,surgery,PTC,1,2,235,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+388,surgery,PTC,1,2,61,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+418,surgery,PTC,1,2,91,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+440,surgery,PTC,1,2,1266,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+452,surgery,PTC,1,2,278,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+475,surgery,PTC,2,2,-3172,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+575,surgery,PTC,2,2,177,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+628,surgery,PTC,3,6,-784,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+701,surgery,PTC,1,2,43,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+706,surgery,PTC,3,2,127,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+710,surgery,PTC,12,2,587,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+712,surgery,PTC,2,2,719,True,False,True,True,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+734,surgery,PTC,3,2,-1719,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+768,surgery,PTC,3,2,-434,True,False,True,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+788,surgery,PTC,6,2,138,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+790,surgery,PTC,7,2,2111,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+813,surgery,PTC,2,2,152,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+846,surgery,PTC,2,6,43,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+880,surgery,follicular carcinoma,1,2,11,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+927,surgery,PTC,1,2,36,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+939,surgery,PTC,1,2,190,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+948,surgery,PTC,1,2,209,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+964,surgery,PTC,1,2,46,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+978,surgery,PTC,1,2,6,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1071,surgery,PTC,2,6,161,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1074,surgery,PTC,3,2,286,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1124,surgery,PTC,1,2,41,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1152,surgery,PTC,1,2,335,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1171,surgery,PTC,2,2,272,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1190,surgery,PTC,1,2,26,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1216,surgery,PTC,2,2,-1494,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1224,surgery,FTUMP,1,2,285,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1225,surgery,follicular carcinoma,1,2,131,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1239,surgery,follicular carcinoma,1,2,34,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1280,surgery,PTC,4,2,300,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1309,surgery,follicular carcinoma,2,2,559,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1328,surgery,PTC,1,2,104,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1350,surgery,follicular carcinoma,1,2,476,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1370,surgery,PTC,1,2,644,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1382,surgery,PTC,3,2,81,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1390,surgery,follicular carcinoma,2,2,118,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1395,surgery,PTC,1,2,159,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1460,surgery,PTC,1,2,226,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1488,surgery,follicular carcinoma,1,2,171,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1504,surgery,PTC,1,2,845,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1549,surgery,PTC,2,6,53,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1617,surgery,PTC,1,2,112,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1630,surgery,PTC,1,2,126,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1656,surgery,PTC,1,2,1408,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1659,surgery,PTC,3,3,177,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1666,surgery,PTC,1,2,351,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1676,surgery,PTC,1,2,1248,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1679,surgery,PTC,2,6,78,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1682,surgery,PTC,2,2,146,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1684,surgery,PTC,1,2,181,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1688,surgery,PTC,2,2,512,True,False,True,True,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1710,surgery,PTC,1,2,787,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1734,surgery,PTC,2,3,183,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1748,surgery,follicular carcinoma,1,2,121,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1766,surgery,PTC,1,2,67,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1779,surgery,PTC,1,2,1682,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1883,surgery,PTC,1,2,672,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+1889,surgery,PTC,1,2,301,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+1941,surgery,PTC,2,4,4,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+1946,surgery,PTC,1,2,253,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2001,surgery,PTC,3,2,-79,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2012,surgery,PTC,2,2,103,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2045,surgery,PTC,1,2,126,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2078,surgery,PTC,2,6,28,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+2159,surgery,PTC,1,2,2324,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+2164,surgery,PTC,2,3,25,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+2213,surgery,PTC,2,2,1067,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+2226,surgery,PTC,1,2,1001,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+2765,surgery,PTC,1,2,65,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2775,surgery,PTC,1,2,30,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2778,surgery,PTC,2,2,29,True,False,True,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2892,surgery,follicular carcinoma,1,2,75,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+2894,surgery,PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+2906,surgery,follicular carcinoma,1,2,35,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2966,surgery,PTC,1,2,364,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+2982,surgery,PTC,1,2,805,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3002,surgery,PTC,2,2,47,True,False,True,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3037,surgery,metastatic PTC,3,3,-1018,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+3066,surgery,PTC,1,2,2241,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3084,surgery,PTC,2,3,73,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+3086,surgery,PTC,1,2,362,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3137,surgery,PTC,2,2,388,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3222,surgery,PTC,1,2,21,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3248,surgery,PTC,1,2,20,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3269,surgery,PTC,1,2,168,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3298,surgery,PTC,1,2,11,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3318,surgery,PTC,1,2,659,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3321,surgery,follicular carcinoma,1,2,55,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3400,surgery,PTC,1,2,33,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3408,surgery,PTC,1,2,299,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3436,surgery,follicular carcinoma,1,2,20,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3441,surgery,PTC,1,2,63,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3456,surgery,PTC,1,2,1596,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3462,surgery,follicular carcinoma,1,2,41,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3471,surgery,PTC,1,2,1296,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3565,surgery,PTC,1,2,69,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3595,surgery,PTC,1,2,40,True,False,False,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3597,surgery,PTC,4,6,28,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+3601,surgery,PTC,3,6,15,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+3640,surgery,PTC,2,2,433,False,False,True,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+3732,surgery,PTC,1,2,60,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3751,surgery,PTC,2,2,329,True,False,True,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3773,surgery,follicular carcinoma,2,2,56,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+3849,surgery,PTC,2,6,14,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+3896,surgery,PTC,2,6,1,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+3987,surgery,PTC,2,3,38,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+4127,surgery,PTC,2,2,4290,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4145,surgery,PTC,2,2,294,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4185,surgery,PTC,1,2,762,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4208,surgery,PTC,2,2,51,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4242,surgery,PTC,1,2,301,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4267,surgery,PTC,1,2,16,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4293,surgery,PTC,3,6,43,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+4336,surgery,PTC,1,2,618,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4352,surgery,PTC,1,2,52,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4378,surgery,PTC,2,2,134,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4414,surgery,PTC,3,2,75,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4467,surgery,PTC,2,2,145,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4479,surgery,PTC,1,2,1205,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4526,surgery,PTC,1,2,240,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4564,surgery,PTC,4,6,-1227,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+4594,surgery,follicular carcinoma,1,2,583,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4606,surgery,PTC,2,2,904,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4610,surgery,PTC,1,2,365,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4612,surgery,PTC,1,2,36,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4649,surgery,PTC,2,3,76,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+4679,surgery,PTC,2,2,149,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4744,surgery,PTC,3,2,559,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4759,surgery,PTC,2,6,85,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+4769,surgery,PTC,1,2,1141,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4889,surgery,PTC,2,2,412,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4901,surgery,PTC,1,2,29,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4911,surgery,PTC,2,2,144,True,False,True,True,False,False,heuristic_default_review,A_not_in_m025_us_spine
+4936,surgery,PTC,3,2,-240,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4943,surgery,PTC,1,2,146,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+4946,surgery,follicular carcinoma,2,2,397,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+4958,surgery,PTC,1,2,322,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4960,surgery,PTC,2,2,30,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+4995,surgery,PTC,2,2,3024,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+5001,surgery,PTC,1,2,29,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5053,surgery,PTC,1,2,17,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5064,surgery,PTC,1,2,162,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5100,surgery,PTC,3,3,-1045,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5101,surgery,PTC,2,2,261,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+5103,surgery,PTC,1,2,165,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5110,surgery,PTC,2,6,56,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5185,surgery,PTC,2,2,26,False,False,True,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+5187,surgery,follicular carcinoma,4,6,-1804,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5197,surgery,PTC,5,6,-333,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5265,surgery,PTC,1,2,40,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+5271,surgery,PTC,2,2,-224,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5366,surgery,PTC,2,2,27,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5416,surgery,PTC,4,3,377,False,True,True,False,True,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5447,surgery,PTC,2,2,37,True,False,True,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+5472,surgery,follicular carcinoma,1,2,232,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5491,surgery,PTC,3,3,92,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5501,surgery,follicular carcinoma,2,2,72,True,False,True,True,False,False,heuristic_default_review,F_spine_plus_b2_but_no_nodule_path_mal_flag
+5556,surgery,PTC,1,2,784,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+5628,surgery,follicular carcinoma,1,2,231,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+5715,surgery,PTC,1,2,105,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+5726,surgery,metastatic PTC,2,3,94,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5751,surgery,PTC,1,2,617,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+5761,surgery,PTC,2,2,248,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+5767,surgery,PTC,3,2,140,True,False,True,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+5770,surgery,PTC,1,2,2884,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+5785,surgery,PTC,1,2,156,False,False,False,False,False,False,heuristic_default_review,F_spine_plus_b2_but_no_nodule_path_mal_flag
+5787,surgery,follicular carcinoma,4,2,94,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5820,surgery,PTC,2,6,1314,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5839,surgery,follicular carcinoma,4,2,-384,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5859,surgery,PTC,1,2,718,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+5867,surgery,PTC,4,2,128,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+5871,surgery,PTC,2,6,1387,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5959,surgery,PTC,2,6,1321,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+5981,surgery,PTC,2,2,1052,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6013,surgery,PTC,2,2,107,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6043,surgery,follicular carcinoma,1,2,98,True,False,False,True,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+6060,surgery,PTC,4,5,87,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,E_malignant_disjoint_b2_nodules
+6130,surgery,PTC,2,2,390,True,False,True,True,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+6144,surgery,PTC,1,2,732,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6146,surgery,PTC,2,2,17,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6159,surgery,PTC,1,2,225,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+6168,surgery,PTC,2,3,78,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+6188,surgery,PTC,2,4,96,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6195,surgery,PTC,1,2,1261,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6214,surgery,PTC,2,6,-1351,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6238,surgery,MTC,2,5,34,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6251,surgery,PTC,2,6,57,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+6266,surgery,PTC,4,5,63,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,C_same_side_malignant_not_on_b2_linked_nodule
+6270,surgery,PTC,1,2,918,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6293,surgery,PTC,1,2,7,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+6356,surgery,PTC,1,2,69,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6361,surgery,PTC,2,2,314,False,False,True,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+6374,surgery,PTC,3,3,180,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,C_same_side_malignant_not_on_b2_linked_nodule
+6403,surgery,PTC,5,2,178,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6422,surgery,PTC,2,6,323,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6447,surgery,PTC,1,2,14,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6457,surgery,anaplastic carcinoma,2,3,27,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+6481,surgery,PTC,2,2,41,True,False,True,True,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+6514,surgery,MTC,2,6,79,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+6522,surgery,PTC,2,6,84,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6670,surgery,PTC,1,2,92,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6682,surgery,PTC,1,2,48,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+6709,surgery,follicular carcinoma,1,2,1330,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+6713,surgery,PTC,2,2,37,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6723,surgery,PTC,1,2,24,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6727,surgery,PTC,2,3,62,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,A_not_in_m025_us_spine
+6731,surgery,PTC,2,2,126,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+6751,surgery,PTC,1,2,57,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+6788,surgery,PTC,3,2,982,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6814,surgery,PTC,1,2,95,True,False,False,True,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+6865,surgery,PTC,4,3,92,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+6936,surgery,PTC,5,2,417,False,False,True,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+6941,surgery,PTC,1,2,949,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6977,surgery,MTC,2,2,1873,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+6998,surgery,PTC,2,2,1167,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7025,surgery,PTC,2,3,938,True,True,True,True,True,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+7181,surgery,PTC,1,2,2165,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7188,surgery,PTC,2,2,96,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+7193,surgery,PTC,1,2,68,False,False,False,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+7280,surgery,PTC,1,2,1689,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7354,surgery,PTC,1,2,457,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7374,surgery,PTC,2,3,89,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+7393,surgery,PTC,1,2,1322,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7445,surgery,PTC,2,5,6,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,C_same_side_malignant_not_on_b2_linked_nodule
+7491,surgery,PTC,2,2,797,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7689,surgery,PTC,1,2,199,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+7731,surgery,MTC,1,2,16,False,False,False,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+7737,surgery,PTC,1,2,3389,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7742,surgery,metastatic follicular carcinoma,2,6,-855,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,D_true_FN_candidate_same_nid_b2_and_mal
+7745,surgery,PTC,1,2,515,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7884,surgery,PTC,1,2,1162,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+7888,surgery,PTC,1,2,69,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+7894,surgery,PTC,2,2,135,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+7962,surgery,PTC,2,2,1709,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8008,surgery,PTC,2,3,34,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,D_true_FN_candidate_same_nid_b2_and_mal
+8010,surgery,PTC,3,2,1802,True,False,True,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8063,surgery,PTC,1,2,657,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8097,surgery,PTC,1,2,593,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8104,surgery,PTC,1,2,515,True,False,False,True,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+8110,surgery,follicular carcinoma,1,2,118,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+8137,surgery,PTC,1,2,1050,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8155,surgery,follicular carcinoma,1,2,168,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+8197,surgery,PTC,1,2,832,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8287,surgery,PTC,1,2,208,True,False,False,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+8323,surgery,follicular carcinoma,1,2,241,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+8343,surgery,PTC,2,2,1843,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8381,surgery,PTC,1,2,1101,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8404,surgery,PTC,1,2,916,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8553,surgery,PTC,1,2,14,True,False,False,True,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+8628,surgery,follicular carcinoma,1,2,2097,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+8806,surgery,PTC,1,2,35,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+8901,surgery,PTC,1,2,75,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+9071,surgery,PTC,2,6,35,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+9085,surgery,MTC,1,2,61,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+9090,surgery,poorly differentiated thyroid carcinoma,1,2,3550,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9107,surgery,PTC,1,2,85,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9110,surgery,PTC,1,2,2555,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9136,surgery,PTC,2,2,24,True,False,True,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+9149,surgery,follicular carcinoma,1,2,302,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9239,surgery,follicular carcinoma,1,2,57,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9258,surgery,follicular carcinoma,1,2,36,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9300,surgery,PTC,1,2,20,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9313,surgery,PTC,1,2,414,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9319,surgery,PTC,1,2,69,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9328,surgery,PTC,1,2,71,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9371,surgery,follicular carcinoma,2,2,41,False,False,True,False,False,False,heuristic_default_review,E_malignant_disjoint_b2_nodules
+9424,surgery,PTC,1,2,38,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9455,surgery,PTC,2,5,63,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+9462,surgery,follicular carcinoma,1,2,878,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9508,surgery,PTC,1,2,56,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9544,surgery,PTC,1,2,27,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9588,surgery,follicular carcinoma,1,2,286,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9596,surgery,PTC,2,6,43,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,C_same_side_malignant_not_on_b2_linked_nodule
+9605,surgery,PTC,1,2,461,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9674,surgery,PTC,2,3,56,False,True,True,False,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+9715,surgery,follicular carcinoma,1,2,90,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+9729,surgery,follicular carcinoma,1,2,1202,True,False,False,True,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9735,surgery,PTC,2,2,251,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9741,surgery,MTC,2,2,141,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9798,surgery,metastatic PTC,1,2,94,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9831,surgery,follicular carcinoma,1,2,1073,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+9843,surgery,PTC,1,2,1681,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9859,surgery,PTC,1,2,1879,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9861,surgery,PTC,1,2,1322,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9893,surgery,PTC,1,2,83,False,False,False,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+9934,surgery,PTC,2,2,27,True,False,True,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9953,surgery,PTC,1,2,1511,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+9970,surgery,PTC,1,2,10,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+9986,surgery,FTUMP,1,2,2383,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+9988,surgery,follicular carcinoma,2,2,1778,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10023,surgery,follicular carcinoma,1,2,2197,False,False,False,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+10100,surgery,PTC,5,2,176,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10112,surgery,follicular carcinoma,1,2,3053,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10128,surgery,follicular carcinoma,2,2,545,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10143,surgery,PTC,1,2,43,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10246,surgery,poorly differentiated thyroid carcinoma,2,2,452,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10266,surgery,PTC,1,2,109,False,False,False,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+10313,surgery,PTC,1,2,70,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10344,surgery,FTUMP,2,2,894,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10401,surgery,PTC,2,2,-423,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10443,surgery,follicular carcinoma,2,2,1823,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10450,surgery,PTC,1,2,1214,False,False,False,False,True,False,heuristic_long_interval,E_malignant_disjoint_b2_nodules
+10464,surgery,PTC,3,2,217,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10512,surgery,PTC,2,2,42,False,False,True,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+10546,surgery,PTC,2,2,2696,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10679,surgery,follicular carcinoma,2,2,210,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10681,surgery,PTC,3,2,183,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10719,surgery,PTC,1,2,4585,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+10720,surgery,follicular carcinoma,2,2,163,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10730,surgery,PTC,1,2,81,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10823,surgery,follicular carcinoma,2,2,170,True,False,True,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+10838,surgery,PTC,1,2,33,False,False,False,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+10851,surgery,differentiated high grade thyroid carcinoma,1,2,32,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+10961,surgery,follicular carcinoma,2,2,22,True,False,True,True,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+11001,surgery,follicular carcinoma,1,2,3616,False,False,False,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+11030,surgery,PTC,1,2,100,True,False,False,True,False,False,heuristic_default_review,F_spine_plus_b2_but_no_nodule_path_mal_flag
+11203,surgery,PTC,1,2,564,True,False,False,True,True,False,heuristic_long_interval,C_same_side_malignant_not_on_b2_linked_nodule
+11238,surgery,PTC,3,5,-16,True,True,True,True,False,False,heuristic_stale_bethesda2_vs_events,B_in_spine_no_pernodule_bethesda2_bridge
+11248,surgery,PTC,1,2,37,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11265,surgery,PTC,2,2,24,False,False,True,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11283,surgery,FTUMP,1,2,2047,False,False,False,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+11317,surgery,FTUMP,1,2,66,False,False,False,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+11329,surgery,follicular carcinoma,1,2,246,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11393,surgery,PTC,1,2,71,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11402,surgery,FTUMP,1,2,532,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+11408,surgery,PTC,1,2,3634,True,False,False,True,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+11573,surgery,PTC,1,2,235,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11574,surgery,PTC,1,2,2195,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+11592,surgery,PTC,1,2,53,False,False,False,False,False,False,heuristic_default_review,D_true_FN_candidate_same_nid_b2_and_mal
+11598,surgery,PTC,2,2,69,False,False,True,False,False,False,heuristic_default_review,E_malignant_disjoint_b2_nodules
+11607,surgery,follicular carcinoma,4,2,3399,False,False,True,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+11698,surgery,PTC,2,2,5,False,False,True,False,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+11703,surgery,follicular carcinoma,1,2,116,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11721,surgery,PTC,1,2,2645,False,False,False,False,True,False,heuristic_long_interval,A_not_in_m025_us_spine
+11763,surgery,PTC,3,2,187,False,False,True,False,False,False,heuristic_default_review,A_not_in_m025_us_spine
+11795,surgery,PTC,1,2,427,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+11838,surgery,PTC,1,2,147,True,False,False,True,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11917,surgery,PTC,1,2,495,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+11954,surgery,PTC,1,2,566,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+11960,surgery,PTC,1,2,64,False,False,False,False,False,False,heuristic_default_review,B_in_spine_no_pernodule_bethesda2_bridge
+11989,surgery,PTC,1,2,2851,False,False,False,False,True,False,heuristic_long_interval,C_same_side_malignant_not_on_b2_linked_nodule
+12018,surgery,PTC,1,2,1528,False,False,False,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+12057,surgery,PTC,1,2,1833,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
+12063,surgery,PTC,4,2,583,False,False,True,False,True,False,heuristic_long_interval,F_spine_plus_b2_but_no_nodule_path_mal_flag
+12065,surgery,PTC,2,2,178,True,False,True,True,False,False,heuristic_default_review,C_same_side_malignant_not_on_b2_linked_nodule
+12083,surgery,PTC,2,2,117,False,False,True,False,False,False,heuristic_default_review,E_malignant_disjoint_b2_nodules
+12131,surgery,PTC,1,2,2022,False,False,False,False,True,False,heuristic_long_interval,B_in_spine_no_pernodule_bethesda2_bridge
