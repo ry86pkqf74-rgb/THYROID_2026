@@ -663,6 +663,78 @@ def _run_validation(cur) -> dict[str, float]:
     }
 
 
+def _enforce_pilot_gates(cur, stats: dict[str, float]) -> None:
+    """Fail closed before Phase F (--pilot): don't mirror bad QA to MotherDuck.
+
+    Thresholds align with mig_310 v2 runbook (CF-FNA-SIZE-CM-NULL).
+    """
+    print("\n  === Pilot acceptance gates (--pilot) ===")
+    failures: list[str] = []
+
+    sz = stats.get("size_fill_pct") or 0.0
+    lat = stats.get("lat_fill_pct") or 0.0
+    if sz < 60.0:
+        failures.append(f"size_fill_pct={sz}% (need ≥60%)")
+    if lat < 50.0:
+        failures.append(f"lat_fill_pct={lat}% (need ≥50%)")
+
+    avg_beth: float | None = None
+    mn_sz = mx_sz = None
+    try:
+        cur.execute(
+            f"""
+            SELECT
+                ROUND(AVG(bethesda_extract_score), 3),
+                ROUND(MIN(extracted_size_cm), 3),
+                ROUND(MAX(extracted_size_cm), 3)
+            FROM {_SF_RESULTS_TABLE}
+            """
+        )
+        row = cur.fetchone()
+        if row:
+            avg_beth = float(row[0]) if row[0] is not None else None
+            mn_sz = row[1]
+            mx_sz = row[2]
+    except Exception as exc:
+        failures.append(f"bethesda/size-range probe failed ({exc})")
+
+    print(f"  Avg bethesda_extract_score (all notes): {avg_beth}")
+    print(
+        "  extracted_size_cm min/max (all populated): "
+        f"{mn_sz} .. {mx_sz} cm (allowed 0.1–15.0)"
+    )
+    if avg_beth is None:
+        failures.append("avg bethesda_extract_score=NULL (unexpected for pilot)")
+    elif avg_beth < 0.5:
+        failures.append(f"avg bethesda_extract_score={avg_beth} (need ≥0.5)")
+
+    # Flag implausible extremes (investigate prompts / corpus)
+    try:
+        if mn_sz is not None and mx_sz is not None:
+            if float(mn_sz) < float(_PLAUSIBLE_SIZE_RANGE[0]) or float(mx_sz) > float(
+                _PLAUSIBLE_SIZE_RANGE[1]
+            ):
+                failures.append(
+                    f"size out of plausible range [{_PLAUSIBLE_SIZE_RANGE[0]}, "
+                    f"{_PLAUSIBLE_SIZE_RANGE[1]}] cm (min={mn_sz}, max={mx_sz})"
+                )
+    except Exception:
+        pass
+
+    if failures:
+        print("  PILOT GATE FAIL — skipping MotherDuck mirror:")
+        for f in failures:
+            print(f"    • {f}")
+        print(
+            "\n  Fix Cortex/corpus/linkage issues, then re-run (--pilot). "
+            "Do not proceed to full-scale until gates pass.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
+    print("  Pilot gates: PASS")
+
+
 # ---------------------------------------------------------------------------
 # Phase F — Mirror to MotherDuck (v2: includes fna_event_id + bethesda)
 # ---------------------------------------------------------------------------
@@ -893,6 +965,8 @@ def main() -> int:
         # Phase E — Validation
         print("\n[E] Validation summary...")
         stats = _run_validation(cur)
+        if args.pilot:
+            _enforce_pilot_gates(cur, stats)
 
         # Phase F — Mirror to MD
         print("\n[F] Mirroring to MotherDuck...")
