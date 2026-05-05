@@ -5,12 +5,13 @@ Connector workarounds (v4.4.0):
   - PROGRAMMATIC_ACCESS_TOKEN auth leaves TOKEN body field empty
   - ACCOUNT_NAME body strips region from dotted form
 """
-import os, sys, time, json
+import os, time, json
 from pathlib import Path
 import snowflake.connector
 import snowflake.connector.network as _net
 
-PARQUET_DIR = Path("/Users/ros/THyroid 2026/snowflake_trial/parquet")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+PARQUET_DIR = REPO_ROOT / "snowflake_trial" / "parquet"
 PAT = os.environ["SNOWFLAKE_PAT"]
 DOTTED = "qcc02515.us-east-1"
 

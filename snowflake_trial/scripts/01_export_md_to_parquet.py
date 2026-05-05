@@ -1,16 +1,21 @@
 """
 Export key MotherDuck tables to local Parquet for Snowflake load.
 
-Run from /Users/ros/THyroid 2026/ with .venv activated:
+Run from repo root with .venv activated:
     python snowflake_trial/scripts/01_export_md_to_parquet.py
 
-Reads from: md:thyroid_canonical_publication_v1_0
-Writes to:  /Users/ros/THyroid 2026/snowflake_trial/parquet/<table>.parquet
+Reads from: thyroid_canonical_publication_v1_0 (via scripts._md_connect.connect_locked)
+Writes to:  <repo>/snowflake_trial/parquet/<table>.parquet
 """
-import duckdb, time
+import sys
+import time
 from pathlib import Path
 
-OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/parquet")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from _md_connect import connect_locked  # noqa: E402
+
+OUT = REPO_ROOT / "snowflake_trial" / "parquet"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # Priority tables for validation prompts 1-12 + cross-validation 13-21
@@ -35,7 +40,7 @@ TABLES = [
     "canonical_us_patient_master_VIEW_v2",
 ]
 
-con = duckdb.connect("md:thyroid_canonical_publication_v1_0")
+con = connect_locked()
 
 # Discover which of these actually exist (tables + views — cupm_v2 is a VIEW)
 existing_tables = {

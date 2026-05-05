@@ -9,10 +9,12 @@ Requires parquet export + Snowflake load + 04_build_flat_views so *_FLAT exists.
 import sys, time, json
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).parent))
 from _sf_client import get_cursor, md_table
 
-OUT = Path("/Users/ros/THyroid 2026/snowflake_trial/reports/07_tirads_bethesda_validation.md")
+OUT = REPO_ROOT / "snowflake_trial" / "reports" / "07_tirads_bethesda_validation.md"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 CPM = "CANONICAL_PATIENT_MASTER_FLAT"
 CUPM = "CANONICAL_US_PATIENT_MASTER_VIEW_V2_FLAT"
