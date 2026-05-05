@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import re
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 
 # ---------- OCR normalization ----------
@@ -325,8 +325,16 @@ def parse_afirma(text: str) -> Dict:
 
 
 def parse(text, platform=None):
+    plat = str(platform or "").strip().lower()
     if not text or not text.strip():
+        if plat.startswith("thyroseq"):
+            return {"parse_status": "empty_block", "parser": "thyroseq"}
         return {"parse_status": "empty_block", "parser": None}
+    # mig_320: never route ThyroSeq-platform reports through the Afirma parser.
+    # Afirma heuristics (e.g. "tert promoter region") appear inside ThyroSeq PDFs
+    # and caused parser='afirma' + platform='ThyroSeq' mismatches (M083 blocker).
+    if plat.startswith("thyroseq"):
+        return parse_block(text)
     is_afirma = False
     if platform:
         is_afirma = str(platform).lower().startswith("afirma")
@@ -361,9 +369,73 @@ def find_label_positions(norm: str) -> List[Tuple[str, int, int]]:
     return positions
 
 
+def _variants_from_freeform(mut_source: str) -> List[Dict]:
+    """Scan arbitrary report text for gene tokens + HGVS / AF (mig_320 fallback)."""
+    variants: List[Dict] = []
+    seen_keys = set()
+    if not mut_source:
+        return variants
+    for gene_m in GENE_TOKEN_RX.finditer(mut_source):
+        g = gene_m.group(1).upper()
+        g_norm = {"EIFIAX": "EIF1AX", "EIFLAX": "EIF1AX", "EIFTAX": "EIF1AX", "DICERI": "DICER1"}.get(g, g)
+        window = mut_source[gene_m.start(): gene_m.start() + 220]
+        prot = PROT_RX.search(window)
+        cdna = CDNA_RX.search(window)
+        af = AF_RX.search(window)
+        key = (g_norm, prot.group(0) if prot else None)
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+        variants.append({
+            "gene": g_norm,
+            "protein": prot.group(0) if prot else None,
+            "cdna": cdna.group(0) if cdna else None,
+            "af_pct": int(af.group(1)) if af else None,
+            "source_call": "ThyroSeq_FREEFORM_FALLBACK",
+        })
+    return variants
+
+
 def parse_block(text: str) -> Dict:
     header_out = parse_header_block(text or "")
     if not text or "DETAILED RESULTS" not in text.upper():
+        fb_variants = _variants_from_freeform(normalize(text or ""))
+        if not fb_variants:
+            fb_variants = _variants_from_freeform(text or "")
+        if fb_variants:
+            out: Dict = {"parse_status": "partial", "parser": "thyroseq", **header_out}
+            out["specimen_adequacy_raw"] = None
+            out["specimen_adequacy_norm"] = None
+            out["gene_mutations_raw"] = (text or "")[:400]
+            out["gene_mutations_status"] = "Positive"
+            out["gene_mutations_variants"] = fb_variants
+            out["gene_fusions_raw"] = None
+            out["gene_fusions_status"] = None
+            out["gene_fusions_list"] = []
+            out["cna_raw"] = None
+            out["cna_status"] = None
+            out["gep_raw"] = None
+            out["gep_status"] = None
+            out["gep_detail"] = None
+            out["parathyroid_raw"] = None
+            out["parathyroid_status"] = None
+            out["medullary_raw"] = None
+            out["medullary_status"] = None
+            out["labels_found"] = []
+            tert_present = False
+            tert_variant = None
+            for v in fb_variants:
+                if v.get("gene") == "TERT":
+                    tert_present = True
+                    prot = (v.get("protein") or "")
+                    tm = TERT_PROMOTER_VARIANT_RX.search(prot)
+                    tert_variant = re.sub(r"\s+", "", tm.group(1).upper()) if tm else (prot or "OTHER")
+                    break
+            out["tert_present"] = tert_present
+            out["tert_promoter_variant"] = tert_variant
+            filled = sum(1 for k in ("gene_mutations_status",) if out.get(k))
+            out["n_fields_parsed"] = filled
+            return out
         return {"parse_status": "no_detailed_block", "parser": "thyroseq", **header_out}
     start = text.upper().find("DETAILED RESULTS")
     block = text[start + len("DETAILED RESULTS"):]
