@@ -156,6 +156,7 @@ SELECT
   COUNT_IF(has_any_row = 1 AND rows_bethesda2_nonempty_nid = 0)
     AS pts_in_spine_but_no_bethesda2_on_nonempty_nid,
   COUNT_IF(rows_bethesda2_nonempty_nid > 0) AS pts_with_bethesda2_on_nonempty_nid,
+  -- §2h pts_with_any_b2_nid uses the same row predicate (not BOOL_OR per nid).
   COUNT_IF(rows_bethesda2_any > 0 AND rows_bethesda2_nonempty_nid = 0)
     AS pts_bethesda2_only_on_null_nid_rows,
   SUM(n_rows_null_nid) AS total_rows_null_nid_in_cohort,
@@ -170,19 +171,27 @@ WITH cohort AS (
   FROM main.canonical_patient_master
   WHERE bethesda_final = 2 AND COALESCE(is_malignant, FALSE)
 ),
-nodule_agg AS (
+-- B2-linked nodules = same row predicate as §2g SUM(rows_bethesda2_nonempty_nid): any row with INTEGER Bethesda 2 + nonempty nid.
+b2 AS (
   SELECT CAST(v.research_id AS VARCHAR) AS rid,
-         v.nodule_master_id,
-         MAX(v.laterality_norm) AS lat,
-         BOOL_OR(CAST(v.bethesda_final_num AS INTEGER) = 2) AS has_b2_linked,
-         BOOL_OR(v.nodule_path_proven_malignant) AS is_path_mal
+         v.nodule_master_id AS nid,
+         MAX(v.laterality_norm) AS lat
   FROM manuscript_workspace.cohort_m025_nodule_level_v1 v
   INNER JOIN cohort c ON CAST(v.research_id AS VARCHAR) = c.rid
   WHERE v.nodule_master_id IS NOT NULL
+    AND CAST(v.bethesda_final_num AS INTEGER) = 2
   GROUP BY 1, 2
 ),
-b2 AS (SELECT DISTINCT rid, nodule_master_id AS nid, lat FROM nodule_agg WHERE has_b2_linked),
-mal AS (SELECT DISTINCT rid, nodule_master_id AS nid, lat FROM nodule_agg WHERE is_path_mal),
+mal AS (
+  SELECT CAST(v.research_id AS VARCHAR) AS rid,
+         v.nodule_master_id AS nid,
+         MAX(v.laterality_norm) AS lat
+  FROM manuscript_workspace.cohort_m025_nodule_level_v1 v
+  INNER JOIN cohort c ON CAST(v.research_id AS VARCHAR) = c.rid
+  WHERE v.nodule_master_id IS NOT NULL
+    AND v.nodule_path_proven_malignant
+  GROUP BY 1, 2
+),
 flags AS (
   SELECT DISTINCT b.rid
   FROM b2 b
@@ -207,19 +216,26 @@ spine AS (
   SELECT DISTINCT CAST(v.research_id AS VARCHAR) AS rid
   FROM manuscript_workspace.cohort_m025_nodule_level_v1 v
 ),
-nodule_agg AS (
+b2 AS (
   SELECT CAST(v.research_id AS VARCHAR) AS rid,
-         v.nodule_master_id,
-         MAX(v.laterality_norm) AS lat,
-         BOOL_OR(CAST(v.bethesda_final_num AS INTEGER) = 2) AS has_b2_linked,
-         BOOL_OR(v.nodule_path_proven_malignant) AS is_path_mal
+         v.nodule_master_id AS nid,
+         MAX(v.laterality_norm) AS lat
   FROM manuscript_workspace.cohort_m025_nodule_level_v1 v
   INNER JOIN cohort c ON CAST(v.research_id AS VARCHAR) = c.rid
   WHERE v.nodule_master_id IS NOT NULL
+    AND CAST(v.bethesda_final_num AS INTEGER) = 2
   GROUP BY 1, 2
 ),
-b2 AS (SELECT DISTINCT rid, nodule_master_id AS nid, lat FROM nodule_agg WHERE has_b2_linked),
-mal AS (SELECT DISTINCT rid, nodule_master_id AS nid, lat FROM nodule_agg WHERE is_path_mal),
+mal AS (
+  SELECT CAST(v.research_id AS VARCHAR) AS rid,
+         v.nodule_master_id AS nid,
+         MAX(v.laterality_norm) AS lat
+  FROM manuscript_workspace.cohort_m025_nodule_level_v1 v
+  INNER JOIN cohort c ON CAST(v.research_id AS VARCHAR) = c.rid
+  WHERE v.nodule_master_id IS NOT NULL
+    AND v.nodule_path_proven_malignant
+  GROUP BY 1, 2
+),
 pat_sets AS (
   SELECT c.rid,
          spine.rid IS NOT NULL AS in_m025_spine,

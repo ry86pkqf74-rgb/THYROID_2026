@@ -1,5 +1,5 @@
 # mig_264 Bethesda-2 false-negative audit (read-only)
-Generated UTC: 2026-05-05T02:58:03Z
+Generated UTC: 2026-05-05T03:03:48Z
 Database: thyroid_canonical_publication_v1_0 (connect_locked)
 
 ### §2.0 Cohort verification
@@ -36,9 +36,9 @@ Database: thyroid_canonical_publication_v1_0 (connect_locked)
 | FTUMP                                       |   6 |
 | metastatic PTC                              |   4 |
 | poorly differentiated thyroid carcinoma     |   2 |
-| metastatic follicular carcinoma             |   1 |
 | metastatic thyroid carcinoma                |   1 |
 | anaplastic carcinoma                        |   1 |
+| metastatic follicular carcinoma             |   1 |
 | differentiated high grade thyroid carcinoma |   1 |
 
 ### §2e FNA-to-first-surgery interval
@@ -63,7 +63,7 @@ Database: thyroid_canonical_publication_v1_0 (connect_locked)
 
 |   n_cohort |   pts_same_side_malignant_diff_nid_than_b2 |   pts_with_any_b2_nid |   pts_with_any_path_mal_nid |
 |-----------:|-------------------------------------------:|----------------------:|----------------------------:|
-|        360 |                                         21 |                    50 |                         103 |
+|        360 |                                         21 |                    51 |                         103 |
 
 ### §2i M025 bridge pattern (mutually exclusive buckets)
 
