@@ -1,0 +1,157 @@
+% M044 ETE — LaTeX-Ready Tables for Thyroid Submission
+% Compile with: pdflatex or include in main manuscript .tex file
+
+% ============================================================
+% TABLE 2: PRIMARY + SENSITIVITY REGRESSION MODELS
+% ============================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Multivariable logistic regression models for pathologically confirmed recurrence in differentiated thyroid cancer. Primary model adjusts for ETE group (microscopic reference), age, sex, log-transformed tumor size, AJCC 8th edition N stage, 5-level histologic subtype, and separate 5-level lymphatic and vascular invasion categories.}
+\label{tab:regression}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Model} & \textbf{Variable} & \textbf{OR} & \textbf{95\% CI} & \textbf{\textit{p}} \\
+\midrule
+\multicolumn{5}{l}{\textit{Crude (ETE only); N=3{,}578; 105 events}} \\
+ & Gross vs Microscopic (ref) & 2.68 & 1.80--3.99 & $<$0.001 \\
+ & No/neg vs Microscopic (ref) & 2.37 & 0.72--7.84 & 0.156 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Primary (no RAI); N=3{,}572; 105 events}} \\
+ & Gross vs Microscopic (ref) & \textbf{1.77} & \textbf{1.15--2.71} & \textbf{0.009} \\
+ & No/neg vs Microscopic (ref) & 2.72 & 0.80--9.30 & 0.111 \\
+ & Age (per 10 y) & 0.98 & 0.86--1.11 & 0.702 \\
+ & Female sex & 0.70 & 0.46--1.08 & 0.106 \\
+ & ln(1 + tumor size cm) & \textbf{1.93} & \textbf{1.27--2.92} & \textbf{0.002} \\
+ & N1a vs N0 & 0.96 & 0.61--1.53 & 0.877 \\
+ & N1b vs N0 & 2.24 & 0.83--6.03 & 0.110 \\
+ & Nx vs N0 & \multicolumn{3}{c}{quasi-separation\textsuperscript{a}} \\
+ & FTC vs PTC & \textbf{0.31} & \textbf{0.14--0.71} & \textbf{0.006} \\
+ & Poorly-diff DTC vs PTC & 1.37 & 0.44--4.34 & 0.587 \\
+ & High-grade DTC vs PTC & \multicolumn{3}{c}{quasi-separation\textsuperscript{a}} \\
+ & Lymphatic present vs missing & 0.87 & 0.47--1.61 & 0.657 \\
+ & Lymphatic extensive vs missing & 2.45 & 0.92--6.52 & 0.073 \\
+ & Lymphatic focal vs missing & \multicolumn{3}{c}{quasi-separation\textsuperscript{a}} \\
+ & Lymphatic indet. vs missing & 0.93 & 0.34--2.56 & 0.892 \\
+ & Vasc present vs missing & 1.66 & 0.88--3.16 & 0.120 \\
+ & Vasc extensive vs missing & 1.98 & 0.80--4.93 & 0.141 \\
+ & Vasc focal vs missing & \textbf{2.25} & \textbf{1.07--4.73} & \textbf{0.033} \\
+ & Vasc indet. vs missing & 0.74 & 0.09--5.78 & 0.770 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Sensitivity (+RAI); N=3{,}572; 105 events}} \\
+ & Gross vs Microscopic (ref) & 1.40 & 0.90--2.16 & 0.136 \\
+ & No/neg vs Microscopic (ref) & 2.28 & 0.66--7.91 & 0.193 \\
+ & RAI received & 3.72 & 2.45--5.64 & $<$0.001 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Sensitivity (+BRAF/TERT); N=3{,}572; 105 events}} \\
+ & Gross vs Microscopic (ref) & \textbf{1.78} & \textbf{1.16--2.73} & \textbf{0.008} \\
+ & No/neg vs Microscopic (ref) & 2.76 & 0.80--9.49 & 0.107 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item[\textsuperscript{a}] Zero events in stratum or extreme separation; indicator dropped from model.
+\item Bold values indicate statistical significance at $\alpha$ = 0.05.
+\end{tablenotes}
+\end{table}
+
+
+% ============================================================
+% TABLE 3: NO/NEGATIVE ETE CONFOUNDING AUDIT
+% ============================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Confounding audit of the no/negative ETE subgroup (n=68): comparison of composite-recurred (n=4) versus non-recurred (n=64) patients.}
+\label{tab:noneg_audit}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Variable} & \textbf{No recurrence (n=64)} & \textbf{Recurred (n=4)} \\
+\midrule
+\multicolumn{3}{l}{\textit{Demographics}} \\
+Age, y, median (IQR) & 49.0 (35.8--58.0) & 57.5 (54.8--61.8) \\
+Female sex & 47 (73.4\%) & 4 (100\%) \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Tumor characteristics}} \\
+Tumor size, cm, median (IQR) & 1.05 (0.50--2.55) & 2.00 (1.73--2.40) \\
+Multifocal disease & 14 (21.9\%) & 0 (0\%) \\
+Margin involved & 12 (18.8\%) & 3 (75\%) \\
+\addlinespace
+\multicolumn{3}{l}{\textit{N stage}} \\
+N0 & 19 (29.7\%) & 1 (25\%) \\
+N1a & 28 (43.8\%) & 3 (75\%) \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Treatment and follow-up}} \\
+Total thyroidectomy & 38 (59.4\%) & 1 (25\%) \\
+RAI received & 10 (15.6\%) & 3 (75\%) \\
+$\geq$2 surgeries & 14 (21.9\%) & \textbf{4 (100\%)} \\
+Days to 2nd surgery, median (IQR) & 116.5 (49.5--241.8) & \textbf{629.5 (366.8--1{,}050.5)} \\
+Follow-up, y, median (IQR) & 1.20 (0.00--5.89) & \textbf{9.68 (4.53--13.84)} \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Recurrence detail}} \\
+Path-proven & --- & 3 \\
+Imaging-only unconfirmed & --- & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% ============================================================
+% FOREST PLOT DATA (for use with R forestplot or tikz)
+% ============================================================
+% Model                    OR    Lower  Upper   p
+% Crude                    2.68  1.80   3.99    <0.001
+% Primary (no RAI)         1.77  1.15   2.71    0.009
+% +RAI                     1.40  0.90   2.16    0.136
+% +BRAF/TERT               1.78  1.16   2.73    0.008
+% +LN topography           1.99  1.31   3.02    0.001
+% PTC-only                 1.97  1.26   3.07    0.003
+% Composite LVI            2.04  1.35   3.09    <0.001
+
+
+% ============================================================
+% eTABLE 1: EXPLORATORY REGRESSION MODELS
+% ============================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Exploratory logistic regression models for pathologically confirmed recurrence.}
+\label{tab:exploratory}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Model} & \textbf{Variable} & \textbf{OR} & \textbf{95\% CI} & \textbf{\textit{p}} \\
+\midrule
+\multicolumn{5}{l}{\textit{Model A: Primary + LN topography (N=3{,}572; 105 events)}} \\
+ & Gross vs Microscopic & \textbf{1.99} & \textbf{1.31--3.02} & \textbf{0.001} \\
+ & No/neg vs Microscopic & 2.30 & 0.68--7.72 & 0.180 \\
+ & Central LN+ & \textbf{1.78} & \textbf{1.04--3.06} & \textbf{0.036} \\
+ & Lateral LN+ & \textbf{1.85} & \textbf{1.05--3.24} & \textbf{0.033} \\
+ & Vasc focal vs missing & \textbf{2.36} & \textbf{1.13--4.92} & \textbf{0.022} \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Model B: ETE $\times$ LN burden interaction (N=3{,}578; 105 events)}} \\
+ & Gross vs Microscopic & \textbf{2.21} & \textbf{1.20--4.05} & \textbf{0.011} \\
+ & ln(1+LN positive) & \textbf{2.08} & \textbf{1.44--3.00} & \textbf{$<$0.001} \\
+ & Gross $\times$ ln(1+LN pos) & 0.87 & 0.59--1.28 & 0.485 \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Model C: PTC-only (N=3{,}047; 92 events)}} \\
+ & Gross vs Microscopic & \textbf{1.97} & \textbf{1.26--3.07} & \textbf{0.003} \\
+ & No/neg vs Microscopic & 2.89 & 0.85--9.85 & 0.089 \\
+ & N1b vs N0 & \textbf{3.32} & \textbf{1.21--9.12} & \textbf{0.020} \\
+ & Vasc extensive vs missing & \textbf{3.06} & \textbf{1.06--8.83} & \textbf{0.039} \\
+ & Vasc focal vs missing & \textbf{2.79} & \textbf{1.20--6.45} & \textbf{0.017} \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Model D: Composite LVI (N=3{,}572; 105 events)}} \\
+ & Gross vs Microscopic & \textbf{2.04} & \textbf{1.35--3.09} & \textbf{$<$0.001} \\
+ & No/neg vs Microscopic & 2.18 & 0.65--7.34 & 0.208 \\
+ & Any LVI composite & \textbf{2.04} & \textbf{1.33--3.12} & \textbf{0.001} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Only selected covariates shown for each model. Full model specifications are provided in eTable S1.
+\item Bold values indicate statistical significance at $\alpha$ = 0.05.
+\end{tablenotes}
+\end{table}

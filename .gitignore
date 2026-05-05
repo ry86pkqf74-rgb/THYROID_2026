@@ -149,3 +149,29 @@ parquet_export/**/_archive_snapshots/
 # Snowflake trial — generated Parquet exports (regenerable via 01_export_md_to_parquet.py)
 snowflake_trial/parquet/
 
+
+# ── Run artifacts / large generated files (added 2026-05-05 cleanup) ────────
+backups/
+runs/
+runbook/
+hpc/
+processed/remaining/
+processed/output/
+exports/canonical_patient_master_pre*.parquet
+exports/mig*_postapply_*/
+dive_audit_20260418/
+extraction.sbatch
+
+# ── Stale handoff/review docs from Apr 2026 (superseded by COWORK_HANDOFF_M025_V2_PIVOT_20260504.md) ────
+COMPREHENSIVE_REVIEW_v1_0_STAGING_AND_INTEGRITY_20260417.md
+COWORK_CONTINUATION_PROMPT.md
+HANDOFF_PROMPT.md
+HYPERCLUSTER_EXTRACTION_HANDOFF_20260417.md
+HYPERCLUSTER_EXTRACTION_RUNBOOK_v2.md
+
+# ── Stale dryrun audit prompts from Apr 2026 (superseded by 5/4 cursor_prompts/) ──
+PROMPT_13_FNA_detail_vs_master_dry_run_2026-04-16.md
+PROMPT_18_SURGERY_COMPLICATIONS_DRY_RUN_20260417.md
+Prompt_8_9_Complications_NLP_Audit.docx
+Prompt_8_9_Complications_NLP_Audit_REVISED.docx
+dryrun_audit_prompts_10_11_12_20260416.docx
