@@ -1,0 +1,6 @@
+tirads_category,acr_fna_threshold_mm,n_nodules,n_with_size,n_above_threshold,n_below_threshold,n_unnecessary_fna,pct_unnecessary,n_cancers_below_threshold,pct_cancers_missed_if_strict
+TR1,,340,340,0,340,340,100.0,96,100.0
+TR2,,299,299,0,299,299,100.0,96,100.0
+TR3,25.0,845,843,39,804,804,95.4,221,94.8
+TR4,15.0,492,492,402,90,90,18.3,44,18.9
+TR5,10.0,1399,1399,1379,20,20,1.4,15,1.8
