@@ -54,7 +54,11 @@ TABLES = [
     "CANONICAL_US_PATIENT_MASTER_VIEW_V2",
 ]
 
-# Map Parquet types -> Snowflake cast targets
+# Stage file names must match `01_export_md_to_parquet.py` (`OUT / f"{t}.parquet"`).
+# Only exceptions are names where DuckDB/MotherDuck object id preserves mixed case.
+PARQUET_ON_STAGE = {
+    "CANONICAL_US_PATIENT_MASTER_VIEW_V2": "canonical_us_patient_master_VIEW_v2.parquet",
+}
 def cast_for(p_type: str) -> str:
     p = p_type.upper()
     if "INT" in p or "BIGINT" in p:
@@ -73,7 +77,7 @@ def cast_for(p_type: str) -> str:
 
 for table in TABLES:
     print(f"\n=== {table} ===")
-    parquet_name = table.lower() + ".parquet"
+    parquet_name = PARQUET_ON_STAGE.get(table, f"{table.lower()}.parquet")
     cur.execute(f"""
 SELECT COLUMN_NAME, TYPE
 FROM TABLE(INFER_SCHEMA(
