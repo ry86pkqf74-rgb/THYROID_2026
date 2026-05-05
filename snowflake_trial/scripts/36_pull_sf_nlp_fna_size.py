@@ -435,9 +435,37 @@ def _upload_to_sf(cur, parq_path: Path, n_notes: int) -> int:
 # ---------------------------------------------------------------------------
 
 def _run_extraction(cur) -> None:
-    """Create NLP_FNA_SIZE_FULL_RESULTS_v1 and NLP_FNA_SIZE_PATIENT_ROLLUP_v1."""
+    """Create NLP_FNA_SIZE_FULL_RESULTS_v1 and NLP_FNA_SIZE_PATIENT_ROLLUP_v1.
+
+    Prompts are pre-built as Python strings so the SQL sent to Snowflake
+    contains single quoted literals without adjacent-string concatenation
+    (which Snowflake rejects as a syntax error).
+    """
     print("  Running Cortex EXTRACT_ANSWER (may take several minutes)...")
     t0 = datetime.now()
+
+    p_size = (
+        "What is the size (largest dimension) of the aspirated thyroid nodule "
+        "in centimeters? Provide only the numeric value as a decimal (e.g. 1.5). "
+        "Convert mm to cm if needed. If multiple nodules, report the largest. "
+        "Return NULL if not stated."
+    )
+    p_lat = (
+        "What is the laterality (side) of the thyroid nodule sampled in this "
+        "FNA? Answer with exactly one word: right, left, isthmus, or bilateral. "
+        "Return NULL if not stated."
+    )
+    p_count = (
+        "How many distinct thyroid nodules were sampled in this FNA procedure? "
+        "Answer with a whole number; default to 1 if a single nodule is described. "
+        "Return NULL if completely unclear."
+    )
+    p_beth = (
+        "What is the Bethesda category of the FNA cytology result? "
+        "Return the integer (1-6) if explicitly stated in the note. "
+        "Examples: Bethesda II or Category II = 2; Bethesda VI = 6. "
+        "Return NULL if not mentioned."
+    )
 
     cur.execute(
         f"""
@@ -448,40 +476,12 @@ def _run_extraction(cur) -> None:
                 FNA_EVENT_ID,
                 NOTE_TYPE,
                 NOTE_DATE,
-
-                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
-                    NOTE_TEXT,
-                    'What is the size (largest dimension) of the aspirated thyroid nodule '
-                    'in centimeters? Provide only the numeric value as a decimal (e.g. 1.5). '
-                    'Convert mm to cm if needed. If multiple nodules, report the largest. '
-                    'Return NULL if not stated.'
-                ) AS _size_raw,
-
-                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
-                    NOTE_TEXT,
-                    'What is the laterality (side) of the thyroid nodule sampled in this '
-                    'FNA? Answer with exactly one word: right, left, isthmus, or bilateral. '
-                    'Return NULL if not stated.'
-                ) AS _lat_raw,
-
-                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
-                    NOTE_TEXT,
-                    'How many distinct thyroid nodules were sampled in this FNA procedure? '
-                    'Answer with a whole number; default to 1 if a single nodule is '
-                    'described. Return NULL if completely unclear.'
-                ) AS _count_raw,
-
-                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
-                    NOTE_TEXT,
-                    'What is the Bethesda category of the FNA cytology result? '
-                    'Return the integer (1-6) if explicitly stated in the note. '
-                    'Examples: Bethesda II or Category II = 2; Bethesda VI = 6. '
-                    'Return NULL if not mentioned.'
-                ) AS _bethesda_raw,
-
+                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(NOTE_TEXT, '{p_size}')    AS _size_raw,
+                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(NOTE_TEXT, '{p_lat}')     AS _lat_raw,
+                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(NOTE_TEXT, '{p_count}')   AS _count_raw,
+                SNOWFLAKE.CORTEX.EXTRACT_ANSWER(NOTE_TEXT, '{p_beth}')    AS _bethesda_raw,
                 CURRENT_TIMESTAMP AS extracted_at,
                 'cortex_extract_answer_mig_310_v2' AS extraction_source
-
             FROM {_SF_FNA_TABLE}
         )
         SELECT
