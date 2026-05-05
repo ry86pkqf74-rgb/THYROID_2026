@@ -1,2 +1,3 @@
-error
-['is_malignant']
+race_level,or,ci_lo,ci_hi,p,param
+Black,0.4376250104048753,0.3052156599415207,0.6274764858676045,6.961086266450665e-06,"C(race_strat, Treatment('White'))[T.Black]"
+Asian,1.458438259152508,0.8656861557864401,2.4570592258431905,0.1561926084399881,"C(race_strat, Treatment('White'))[T.Asian]"

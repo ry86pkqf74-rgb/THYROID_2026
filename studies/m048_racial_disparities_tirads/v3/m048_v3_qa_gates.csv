@@ -2,8 +2,8 @@ gate,status,actual,expected
 v3_master_rowcount,PASS,3375.0,3375
 fna_coverage_pct,PASS,71.67,~70.5
 repeat_fna_pct_among_biopsied,WARN,41.75,~15-25
-multifocal_pct_malignant,WARN,0.0,~61
-tumor_size_nonnull_pct_malignant,PASS,98.99,>70
+multifocal_pct_malignant,WARN,39.62,~61
+tumor_size_nonnull_pct_malignant,PASS,100.0,>70
 v3_v2_row_reconcile_sql,PASS,1.0,1
 disparity_cells_ge10_malignant,PASS,6.0,>=6 of 9 cells
 mediation_has_asian_rows,PASS,5.0,>=1 row with race_target==Asian

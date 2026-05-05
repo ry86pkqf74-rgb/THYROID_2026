@@ -1,7 +1,7 @@
 race_strat,tr_category,n_malignant_cell,rom_pct,mean_tumor_size_cm,pct_multifocal,pct_any_ete,pct_ln_positive,dominant_histology,acr_rom_mid_ref,acr_rom_high_ref,signature
-Black,TR4,71,34.3,2.81,0.0,94.35483870967742,75.0,differentiated,18.0,28.0,under_referral_signature
-White,TR4,116,53.95,2.24,0.0,91.13924050632912,70.88607594936708,differentiated,18.0,28.0,calibrated
-Asian,TR4,26,78.79,1.91,0.0,90.2439024390244,60.97560975609756,differentiated,18.0,28.0,calibrated
-Black,TR5,199,40.04,2.47,0.0,91.61490683229813,71.73913043478261,differentiated,42.0,55.0,calibrated
-White,TR5,464,68.74,2.21,0.0,93.73626373626374,70.98901098901099,differentiated,42.0,55.0,calibrated
-Asian,TR5,76,73.79,1.88,0.0,95.40229885057471,72.41379310344827,differentiated,42.0,55.0,calibrated
+Black,TR4,71,34.3,2.81,38.028169014084504,94.35483870967742,75.0,differentiated,18.0,28.0,under_referral_signature
+White,TR4,116,53.95,2.25,43.96551724137931,91.13924050632912,70.88607594936708,differentiated,18.0,28.0,calibrated
+Asian,TR4,26,78.79,2.06,38.46153846153846,90.2439024390244,60.97560975609756,differentiated,18.0,28.0,calibrated
+Black,TR5,199,40.04,2.54,31.65829145728643,91.61490683229813,71.73913043478261,differentiated,42.0,55.0,calibrated
+White,TR5,464,68.74,2.23,43.31896551724138,93.73626373626374,70.98901098901099,differentiated,42.0,55.0,calibrated
+Asian,TR5,76,73.79,1.96,51.31578947368421,95.40229885057471,72.41379310344827,differentiated,42.0,55.0,calibrated

@@ -605,7 +605,16 @@ def main():
     ]:
         if c in df_nod.columns:
             df_nod[c] = df_nod[c].apply(lambda v: 1 if v in (True, "true", 1, "1") else 0)
+    # Issue 1 follow-up: the nodule master ships both nodule-grain bethesda_bucket
+    # (per-FNA, computed from bethesda_2023_name) and patient_bethesda_bucket
+    # (joined from the v3 patient master). The original rename collided -- pandas
+    # ended up with two columns named bethesda_bucket, which Patsy then chokes on
+    # with "categorical data cannot be >1-dimensional". Drop the nodule-grain copy
+    # before renaming so the formula uses the patient-grain Bethesda (consistent
+    # with all the other patient-level controls in this regression).
     if "patient_bethesda_bucket" in df_nod.columns:
+        if "bethesda_bucket" in df_nod.columns:
+            df_nod = df_nod.drop(columns=["bethesda_bucket"])
         df_nod.rename(columns={"patient_bethesda_bucket": "bethesda_bucket"}, inplace=True)
     nod_formula = (
         "nodule_path_proven_malignant ~ C(race_strat, Treatment('White')) + acr2017_tirads_int + "
