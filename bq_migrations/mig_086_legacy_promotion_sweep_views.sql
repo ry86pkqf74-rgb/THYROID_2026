@@ -295,10 +295,10 @@ SELECT
   '55_view_facades_batch',
   CAST(NULL AS STRING),
   CAST(NULL AS INT64),
-  55,
+  CAST(NULL AS INT64),
   'DROP VIEW IF EXISTS for each facade listed in bq_migrations/mig_086_legacy_promotion_sweep_views.sql; legacy dataset unchanged.',
   FORMAT(
-    'DFL=DFL-20260506-T7; views=%d; file=bq_migrations/mig_086_legacy_promotion_sweep_views.sql; spot_check synoptic_tumor_long_v1 n=11103 pts=8422.',
+    'DFL=DFL-20260506-T7; view_facades_created=%d (not row count); file=bq_migrations/mig_086_legacy_promotion_sweep_views.sql; spot_check synoptic_tumor_long_v1 n=11103 pts=8422.',
     55
   )
 FROM UNNEST([1]) AS _
