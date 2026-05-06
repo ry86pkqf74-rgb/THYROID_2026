@@ -1,0 +1,4 @@
+-- Source: MotherDuck thyroid_canonical_publication_v1_0.manuscript_workspace.ete_manuscript_analytic_v7
+-- Captured: 2026-05-06 for THY-19 BQ migration
+
+CREATE VIEW manuscript_workspace.ete_manuscript_analytic_v7 AS SELECT v6.*, rr.recurrence_path_proven, rr.recurrence_path_proven_date, rr.recurrence_path_proven_source, rr.days_to_path_proven, rr.recurrence_imaging_suspicious, rr.recurrence_imaging_suspicious_date, rr.recurrence_imaging_modality, rr.recurrence_imaging_modality_summary, rr.recurrence_imaging_finding_text, rr.recurrence_imaging_n_events, rr.days_to_imaging_suspicious, rr.recurrence_imaging_then_path_confirmed, rr.recurrence_status_final FROM manuscript_workspace.ete_manuscript_analytic_v6 AS v6 LEFT JOIN main.canonical_recurrence_resolved_v1 AS rr ON ((CAST(rr.research_id AS VARCHAR) = CAST(v6.research_id AS VARCHAR)));
