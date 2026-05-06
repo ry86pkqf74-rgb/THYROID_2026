@@ -1,5 +1,10 @@
 # thyroid-integration skill — changelog
 
+## Reference inventory v1.1.0 / `CLAUDE.md` sync — 2026-05-06
+
+- **Manuscript inventory:** Regenerated `references/manuscript_inventory.md` from `pub_workspace.manuscript_feasibility_v1` (83 manuscripts; mirrored in repo-root `manuscript_feasibility_full_20260506.csv`). Added verified status counts and a full table (code, title, status, feasibility color). Bumped inventory snapshot header to skill reference **v1.1.0**.
+- **`CLAUDE.md`:** Corrected feedback-log placement (both logs only in THYROID_MANUSCRIPT, with explicit table IDs) and replaced stale “~90+ planned manuscripts” language with the MD-migrated feasibility inventory counts (83 total; 27 scaffolded in Airtable / 56 pending backfill).
+
 ## v1.4.0 — 2026-05-05 (later same day)
 
 Tightened triggering and added a Session Opening Protocol.

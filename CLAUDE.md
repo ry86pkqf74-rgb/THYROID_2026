@@ -6,7 +6,7 @@ This file is read automatically by Claude when working in this project. It guara
 
 ## What this project is
 
-Logan's multi-year thyroid surgical / pathological / molecular research database, supporting ~90+ planned manuscripts at varying stages. Master analytical store is `thyroid_master.duckdb`. Active manuscripts include M025 (TI-RADS), M032, M036, M037, M038, M044, M048, M083, Mo36, H1, H2, TGDC primary, ETE, MULTIMODAL, MOLIMG, SURGEON, EXT2-4, NSQIP-PTH, LOBMOL, plus dormant codes M004, M019, M027, M028, M029, M033, M043, M047 in the backlog.
+Logan's multi-year thyroid surgical / pathological / molecular research database, with **83 manuscripts** in `pub_workspace.manuscript_feasibility_v1` (MD-migrated master inventory). Of these, **27** are scaffolded into Airtable Manuscripts and **56** await scaffolding via the manuscripts backfill (see `manuscript_feasibility_full_20260506.csv`). Master analytical store is `thyroid_master.duckdb`. Full code list (M001–M083): `.cowork/skills/thyroid-integration/references/manuscript_inventory.md`.
 
 ## The integration
 
@@ -19,10 +19,7 @@ Logan's multi-year thyroid surgical / pathological / molecular research database
 | Daily sync anchor issue | THY-6 | https://linear.app/rostemp/issue/THY-6/ |
 | Scheduled task | `thyroid-daily-sync` | runs daily at 7:04 AM local |
 
-**Feedback log table locations (explicit, to prevent confusion):**
-- `Data Feedback Log` → Base B THYROID_MANUSCRIPT (`appJYOnUb7KrHKwpV`), table ID `tblsiYKJtKcktkzze`
-- `Manuscript Feedback Log` → Base B THYROID_MANUSCRIPT (`appJYOnUb7KrHKwpV`), table ID `tblYSCBzRFC4RGPMq`
-- All data-verification/BQ-infrastructure edits log to **Data Feedback Log in base B**, NOT in DATA_REGISTRY (base A).
+**Feedback log table locations (explicit, to prevent confusion):** Both feedback logs live in **THYROID_MANUSCRIPT** (`appJYOnUb7KrHKwpV`). **Data Feedback Log** table = `tblsiYKJtKcktkzze`; **Manuscript Feedback Log** = `tblYSCBzRFC4RGPMq`. All data-verification/BQ-infrastructure edits log to **Data Feedback Log** here — not in THYROID_DATA_REGISTRY (base A).
 
 Full ID reference: `.cowork/skills/thyroid-integration/references/airtable_ids.md` and `linear_ids.md`.
 
