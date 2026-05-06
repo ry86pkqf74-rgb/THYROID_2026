@@ -1,0 +1,747 @@
+# Cortex Analyst semantic model — M025 (TI-RADS performance) + M044 (ETE/AJCC8)
+#
+# Version : v1  (2026-05-06)
+# Source   : manuscript_workspace.cohort_m025_tirads_performance_v1
+#            manuscript_workspace.cohort_m044_ajcc_ete_v1
+#            main.canonical_patient_master
+#            (all in thyroid_canonical_publication_v1_0 / MotherDuck)
+#
+# SF mirror targets (must be pre-created via load_*_to_sf.py before binding):
+#   THYROID_VALIDATION.PUBLIC.COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+#   THYROID_VALIDATION.PUBLIC.COHORT_M044_AJCC_ETE_V1_FLAT
+#   THYROID_VALIDATION.PUBLIC.CANONICAL_PATIENT_MASTER
+#
+# Bind path  : Snowsight → AI & ML → Cortex Analyst → + Semantic model
+# Stage path : @THYROID_VALIDATION.PUBLIC.CORTEX_ANALYST_STAGE/m025_m044_v1.yaml
+# Closes     : CF-CORTEX-ANALYST-M025-M044-PATIENT-LEVEL (mig_312)
+
+name: m025_m044_tirads_ete
+description: >
+  Two-manuscript semantic model covering M025 (patient-level TI-RADS diagnostic
+  performance) and M044 (AJCC 8th-edition ETE grading and recurrence). One row
+  per surgical patient in each cohort. Joins to canonical_patient_master via
+  research_id for molecular/staging enrichment. Excludes nodule-level grain
+  (use m025_nodule_level for per-nodule ROM).
+
+tables:
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TABLE 1: M025 — patient-level TI-RADS diagnostic performance
+  # Source: manuscript_workspace.cohort_m025_tirads_performance_v1
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: m025_tirads_cohort
+    description: >
+      M025 patient-level analytic cohort. One row per surgical patient who had
+      at least one pre-operative ultrasound with an assignable ACR TI-RADS score.
+      Gold-standard outcome is is_malignant (final pathologic diagnosis).
+      n = varies by eligibility filter; full cohort ~3,000 patients.
+    base_table:
+      database: THYROID_VALIDATION
+      schema: PUBLIC
+      table: COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+
+    primary_key:
+      columns: [RESEARCH_ID]
+
+    dimensions:
+      - name: research_id
+        synonyms: [patient id, patient, subject]
+        description: De-identified patient identifier (integer stored as VARCHAR).
+        expr: RESEARCH_ID
+        data_type: text
+
+      - name: sex
+        synonyms: [gender]
+        description: Patient sex (Female / Male).
+        expr: SEX
+        data_type: text
+        sample_values: [Female, Male]
+
+      - name: race
+        synonyms: [race ethnicity, patient race]
+        description: >
+          Self-reported race/ethnicity (normalized): White, Black or African American,
+          Asian, Hispanic or Latino, Other, Unknown.
+        expr: RACE
+        data_type: text
+        sample_values: [White, Black or African American, Asian, Hispanic or Latino,
+                        Other, Unknown]
+
+      - name: tirads_best_category
+        synonyms: [lowest TR, best TI-RADS, best tirads]
+        description: >
+          Lowest-risk (best) ACR TI-RADS category ever assigned to any nodule in
+          the patient's pre-operative ultrasound series (Phase 12 structured source).
+          TR1 = benign, TR5 = highly suspicious.
+        expr: TIRADS_BEST_CATEGORY_V12
+        data_type: text
+        sample_values: [TR1, TR2, TR3, TR4, TR5]
+
+      - name: tirads_worst_category
+        synonyms: [highest TR, worst TI-RADS, worst tirads, max TR]
+        description: >
+          Highest-risk (worst) ACR TI-RADS category ever assigned to any nodule in
+          the patient's pre-operative ultrasound series (Phase 12 structured source).
+          This is the primary publication stratifier.
+        expr: TIRADS_WORST_CATEGORY_V12
+        data_type: text
+        sample_values: [TR1, TR2, TR3, TR4, TR5]
+
+      - name: preop_tirads_category
+        synonyms: [pre-op TR, pre-operative TI-RADS, preop TR]
+        description: >
+          TI-RADS category from the most recent pre-operative ultrasound (may differ
+          from tirads_worst_category for multi-exam patients).
+        expr: PREOP_TIRADS_CATEGORY
+        data_type: text
+        sample_values: [TR1, TR2, TR3, TR4, TR5]
+
+      - name: bethesda_category
+        synonyms: [FNA Bethesda, FNA result, cytology category, bethesda]
+        description: >
+          Pre-operative FNA Bethesda 2023 category (text label). I=Nondiagnostic,
+          II=Benign, III=AUS/FLUS, IV=FN/SFN, V=Suspicious, VI=Malignant.
+          NULL = no linked FNA.
+        expr: BETHESDA_FINAL_NAME
+        data_type: text
+        sample_values: [I - Nondiagnostic, II - Benign, III - AUS/FLUS,
+                        IV - Follicular Neoplasm/SFN, V - Suspicious, VI - Malignant]
+
+      - name: histology_final
+        synonyms: [histology, tumor type, cancer type, pathology]
+        description: >
+          Final pathologic histology for patients with malignancy (PTC, FTC, HCC,
+          MTC, ATC, other). NULL for benign.
+        expr: HISTOLOGY_FINAL
+        data_type: text
+        sample_values: [PTC, FTC, HCC, MTC, ATC, other]
+
+      - name: is_malignant
+        synonyms: [malignant, cancer, malignancy, cancer diagnosis]
+        description: >
+          TRUE = final pathologic diagnosis confirmed malignancy (primary outcome).
+          FALSE = benign pathology.
+        expr: IS_MALIGNANT
+        data_type: boolean
+
+      - name: fna_path_concordance
+        synonyms: [FNA concordance, FNA accuracy, cytology concordance]
+        description: >
+          FNA-to-pathology concordance category: true_positive, true_negative,
+          false_positive, false_negative, indeterminate_malignant,
+          indeterminate_benign, no_fna.
+        expr: FNA_PATH_CONCORDANCE_CATEGORY
+        data_type: text
+        sample_values: [true_positive, true_negative, false_positive, false_negative,
+                        indeterminate_malignant, indeterminate_benign, no_fna]
+
+      - name: surg_procedure_type
+        synonyms: [surgery type, procedure, thyroidectomy type]
+        description: >
+          Surgical procedure: total_thyroidectomy, hemithyroidectomy,
+          completion_thyroidectomy, other.
+        expr: SURG_PROCEDURE_TYPE
+        data_type: text
+        sample_values: [total_thyroidectomy, hemithyroidectomy, completion_thyroidectomy]
+
+      - name: n_us_exams
+        synonyms: [number of ultrasounds, ultrasound count, US count]
+        description: Number of pre-operative ultrasound exams linked for this patient.
+        expr: N_US_EXAMS
+        data_type: number
+
+    time_dimensions:
+      - name: surgery_date
+        synonyms: [date of surgery, operative date]
+        description: Date of first thyroid surgery.
+        expr: SURG_FIRST_DATE
+        data_type: date
+
+    measures:
+      - name: n_patients
+        description: Count of patients in cohort.
+        expr: COUNT(*)
+        synonyms: [count, number of patients, n]
+        default_aggregation: count
+        data_type: number
+
+      - name: n_malignant
+        description: Count of patients with confirmed malignant pathology.
+        expr: COUNT_IF(IS_MALIGNANT)
+        synonyms: [cancer count, malignant count, number malignant]
+        default_aggregation: count
+        data_type: number
+
+      - name: rom_pct
+        description: >
+          Risk of malignancy (ROM) at patient grain: proportion of patients with
+          malignant pathology (n_malignant / n_patients × 100).
+        expr: 100.0 * COUNT_IF(IS_MALIGNANT) / NULLIF(COUNT(*), 0)
+        synonyms: [ROM, malignancy rate, malignancy percent, risk of malignancy,
+                   cancer rate, percent malignant]
+        default_aggregation: custom
+        data_type: number
+
+      - name: mean_dominant_nodule_size_cm
+        description: Mean dominant nodule size in centimetres across patients.
+        expr: AVG(DOMINANT_NODULE_SIZE_CM)
+        synonyms: [average nodule size, mean nodule size, mean size]
+        default_aggregation: mean
+        data_type: number
+
+      - name: mean_tumor_size_cm
+        description: Mean pathologic tumor size in centimetres (malignant patients only meaningful).
+        expr: AVG(TUMOR_SIZE_CM)
+        synonyms: [average tumor size, mean tumor size]
+        default_aggregation: mean
+        data_type: number
+
+      - name: mean_tirads_worst_score
+        description: Mean numeric ACR TI-RADS worst score across patients.
+        expr: AVG(TIRADS_WORST_SCORE_V12)
+        synonyms: [average TIRADS score, mean TR score]
+        default_aggregation: mean
+        data_type: number
+
+      - name: n_patients_with_fna
+        description: Count of patients who had at least one linked pre-operative FNA.
+        expr: COUNT_IF(FNA_PATH_CONCORDANCE_CATEGORY <> 'no_fna')
+        synonyms: [FNA count, patients with FNA, patients biopsied]
+        default_aggregation: count
+        data_type: number
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TABLE 2: M044 — AJCC 8th-edition ETE grading and recurrence
+  # Source: manuscript_workspace.cohort_m044_ajcc_ete_v1
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: m044_ete_cohort
+    description: >
+      M044 analytic cohort of differentiated thyroid cancer patients with ETE
+      grade adjudicated by the canonical cleanup pipeline (mig_313 M-stage
+      correction applied). One row per patient. Primary exposure = ete_grade_final
+      (absent / microscopic / gross); primary outcome = any_recurrence_flag.
+      n ≈ 4,000 malignant patients after eligibility filter.
+    base_table:
+      database: THYROID_VALIDATION
+      schema: PUBLIC
+      table: COHORT_M044_AJCC_ETE_V1_FLAT
+
+    primary_key:
+      columns: [RESEARCH_ID]
+
+    dimensions:
+      - name: research_id
+        synonyms: [patient id, patient, subject]
+        description: De-identified patient identifier.
+        expr: RESEARCH_ID
+        data_type: text
+
+      - name: sex
+        synonyms: [gender]
+        description: Patient sex (Female / Male).
+        expr: SEX
+        data_type: text
+        sample_values: [Female, Male]
+
+      - name: histology_final
+        synonyms: [histology, tumor type, cancer type, pathology]
+        description: >
+          Final pathologic histology: PTC, FTC, HCC, MTC, ATC, PDTC, other.
+        expr: HISTOLOGY_FINAL
+        data_type: text
+        sample_values: [PTC, FTC, HCC, MTC, ATC, PDTC, other]
+
+      - name: ete_grade_final
+        synonyms: [ETE grade, extrathyroidal extension, ETE, extension grade]
+        description: >
+          Final adjudicated extrathyroidal extension grade (primary manuscript exposure).
+          absent = no ETE; microscopic = pT3a/minor ETE not upstaging T1-T2 per
+          AJCC8; gross = pT3b or higher substrate involvement.
+        expr: ETE_GRADE_FINAL
+        data_type: text
+        sample_values: [absent, microscopic, gross]
+
+      - name: gross_ete_flag
+        synonyms: [gross ETE, grossly invasive, pT3b, T3b]
+        description: TRUE = gross ETE present (maps to AJCC8 T3b or higher).
+        expr: GROSS_ETE_FLAG
+        data_type: boolean
+
+      - name: ete_grade_source
+        synonyms: [ETE source, ETE data source]
+        description: >
+          Primary source used to assign ete_grade_final: path_synoptic,
+          path_report_nlp, op_note, cpm_patient_level.
+        expr: ETE_GRADE_SOURCE
+        data_type: text
+
+      - name: ajcc8_t_stage
+        synonyms: [T stage, T-stage, AJCC T, tumor stage]
+        description: AJCC 8th edition T-stage (post-mig_313 correction). T1a–T4b.
+        expr: AJCC8_T_STAGE
+        data_type: text
+        sample_values: [T1a, T1b, T2, T3a, T3b, T4a, T4b]
+
+      - name: ajcc8_n_stage
+        synonyms: [N stage, N-stage, nodal stage, lymph node stage]
+        description: AJCC 8th edition N-stage. N0 / N1a / N1b / NX.
+        expr: AJCC8_N_STAGE
+        data_type: text
+        sample_values: [N0, N1a, N1b, NX]
+
+      - name: ajcc8_m_stage
+        synonyms: [M stage, M-stage, distant metastasis stage]
+        description: >
+          AJCC 8th edition M-stage (post-mig_313 corruption fix; M1 = 2.84%).
+          M0 / M1.
+        expr: AJCC8_M_STAGE
+        data_type: text
+        sample_values: [M0, M1]
+
+      - name: ajcc8_stage_group
+        synonyms: [overall stage, AJCC stage, cancer stage, stage group]
+        description: >
+          AJCC 8th edition overall stage group: I, II, III, IVA, IVB, IVC.
+          Age-dependent for DTC (< 55: Stage I vs II; ≥ 55: full I–IV).
+        expr: AJCC8_STAGE_GROUP
+        data_type: text
+        sample_values: [I, II, III, IVA, IVB, IVC]
+
+      - name: ata_risk_category
+        synonyms: [ATA risk, ATA initial risk, recurrence risk tier]
+        description: >
+          ATA 2015 initial recurrence risk category: low, intermediate, high.
+          Derived post-mig_313 M-stage correction.
+        expr: ATA_RISK_CATEGORY
+        data_type: text
+        sample_values: [low, intermediate, high]
+
+      - name: ln_positive_flag
+        synonyms: [lymph node positive, LN positive, node positive]
+        description: >
+          1 = at least one pathologically positive lymph node; 0 = node-negative
+          or NX (not examined).
+        expr: LN_POSITIVE_FLAG
+        data_type: number
+
+      - name: lvi_grade
+        synonyms: [LVI, lymphovascular invasion, vascular invasion grade]
+        description: >
+          Lymphovascular invasion grade: absent, focal, extensive, present_ungraded.
+          present_ungraded = 'x' placeholder in synoptic (grade not further specified).
+        expr: LVI_GRADE
+        data_type: text
+        sample_values: [absent, focal, extensive, present_ungraded]
+
+      - name: vascular_invasion_final
+        synonyms: [vascular invasion, angioinvasion]
+        description: >
+          Vascular invasion status: absent / focal / extensive / present_ungraded.
+          Critical for FTC/HCC WHO 2022 risk stratification.
+        expr: VASCULAR_INVASION_FINAL
+        data_type: text
+        sample_values: [absent, focal, extensive, present_ungraded]
+
+      - name: rai_received_flag
+        synonyms: [RAI, radioactive iodine, iodine ablation, RAI received]
+        description: TRUE = patient received post-operative radioactive iodine ablation/therapy.
+        expr: RAI_RECEIVED_FLAG
+        data_type: boolean
+
+      - name: any_recurrence_flag
+        synonyms: [recurrence, recurred, recurrent disease, disease recurrence]
+        description: >
+          TRUE = any recurrence (structural or biochemical) documented during
+          follow-up. Primary outcome for M044.
+        expr: ANY_RECURRENCE_FLAG
+        data_type: boolean
+
+      - name: structural_recurrence_flag
+        synonyms: [structural recurrence, locoregional recurrence, distant recurrence]
+        description: TRUE = structural (imaging-confirmed) recurrence.
+        expr: STRUCTURAL_RECURRENCE_FLAG
+        data_type: boolean
+
+      - name: death_occurred
+        synonyms: [died, deceased, death, mortality]
+        description: TRUE = patient died during follow-up (competing event for recurrence analyses).
+        expr: DEATH_OCCURRED
+        data_type: boolean
+
+      - name: surg_procedure_type
+        synonyms: [surgery type, procedure, thyroidectomy type]
+        description: >
+          Surgical procedure: total_thyroidectomy, hemithyroidectomy,
+          completion_thyroidectomy, other.
+        expr: SURG_PROCEDURE_TYPE
+        data_type: text
+        sample_values: [total_thyroidectomy, hemithyroidectomy, completion_thyroidectomy]
+
+    time_dimensions:
+      - name: surgery_date
+        synonyms: [date of surgery, operative date]
+        description: Date of first thyroid surgery.
+        expr: SURG_FIRST_DATE
+        data_type: date
+
+    measures:
+      - name: n_patients
+        description: Count of patients in M044 cohort.
+        expr: COUNT(*)
+        synonyms: [count, number of patients, n, cohort size]
+        default_aggregation: count
+        data_type: number
+
+      - name: n_with_gross_ete
+        description: Count of patients with gross ETE.
+        expr: COUNT_IF(GROSS_ETE_FLAG)
+        synonyms: [gross ETE count, number with gross ETE, n gross ETE]
+        default_aggregation: count
+        data_type: number
+
+      - name: gross_ete_pct
+        description: Proportion of patients with gross ETE (%).
+        expr: 100.0 * COUNT_IF(GROSS_ETE_FLAG) / NULLIF(COUNT(*), 0)
+        synonyms: [gross ETE rate, gross ETE percent, prevalence gross ETE]
+        default_aggregation: custom
+        data_type: number
+
+      - name: n_recurrence
+        description: Count of patients with any recurrence.
+        expr: COUNT_IF(ANY_RECURRENCE_FLAG)
+        synonyms: [recurrence count, number recurred]
+        default_aggregation: count
+        data_type: number
+
+      - name: recurrence_rate_pct
+        description: Recurrence rate (n_recurrence / n_patients × 100).
+        expr: 100.0 * COUNT_IF(ANY_RECURRENCE_FLAG) / NULLIF(COUNT(*), 0)
+        synonyms: [recurrence rate, recurrence percent, recurrence proportion,
+                   percent recurred]
+        default_aggregation: custom
+        data_type: number
+
+      - name: structural_recurrence_rate_pct
+        description: Structural recurrence rate (%).
+        expr: 100.0 * COUNT_IF(STRUCTURAL_RECURRENCE_FLAG) / NULLIF(COUNT(*), 0)
+        synonyms: [structural recurrence rate, structural recurrence percent]
+        default_aggregation: custom
+        data_type: number
+
+      - name: rai_receipt_rate_pct
+        description: RAI receipt rate (% of patients who received post-op RAI).
+        expr: 100.0 * COUNT_IF(RAI_RECEIVED_FLAG) / NULLIF(COUNT(*), 0)
+        synonyms: [RAI rate, RAI receipt, radioactive iodine rate]
+        default_aggregation: custom
+        data_type: number
+
+      - name: mean_followup_years
+        description: Mean follow-up duration in years.
+        expr: AVG(FOLLOWUP_YEARS)
+        synonyms: [average followup, mean follow-up, median followup]
+        default_aggregation: mean
+        data_type: number
+
+      - name: mean_tumor_size_cm
+        description: Mean pathologic tumor size in centimetres.
+        expr: AVG(TUMOR_SIZE_CM)
+        synonyms: [average tumor size, mean tumor size]
+        default_aggregation: mean
+        data_type: number
+
+      - name: n_ln_positive
+        description: Count of patients with at least one positive lymph node.
+        expr: COUNT_IF(LN_POSITIVE_FLAG = 1)
+        synonyms: [node positive count, LN positive count]
+        default_aggregation: count
+        data_type: number
+
+      - name: ln_positive_rate_pct
+        description: Rate of lymph node positivity (%).
+        expr: 100.0 * COUNT_IF(LN_POSITIVE_FLAG = 1) / NULLIF(COUNT(*), 0)
+        synonyms: [LN positive rate, node positive rate, nodal positivity rate]
+        default_aggregation: custom
+        data_type: number
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # TABLE 3: Canonical patient master — enrichment join only
+  # Source: main.canonical_patient_master
+  # Use this table only when a query explicitly needs molecular markers
+  # or ATA risk that are not already replicated in the cohort tables.
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: canonical_patient_master
+    description: >
+      Master patient spine (10,871 patients, all surgical patients including
+      benign). Use as an enrichment join to cohort tables via research_id.
+      Contains molecular markers (BRAF, TERT, RAS), CPM-level staging, and
+      complication flags not replicated in manuscript cohorts.
+      NOTE: CPM research_id is VARCHAR; cohort tables also store as VARCHAR.
+    base_table:
+      database: THYROID_VALIDATION
+      schema: PUBLIC
+      table: CANONICAL_PATIENT_MASTER
+
+    primary_key:
+      columns: [RESEARCH_ID]
+
+    dimensions:
+      - name: research_id
+        synonyms: [patient id, patient]
+        description: De-identified patient identifier. Join key to cohort tables.
+        expr: RESEARCH_ID
+        data_type: text
+
+      - name: braf_positive_final
+        synonyms: [BRAF, BRAF mutation, BRAF positive, BRAF V600E]
+        description: >
+          TRUE = BRAF mutation confirmed (V600E or other) from any source
+          (NGS, NLP-confirmed, ThyroSeq). Phase 11 final composite flag.
+        expr: BRAF_POSITIVE_FINAL
+        data_type: boolean
+
+      - name: tert_positive
+        synonyms: [TERT, TERT promoter, TERT mutation]
+        description: >
+          TRUE = TERT promoter mutation confirmed (C228T or C250T). High-risk
+          molecular marker; recovered via Phase 5 NGS/ThyroSeq expansion.
+        expr: TERT_POSITIVE_V9
+        data_type: boolean
+
+      - name: ras_positive_final
+        synonyms: [RAS mutation, NRAS, HRAS, KRAS, RAS positive]
+        description: >
+          TRUE = any RAS subtype mutation (NRAS / HRAS / KRAS) confirmed.
+          Phase 11 composite flag.
+        expr: RAS_POSITIVE_FINAL
+        data_type: boolean
+
+      - name: ata_initial_risk
+        synonyms: [ATA risk, ATA 2015 risk, recurrence risk]
+        description: >
+          ATA 2015 initial recurrence risk at CPM level: low, intermediate, high.
+          Derived post-mig_313; use m044_ete_cohort.ata_risk_category for M044
+          cohort-specific value.
+        expr: ATA_INITIAL_RISK
+        data_type: text
+        sample_values: [low, intermediate, high]
+
+      - name: comp_hypocalcemia_confirmed
+        synonyms: [hypocalcemia, low calcium, calcium complication]
+        description: >
+          TRUE = post-operative hypocalcemia confirmed (calcium < 8.0 mg/dL
+          within 30 days or calcium supplement required). Phase 2 refined flag.
+        expr: COMP_HYPOCALCEMIA_CONFIRMED
+        data_type: boolean
+
+      - name: comp_rln_confirmed
+        synonyms: [RLN injury, vocal cord injury, hoarseness, voice complication]
+        description: >
+          TRUE = recurrent laryngeal nerve injury confirmed (Tier 1 laryngoscopy
+          or Tier 2 chart-documented). Refined via Phase 2 pipeline.
+        expr: COMP_VC_PARALYSIS_CONFIRMED
+        data_type: boolean
+
+    measures:
+      - name: n_patients
+        description: Total count of patients in canonical master.
+        expr: COUNT(*)
+        synonyms: [count, n, total patients]
+        default_aggregation: count
+        data_type: number
+
+      - name: braf_positive_rate_pct
+        description: BRAF mutation rate across patients (%).
+        expr: 100.0 * COUNT_IF(BRAF_POSITIVE_FINAL) / NULLIF(COUNT(*), 0)
+        synonyms: [BRAF rate, BRAF positivity, BRAF prevalence]
+        default_aggregation: custom
+        data_type: number
+
+      - name: tert_positive_rate_pct
+        description: TERT promoter mutation rate across patients (%).
+        expr: 100.0 * COUNT_IF(TERT_POSITIVE_V9) / NULLIF(COUNT(*), 0)
+        synonyms: [TERT rate, TERT positivity, TERT prevalence]
+        default_aggregation: custom
+        data_type: number
+
+# ─────────────────────────────────────────────────────────────────────────
+# RELATIONSHIPS
+# Both cohort tables join to canonical_patient_master on research_id.
+# Cortex Analyst will use these to compose cross-table queries.
+# ─────────────────────────────────────────────────────────────────────────
+relationships:
+  - name: m025_to_cpm
+    left_table: m025_tirads_cohort
+    right_table: canonical_patient_master
+    relationship_columns:
+      - left_column: research_id
+        right_column: research_id
+    join_type: left
+    description: >
+      Joins M025 patient-level cohort to canonical_patient_master for molecular
+      enrichment (BRAF, TERT, RAS) and complication flags.
+
+  - name: m044_to_cpm
+    left_table: m044_ete_cohort
+    right_table: canonical_patient_master
+    relationship_columns:
+      - left_column: research_id
+        right_column: research_id
+    join_type: left
+    description: >
+      Joins M044 ETE cohort to canonical_patient_master for molecular enrichment
+      (BRAF, TERT, RAS) and CPM-level ATA risk.
+
+# ─────────────────────────────────────────────────────────────────────────
+# VERIFIED QUERIES
+# Golden SQL examples that Cortex Analyst uses to ground NL→SQL generation.
+# These are the primary "smoke test" queries listed in the bind walkthrough.
+# ─────────────────────────────────────────────────────────────────────────
+verified_queries:
+
+  # M025 queries
+  - name: m025_rom_by_tirads_worst
+    question: What is the risk of malignancy by worst TI-RADS category in the M025 cohort?
+    sql: |
+      SELECT
+        TIRADS_WORST_CATEGORY_V12              AS tirads_worst,
+        COUNT(*)                               AS n_patients,
+        COUNT_IF(IS_MALIGNANT)                 AS n_malignant,
+        100.0 * COUNT_IF(IS_MALIGNANT)
+          / NULLIF(COUNT(*), 0)                AS rom_pct
+      FROM COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+      WHERE TIRADS_WORST_CATEGORY_V12 IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1;
+
+  - name: m025_rom_by_tirads_and_bethesda
+    question: >
+      What is the risk of malignancy at each TI-RADS × Bethesda combination in
+      the M025 cohort?
+    sql: |
+      SELECT
+        TIRADS_WORST_CATEGORY_V12              AS tirads_worst,
+        BETHESDA_FINAL_NAME                    AS bethesda,
+        COUNT(*)                               AS n,
+        COUNT_IF(IS_MALIGNANT)                 AS n_malignant,
+        100.0 * COUNT_IF(IS_MALIGNANT)
+          / NULLIF(COUNT(*), 0)                AS rom_pct
+      FROM COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+      WHERE TIRADS_WORST_CATEGORY_V12 IS NOT NULL
+        AND BETHESDA_FINAL_NAME IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  - name: m025_fna_concordance_by_tirads
+    question: How does FNA-pathology concordance vary across TI-RADS categories?
+    sql: |
+      SELECT
+        TIRADS_WORST_CATEGORY_V12              AS tirads_worst,
+        FNA_PATH_CONCORDANCE_CATEGORY          AS concordance_category,
+        COUNT(*)                               AS n,
+        100.0 * COUNT(*) / SUM(COUNT(*)) OVER (
+          PARTITION BY TIRADS_WORST_CATEGORY_V12
+        )                                      AS pct_within_tr
+      FROM COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+      WHERE FNA_PATH_CONCORDANCE_CATEGORY <> 'no_fna'
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  - name: m025_rom_by_tirads_and_sex
+    question: Does the ROM by TI-RADS category differ between male and female patients?
+    sql: |
+      SELECT
+        TIRADS_WORST_CATEGORY_V12              AS tirads_worst,
+        SEX,
+        COUNT(*)                               AS n,
+        COUNT_IF(IS_MALIGNANT)                 AS n_malignant,
+        100.0 * COUNT_IF(IS_MALIGNANT)
+          / NULLIF(COUNT(*), 0)                AS rom_pct
+      FROM COHORT_M025_TIRADS_PERFORMANCE_V1_FLAT
+      WHERE TIRADS_WORST_CATEGORY_V12 IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  # M044 queries
+  - name: m044_recurrence_by_ete_grade
+    question: What is the recurrence rate by ETE grade in the M044 ETE cohort?
+    sql: |
+      SELECT
+        ETE_GRADE_FINAL                         AS ete_grade,
+        COUNT(*)                                AS n_patients,
+        COUNT_IF(ANY_RECURRENCE_FLAG)           AS n_recurrence,
+        100.0 * COUNT_IF(ANY_RECURRENCE_FLAG)
+          / NULLIF(COUNT(*), 0)                 AS recurrence_rate_pct,
+        COUNT_IF(STRUCTURAL_RECURRENCE_FLAG)    AS n_structural,
+        100.0 * COUNT_IF(STRUCTURAL_RECURRENCE_FLAG)
+          / NULLIF(COUNT(*), 0)                 AS structural_recurrence_rate_pct
+      FROM COHORT_M044_AJCC_ETE_V1_FLAT
+      WHERE ETE_GRADE_FINAL IS NOT NULL
+      GROUP BY 1
+      ORDER BY 1;
+
+  - name: m044_stage_distribution_by_ete
+    question: What is the AJCC 8 stage group distribution by ETE grade?
+    sql: |
+      SELECT
+        ETE_GRADE_FINAL                         AS ete_grade,
+        AJCC8_STAGE_GROUP                       AS stage_group,
+        COUNT(*)                                AS n,
+        100.0 * COUNT(*) / SUM(COUNT(*)) OVER (
+          PARTITION BY ETE_GRADE_FINAL
+        )                                       AS pct_within_ete_grade
+      FROM COHORT_M044_AJCC_ETE_V1_FLAT
+      WHERE ETE_GRADE_FINAL IS NOT NULL
+        AND AJCC8_STAGE_GROUP IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  - name: m044_rai_receipt_by_ete_and_stage
+    question: How does RAI receipt rate vary by ETE grade and AJCC stage group?
+    sql: |
+      SELECT
+        ETE_GRADE_FINAL                         AS ete_grade,
+        AJCC8_STAGE_GROUP                       AS stage_group,
+        COUNT(*)                                AS n,
+        COUNT_IF(RAI_RECEIVED_FLAG)             AS n_rai,
+        100.0 * COUNT_IF(RAI_RECEIVED_FLAG)
+          / NULLIF(COUNT(*), 0)                 AS rai_rate_pct
+      FROM COHORT_M044_AJCC_ETE_V1_FLAT
+      WHERE ETE_GRADE_FINAL IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  - name: m044_recurrence_by_ete_and_histology
+    question: What is the recurrence rate by ETE grade broken down by tumor histology?
+    sql: |
+      SELECT
+        ETE_GRADE_FINAL                         AS ete_grade,
+        HISTOLOGY_FINAL                         AS histology,
+        COUNT(*)                                AS n,
+        COUNT_IF(ANY_RECURRENCE_FLAG)           AS n_recurrence,
+        100.0 * COUNT_IF(ANY_RECURRENCE_FLAG)
+          / NULLIF(COUNT(*), 0)                 AS recurrence_rate_pct
+      FROM COHORT_M044_AJCC_ETE_V1_FLAT
+      WHERE ETE_GRADE_FINAL IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
+
+  # Cross-table query (M044 + CPM for BRAF)
+  - name: m044_recurrence_by_ete_and_braf
+    question: >
+      Does recurrence rate by ETE grade differ between BRAF-mutant and BRAF
+      wild-type patients?
+    sql: |
+      SELECT
+        e.ETE_GRADE_FINAL                       AS ete_grade,
+        c.BRAF_POSITIVE_FINAL                   AS braf_positive,
+        COUNT(*)                                AS n,
+        COUNT_IF(e.ANY_RECURRENCE_FLAG)         AS n_recurrence,
+        100.0 * COUNT_IF(e.ANY_RECURRENCE_FLAG)
+          / NULLIF(COUNT(*), 0)                 AS recurrence_rate_pct
+      FROM COHORT_M044_AJCC_ETE_V1_FLAT      AS e
+      LEFT JOIN CANONICAL_PATIENT_MASTER     AS c
+        ON e.RESEARCH_ID = c.RESEARCH_ID
+      WHERE e.ETE_GRADE_FINAL IS NOT NULL
+        AND c.BRAF_POSITIVE_FINAL IS NOT NULL
+      GROUP BY 1, 2
+      ORDER BY 1, 2;
