@@ -31,10 +31,10 @@ data dictionary and figures pointer.
 | `04_manuscript_outline_v3.2.docx` | Draft outline manuscript (Abstract → Introduction → Methods → Results → Discussion → Limitations → Tables/Figures index → Supplementary). All numbers pre-filled; narrative prose marked `[TO WRITE]` where senior-author input is needed. |
 | `_manifest.json` | Machine-readable copy of the headline numbers used to populate the docx. |
 
-## Figures (referenced from the docx, not bundled in this zip)
+## Figures (now bundled in `05_figures/` inside this zip)
 
-Eight 300-dpi PNGs + vector PDFs live in
-`/Users/loganglosser/THYROID_2026/M048_submission_package/figures/v3/`:
+Eight 300-dpi PNGs + vector PDFs (also kept under
+`/Users/loganglosser/THYROID_2026/M048_submission_package/figures/v3/` for git history):
 
 - Figure 6 — Adjusted OR forest plot (full M6 model)
 - Figure 7 — Attenuation cascade M0 → M6, Black + Asian
