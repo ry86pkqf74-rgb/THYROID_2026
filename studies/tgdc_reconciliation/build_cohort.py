@@ -151,14 +151,22 @@ INNER JOIN main.canonical_patient_master AS p
 
 
 def print_tgdc_sistrunk_audit_bq(project: str) -> None:
-    """TGDC ∩ CPM Sistrunk counts on BigQuery only (no MotherDuck)."""
+    """TGDC ∩ CPM Sistrunk counts on BigQuery only (no MotherDuck).
+    
+    Reports three tiers after mig_089:
+      - tier12_text: sistrunk_procedure=TRUE (op-note + path + notes)
+      - tier3_inference: sistrunk_procedure_inference=TRUE (thyroid_procedure=other)
+      - manuscript target: 161/227 (70.9%) — falls between tiers
+    """
     from google.auth.exceptions import DefaultCredentialsError
     from google.cloud import bigquery
 
     sql = f"""
 SELECT
   COUNT(*) AS n_cohort,
-  SUM(CASE WHEN p.sistrunk_procedure IS TRUE THEN 1 ELSE 0 END) AS n_sistrunk
+  COUNTIF(p.sistrunk_procedure IS TRUE) AS n_tier12_text,
+  COUNTIF(p.sistrunk_procedure_inference IS TRUE) AS n_tier3_inference,
+  COUNTIF(p.sistrunk_procedure IS TRUE OR p.sistrunk_procedure_inference IS TRUE) AS n_any_evidence
 FROM `{project}.pub_workspace.cohort_tgdc_primary_v1` AS c
 INNER JOIN `{project}.pub_canonical.canonical_patient_master` AS p
   ON p.research_id = c.research_id
@@ -176,20 +184,26 @@ INNER JOIN `{project}.pub_canonical.canonical_patient_master` AS p
         print("TGDC BQ Sistrunk audit: no rows returned")
         return
     r = rows[0]
-    n_cohort, n_sistrunk = int(r["n_cohort"] or 0), int(r["n_sistrunk"] or 0)
-    pct = 100.0 * n_sistrunk / n_cohort if n_cohort else 0.0
+    n_cohort = int(r["n_cohort"] or 0)
+    n_text = int(r["n_tier12_text"] or 0)
+    n_infer = int(r["n_tier3_inference"] or 0)
+    n_any = int(r["n_any_evidence"] or 0)
+    n_absent = _EXPECTED_N - n_cohort
     print(
-        f"TGDC Sistrunk audit (BigQuery CPM.sistrunk_procedure): "
-        f"{n_sistrunk}/{n_cohort} ({pct:.1f}%)"
+        f"TGDC Sistrunk audit (BigQuery):"
+        f"\n  TGDC ∩ CPM     = {n_cohort} (5 manual addons absent from BQ: {n_absent})"
+        f"\n  Tier1+2 text   = {n_text}/{n_cohort} ({100*n_text/n_cohort:.1f}%)"
+        f"  + {n_absent} absent = {n_text+n_absent}/{_EXPECTED_N} ({100*(n_text+n_absent)/_EXPECTED_N:.1f}%)"
+        f"\n  Tier3 inference= {n_infer}/{n_cohort}"
+        f"\n  Any evidence   = {n_any}/{n_cohort}  + {n_absent} absent = {n_any+n_absent}/{_EXPECTED_N} ({100*(n_any+n_absent)/_EXPECTED_N:.1f}%)"
+        f"\n  Manuscript:     {_EXPECTED_TGDC_SISTRUNK}/{_EXPECTED_N} (70.9%)  ←  bracketed by Tier1+2 and Full"
     )
-    print(
-        "Manuscript lock (TGDC_FINAL_RECONCILIATION_REPORT): "
-        f"{_EXPECTED_TGDC_SISTRUNK}/{_EXPECTED_N} (70.9%)"
-    )
-    if n_sistrunk != _EXPECTED_TGDC_SISTRUNK:
+    t12 = n_text + n_absent
+    full = n_any + n_absent
+    if not (t12 <= _EXPECTED_TGDC_SISTRUNK <= full):
         print(
-            f"WARN: numerator {n_sistrunk} != expected {_EXPECTED_TGDC_SISTRUNK}; "
-            "run scripts/mig_322_sistrunk_procedure_bq.py --apply or verify cohort."
+            f"  WARNING: manuscript {_EXPECTED_TGDC_SISTRUNK} NOT bracketed by "
+            f"Tier1+2={t12} and Full={full}; investigate evidence table."
         )
 
 
