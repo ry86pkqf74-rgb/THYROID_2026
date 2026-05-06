@@ -54,7 +54,7 @@ Canonical full export: `manuscript_feasibility_full_20260506.csv` (repo root). T
 | M035 | Bethesda V (Suspicious for Malignancy) Analysis | In Progress | RED |
 | M036 | 2015 vs 2025 ATA Risk Stratification Comparison | In Progress | YELLOW |
 | M037 | Lymph Node Metastasis Patterns in Thyroid Carcinoma | In Progress | YELLOW |
-| M038 | ECMO Support for Massive Goiter Surgery | Ready to Submit | GREEN |
+| M038 | Massive Goiter at a Tertiary Referral Center: A Composite-Definition Descriptive Cohort | Ready to Submit | GREEN |
 | M039 | PTH and Calcium Protocol Post-Thyroidectomy | In Progress | GREEN |
 | M040 | Reoperative Thyroid Surgery: Single Institution Experience | In Progress | RED |
 | M041 | Thyroglossal Duct Cyst Analysis | Data Collection | RED |
