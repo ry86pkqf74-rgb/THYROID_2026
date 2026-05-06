@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-06  
 **Migration:** `bq_migrations/mig_086_legacy_promotion_sweep_views.sql`  
-**Governance:** Airtable Data Feedback Log `DFL-20260506-T7` (record `recngpdfGKKZF0HMu`); `pub_signoff.bq_migration_log_v1` row `mig_086_legacy_promotion_sweep_views`.
+**Governance:** Airtable Data Feedback Log `DFL-20260506-T7` (record `recngpdfGKKZF0HMu`); `pub_signoff.bq_migration_log_v1` row `mig_086_legacy_promotion_sweep_views` (`rows_after` left **NULL** — 55 is the facade count, carried in `notes` only).
 
 ## Scope
 
