@@ -195,12 +195,14 @@ near-separated subsamples.
 | S048v2_B_single_nodule | 305 | 0.769 (0.405-1.461), p=0.4234 | 2.452 (0.922-6.518), p=0.0722 |
 | S048v2_C_genetics_tested | 655 | 0.689 (CI not estimable) | 0.453 (CI not estimable) |
 | S048v2_D_no_CLT | 3,121 | 0.430 (0.357-0.519), p<0.0001 | 1.197 (0.825-1.736), p=0.3440 |
-| S048v3_E_no_Bethesda_VI | 3,121 | 0.430 (0.357-0.519), p<0.0001 | 1.197 (0.825-1.736), p=0.3440 |
+| S048v3_E_no_Bethesda_VI | 2,599 | 0.417 (0.341-0.509), p<0.0001 | 1.270 (0.849-1.901), p=0.2440 |
 | S048v3_F_TR4_only | 455 | 0.627 (0.386-1.019), p=0.0598 | 4.074 (1.467-11.314), p=0.0070 |
 | S048v3_G_had_fna | 2,258 | 0.586 (0.467-0.735), p<0.0001 | 0.902 (0.555-1.466), p=0.6770 |
 
+
 - **Post-2017 (S048v2_A):** Black OR 0.42, robust and significant.
 - **Single-nodule (S048v2_B):** small N drops precision; Asian point estimate 2.5 (p=0.07).
+- **Drop Bethesda VI (S048v3_E):** Black OR 0.42 (0.34-0.51, p<0.0001) on n=2,599 after correctly excluding the 522 Bethesda VI patients (the original v3.2 export had a string-matching bug that left the arm equal to the full cohort).
 - **TR4-only (S048v3_F):** wide CIs; Asian point estimate elevated.
 - **Had-FNA (S048v3_G):** Black OR 0.58, still significant (p<0.001).
 
