@@ -15,6 +15,7 @@ Usage (from repo root, token via motherduck.local.toml or env):
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --apply --bq-load
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --bq-load
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --sistrunk-audit
+  .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --bq-sistrunk-audit
 """
 
 from __future__ import annotations
@@ -149,6 +150,49 @@ INNER JOIN main.canonical_patient_master AS p
         )
 
 
+def print_tgdc_sistrunk_audit_bq(project: str) -> None:
+    """TGDC ∩ CPM Sistrunk counts on BigQuery only (no MotherDuck)."""
+    from google.auth.exceptions import DefaultCredentialsError
+    from google.cloud import bigquery
+
+    sql = f"""
+SELECT
+  COUNT(*) AS n_cohort,
+  SUM(CASE WHEN p.sistrunk_procedure IS TRUE THEN 1 ELSE 0 END) AS n_sistrunk
+FROM `{project}.pub_workspace.cohort_tgdc_primary_v1` AS c
+INNER JOIN `{project}.pub_canonical.canonical_patient_master` AS p
+  ON p.research_id = c.research_id
+"""
+    try:
+        client = bigquery.Client(project=project)
+        rows = list(client.query(sql).result())
+    except DefaultCredentialsError as exc:
+        print(f"TGDC BQ Sistrunk audit skipped (credentials): {exc}")
+        return
+    except Exception as exc:  # noqa: BLE001
+        print(f"TGDC BQ Sistrunk audit skipped: {exc}")
+        return
+    if not rows:
+        print("TGDC BQ Sistrunk audit: no rows returned")
+        return
+    r = rows[0]
+    n_cohort, n_sistrunk = int(r["n_cohort"] or 0), int(r["n_sistrunk"] or 0)
+    pct = 100.0 * n_sistrunk / n_cohort if n_cohort else 0.0
+    print(
+        f"TGDC Sistrunk audit (BigQuery CPM.sistrunk_procedure): "
+        f"{n_sistrunk}/{n_cohort} ({pct:.1f}%)"
+    )
+    print(
+        "Manuscript lock (TGDC_FINAL_RECONCILIATION_REPORT): "
+        f"{_EXPECTED_TGDC_SISTRUNK}/{_EXPECTED_N} (70.9%)"
+    )
+    if n_sistrunk != _EXPECTED_TGDC_SISTRUNK:
+        print(
+            f"WARN: numerator {n_sistrunk} != expected {_EXPECTED_TGDC_SISTRUNK}; "
+            "run scripts/mig_322_sistrunk_procedure_bq.py --apply or verify cohort."
+        )
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Rebuild TGDC cohort tables on MotherDuck.")
     p.add_argument(
@@ -187,7 +231,22 @@ def main() -> int:
         action="store_true",
         help="Print TGDC∩CPM counts for canonical_patient_master.sistrunk_procedure (VC-TGDC-009).",
     )
+    p.add_argument(
+        "--bq-sistrunk-audit",
+        action="store_true",
+        help="BigQuery-only TGDC Sistrunk parity (no MotherDuck). Exclusive with other flags.",
+    )
     args = p.parse_args()
+
+    if args.bq_sistrunk_audit:
+        if args.apply or args.dry_run or args.bq_load or args.sistrunk_audit:
+            print(
+                "--bq-sistrunk-audit is exclusive (run without --apply/--dry-run/--bq-load/--sistrunk-audit).",
+                file=sys.stderr,
+            )
+            return 2
+        print_tgdc_sistrunk_audit_bq(args.bq_project)
+        return 0
 
     if (
         not args.apply

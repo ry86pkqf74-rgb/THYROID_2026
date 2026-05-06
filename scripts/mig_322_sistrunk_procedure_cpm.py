@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
-"""mig_322 — Sistrunk keyword pass from operative notes → canonical_patient_master.
+"""mig_322 — LEGACY MotherDuck path for Sistrunk parser (operative notes → CPM).
 
-Populates:
+**Publication Truth:** Canonical BigQuery. Use::
+
+  * ``bq_migrations/mig_088_sistrunk_procedure_cpm_bq_20260506.sql`` — DDL + extract CREATE
+  * ``scripts/mig_322_sistrunk_procedure_bq.py`` — scan ``pub_canonical.clinical_notes_long``,
+    load ``pub_workspace.extracted_sistrunk_procedure_opnote_v1``, update ``canonical_patient_master``.
+
+MotherDuck was retained only for reproducibility audits / historical runs.
+
+Legacy populates:
+
   * main.extracted_sistrunk_procedure_opnote_v1 — one row per operative-note hit
-    (no note body stored; evidence_summary is a fixed paraphrase template).
   * main.canonical_patient_master — sistrunk_procedure BOOLEAN + provenance cols.
 
-DFL (before apply): DFL-20260506-SISTRUNKPARSE | action_type=schema-add+extract
+Usage (MotherDuck only):
 
-Usage:
   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --dry-run
   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --apply
 """

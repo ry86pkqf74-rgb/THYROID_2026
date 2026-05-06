@@ -15,9 +15,13 @@
 --     (research_id, note_row_id, rule_id, match_kind, match_offset,
 --      evidence_summary — paraphrase only).
 --
--- APPLY:
+-- APPLY (MotherDuck):
 --   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --dry-run
 --   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --apply
+--
+-- APPLY (BigQuery — primary publication path):
+--   See bq_migrations/mig_088_sistrunk_procedure_cpm_bq_20260506.sql
+--   + scripts/mig_322_sistrunk_procedure_bq.py
 --
 -- Parser module (local):
 --   pipelines/extraction/sistrunk_parser.py
