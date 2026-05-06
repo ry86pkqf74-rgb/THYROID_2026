@@ -1,0 +1,37 @@
+-- =============================================================================
+-- 322 — canonical_patient_master.sistrunk_procedure + operative-note extract
+-- =============================================================================
+-- Database:   thyroid_canonical_publication_v1_0 (MotherDuck)
+-- Date:       2026-05-06
+-- DFL:        DFL-20260506-SISTRUNKPARSE (Data Feedback Log, THYROID_MANUSCRIPT)
+--              action_type = schema-add+extract (log BEFORE apply in Airtable)
+-- Issue:      THY-4
+--
+-- Purpose:
+--   * Add patient-level flags derived from LOCAL operative-note keyword pass
+--     (no raw note text stored on CPM or exported to Airtable/Linear).
+--   * Materialize per-hit audit table:
+--       main.extracted_sistrunk_procedure_opnote_v1
+--     (research_id, note_row_id, rule_id, match_kind, match_offset,
+--      evidence_summary — paraphrase only).
+--
+-- APPLY:
+--   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --dry-run
+--   .venv/bin/python scripts/mig_322_sistrunk_procedure_cpm.py --apply
+--
+-- Parser module (local):
+--   pipelines/extraction/sistrunk_parser.py
+--
+-- TGDC reconciliation:
+--   After apply, re-run ``studies/tgdc_reconciliation/build_cohort.py`` as needed;
+--   script supports ``--sistrunk-audit`` to print TGDC subset Sistrunk COUNT for
+--   VC-TGDC-009 parity (expect 161/227 text-confirmed arm when CPM is current).
+--
+-- Related:
+--   TGDC_VERIFICATION_REPORT.md — Sistrunk procedure gap + fix recommendation
+--   TGDC_FINAL_RECONCILIATION_REPORT.md — 161 (70.9%) gold count
+-- =============================================================================
+
+USE thyroid_canonical_publication_v1_0;
+
+-- DDL is applied by scripts/mig_322_sistrunk_procedure_cpm.py (ALTER … ADD IF NOT EXISTS).

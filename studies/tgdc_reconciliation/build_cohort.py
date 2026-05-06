@@ -14,7 +14,7 @@ Usage (from repo root, token via motherduck.local.toml or env):
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --apply
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --apply --bq-load
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --bq-load
-  .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --dry-run
+  .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --sistrunk-audit
 """
 
 from __future__ import annotations
@@ -34,6 +34,7 @@ PUB_DB = "thyroid_canonical_publication_v1_0"
 CSV_PATH = Path(__file__).resolve().parent / "sources" / "tgdc_manual_addons_v1.csv"
 _EXPECTED_N = 227
 BQ_PROJECT_DEFAULT = "thyroid-canonical-pub-2026"
+_EXPECTED_TGDC_SISTRUNK = 161  # VC-TGDC-009 manuscript parity (TGDC_FINAL_RECONCILIATION_REPORT)
 
 _BQ_TABLES = (
     ("tgdc_manual_addons_v1", "pub_workspace.tgdc_manual_addons_v1"),
@@ -109,6 +110,45 @@ CREATE OR REPLACE TEMP TABLE _tgdc_primary_path_text AS
 """
 
 
+def print_tgdc_sistrunk_audit(con) -> None:
+    """JOIN TGDC cohort to CPM for VC-TGDC-009 Sistrunk numerator (expects 161/227).
+
+    Requires ``main.canonical_patient_master.sistrunk_procedure`` populated
+    (``scripts/mig_322_sistrunk_procedure_cpm.py --apply``).
+    """
+    try:
+        row = con.execute(
+            """
+SELECT
+  COUNT(*)::BIGINT AS n_cohort,
+  SUM(CASE WHEN p.sistrunk_procedure IS TRUE THEN 1 ELSE 0 END)::BIGINT AS n_sistrunk
+FROM pub_workspace.cohort_tgdc_primary_v1 AS c
+INNER JOIN main.canonical_patient_master AS p
+  ON p.research_id = c.research_id
+"""
+        ).fetchone()
+    except Exception as exc:
+        print(f"TGDC Sistrunk audit skipped (tables missing?): {exc}")
+        return
+    if row is None:
+        print("TGDC Sistrunk audit: no rows returned")
+        return
+    n_cohort, n_sistrunk = int(row[0]), int(row[1] or 0)
+    pct = 100.0 * n_sistrunk / n_cohort if n_cohort else 0.0
+    print(
+        f"TGDC Sistrunk audit (CPM.sistrunk_procedure): {n_sistrunk}/{n_cohort} ({pct:.1f}%)"
+    )
+    print(
+        "Manuscript lock (TGDC_FINAL_RECONCILIATION_REPORT): "
+        f"{_EXPECTED_TGDC_SISTRUNK}/{_EXPECTED_N} (70.9%)"
+    )
+    if n_sistrunk != _EXPECTED_TGDC_SISTRUNK:
+        print(
+            f"WARN: numerator {n_sistrunk} != expected {_EXPECTED_TGDC_SISTRUNK}; "
+            "tune pipelines/extraction/sistrunk_parser.py patterns or verify cohort."
+        )
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Rebuild TGDC cohort tables on MotherDuck.")
     p.add_argument(
@@ -142,19 +182,37 @@ def main() -> int:
         default=BQ_PROJECT_DEFAULT,
         help=f"GCP project id for --bq-load (default {BQ_PROJECT_DEFAULT}).",
     )
+    p.add_argument(
+        "--sistrunk-audit",
+        action="store_true",
+        help="Print TGDC∩CPM counts for canonical_patient_master.sistrunk_procedure (VC-TGDC-009).",
+    )
     args = p.parse_args()
 
-    if not args.apply and not args.dry_run and not args.bq_load:
-        print("Specify --apply, --dry-run, and/or --bq-load", file=sys.stderr)
+    if (
+        not args.apply
+        and not args.dry_run
+        and not args.bq_load
+        and not args.sistrunk_audit
+    ):
+        print(
+            "Specify --apply, --dry-run, --bq-load, and/or --sistrunk-audit",
+            file=sys.stderr,
+        )
         return 2
-
-    if (args.apply or args.dry_run) and not CSV_PATH.is_file():
-        print(f"Missing CSV: {CSV_PATH}", file=sys.stderr)
-        return 1
 
     cfg = MotherDuckConfig(database=args.md_database)
     con = MotherDuckClient(cfg).connect_rw()
     con.execute(f'USE "{args.md_database}"')
+
+    if args.sistrunk_audit and not args.apply and not args.dry_run and not args.bq_load:
+        print_tgdc_sistrunk_audit(con)
+        con.close()
+        return 0
+
+    if (args.apply or args.dry_run) and not CSV_PATH.is_file():
+        print(f"Missing CSV: {CSV_PATH}", file=sys.stderr)
+        return 1
 
     if args.bq_load and not args.apply and not args.dry_run:
         try:
@@ -162,6 +220,14 @@ def main() -> int:
         finally:
             con.close()
         print("PASS: TGDC BQ mirror")
+        if args.sistrunk_audit:
+            cfg2 = MotherDuckConfig(database=args.md_database)
+            con_b = MotherDuckClient(cfg2).connect_rw()
+            con_b.execute(f'USE "{args.md_database}"')
+            try:
+                print_tgdc_sistrunk_audit(con_b)
+            finally:
+                con_b.close()
         return 0
 
     con.execute(PRIMARY_SQL)
@@ -224,6 +290,8 @@ def main() -> int:
         print("DRY-RUN complete (gate PASS).")
         if args.bq_load:
             print("(Skipping --bq-load during dry-run.)", file=sys.stderr)
+        if args.sistrunk_audit:
+            print_tgdc_sistrunk_audit(con)
         con.close()
         return 0
 
@@ -287,6 +355,14 @@ def main() -> int:
     finally:
         con.close()
     print("PASS: TGDC cohort gate")
+    if args.sistrunk_audit:
+        cfg = MotherDuckConfig(database=args.md_database)
+        con2 = MotherDuckClient(cfg).connect_rw()
+        con2.execute(f'USE "{args.md_database}"')
+        try:
+            print_tgdc_sistrunk_audit(con2)
+        finally:
+            con2.close()
     return 0
 
 
