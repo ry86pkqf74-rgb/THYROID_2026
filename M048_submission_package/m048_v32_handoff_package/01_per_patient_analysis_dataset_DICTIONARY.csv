@@ -1,0 +1,41 @@
+column,dtype,description
+research_id,string,De-identified patient identifier; primary key (one row per patient).
+race_strat,string,Analysis race stratum: Black / White / Asian (NHPI excluded; n=204 Asian).
+race_raw,string,Original race-ethnicity code as recorded in the EHR (free text).
+age_at_surgery,int,Age at first thyroid surgery (years).
+sex,string,Sex at birth (Female / Male / unknown).
+surg_year,int (centred),"Year of first surgery, centred to the cohort median (~2020) for numerical stability."
+surg_first_date,date,Date of first thyroid surgery.
+surg_procedure_type,string,"Procedure type: lobectomy, total thyroidectomy, completion, etc."
+is_malignant,0/1,"Outcome: 1 if path-confirmed malignant (PTC, FTC, MTC, etc.); 0 if benign."
+histology_final,string,Final histology label (only populated for malignant cases).
+histology_category,string,"Coarse histology bucket: differentiated, MTC, anaplastic, NIFTP, FTUMP."
+max_tirads_category_ever,string,Max ACR TI-RADS category recorded across all pre-op US exams.
+max_tr_int,int,Max ACR TI-RADS as integer 1-5.
+predicted_pos_TR3 / TR4 / TR5,0/1,Indicator: any nodule reached TR3/TR4/TR5 on imaging.
+n_us_exams,int,Count of pre-op ultrasound exams.
+n_nodules_total,int,Total nodules detected pre-op (across all US exams).
+n_nodules_strict,int,Strict-eligible nodule count (per the M025 nodule-grain definition).
+nodule_burden_cat,string,Categorical burden: solitary / 2-4 / 5+.
+had_any_genetics,0/1,"Any pre-op molecular workup (Afirma, ThyroSeq, mutation panel)."
+had_afirma / had_thyroseq / had_mutation_panel,0/1,Specific platform indicator.
+had_suspicious_result,0/1,Genetics returned a suspicious-for-malignancy result.
+had_any_nm,0/1,Any pre-op nuclear medicine workup (e.g. RAI uptake scan).
+had_radioiodine,0/1,Pre-op radioiodine therapy (rare).
+had_any_fna,0/1,Any pre-op fine-needle aspiration. (NOTE: dropped from regression formulas due to perfect collinearity with bethesda_bucket=='missing'.)
+had_repeat_fna,0/1,Two or more pre-op FNA episodes.
+n_fnas_total,int,Count of pre-op FNA episodes.
+bethesda_final,string,Final Bethesda category label as reported (raw).
+bethesda_bucket,string,Analysis bucket: I_nondiagnostic / II_benign / III_AUS / IV_FN / V_susp_malig / VI_malig / missing (no FNA).
+days_fna_to_surg_approx,int,Days from first FNA to surgery.
+days_us_to_surg_approx,float (years),"Years from first US to surgery, clipped to >=0 for numerical stability."
+n_malignant_tumors,int,Count of malignant tumors at path (descriptor; from cohort_m048_tnm_multifocal_v1).
+multifocal_flag,0/1,Multifocality at path (descriptor; from cohort_m048_tnm_multifocal_v1.multifocal_flag_path).
+max_tumor_size_cm,float,Largest tumor dimension in cm (descriptor).
+tumor_size_band,string,Categorical: micro (<1cm) / 1-4cm / >4cm / unknown.
+any_ete_flag,0/1,Any extrathyroidal extension at path (microscopic or gross). Patient rollup over canonical_ete_event_resolved_v1.any_ete_present.
+gross_ete_flag,0/1,Any gross ETE event at path.
+microscopic_ete_flag,0/1,Any microscopic ETE event at path.
+ete_grade,string,Highest-rank ETE grade observed across all path events for the patient (microscopic / gross / null).
+ln_positive_flag,0/1,Any cervical LN with positive nodal disease at path. Source: canonical_cervical_ln_clinical_patient_rollup_v1.has_positive_ln_level.
+n_positive_ln_level_mentions,int,Count of positive-LN mentions in clinical notes (proxy for nodal burden; not a clean lab count).

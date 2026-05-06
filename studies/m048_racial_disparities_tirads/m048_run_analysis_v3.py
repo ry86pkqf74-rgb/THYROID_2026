@@ -707,7 +707,12 @@ def main():
     sens_fit("S048v2_B_single_nodule", sdf[sdf["n_nodules_total"] == 1])
     sens_fit("S048v2_C_genetics_tested", sdf[sdf["had_any_genetics"] == 1])
     sens_fit("S048v2_D_no_CLT", sdf[sdf["has_clt"] == 0])
-    vi_mask = sdf["bethesda_bucket"].astype(str).str.strip().str.upper().isin({"VI", "6"})
+    # Issue: prepare_v3_frame stores the Bethesda VI bucket as "VI_malig", not "VI" or "6",
+    # so the original mask matched zero rows and the "drop Bethesda VI" arm silently
+    # collapsed onto the full cohort. Match the substring "VI" *and* exclude the
+    # "V_susp_malig" bucket to drop only the path-confirmed-malignant cytology stratum.
+    bb_upper = sdf["bethesda_bucket"].astype(str).str.strip().str.upper()
+    vi_mask = bb_upper.str.startswith("VI")
     sens_fit("S048v3_E_no_Bethesda_VI", sdf[~vi_mask])
     sens_fit("S048v3_F_TR4_only", sdf[sdf["max_tr_int"] == 4])
     sens_fit("S048v3_G_had_fna", sdf[sdf["had_any_fna"] == 1])
