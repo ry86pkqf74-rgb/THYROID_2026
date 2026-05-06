@@ -2,6 +2,7 @@
 
 **Generated:** 2026-05-04 01:06 | mig_290 | thyroid_canonical_publication_v1_0
 **Cohort lock:** mig_281 + mig_285 (post-2026-05-04)
+**20260507 recurrence refresh:** headline recurrence row + locked JSON verified on **BigQuery** `thyroid-canonical-pub-2026.pub_workspace.cohort_m032_descriptive_25yr_v1` (MotherDuck cross-check identical); see `M032_locked_numbers_20260507.json`.
 
 ---
 

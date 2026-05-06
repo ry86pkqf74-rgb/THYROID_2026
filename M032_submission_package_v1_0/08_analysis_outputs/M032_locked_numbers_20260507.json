@@ -1,7 +1,10 @@
 {
   "source": "post-mig_086 refresh; +12 recurrences caught by complete extractions",
-  "query_ref": "manuscript_workspace.cohort_m032_descriptive_25yr_v1 @ thyroid_canonical_publication_v1_0 (MotherDuck MOTHERDUCK_DATABASE=thyroid_canonical_publication_v1_0)",
-  "drift_note": "Only n_recurrence changed vs 20260504 lock; all other headline metrics verified identical live.",
+  "verification_engine": "bigquery",
+  "bq_project": "thyroid-canonical-pub-2026",
+  "bq_table": "pub_workspace.cohort_m032_descriptive_25yr_v1",
+  "query_ref": "Full metric SELECT (COUNTIF/COUNT/AVG/STDDEV_POP/APPROX_QUANTILES) against `thyroid-canonical-pub-2026.pub_workspace.cohort_m032_descriptive_25yr_v1` (pub_canonical publication mirror). MotherDuck cross-check: same view name under `thyroid_canonical_publication_v1_0.manuscript_workspace` matched all headline counts.",
+  "drift_note": "Only n_recurrence changed vs 20260504 lock; all other headline metrics verified identical on BQ (authoritative for this package) with MD cross-check.",
   "n_total": 10871.0,
   "n_malig": 4019.0,
   "pct_malig": 37.0,
