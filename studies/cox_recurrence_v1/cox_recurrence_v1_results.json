@@ -1,0 +1,16 @@
+{
+  "model_id": "cox_recurrence_v1",
+  "model_type": "CoxPHFitter",
+  "library": "lifelines 0.30.3",
+  "cohort": "cohort_m044_ajcc_ete_v1 (BQ pub_workspace)",
+  "n_train": 2580,
+  "n_events": 428,
+  "c_index": 0.674,
+  "brier_1y": 0.1741,
+  "brier_3y": 0.1745,
+  "brier_5y": 0.1601,
+  "llr_pvalue": 0.0,
+  "log_likelihood": -2769.9168,
+  "dfl_id": "DFL-20260506-086",
+  "run_ts": "2026-05-06T12:30:23.514505+00:00"
+}
