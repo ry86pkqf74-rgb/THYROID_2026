@@ -69,6 +69,7 @@ _RLN_PATTERNS: list[_PatternRow] = [
 ]
 
 _NERVE_MONITOR_PATTERNS: list[_PatternRow] = [
+    # ── Existing patterns (v2.0) ─────────────────────────────────
     (re.compile(
         r"\b((?:intraoperative\s+)?nerve\s+(?:integrity\s+)?monit\w+)\b",
         re.I),
@@ -87,7 +88,216 @@ _NERVE_MONITOR_PATTERNS: list[_PatternRow] = [
         r"\b(nerve\s+stimulat(?:or|ion)\s+(?:was\s+)?used)\b",
         re.I),
      "nerve_stimulator_used", "nerve_monitoring", CONF_EXPLICIT),
+
+    # ── F3 expansion (v2.1, 2026-05-06; M038-AUDIT-F3) ───────────
+    # 1. Continuous IONM / cIONM
+    (re.compile(
+        r"\b(c[\.\s-]?IONM|continuous\s+IONM|continuous\s+intraoperative\s+(?:neuro)?monitoring)\b",
+        re.I),
+     "continuous_ionm", "nerve_monitoring", CONF_EXPLICIT),
+    # 2. Intermittent IONM / iIONM
+    (re.compile(
+        r"\b(i[\.\s-]?IONM|intermittent\s+IONM|intermittent\s+stimulation)\b",
+        re.I),
+     "intermittent_ionm", "nerve_monitoring", CONF_EXPLICIT),
+    # 3. RLN identified AND stimulated (intraoperative monitoring evidence)
+    (re.compile(
+        r"\b((?:recurrent\s+laryngeal\s+nerve|RLN)\s+(?:was\s+)?(?:identified[,\s]+(?:and\s+)?(?:was\s+)?)?stimulated)\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 4. Verified intact response to stimulation / response confirmed
+    (re.compile(
+        r"\b((?:verified\s+)?intact\s+response\s+to\s+stimulation|stimulation\s+response\s+(?:was\s+)?(?:verified|confirmed|intact))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 5. EMG response confirmed / positive EMG response / EMG signal
+    (re.compile(
+        r"\b((?:positive\s+)?EMG\s+(?:response|signal|tracing|amplitude)\s+(?:was\s+)?(?:confirmed|preserved|maintained|intact|noted|obtained|present))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 6. NIM ETT (endotracheal tube variants beyond the existing emg_tube pattern)
+    (re.compile(
+        r"\b(NIM(?:\s+(?:3\.0|2\.0|TriVantage|standard))?\s+ETTs?\b)",
+        re.I),
+     "nim_etts", "nerve_monitoring", CONF_EXPLICIT),
+    # 7. Nerve integrity monitor (broader than monit-stem)
+    (re.compile(
+        r"\b(nerve\s+integrity\s+monitor(?:ing|s)?)\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 8. Continuous vagal monitoring / APS / vagal stimulator
+    (re.compile(
+        r"\b(continuous\s+vagal\s+(?:nerve\s+)?(?:monitoring|stimulation)|APS\s+(?:electrode|probe|monitor)|vagal\s+nerve\s+stimulator)\b",
+        re.I),
+     "vagal_continuous", "nerve_monitoring", CONF_EXPLICIT),
+    # 9. Randolph protocol amplitudes — V1/V2/R1/R2 stimulation
+    (re.compile(
+        r"\b((?:V1|V2|R1|R2)(?:[/\s\-]+(?:V1|V2|R1|R2))*\s+(?:stimulation|amplitudes?|signals?|recorded|obtained))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 10. Signal preserved / maintained (positive monitoring outcome)
+    (re.compile(
+        r"\b((?:nerve\s+)?signal\s+(?:was\s+)?(?:preserved|maintained|present|intact|robust))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 11. Device brand → monitoring (Inomed, Medtronic, Magstim, Checkpoint)
+    (re.compile(
+        r"\b((?:Inomed|Medtronic|Magstim|Checkpoint|Xomed|C2)\s+(?:NIM|stimulator|nerve\s+monitor|neuromonitor\w*|probe))\b",
+        re.I),
+     "nim_device", "nerve_monitoring", CONF_EXPLICIT),
+    # 12. Looser nerve stimulator phrasing
+    (re.compile(
+        r"\b((?:electrical\s+)?nerve\s+stimulation\s+(?:was\s+)?(?:applied|performed|utilized|employed)|nerve\s+stimulator\s+probe)\b",
+        re.I),
+     "nerve_stimulator_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 13. Laryngeal EMG / electromyography
+    (re.compile(
+        r"\b(laryngeal\s+(?:nerve\s+)?(?:EMG|electromyograph\w+))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 14. Stimulation amplitudes recorded — broad monitoring evidence
+    (re.compile(
+        r"\b(stimulation\s+(?:was\s+)?(?:performed|carried\s+out|done)\s+(?:at|with|to)\s+\d+(?:\.\d+)?\s*(?:mA|microV|µV|uV))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 15. Compound 'neuromonitor*' word (no preceding 'nerve' required) —
+    #     catches Saunders-style 'Intraoperative recurrent laryngeal neuromonitoring',
+    #     'neuromonitoring endotracheal tube', 'continuous neuromonitoring'.
+    #     This was the v2.0 blind spot recovered during F3 validation.
+    (re.compile(r"\b(neuromonitor\w+)\b", re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
+    # 16. Neuromonitoring endotracheal tube (specific common phrasing)
+    (re.compile(
+        r"\b(neuromonitor\w+\s+(?:endotracheal|ET)\s+tube)\b",
+        re.I),
+     "nim_etts", "nerve_monitoring", CONF_EXPLICIT),
+    # 17. RLN nerves identified WITH stimulation noted in same clause
+    (re.compile(
+        r"\b((?:recurrent\s+laryngeal\s+nerves?|RLNs?)\s+(?:were\s+)?identified\s+(?:and\s+)?(?:stimulated|monitored|protected)\s+(?:via|with|using)\s+(?:the\s+)?(?:NIM|nerve\s+monitor|stimulator|neuromonitor\w*))\b",
+        re.I),
+     "nerve_monitoring_used", "nerve_monitoring", CONF_EXPLICIT),
 ]
+
+_NECK_DISSECTION_PATTERNS: list[_PatternRow] = [
+    # ── F4 (v2.2, 2026-05-06; M038-AUDIT-F4-NeckDissection-NLPRules) ────
+    # Central neck dissection patterns
+    (re.compile(
+        r"\b((?:right\s+|left\s+|bilateral\s+)?central\s+neck\s+(?:lymph\s+node\s+|lymph(?:adenectomy)?|compartment\s+)?dissection)\b",
+        re.I),
+     "central_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(level\s+(?:VI|6)\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "central_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    (re.compile(
+        r"\b((?:right\s+|left\s+|bilateral\s+)?central\s+compartment\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "central_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    (re.compile(
+        r"\b((?:right\s+|left\s+|bilateral\s+)?(?:para|pre)tracheal\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "central_neck_dissection", "neck_dissection", CONF_CONTEXTUAL),
+    (re.compile(
+        r"\b(prelaryngeal\s+(?:lymph(?:adenectomy)?|dissection|node)|delphian\s+(?:node\s+)?(?:dissection|excision))\b",
+        re.I),
+     "central_neck_dissection", "neck_dissection", CONF_CONTEXTUAL),
+    # Lateral neck dissection patterns
+    (re.compile(
+        r"\b((?:right\s+|left\s+|bilateral\s+)?lateral\s+neck\s+(?:lymph\s+node\s+|lymph(?:adenectomy)?|compartment\s+)?dissection)\b",
+        re.I),
+     "lateral_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    (re.compile(
+        r"\b((?:modified\s+)?radical\s+neck\s+(?:lymph\s+node\s+)?dissection)\b",
+        re.I),
+     "lateral_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    (re.compile(r"\b(MRND)\b"),
+     "lateral_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    # Multi-level dissection (II-V or 2-5 ranges) — implies lateral
+    (re.compile(
+        r"\b(levels?\s+(?:II|2)\s*(?:[-–—]\s*|\s+through\s+|\s+to\s+|\s*and\s+|\s+,\s*)*\s*(?:III|IV|V|3|4|5)(?:\s*[-–—,]\s*(?:III|IV|V|3|4|5))*\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "lateral_neck_dissection", "neck_dissection", CONF_EXPLICIT),
+    # Single-lateral-level dissection (II/III/IV/V) — implies lateral
+    (re.compile(
+        r"\b(level\s+(?:II|III|IV|V|2|3|4|5)\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "lateral_neck_dissection", "neck_dissection", CONF_CONTEXTUAL),
+    # Jugular chain dissection — lateral neck
+    (re.compile(
+        r"\b((?:right\s+|left\s+|bilateral\s+)?jugular\s+(?:chain|node)\s+(?:lymph(?:adenectomy)?|dissection|lymph\s+node\s+dissection))\b",
+        re.I),
+     "lateral_neck_dissection", "neck_dissection", CONF_CONTEXTUAL),
+]
+
+
+_TRACHEOSTOMY_TEMPORAL_PATTERNS: list[_PatternRow] = [
+    # ── F2 (v2.2, 2026-05-06; M038-AUDIT-F2-Tracheostomy-Perioperative) ───
+    # CONCURRENT/PERIOPERATIVE — high confidence the trach is THIS admission
+    (re.compile(
+        r"\b(tracheo(?:s|t)tomy\s+(?:tube\s+)?(?:was\s+)?(?:placed|performed|created|fashioned|inserted)\s+(?:through|in|during|today|now|concurrently))\b",
+        re.I),
+     "tracheostomy_concurrent", "tracheostomy", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(concurrent(?:ly)?\s+tracheo(?:s|t)tomy|tracheo(?:s|t)tomy\s+(?:was\s+)?performed\s+(?:concurrently|at\s+the\s+same\s+(?:time|setting)|in\s+the\s+same\s+(?:procedure|setting)))\b",
+        re.I),
+     "tracheostomy_concurrent", "tracheostomy", CONF_EXPLICIT),
+    (re.compile(
+        r"\b((?:emergent|emergency|urgent)\s+tracheo(?:s|t)tomy)\b",
+        re.I),
+     "tracheostomy_concurrent", "tracheostomy", CONF_EXPLICIT),
+    # CPT-coded concurrent tracheostomy (31600 = elective; 31603 = emergency
+    # transtracheal; 31605 = emergency cricothyroid)
+    (re.compile(r"\b(?:CPT\s*[:\-]?\s*)?(3160[035])\b"),
+     "tracheostomy_concurrent_cpt", "tracheostomy", CONF_EXPLICIT),
+    # POD-N timing reference ("tracheostomy on postoperative day 4")
+    (re.compile(
+        r"\b(tracheo(?:s|t)tomy\s+(?:on\s+|at\s+)?(?:POD\s*\d+|postoperative\s+day\s+\d+|day\s+\d+\s+post\s*-?\s*op))\b",
+        re.I),
+     "tracheostomy_pod", "tracheostomy", CONF_EXPLICIT),
+    # PRE-EXISTING / HISTORICAL — these should DEMOTE proc_nlp_tracheostomy
+    (re.compile(
+        r"\b((?:history\s+of|prior|previous|past\s+(?:medical\s+)?history\s+of|s/p|status\s+post|h/o)\s+tracheo(?:s|t)tomy)\b",
+        re.I),
+     "tracheostomy_history", "tracheostomy", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(tracheo(?:s|t)tomy\s+(?:tract|tube|stoma|site|scar)|tracheostoma\b)",
+        re.I),
+     "tracheostomy_anatomy_only", "tracheostomy", CONF_CONTEXTUAL),
+    (re.compile(
+        r"\b(no\s+tracheo(?:s|t)tomy\s+(?:required|needed|necessary|performed))\b",
+        re.I),
+     "tracheostomy_negated", "tracheostomy", CONF_EXPLICIT),
+]
+
+
+_RLN_SIGNAL_STATUS_PATTERNS: list[_PatternRow] = [
+    # ── F5 (v2.2, 2026-05-06; M038-AUDIT-F5-NerveSignal-AbnormalVsVerified) ──
+    # Verified / preserved / intact signal
+    (re.compile(
+        r"\b(signal\s+(?:was\s+)?(?:preserved|maintained|intact|robust|present|verified))\b",
+        re.I),
+     "signal_verified", "rln_signal_status", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(intact\s+stimulation|positive\s+EMG\s+response|amplitude\s+(?:was\s+)?maintained|continuous\s+response\s+(?:was\s+)?confirmed)\b",
+        re.I),
+     "signal_verified", "rln_signal_status", CONF_EXPLICIT),
+    # Diminished / reduced
+    (re.compile(
+        r"\b(amplitude\s+(?:was\s+)?(?:decreased|reduced|attenuated|diminished)|reduced\s+response|attenuated\s+signal|signal\s+(?:was\s+)?weakened)\b",
+        re.I),
+     "signal_diminished", "rln_signal_status", CONF_EXPLICIT),
+    # Loss of signal / absent
+    (re.compile(
+        r"\b(no\s+response\s+to\s+stimulation|signal\s+(?:was\s+)?lost|loss\s+of\s+signal|failure\s+to\s+elicit|flatline|no\s+EMG\s+response|absent\s+(?:nerve\s+)?signal|LOS\b(?!\s+\d))",
+        re.I),
+     "loss_of_signal_los", "rln_signal_status", CONF_EXPLICIT),
+    # Amplitude < 100µV LOS-threshold (per North American Loss-of-Signal definition)
+    (re.compile(
+        r"\b(amplitude\s*(?:<|less\s+than|under)\s*100\s*(?:µV|microV|uV)|under\s+100\s+microvolts?)\b",
+        re.I),
+     "loss_of_signal_los", "rln_signal_status", CONF_EXPLICIT),
+]
+
 
 _PARATHYROID_AUTOGRAFT_PATTERNS: list[_PatternRow] = [
     (re.compile(
@@ -393,6 +603,9 @@ class OperativeDetailExtractor(BaseExtractor):
     _DOMAIN_PATTERNS: list[list[_PatternRow]] = [
         _RLN_PATTERNS,
         _NERVE_MONITOR_PATTERNS,
+        _NECK_DISSECTION_PATTERNS,
+        _TRACHEOSTOMY_TEMPORAL_PATTERNS,
+        _RLN_SIGNAL_STATUS_PATTERNS,
         _PARATHYROID_AUTOGRAFT_PATTERNS,
         _PARATHYROID_MGMT_PATTERNS,
         _GROSS_INVASION_PATTERNS,

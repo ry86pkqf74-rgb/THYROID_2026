@@ -1,0 +1,115 @@
+-- =============================================================================
+-- mig_331 — Operative-note NLP enrichment: IMPLEMENTATION LOG (companion to
+--           331_op_nlp_enrichment_spec_20260506.sql)
+--
+-- Date:    2026-05-06
+-- Status:  Python @ extract_operative_v2.py v2.2 implementation COMPLETE.
+--          BQ canonical rebuild PENDING (separate THY Linear issue).
+-- Source:  Cowork session continuation 2026-05-06 (handoff prompt).
+--          DFL rows updated: M038-AUDIT-F2/F3/F4/F5.
+--
+-- WHAT LANDED IN llm_extraction/extract_operative_v2.py @ v2.2 (2026-05-06):
+--
+--   F3 — _NERVE_MONITOR_PATTERNS expanded 6 → 23 patterns
+--     v2.1 added 14: continuous IONM (cIONM), intermittent IONM (iIONM),
+--                    RLN identified+stimulated, intact response to stim,
+--                    EMG response confirmed, NIM ETT (NIM 3.0/2.0/TriVantage),
+--                    nerve integrity monitor (broader), continuous vagal /
+--                    APS / vagal nerve stimulator, V1/V2/R1/R2 Randolph stim,
+--                    signal preserved/maintained/intact, device brands
+--                    (Inomed, Medtronic, Magstim, Checkpoint, Xomed, C2),
+--                    electrical nerve stimulation (looser), laryngeal EMG,
+--                    stim amplitudes recorded.
+--     v2.2 added 3 (after FN-sample audit revealed compound-word blind spot):
+--                    \bneuromonitor\w*\b (catches Saunders 'Intraoperative
+--                    recurrent laryngeal neuromonitoring'), neuromonitoring
+--                    ETT, RLN identified+monitored+via-device.
+--     Validation (BQ SQL re-expression): op-note-conditional sensitivity 96%
+--     vs NSQIP n=448, specificity 98%, +58 cohort positives over v2.0.
+--     Absolute sensitivity 58.9% (430/730) is structurally bounded by
+--     op-note ingestion gap (282 NSQIP-Yes patients have no op-note in
+--     clinical_notes_long; 18 have op-notes silent on monitoring). See
+--     mig_333 spec for NSQIP fallback view.
+--
+--   F4 — NEW _NECK_DISSECTION_PATTERNS bank (12 patterns)
+--     Central (5): central neck dissection [+side], level VI/6 lymphadenectomy,
+--                  central compartment dissection, paratracheal/pretracheal
+--                  dissection, prelaryngeal/Delphian.
+--     Lateral (7): lateral neck dissection [+side], modified radical neck
+--                  dissection, MRND acronym, levels II-V/2-5 multi-range,
+--                  single level (II/III/IV/V/2/3/4/5), jugular chain dissection.
+--     Side detection: regex prefix capture of 'right/left/bilateral'.
+--     Validation: NLP-only central=520, lateral=181. Combined with structured
+--     rollups: central=1,229 (11.3%), lateral=461 (4.2%). Side detection:
+--     central R=197/L=167/bilateral=34; lateral R=63/L=65/bilateral=1.
+--
+--   F5 — NEW _RLN_SIGNAL_STATUS_PATTERNS bank (5 patterns)
+--     signal_verified: signal preserved/maintained/intact/robust/present;
+--                      intact stimulation, positive EMG response, amplitude
+--                      maintained, continuous response confirmed.
+--     signal_diminished: amplitude decreased/reduced/attenuated/diminished;
+--                        reduced/attenuated response; signal weakened.
+--     loss_of_signal_los: no response to stimulation; signal lost; loss of
+--                         signal; failure to elicit; flatline; no EMG response;
+--                         absent signal; LOS acronym.
+--     Threshold-based LOS: amplitude < 100 µV / under 100 microvolts.
+--     Validation: NLP recovers ≈30 patients of qualitative signal data on
+--     top of mig_330's 113 structured-amplitude cases. Combined coverage
+--     ≈1.3% of cohort, vs audit target ≥30%. Structural ceiling — signal
+--     quality is rarely documented qualitatively in op-notes.
+--
+--   F2 — NEW _TRACHEOSTOMY_TEMPORAL_PATTERNS bank (8 patterns)
+--     Concurrent (4): tracheostomy placed today/now/concurrently; concurrent
+--                     tracheostomy; emergent/urgent tracheostomy; CPT codes
+--                     31600/31603/31605.
+--     POD-anchored (1): tracheostomy on POD N / postoperative day N.
+--     Pre-existing/historical (3): history-of / prior / s/p / h/o
+--                                  tracheostomy; tract/tube/stoma/site/scar
+--                                  anatomy; explicit 'no tracheostomy
+--                                  required'.
+--     Validation: 2 concurrent (matches mig_329 strict count exactly); 17
+--     patients with definitive classification; 365 unclassified incidental.
+--     Audit target of ≥80% temporal anchoring is structurally unachievable.
+--
+-- CANONICAL REBUILD TO APPLY (separate THY Linear issue, deferred to next
+-- pipeline run):
+--
+--   1. Run llm_extraction/run_extraction.py with OperativeDetailExtractor
+--      against pub_canonical.clinical_notes_long op_notes (n=4,727). Replace
+--      rows in note_entities_operative_detail where extractor_version is
+--      v2.0 and entity_domain='operative_detail'.
+--
+--   2. Run scripts/22_canonical_episodes_v2.py episode-rollup section.
+--      ADD entity_type='neck_dissection' to the rollup CASE expression
+--      (currently only handles nerve_monitoring, rln_finding, gross_invasion,
+--      tracheal_involvement, esophageal_involvement, strap_muscle,
+--      reoperative_field, drain_placement). New aggregation:
+--          BOOL_OR(entity_type='neck_dissection'
+--              AND present_or_negated='present'
+--              AND entity_value_norm='central_neck_dissection') AS cnd_nlp,
+--          BOOL_OR(entity_type='neck_dissection'
+--              AND present_or_negated='present'
+--              AND entity_value_norm='lateral_neck_dissection') AS lnd_nlp,
+--          MAX(CASE WHEN entity_type='rln_signal_status'
+--              AND present_or_negated='present'
+--              THEN entity_value_norm END) AS rln_signal_status_nlp,
+--          MAX(CASE WHEN entity_type='tracheostomy'
+--              AND present_or_negated='present'
+--              THEN entity_value_norm END) AS trach_temporal_class
+--      Update operative_episode_detail_v2 lines 643-644:
+--          COALESCE(ps.cnd_from_ps, e.cnd_nlp, FALSE) AS central_neck_dissection_flag,
+--          COALESCE(ps.lnd_from_ps, e.lnd_nlp, FALSE) AS lateral_neck_dissection_flag,
+--
+--   3. Run scripts/364_cpm_feeder_repoint.py to propagate to
+--      canonical_patient_master.op_nlp_nerve_monitoring_used (with v2.2
+--      patterns), op_nlp_nerve_monitoring_type (with priority categorical:
+--      continuous_ionm > vagal_continuous > intermittent_ionm > nim_etts >
+--      nim_device > nerve_stimulator_used > nerve_monitoring_used >
+--      unspecified).
+--
+--   4. Apply mig_333 (op_nlp_nerve_monitoring NSQIP fallback) — separate
+--      DFL row to be filed.
+--
+-- =============================================================================
+
+SELECT 'mig_331 implementation logged 2026-05-06 — see comments and DFL F2/F3/F4/F5' AS note;

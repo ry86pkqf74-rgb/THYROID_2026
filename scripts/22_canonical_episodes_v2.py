@@ -1002,9 +1002,30 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 BOOL_OR(entity_type = 'drain_placement'
                     AND present_or_negated = 'present'
                     AND entity_value_norm != 'no_drain') AS drain_flag,
+                -- F4 (mig_331 v2.2) — neck-dissection NLP entities
+                BOOL_OR(entity_type = 'neck_dissection'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm = 'central_neck_dissection') AS central_neck_dissection_nlp,
+                BOOL_OR(entity_type = 'neck_dissection'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm = 'lateral_neck_dissection') AS lateral_neck_dissection_nlp,
+                -- F5 (mig_331 v2.2) — RLN signal-status NLP entities (priority: LOS > diminished > verified)
+                MAX(CASE WHEN entity_type = 'rln_signal_status'
+                    AND present_or_negated = 'present'
+                    THEN entity_value_norm END) AS rln_signal_status_nlp,
+                -- F2 (mig_331 v2.2) — tracheostomy temporal classification
+                MAX(CASE WHEN entity_type = 'tracheostomy'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm IN ('tracheostomy_concurrent', 'tracheostomy_concurrent_cpt', 'tracheostomy_pod')
+                    THEN entity_value_norm END) AS trach_concurrent_evidence,
+                MAX(CASE WHEN entity_type = 'tracheostomy'
+                    AND present_or_negated = 'present'
+                    AND entity_value_norm IN ('tracheostomy_history', 'tracheostomy_anatomy_only', 'tracheostomy_negated')
+                    THEN entity_value_norm END) AS trach_nonperioperative_evidence,
                 STRING_AGG(DISTINCT CASE WHEN entity_type IN (
                         'gross_invasion', 'rln_finding', 'tracheal_involvement',
-                        'esophageal_involvement', 'strap_muscle', 'intraop_complication')
+                        'esophageal_involvement', 'strap_muscle', 'intraop_complication',
+                        'neck_dissection', 'rln_signal_status', 'tracheostomy')
                     AND present_or_negated = 'present'
                     THEN entity_value_norm END, '; ') AS operative_findings_raw
             FROM _op_v2_raw
@@ -1020,6 +1041,18 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 except Exception:
                     pass
             return
+        # Ensure new F2/F4/F5 columns exist on operative_episode_detail_v2
+        # (idempotent — safe to re-run; skipped if columns already present).
+        for ddl in [
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS rln_signal_status_nlp VARCHAR",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS trach_concurrent_evidence VARCHAR",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS trach_nonperioperative_evidence VARCHAR",
+        ]:
+            try:
+                con.execute(ddl)
+            except Exception:
+                pass
+
         con.execute("""
             UPDATE operative_episode_detail_v2 o
             SET rln_monitoring_flag = COALESCE(e.rln_monitoring_flag, o.rln_monitoring_flag),
@@ -1032,7 +1065,21 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 strap_muscle_involvement_flag = COALESCE(e.strap_muscle_involvement_flag, o.strap_muscle_involvement_flag),
                 reoperative_field_flag = COALESCE(e.reoperative_field_flag, o.reoperative_field_flag),
                 drain_flag = COALESCE(e.drain_flag, o.drain_flag),
-                operative_findings_raw = COALESCE(e.operative_findings_raw, o.operative_findings_raw)
+                operative_findings_raw = COALESCE(e.operative_findings_raw, o.operative_findings_raw),
+                -- F4 (mig_331 v2.2) — OR-fold path-synoptic and NLP central / lateral dissection
+                central_neck_dissection_flag = (
+                    COALESCE(o.central_neck_dissection_flag, FALSE)
+                    OR COALESCE(e.central_neck_dissection_nlp, FALSE)
+                ),
+                lateral_neck_dissection_flag = (
+                    COALESCE(o.lateral_neck_dissection_flag, FALSE)
+                    OR COALESCE(e.lateral_neck_dissection_nlp, FALSE)
+                ),
+                -- F5 (mig_331 v2.2) — RLN signal status NLP (LOS > diminished > verified)
+                rln_signal_status_nlp = COALESCE(e.rln_signal_status_nlp, o.rln_signal_status_nlp),
+                -- F2 (mig_331 v2.2) — trach temporal evidence
+                trach_concurrent_evidence = COALESCE(e.trach_concurrent_evidence, o.trach_concurrent_evidence),
+                trach_nonperioperative_evidence = COALESCE(e.trach_nonperioperative_evidence, o.trach_nonperioperative_evidence)
             FROM (
                 SELECT DISTINCT ON (o2.research_id, o2.surgery_episode_id)
                     o2.research_id, o2.surgery_episode_id, e2.*
@@ -1041,7 +1088,12 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 WHERE o2.research_id = e2.research_id
                   AND (e2.rln_monitoring_flag
                        OR e2.rln_finding_raw IS NOT NULL
-                       OR e2.operative_findings_raw IS NOT NULL)
+                       OR e2.operative_findings_raw IS NOT NULL
+                       OR e2.central_neck_dissection_nlp
+                       OR e2.lateral_neck_dissection_nlp
+                       OR e2.rln_signal_status_nlp IS NOT NULL
+                       OR e2.trach_concurrent_evidence IS NOT NULL
+                       OR e2.trach_nonperioperative_evidence IS NOT NULL)
                 ORDER BY o2.research_id, o2.surgery_episode_id,
                          ABS(DATEDIFF('day',
                              COALESCE(o2.surgery_date_native, DATE '2099-01-01'),
@@ -1057,6 +1109,80 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
             "   OR operative_findings_raw IS NOT NULL"
         ).fetchone()[0]
         print(f"  Operative enrichment applied: {op_enriched:,} episodes now have extractor data")
+
+        # ── F4/F5/F2 patient-level OR-fold (mig_331 v2.2) ──────────────
+        # The closest-note heuristic above can miss CND/LND/rln_signal/trach
+        # mentions that appear in non-primary op notes.  Run a second pass
+        # that takes a per-patient BOOL_OR / MAX across ALL notes and
+        # OR-folds those patient-level signals into every episode for that
+        # patient.  This is conservative (any positive mention wins) and is
+        # safe because CND/LND/signal/trach are existence checks, not
+        # episode-specific quantities.
+        if table_available(con, "_v2_operative_enrichment"):
+            con.execute("""
+                CREATE OR REPLACE TABLE _v2_op_f4f5_patient_max AS
+                SELECT
+                    research_id,
+                    BOOL_OR(central_neck_dissection_nlp) AS cnd_any,
+                    BOOL_OR(lateral_neck_dissection_nlp)  AS lnd_any,
+                    MAX(rln_signal_status_nlp)             AS rln_sig_any,
+                    MAX(trach_concurrent_evidence)         AS trach_conc_any,
+                    MAX(trach_nonperioperative_evidence)   AS trach_nonp_any
+                FROM _v2_operative_enrichment
+                GROUP BY research_id
+            """)
+            con.execute("""
+                UPDATE operative_episode_detail_v2 o
+                SET
+                    central_neck_dissection_flag = (
+                        COALESCE(o.central_neck_dissection_flag, FALSE)
+                        OR COALESCE(pm.cnd_any, FALSE)
+                    ),
+                    lateral_neck_dissection_flag = (
+                        COALESCE(o.lateral_neck_dissection_flag, FALSE)
+                        OR COALESCE(pm.lnd_any, FALSE)
+                    ),
+                    rln_signal_status_nlp = COALESCE(
+                        o.rln_signal_status_nlp, pm.rln_sig_any
+                    ),
+                    trach_concurrent_evidence = COALESCE(
+                        o.trach_concurrent_evidence, pm.trach_conc_any
+                    ),
+                    trach_nonperioperative_evidence = COALESCE(
+                        o.trach_nonperioperative_evidence, pm.trach_nonp_any
+                    )
+                FROM _v2_op_f4f5_patient_max pm
+                WHERE o.research_id = pm.research_id
+                  AND (pm.cnd_any OR pm.lnd_any
+                       OR pm.rln_sig_any IS NOT NULL
+                       OR pm.trach_conc_any IS NOT NULL
+                       OR pm.trach_nonp_any IS NOT NULL)
+            """)
+            try:
+                con.execute("DROP TABLE IF EXISTS _v2_op_f4f5_patient_max")
+            except Exception:
+                pass
+            f4_central = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE central_neck_dissection_flag"
+            ).fetchone()[0]
+            f4_lateral = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE lateral_neck_dissection_flag"
+            ).fetchone()[0]
+            f5_signal = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE rln_signal_status_nlp IS NOT NULL"
+            ).fetchone()[0]
+            f2_trach = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE trach_concurrent_evidence IS NOT NULL"
+            ).fetchone()[0]
+            print(
+                f"  F4/F5/F2 patient-level OR-fold: "
+                f"central={f4_central}, lateral={f4_lateral}, "
+                f"rln_signal={f5_signal}, trach_concurrent={f2_trach}"
+            )
 
     # ── Molecular enrichment ────────────────────────────────────────
     if mol_results and table_available(con, "molecular_test_episode_v2"):

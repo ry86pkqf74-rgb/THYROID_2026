@@ -1,0 +1,94 @@
+-- =============================================================================
+-- mig_331 — Operative-note NLP enrichment spec (Migration B)
+--           This migration is a SPEC ONLY (not applied here). The actual NLP
+--           rule changes live in the upstream operative-note NLP pipeline
+--           (Python). This file documents the column targets and validation
+--           thresholds.
+--
+-- Date:    2026-05-06
+-- Source:  M038 canonical-data audit 2026-05-06.
+--          Data Feedback Log rows: M038-AUDIT-F3-RLNMonitor-NLPGap,
+--                                   M038-AUDIT-F4-NeckDissection-NLPRules,
+--                                   M038-AUDIT-F5-NerveSignal-AbnormalVsVerified
+--
+-- TARGETS:
+--   1. op_nlp_nerve_monitoring_used (BOOL) — expand phrase-match rules.
+--      Current: 4,028/10,871 episodes (37%) populated; 87% positive when known.
+--      Sensitivity vs structured NSQIP field (n=944 ground truth): 24.9%.
+--      Target sensitivity: ≥80%; specificity ≥95%.
+--      Phrases to add: 'continuous IONM', 'recurrent laryngeal nerve was
+--      identified and stimulated', 'verified intact response to stimulation',
+--      'EMG response confirmed', 'NIM ETT', 'IONM', 'nerve integrity monitor',
+--      'continuous vagal monitoring', 'V1/V2/R1/R2 stimulation'.
+--
+--   2. op_nlp_nerve_monitoring_type (STRING) — extend categorical values.
+--      Current values: 'nerve_monitoring_used' (bulk), 'nim', 'nim_device',
+--      'nerve_stimulator_used', 'ionm'.
+--      Add: 'intermittent_ionm', 'continuous_ionm', 'vagal_continuous',
+--      'nim_etts', 'unspecified'.
+--
+--   3. central_neck_dissection_flag (BOOL) — currently ZERO positives in
+--      val_operative_note_parse_coverage_v1. Implement extraction:
+--      'central neck dissection', 'level VI lymphadenectomy',
+--      'central compartment dissection', 'paratracheal lymphadenectomy',
+--      'pretracheal lymph node dissection', 'level 6 dissection'.
+--      Side detection: 'right central', 'left central', 'bilateral central'.
+--      Validation target: 6-8% positive (matches BQ rollup ~655 cases / 10,871).
+--
+--   4. lateral_neck_dissection_flag (BOOL) — currently ZERO positives.
+--      Implement: 'modified radical neck dissection', 'lateral neck dissection',
+--      'levels II-V lymphadenectomy', 'levels 2 through 5 dissection',
+--      'MRND', 'level IV dissection', 'jugular chain dissection'.
+--      Side detection per laterality.
+--      Validation target: ~3-4% positive (matches BQ rollup ~336 cases).
+--
+--   5. rln_signal_status (STRING) NLP component — supplement to mig_330.
+--      mig_330 derives signal status from structured ops_nerve_stim_left/_right
+--      amplitudes (114 cases). NLP supplement should extract qualitative
+--      operative-note phrases:
+--      - signal_verified: 'signal preserved', 'intact stimulation',
+--        'positive EMG response', 'amplitude maintained',
+--        'continuous response confirmed'.
+--      - signal_diminished: 'amplitude decreased', 'reduced response',
+--        'attenuated signal', 'signal weakened from baseline'.
+--      - signal_absent / loss_of_signal_los: 'no response to stimulation',
+--        'signal lost', 'amplitude < 100 microV', 'loss of signal',
+--        'failure to elicit', 'flatline', 'no EMG response detected'.
+--      Combine NLP and structured-amplitude derivations: prefer structured
+--      when available, NLP fallback otherwise. Store source in
+--      rln_signal_status_source.
+--
+--   6. proc_nlp_tracheostomy_days_from_surg — currently anchored for only
+--      9 of 384 NLP-flagged tracheostomy events (2.3%). Improve date
+--      extraction from operative-note context:
+--      - 'tracheostomy performed during this admission' → days = 0
+--      - 'history of tracheostomy in [DATE]' → days < 0 (preexisting)
+--      - 'tracheostomy on POD [N]' → days = N
+--      - 'urgent tracheostomy [DATE]' → days = (DATE - surgery_date)
+--      Cross-reference with NSQIP operative-procedure CPT codes (31600,
+--      31603, 31605) for concurrent tracheostomy validation.
+--      Target: anchor ≥80% of tracheostomy mentions.
+--
+-- DEPENDENCIES:
+--   - Upstream NLP pipeline (Python; location: not in this DuckDB/BQ DDL,
+--     check repo path canonical_pipeline/operative_note_nlp/).
+--   - Validation suite using NSQIP-quality structured ground truth
+--     (n=944 cases for monitoring; cross-domain truth for dissection).
+--
+-- VERIFY (post-implementation):
+--   SELECT COUNT(*) FROM val_operative_note_parse_coverage_v1
+--     WHERE central_neck_dissection_flag = TRUE;  -- Expect ~600+
+--   SELECT COUNT(*) FROM val_operative_note_parse_coverage_v1
+--     WHERE lateral_neck_dissection_flag = TRUE;  -- Expect ~300+
+--   SELECT
+--     COUNTIF(op_nlp_nerve_monitoring_used) /
+--     COUNTIF(op_nlp_nerve_monitoring_used IS NOT NULL) AS positive_rate
+--   FROM canonical_patient_master
+--   WHERE EXTRACT(YEAR FROM first_surgery_date) >= 2015;  -- Expect ≥0.85
+-- =============================================================================
+
+-- This migration is a SPEC; no DDL applied here.
+-- See mig_329, mig_330 for the applied DDL components covering structured-data
+-- derivations. Implement Migration B by updating the operative-note NLP
+-- pipeline and re-running the canonical_patient_master rebuild.
+SELECT 'mig_331 spec only — see comments' AS note;

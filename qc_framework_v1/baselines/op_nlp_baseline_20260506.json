@@ -1,0 +1,36 @@
+{
+  "snapshot_date": "2026-05-06",
+  "snapshot_source": "thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master",
+  "n_total_episodes": 10871,
+  "f3_monitoring": {
+    "n_op_nlp_nerve_monitoring_used_known": 4028,
+    "n_op_nlp_nerve_monitoring_used_pos": 3493,
+    "pct_known": 0.3705,
+    "pct_pos_when_known": 0.8672,
+    "audit_sensitivity_vs_nsqip": 0.249,
+    "ground_truth_n": 944,
+    "target": {"sensitivity": 0.80, "specificity": 0.95, "coverage": 0.70}
+  },
+  "f4_dissection": {
+    "n_central_neck_dissection_flag_pos": 0,
+    "n_lateral_neck_dissection_flag_pos": 0,
+    "n_episodes_observed": 9371,
+    "bq_rollup_lateral_neck_dissected_pos": 336,
+    "bq_rollup_syn_central_dissection_pos": 655,
+    "target": {"central_pos_rate": [0.06, 0.08], "lateral_pos_rate": [0.03, 0.04]}
+  },
+  "f5_rln_signal": {
+    "n_stim_amp_present": 116,
+    "mig_330_signal_verified": 98,
+    "mig_330_loss_of_signal_los": 15,
+    "mig_330_unknown": 10758,
+    "current_coverage": 0.0104,
+    "target_coverage": 0.30
+  },
+  "f2_tracheostomy_temporal": {
+    "n_proc_nlp_tracheostomy_pos": 384,
+    "n_temporal_anchor_known": 9,
+    "pct_anchored": 0.0234,
+    "target_anchor_rate": 0.80
+  }
+}

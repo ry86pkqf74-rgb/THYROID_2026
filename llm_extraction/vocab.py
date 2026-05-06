@@ -223,7 +223,7 @@ CANONICAL_FACT_CONTRACT_DTYPES: dict[str, str] = {
 }
 
 # Aligned with config/extraction_domain_registry.yaml schema_version
-EXTRACTOR_BUILD_VERSION = "entity_schema_v2_2026-04-01"
+EXTRACTOR_BUILD_VERSION = "entity_schema_v2.2_2026-05-06"
 
 # ── Procedures ───────────────────────────────────────────────────
 
