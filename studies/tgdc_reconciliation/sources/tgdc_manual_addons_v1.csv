@@ -1,0 +1,14 @@
+research_id,evidence_source,evidence_summary,added_at
+1208,manual_chart_review,Benign neck cyst with pathologist narrative describing thyroglossal-type epithelial lining; cohort member from chart review because synoptic summary and preoperative fields lack the thyroglossal keyword used for automated capture.,2026-05-06
+255,manual_chart_review,Structured synoptic thyroglossal_duct_cyst flag with mediastinal or neck cyst pathology; retained after excluding non-TGDC mimic diagnoses in the 2026-03-07 reconciliation pass.,2026-05-06
+2593,manual_chart_review,Anterior cervical benign developmental cyst episode with TGDC synoptic marker despite abbreviated free-text summary lines.,2026-05-06
+2902,manual_chart_review,Specimen titled thyroglossal duct cyst with inflammatory change; historic text variant spelling required manual inclusion alongside keyword automation.,2026-05-06
+3315,manual_chart_review,Thyroid specimen narrative describes squamous-lined cyst compatible with thyroglossal duct origin on structured diagnosis feed without matching primary synoptic header keywords.,2026-05-06
+3577,manual_chart_review,Midline excision read as thyroglossal duct cyst on pathology summary; confirms TGDC status outside narrow text-window gaps.,2026-05-06
+4069,manual_chart_review,Benign midline soft tissue and skin cyst excision anchored by synoptic thyroglossal_duct_cyst flag after chart review.,2026-05-06
+7226,manual_chart_review,Repeat midline neck surgery with thyroglossal duct focused re-excision narrative documented on specimen diagnosis lines.,2026-05-06
+7637,manual_chart_review,Total thyroidectomy for multinodular disease where adjacent narrative references thyroglossal duct context not surfaced in primary text matcher.,2026-05-06
+8267,manual_chart_review,Bilateral thyroid surgery cohort with concurrent thyroglossal_duct_cyst synoptic flag despite dominant goiter wording in synoptic headers.,2026-05-06
+8754,manual_chart_review,Midline cystic neck mass explicitly classified thyroglossal duct cyst on thyroid specimen diagnosis while synoptic summary remained sparse.,2026-05-06
+10748,manual_chart_review,Anterior neck excision specimen diagnosed thyroglossal duct cyst on pathology narrative feed used for confirmation.,2026-05-06
+20028,manual_chart_review,Papillary carcinoma arising in thyroglossal duct cyst per specimen diagnosis; malignant TGDC case required explicit manual roster alignment with manuscript totals.,2026-05-06
