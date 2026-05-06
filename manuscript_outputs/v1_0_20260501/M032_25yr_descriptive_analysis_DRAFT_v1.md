@@ -147,6 +147,8 @@ Offline replication (legacy mig_230 bundle): `parquet_export/pub_v1_0_20260430/`
 
 This first draft was generated 2026-05-01 by Cowork using existing `manuscript_outputs/v1_0_20260501/` Tables 1–5 + cohort_flow + the v1.0 Methods doc (`docs/Methods_thyroid_canonical_pub_v1_0_20260501.md`) as source material. Manuscript assembly required no additional database analyses beyond what is already materialized in the CSV bundle.
 
+**Locked numbers refresh (2026-05-07, post–mig_086):** `M032_locked_numbers_20260507.json` — `n_recurrence` updated from 502 → 514 (+2.4%) after extraction completeness; all other headline denominators unchanged vs 20260504 lock. See `_scripts/post_mig_086_manuscript_reconciliation_20260507.md` (M032). Smoking “former” counts remain 504 (distinct from recurrence; do not conflate with legacy recurrence lock).
+
 **Gaps requiring author input before submission:**
 
 1. **Title finalization** — current working title is descriptive; consider tightening for journal scope.

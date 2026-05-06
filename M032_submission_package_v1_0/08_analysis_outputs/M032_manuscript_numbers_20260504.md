@@ -13,7 +13,7 @@
 - Mean age: 51.6 ± 15.2 years
 - Median tumor size: 1.7 cm
 - Median follow-up: 0.0 years
-- Any recurrence: 502; Deaths: 192
+- Any recurrence: 514 (4.73% of N=10,871 full cohort; 12.79% of N=4,019 malignant); Deaths: 192
 - RAI among malignant: 482
 
 ---
@@ -73,6 +73,7 @@
 | Metric | Live | Locked | Match? |
 |---|---|---|---|
 | n_total | 10,871 | 10,871 | ✓ |
+| n_recurrence | 514 | 502 (`20260504` JSON only) | Refreshed → `M032_locked_numbers_20260507.json` |
 | n_malig | 4,019 | 4,018 | ✗ DIFF |
 | n_smoke_current | 215 | 212 | ✗ DIFF |
 | n_smoke_known | 4,232 | 3,022 | ✗ DIFF |
