@@ -87,6 +87,21 @@ Then promote to MD canonical with a signed mig (pattern: mig_281, 287, 298).
 - `290404 (08001) 404 Not Found ... session/v1/login-request` — account name missing region. Use `qcc02515.us-east-1` not `qcc02515`.
 - Cortex-only PATs: silently 250001 on warehouse SQL. To use both warehouse SQL and Cortex, generate the PAT with the role `ACCOUNTADMIN` (or a custom role with USAGE on WH + DB + SCHEMA).
 
+## Cursor / bash sessions — PAT file in Downloads (Logan, 2026-05-06)
+When `snow sql -c thyroid_2026` fails with **250001** because `~/.snowflake/config.toml` still has an expired `[connections.thyroid_2026].password`:
+
+1. Snowsight → Profile → **Programmatic access tokens** → create a **generic**-scope PAT (not Cortex-only).
+2. Save the token as a **one-line** file under `~/Downloads/` (e.g. `*-token-secret.txt`). **Do not commit** the file.
+3. For Python / `_sf_client` / `CALL VALIDATE_ALL_COHORTS()`:
+   ```bash
+   export SNOWFLAKE_PAT_FILE="$HOME/Downloads/<your-one-line-pat-file>.txt"
+   cd /path/to/THYROID_2026 && .venv/bin/python snowflake_trial/scripts/_audit_run.py
+   ```
+   `_sf_client._ensure_snowflake_pat()` loads `SNOWFLAKE_PAT_FILE` before falling back to `config.toml`.
+4. Optional: paste the same PAT into `config.toml` under `password` so `snow sql` works without the env var.
+
+Never print token value, file contents, or full PAT in chat or tracked docs.
+
 ## Known carry-forwards
 - **CF-NODULE-FNA-V2-KEYS** (this session): `imaging_fna_linkage_v3` uses legacy nodule_id format (`4131-US-1-2`) but `canonical_us_nodule_v2` uses MD5 hashes — zero overlap. Bridge via (research_id + exam_date ±30d + laterality). Recovers ~70% of FNA links.
 - **CF-FNA-SIZE-CM-NULL**: `imaging_fna_linkage_v3.fna_size_cm` is NULL by design in v1_0; size_score is a flat 0.5 prior. v1_1 task: NLP-extract from `note_entities_llm_us_nodule_dynamics` / `note_entities_llm_tirads_granular`.
