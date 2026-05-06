@@ -1,0 +1,9 @@
+[
+  { "name": "research_id", "type": "STRING", "mode": "NULLABLE" },
+  { "name": "race", "type": "STRING", "mode": "NULLABLE" },
+  { "name": "ethnicity", "type": "STRING", "mode": "NULLABLE" },
+  { "name": "dob_year", "type": "INTEGER", "mode": "NULLABLE" },
+  { "name": "sex", "type": "STRING", "mode": "NULLABLE" },
+  { "name": "source_table", "type": "STRING", "mode": "NULLABLE" },
+  { "name": "extracted_at", "type": "TIMESTAMP", "mode": "NULLABLE" }
+]
