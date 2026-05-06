@@ -1,0 +1,7 @@
+feature_set,model,n_features,n_train,n_val,n_test,auc_train,auc_val,auc_test,brier_test,ap_test,overfit_flag
+A_structured,logistic,13,1561,335,335,0.8015,0.7235,0.8328,0.112,0.5462,False
+A_structured,xgboost,13,1561,335,335,0.9834,0.7046,0.85,0.1172,0.5047,False
+B_struct_imaging,logistic,19,1561,335,335,0.7997,0.7353,0.8336,0.1105,0.5528,False
+B_struct_imaging,xgboost,19,1561,335,335,0.9894,0.699,0.8504,0.1156,0.4984,False
+C_struct_img_notes,logistic,30,1561,335,335,0.8063,0.7366,0.8604,0.1092,0.5668,False
+C_struct_img_notes,xgboost,30,1561,335,335,0.9941,0.7459,0.8449,0.1241,0.4707,False

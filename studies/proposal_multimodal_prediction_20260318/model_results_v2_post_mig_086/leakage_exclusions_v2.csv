@@ -1,0 +1,12 @@
+feature,leakage_type,reason
+tg_rising_flag,POSTOP_LAB,POSTOP_LAB — part of biochemical recurrence definition (Tg > 1.0 ng/mL without structural disease)
+tg_nadir,POSTOP_LAB,POSTOP_LAB — derived from same Tg surveillance window as recurrence outcome
+tg_last_value,POSTOP_LAB,"POSTOP_LAB — postoperative measurement, not preoperative predictor"
+lab_completeness_score,POSTOP_LAB,POSTOP_LAB — measures completeness of postoperative Tg surveillance
+n_lab_values,POSTOP_LAB,POSTOP_LAB — count of postoperative lab measurements
+n_analyte_groups,POSTOP_LAB,POSTOP_LAB — postoperative analyte diversity
+ata_risk,DERIVED_SCORE,DERIVED_SCORE — ATA risk is calibrated to predict recurrence; circular
+macis_score,DERIVED_SCORE,DERIVED_SCORE — MACIS calibrated to predict recurrence; circular
+ames_risk_group,DERIVED_SCORE,DERIVED_SCORE — AMES calibrated to predict mortality/recurrence; circular
+ages_score,DERIVED_SCORE,DERIVED_SCORE — AGES calibrated to predict mortality; quasi-circular
+ajcc8_stage,DERIVED_SCORE,DERIVED_SCORE — AJCC8 stage is a composite that summarizes T/N/M; T+N+M included directly in Set A
