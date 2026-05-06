@@ -1,0 +1,283 @@
+{
+  "n_cohort": 6075,
+  "table1_chi2_sex_x_race": {
+    "chi2": 42.1740054657472,
+    "p": 4.81379215659166e-07,
+    "dof": 7
+  },
+  "kw_age": {
+    "H": 76.4535798215321,
+    "p": 7.264907742954015e-14
+  },
+  "kw_gland_weight_g": {
+    "H": 801.0046021395515,
+    "p": 1.1264439829834334e-168
+  },
+  "kw_l_vol": {
+    "H": 496.48076982096103,
+    "p": 4.576712147232325e-103
+  },
+  "kw_r_vol": {
+    "H": 378.8033986956358,
+    "p": 8.346616365936831e-78
+  },
+  "chi2_substernal_x_race": {
+    "chi2": 192.89068964394022,
+    "p": 3.670553098204501e-38
+  },
+  "chi2_ct_substernal_x_race": {
+    "chi2": 199.29846488678515,
+    "p": 1.6159161597784984e-39
+  },
+  "chi2_substernal_x_race_among_female": {
+    "chi2": 163.75943809228667,
+    "p": 5.185054306630923e-32,
+    "n": 4926
+  },
+  "chi2_substernal_x_race_among_male": {
+    "chi2": 46.99299532483667,
+    "p": 5.5996049491901136e-08,
+    "n": 1145
+  },
+  "mwu_black_vs_white": [
+    {
+      "contrast": "gland_weight_final_g",
+      "p_uncorrected": 3.4353817784359944e-168
+    },
+    {
+      "contrast": "syn_left_lobe_volume_cc",
+      "p_uncorrected": 2.6111445968990245e-102
+    },
+    {
+      "contrast": "syn_right_lobe_volume_cc",
+      "p_uncorrected": 1.5841043327101432e-81
+    },
+    {
+      "contrast": "age_at_surgery",
+      "p_uncorrected": 3.031656256996018e-08
+    }
+  ],
+  "kw_table3_n_us": {
+    "H": 26.379086881910226,
+    "p": 0.00043083925525635335
+  },
+  "kw_table3_n_fna": {
+    "H": 34.6123747928456,
+    "p": 1.3225214921814976e-05
+  },
+  "chi2_molecular_x_race": {
+    "chi2": 63.40997291710053,
+    "p": 3.13636293367933e-11
+  },
+  "kw_prm_fna_days_pos_only": {
+    "H": 146.7791564106405,
+    "p": 1.9260296481248413e-28,
+    "n": 2816
+  },
+  "chi2_syn_hashimoto_x_race": {
+    "chi2": 25.825260545865888,
+    "p": 0.0005411849035247384
+  },
+  "chi2_syn_graves_x_race": {
+    "chi2": 4.493870353968833,
+    "p": 0.7214552606400557
+  },
+  "chi2_syn_follicular_adenoma_x_race": {
+    "chi2": 12.647716666572133,
+    "p": 0.08117128757672591
+  },
+  "chi2_syn_chronic_thyroiditis_x_race": {
+    "chi2": 127.11651089194896,
+    "p": 2.5147798600215923e-24
+  },
+  "chi2_any_concomitant_malignant_x_race": {
+    "chi2": 267.8548262606715,
+    "p": 4.3629738988427957e-54
+  },
+  "chi2_hypopara_x_race": {
+    "chi2": 2.8581667151521417,
+    "p": 0.8978055738224499
+  },
+  "fisher_rln_baa_white": {
+    "a": 9,
+    "b": 2909,
+    "c": 4,
+    "d": 2496,
+    "or": 1.930560330010313,
+    "p": 0.4046516671603751,
+    "ci95": [
+      0.5938106248763615,
+      6.27651818891848
+    ]
+  },
+  "fisher_vc_paralysis_baa_white": {
+    "a": 8,
+    "b": 2910,
+    "c": 2,
+    "d": 2498,
+    "or": 3.433676975945017,
+    "p": 0.11951501242509083,
+    "ci95": [
+      0.7284925908417996,
+      16.184293050271098
+    ]
+  },
+  "hypopara_logit": {
+    "converged": true,
+    "n": 6071,
+    "events": 187,
+    "coef": {
+      "const": -3.702486099812951,
+      "race_American Indian or Alaska Native": -0.18377135494404467,
+      "race_Asian": -0.3901133426708652,
+      "race_Black or African American": 0.12110420288801271,
+      "race_Hispanic or Latino": -0.0758359026669037,
+      "race_Native Hawaiian or Other Pacific Islander": -0.12583159133713206,
+      "race_Other": -0.10056168646251858,
+      "race_Unknown or Not Reported": 0.3473982495643553,
+      "sex_male": 0.06730255475447966,
+      "age_at_surgery": 0.005168862893309475,
+      "gland_weight_final_g": -0.003536080858009434,
+      "ct_substernal_extension_any": 0.6932438072125185
+    },
+    "or": {
+      "const": 0.024662137656783715,
+      "race_American Indian or Alaska Native": 0.83212604358295,
+      "race_Asian": 0.6769801394124434,
+      "race_Black or African American": 1.1287425244703497,
+      "race_Hispanic or Latino": 0.9269683071064548,
+      "race_Native Hawaiian or Other Pacific Islander": 0.8817633308635792,
+      "race_Other": 0.9043293258150878,
+      "race_Unknown or Not Reported": 1.415380287726733,
+      "sex_male": 1.069619047551724,
+      "age_at_surgery": 1.0051822445110958,
+      "gland_weight_final_g": 0.996470163713303,
+      "ct_substernal_extension_any": 2.0001932626421572
+    },
+    "ci95": {
+      "const": [
+        0.012899441444951035,
+        0.0471509589308778
+      ],
+      "race_American Indian or Alaska Native": [
+        0.040522829350653364,
+        17.087497677351827
+      ],
+      "race_Asian": [
+        0.2350490466146615,
+        1.9498147972079631
+      ],
+      "race_Black or African American": [
+        0.8124350575302498,
+        1.5681988052322082
+      ],
+      "race_Hispanic or Latino": [
+        0.007618117752471672,
+        112.79298513087694
+      ],
+      "race_Native Hawaiian or Other Pacific Islander": [
+        0.019354169205202384,
+        40.17256248057606
+      ],
+      "race_Other": [
+        0.20862623784620682,
+        3.919984072818483
+      ],
+      "race_Unknown or Not Reported": [
+        0.7891441424116993,
+        2.5385747054563828
+      ],
+      "sex_male": [
+        0.7328483676439116,
+        1.5611481957224798
+      ],
+      "age_at_surgery": [
+        0.9945649984743625,
+        1.0159128324747795
+      ],
+      "gland_weight_final_g": [
+        0.9939891740540716,
+        0.9989573459044552
+      ],
+      "ct_substernal_extension_any": [
+        1.344547987646851,
+        2.97555247166819
+      ]
+    },
+    "pvalues": {
+      "const": 4.208233216852232e-29,
+      "race_American Indian or Alaska Native": 0.9051303491719566,
+      "race_Asian": 0.4698052309375774,
+      "race_Black or African American": 0.4703892619254856,
+      "race_Hispanic or Latino": 0.9753039973287484,
+      "race_Native Hawaiian or Other Pacific Islander": 0.9485097966594579,
+      "race_Other": 0.8930972686103988,
+      "race_Unknown or Not Reported": 0.24381827188198857,
+      "sex_male": 0.7271944508433037,
+      "age_at_surgery": 0.34005709233987425,
+      "gland_weight_final_g": 0.005433359630976956,
+      "ct_substernal_extension_any": 0.0006241451801518382
+    },
+    "aic": 1673.3044761750537
+  },
+  "forest_substernal_race_sex": [
+    {
+      "label": "Asian \u2014 female (n=160)",
+      "or": 0.490580102212834,
+      "lo": 0.1983581280934792,
+      "hi": 1.2133046374269874,
+      "p": 0.12320304633156323
+    },
+    {
+      "label": "Asian \u2014 male (n=33)",
+      "or": 0.94425807830081,
+      "lo": 0.21922505757747585,
+      "hi": 4.0671596955618625,
+      "p": 0.9386387560776004
+    },
+    {
+      "label": "Black or African American \u2014 female (n=2454)",
+      "or": 3.340908056541038,
+      "lo": 2.7115499362272875,
+      "hi": 4.11634190952448,
+      "p": 9.647658967484874e-30
+    },
+    {
+      "label": "Black or African American \u2014 male (n=464)",
+      "or": 6.319837111826743,
+      "lo": 4.82527732567074,
+      "hi": 8.277315151926663,
+      "p": 6.709661013785832e-41
+    },
+    {
+      "label": "Other \u2014 female (n=59)",
+      "or": 3.454934359087398,
+      "lo": 1.7503446318809714,
+      "hi": 6.819554965455724,
+      "p": 0.0003521954173692377
+    },
+    {
+      "label": "Unknown or Not Reported \u2014 female (n=271)",
+      "or": 1.5999193356965615,
+      "lo": 1.027025281825074,
+      "hi": 2.492384487543423,
+      "p": 0.037721477955755235
+    },
+    {
+      "label": "Unknown or Not Reported \u2014 male (n=84)",
+      "or": 4.110268755094805,
+      "lo": 2.366568238845224,
+      "hi": 7.138737418090355,
+      "p": 5.21079465651559e-07
+    },
+    {
+      "label": "White \u2014 male (n=551)",
+      "or": 2.3015504416174575,
+      "lo": 1.6946115343312398,
+      "hi": 3.125869456211374,
+      "p": 9.453162550905687e-08
+    }
+  ],
+  "forest_aic": 4639.6508333093625,
+  "forest_min_cell_n": 30
+}
