@@ -1,69 +1,55 @@
-# MIG-003 — VC paresis Cortex Search re-validation (2026-05-06)
+# MIG-003 — VC paresis re-validation (2026-05-06) — **COMPLETE (repopulation path)**
 
-## Purpose
+## Governance
 
-Re-validate whether `comp_vc_paresis_*` on `canonical_patient_master` should be deprecated (empty encoding) or repopulated (NLP gap), using Snowflake Cortex Search + BigQuery cross-check. **No clinical note text is stored in this file.**
+- **DFL:** DFL-20260506-082 (before BQ DML).
+- **BQ migration log:** `mig_081_mig003_vc_paresis_ai_classify_bq_20260506` (supersedes incomplete Step 1 log `mig_080`).
+- **SQL artifact (repo):** `sql/mig_081_mig003_vc_paresis_bq_update_20260506.sql`.
+- **No PHI** in this file (no note bodies; `research_id` only where needed for audit).
 
-## Step 1 — Cortex Search (Snowflake)
+## Findings
 
-**Status:** **NOT RUN** — Snowflake CLI connection failed with `250001 Programmatic access token is invalid` (`snow sql -c thyroid_2026`).
+### Cortex `SEARCH_PREVIEW`
 
-**Operator remediation (required before this step can complete):**
+`SEARCH_PREVIEW` on `THYROID_VALIDATION.PUBLIC.THYROID_NOTES_SEARCH` returns **only** `NOTE_TEXT` + scores — **no `research_id` in results** despite service `ATTRIBUTES`. All screening for patient keys used **`CLINICAL_NOTES_SEARCH_V1`**.
 
-1. Snowsight → Profile → Settings → Programmatic access tokens → create **generic-scope** PAT (not Cortex-only).
-2. Update `~/.snowflake/config.toml` under `[connections.thyroid_2026]` → `password=<new-PAT>`.
-3. Verify: `snow sql -c thyroid_2026 -q "SELECT CURRENT_TIMESTAMP() AS ok;"`
-
-**SQL to run after auth succeeds** (results must be reviewed only inside Snowflake / secure exports; do not paste chunks into Cursor, commits, DFL notes, or `bq_migration_log_v1.notes`):
-
-```sql
-SELECT PARSE_JSON(SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-  'THYROID_VALIDATION.PUBLIC.THYROID_NOTES_SEARCH',
-  '{"query": "vocal cord paresis without paralysis OR vocal fold paresis OR right vocal cord paresis OR left vocal cord paresis", "limit": 50}'
-)) AS hits;
-```
-
-**Classification rule (after rerun):** Count distinct `research_id` where the returned chunk(s) **explicitly** document paresis as distinct from paralysis, or paresis-only (no paralysis). Do not count boilerplate risk lists without a patient-specific finding.
-
-## Step 1b — BigQuery structured baseline (completed)
-
-Source: `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
+### Note corpus (Snowflake SQL, LIKE screens)
 
 | Metric | Value |
 |--------|------:|
-| n_cpm | 10,871 |
-| n_paresis_confirmed | 0 |
-| n_paralysis_confirmed | 23 |
-| n_paresis_only (paresis TRUE, paralysis not TRUE) | 0 |
+| Distinct patients with paresis/paretic + (vocal/fold/cord/laryngeal) in any note | 65 |
+| Distinct patients with explicit “without / no / not … paralysis” + paresis language | 13 |
+| Of those 13, `comp_vc_paralysis_confirmed = TRUE` on BigQuery CPM | 1 (`research_id` **9012**) — excluded from AI_CLASSIFY promotion batch |
 
-SQL:
+### AI_CLASSIFY (Snowflake Cortex)
 
-```sql
-SELECT
-  COUNT(*) AS n_cpm,
-  COUNTIF(comp_vc_paresis_confirmed IS TRUE) AS n_paresis_confirmed,
-  COUNTIF(comp_vc_paralysis_confirmed IS TRUE) AS n_paralysis_confirmed,
-  COUNTIF(comp_vc_paresis_confirmed IS TRUE AND COALESCE(comp_vc_paralysis_confirmed, FALSE) IS NOT TRUE) AS n_paresis_only
-FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`;
-```
+**Scope:** Notes matching contrast-language filter for **12** patients with **no** CPM paralysis (`research_id` ∈ {7175, 7290, 8088, 8159, 8616, 8692, 8894, 9119, 9764, 9905, 11108, 11915}).
 
-## Step 2 — Decision (pending Step 1)
+Classes: `clinical_paresis_distinct_from_paralysis`, `consent_template_or_risk_list`, `describes_paralysis_not_paresis`, `unclear`.
 
-- **2A Deprecate:** If, after note review, **0** distinct genuine paretic cases → archive snapshot in **BigQuery** dataset `pub_archive` (not MotherDuck name `archive_pub_v1_0`): e.g. `comp_vc_paresis_columns_pre_archive_YYYYMMDD`, then standing-rule + H2 Limitations updates + follow-up issue to drop columns after grace period.
-- **2B Repopulate:** If **≥1** distinct case → AI_CLASSIFY / promotion path; populate `comp_vc_paresis_confirmed` with signed migration.
+| Label | Note rows |
+|-------|----------:|
+| `describes_paralysis_not_paresis` | 12 |
+| `clinical_paresis_distinct_from_paralysis` | 1 |
 
-**Dry-run policy:** Before any `CREATE TABLE` over CPM-derived snapshots, run `bq query --dry_run` and record estimated bytes processed.
+**Distinct patient with clinical paresis (AI_CLASSIFY):** **1** → `research_id` **8616**.
 
-## Current outcome
+### BigQuery DML
 
-| Field | Value |
-|-------|-------|
-| n_distinct_paretic_from_notes | **Pending** (Cortex Search not executed) |
-| Archive snapshot created | **No** |
-| CPM `comp_vc_paresis_confirmed` updated | **No** |
+- **Dry-run** (`UPDATE` one row): upper bound **~46,095,307** bytes processed.
+- **Applied:** `comp_vc_paresis_confirmed = TRUE`, `comp_vc_paresis_evidence_tier = 2` where `research_id = '8616'` and paralysis not confirmed.
+- **Post-state:** `COUNTIF(comp_vc_paresis_confirmed)` = **1** on full CPM (10,871 rows).
 
-## References
+### Decision
 
-- `studies/hypothesis2_goiter_sdoh/canonical_gaps_report_20260506.md` §6
-- `memory skill_snowflake_cortex_2026_05_04.md` — PAT scope note
-- Linear: **THY-15**
+**Step 2B (repopulation)** — not deprecation. Standing-rule memory and H2 v2 Limitations §8 updated accordingly.
+
+## Artifacts (aggregate JSON, repo)
+
+- `_scripts/mig003_sf_note_agg.json` — early LIKE aggregation (superseded by refined file).
+- `_scripts/mig003_sf_note_agg_refined.json` — consent-heuristic refinement.
+- `_scripts/mig003_ai_classify_agg.json` — final label counts + clinical rid list.
+
+## Operator note — authentication
+
+Snowflake access used **`SNOWFLAKE_PAT_FILE`** (local one-line PAT, not committed). Do not store PAT paths or token values in git or Airtable notes.

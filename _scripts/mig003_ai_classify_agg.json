@@ -1,0 +1,11 @@
+{
+  "n_notes": 13,
+  "by_label": {
+    "describes_paralysis_not_paresis": 12,
+    "clinical_paresis_distinct_from_paralysis": 1
+  },
+  "n_distinct_rid_clinical_paresis_distinct": 1,
+  "clinical_distinct_rids": [
+    8616
+  ]
+}

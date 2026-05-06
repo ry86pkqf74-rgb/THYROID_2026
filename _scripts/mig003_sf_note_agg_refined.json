@@ -1,0 +1,22 @@
+{
+  "n_patients_paresis_vc_mention": 65,
+  "n_strict_explicit_contrast_any_note": 13,
+  "n_loose_screen_excluding_consent_heuristic": 60,
+  "n_strict_explicit_excluding_consent_heuristic": 13,
+  "strict_contrast_rids_excluding_consent_heuristic": [
+    7175,
+    7290,
+    8088,
+    8159,
+    8616,
+    8692,
+    8894,
+    9012,
+    9119,
+    9764,
+    9905,
+    11108,
+    11915
+  ],
+  "n_strict_contrast_rids": 13
+}

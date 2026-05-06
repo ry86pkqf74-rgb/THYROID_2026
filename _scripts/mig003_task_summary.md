@@ -1,10 +1,13 @@
-# MIG-003 task summary (2026-05-06)
+# MIG-003 task summary (2026-05-06) — **complete**
 
-- **DFL:** DFL-20260506-081 (Data Feedback Log, THYROID_MANUSCRIPT).
-- **BQ migration log:** `mig_080_mig003_vc_paresis_step1_blocked_20260506`.
-- **Artifacts:** `_scripts/mig003_paresis_revalidation_summary.md` (full); this file (brief).
-- **Linear THY-15:** Comment added; state set **In Progress**; **not** moved to In Review / auto-close (work incomplete).
-- **Blocker:** Snowflake PAT invalid (`250001`) — Step 1 Cortex Search must be rerun locally after PAT refresh.
-- **Standing rule / H2 Limitations / archive table:** **Unchanged** — deprecation only after Step 1 completes and decision is 2A.
+- **Decision:** Repopulate (Step 2B), not deprecate.
+- **n_distinct_paretic (AI_CLASSIFY clinical label):** **1** (`research_id` **8616**).
+- **BigQuery:** `comp_vc_paresis_confirmed=TRUE`, `comp_vc_paresis_evidence_tier=2` for `8616`; cohort count **1**.
+- **Dry-run:** ~46.1 MB bytes processed (UPDATE bound).
+- **DFL:** DFL-20260506-082.
+- **Migration log:** `mig_081_mig003_vc_paresis_ai_classify_bq_20260506` (prior blocker: `mig_080`).
+- **SQL:** `sql/mig_081_mig003_vc_paresis_bq_update_20260506.sql`.
+- **Docs:** `memory/feedback_complications_transient_vs_permanent.md`, H2 v2 Limitations item 8.
+- **Linear THY-15:** In Review + `auto-close:pending` after migration closeout.
 
-**Status line:** MIG-003 incomplete. `mig_080`. Key result: BQ structured baseline `n_paresis_confirmed=0`, `n_paralysis_confirmed=23`; `n_distinct_paretic_from_notes` pending Snowflake.
+**Status:** MIG-003 done. **mig_081.** Key result: **`n_distinct_paretic = 1`** (8616); **not** deprecated.
