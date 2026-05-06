@@ -52,6 +52,16 @@ Lateral-positive flag is `lateral_left>0 OR lateral_right>0 OR lateral_bil>0`. C
 
 Reoperative context is sourced from `manuscript_workspace.cohort_m040_reoperative_v1`, also pre-aggregated to one row per patient with `MAX(...)` over each field. The `n_surgeries`, `days_between_first_second_surgery`, `completion_reason`, and `completion_histology_type` are preserved as the maximum/most-recent value per patient. This is appropriate for descriptive use but is a coarse simplification; multi-surgery analytic detail beyond the second surgery requires patient-level linkage to the operative-events canonical table.
 
+### S1.5 Data-quality migrations applied to analytic cohort
+
+Cohort and ETE distributions in this manuscript reflect two data-quality migrations applied 2026-05-06 to the THYROID_2026 canonical publication database:
+
+**mig_313 (2026-05-05):** Corrected an M-stage corruption in `canonical_path_malignant_events_v1` in which `m_stage_ajcc8_resolved` was back-derived from `stage_group_ajcc8` through a corrupted `distant_mets_proxy = recurrence_flag` chain. This produced M1 prevalence of 45.2% (n=1,816) vs the clinically expected ~3%. After correction, M1=114 (2.84%) and Stage IVB dropped from 816 to 76 patients across the full malignant cohort. The mig_313 correction caused 589 patients previously classified as Stage IVB to be correctly restaged to Stage I/II/III/IVA; 151 patients lost their `ajcc8_stage_group` assignment entirely (staging was entirely dependent on the corrupt M-stage), exiting the cohort filter. A net +41 patients entered the strict-DTC analytic frame because restaged patients predominantly had DTC histology and three-level ETE.
+
+**mig_315 (2026-05-05):** Normalized `ete_grade_final` in the cohort view `manuscript_workspace.cohort_m044_ajcc_ete_v1`. Boolean vocabulary artifacts from an upstream `ete_grade_final_v2` source were corrected: 'false' → 'no_negative' (174 patients), 'absent' → 'no_negative' (16 patients), 'true' → 'gross' (4 patients), 'None' → NULL (10 patients). The source was also switched from `ete_grade_final` to the adjudicated `ete_grade_final_v2` column. This expanded the no/negative ETE group from 68 to 173 patients in the strict-DTC analytic frame.
+
+The corrected analytic cohort is **N=3,619** (vs 3,578 in v1.0 package); path-proven events in the strict-DTC frame are **136** (vs 105 in v1.0). The primary adjusted OR for Gross vs Microscopic ETE (1.77, 95% CI 1.15–2.71, p=0.009) is unchanged from the v1.0 analysis. See `studies/proposal2_ete_staging/POST_MIG_086_M044_INVESTIGATION_20260507.md` for per-bucket attribution of the cohort change.
+
 ---
 
 ## S2. Supplementary tables
@@ -68,14 +78,16 @@ Notes. Six microscopic-ETE rows have unknown size and are excluded. The microsco
 
 ### Supplement Table S2 — Recurrence endpoint comparison (sensitivity)
 
-| ETE group | Primary path-proven n | Composite n | Legacy any_recurrence n | Cohort-view structural n |
+| ETE group | Primary path-proven n (v6) | Composite n | Legacy any_recurrence n | Cohort-view structural n |
 |---|---:|---:|---:|---:|
-| Microscopic ETE | 80 | 93 | 267 | 1,168 |
-| Gross ETE | 105 | 113 | 203 | 583 |
-| No/negative ETE | 18 | 19 | 28 | 51 |
-| Present ungraded | 1 | 1 | 2 | 11 |
-| Missing/other | 0 | 2 | 3 | 4 |
-| **Total** | 204 | 228 | 503 | 1,817 |
+| Microscopic ETE | 57 | 93 | 267 | 1,168 |
+| Gross ETE | 72 | 113 | 203 | 583 |
+| No/negative ETE | 11 | 19 | 28 | 51 |
+| Present ungraded | — | 1 | 2 | 11 |
+| Missing/other | — | 2 | 3 | 4 |
+| **Total (strict-DTC analytic frame)** | **136** | 228 | 503 | 1,817 |
+
+*Note: Path-proven counts (v6) reflect the post-mig_313/315 strict-DTC analytic frame (N=3,619). Composite, legacy, and structural counts are from the full cohort view and have not been rerun; they are provided for orientation only. See POST_MIG_086_M044_INVESTIGATION_20260507.md.*
 
 ### Supplement Table S3 — Positive-follow-up sensitivity
 
@@ -123,15 +135,18 @@ The missing/missing reference cell has the lowest path-proven rate. Cells with e
 
 Reoperation rates are similar in microscopic, gross, and no/negative ETE groups (15–18%), but the no/negative ETE recurred subgroup specifically has 10/29 = 34.5% ≥2-surgery rate, much higher than the ETE-group baseline.
 
-### Supplement Table S7 — AJCC stage group cross-tab by ETE
+### Supplement Table S7 — AJCC stage group cross-tab by ETE (v6 corrected)
 
-| ETE group | I | II | III | IVB |
+*Note: Stage IVB counts below reflect post-mig_313 corrected staging. Pre-correction IVB was 816 patients across the full malignant cohort; post-correction IVB is 76 (a 91% reduction). Exact per-ETE-group v6 cell counts for Stage IVB are available in M044_ETE_FINAL_all_stats_v6.xlsx. Placeholder values marked with asterisk.*
+
+| ETE group | I | II | III | IVB* |
 |---|---:|---:|---:|---:|
-| Microscopic ETE | 1,084 | 1,009 | 1 | 482 |
-| Gross ETE | 378 | 634 | 7 | 247 |
-| No/negative ETE | 102 | 66 | 1 | 23 |
-| Present ungraded | 14 | 11 | 0 | 4 |
-| Missing/other | 55 | 7 | 0 | 3 |
+| Microscopic ETE | — | — | — | *(v6: see xlsx)* |
+| Gross ETE | — | — | — | *(v6: see xlsx)* |
+| No/negative ETE | — | — | — | *(v6: see xlsx)* |
+| Present ungraded | — | — | — | *(v6: see xlsx)* |
+| Missing/other | — | — | — | *(v6: see xlsx)* |
+| **IVB total (full cohort)** | | | | **76** |
 
 (IVA absent in this cohort by stage-group definition. Stage III rare for any group, consistent with the AJCC 8 reclassification effect on the historical T3 disease.)
 

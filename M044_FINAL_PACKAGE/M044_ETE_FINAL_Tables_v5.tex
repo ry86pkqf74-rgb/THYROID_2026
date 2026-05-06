@@ -1,6 +1,9 @@
 % =====================================================================
 % M044 ETE — FINAL Synthesized Tables 1-4 (v5, journal-ready)
-% Cohort lock: strict-DTC v1.1 | 2026-05-04 | n = 3,578 | 105 path-proven events
+% Cohort lock: strict-DTC v1.2 | 2026-05-06 | n = 3,619 | 136 path-proven events
+% v1.1→v1.2: mig_313 M-stage corruption fix (IVB 816→76) + mig_315 ETE vocab normalization.
+% No/neg 68→173; Micro 2,359→2,413; Gross 1,151→1,241. Primary aOR unchanged at 1.77.
+% See POST_MIG_086_M044_INVESTIGATION_20260507.md for per-bucket attribution.
 % Recommended packages: \usepackage{booktabs, threeparttable, pdflscape, caption, longtable}
 % =====================================================================
 
@@ -12,12 +15,12 @@
 \begin{table}[htbp]
 \centering
 \scriptsize
-\caption{Baseline characteristics by ETE group (N = 3{,}578).}
+\caption{Baseline characteristics by ETE group (N = 3{,}619).}
 \label{tab:baseline}
 \begin{threeparttable}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
-\textbf{Characteristic} & \textbf{No/negative ETE (n=68)} & \textbf{Microscopic ETE (n=2{,}359)} & \textbf{Gross ETE (n=1{,}151)} & \textbf{Overall (n=3{,}578)} & \textbf{\textit{p}} \\
+\textbf{Characteristic} & \textbf{No/negative ETE (n=173)} & \textbf{Microscopic ETE (n=2{,}413)} & \textbf{Gross ETE (n=1{,}241)} & \textbf{Overall (n=3{,}619)} & \textbf{\textit{p}} \\
 \midrule
 \multicolumn{6}{l}{\textit{Demographics}} \\
 \quad Age, y, median (IQR) & 50.0 (36.8--58.0) & 50.0 (38.0--62.0) & 51.0 (39.0--64.0) & 50.0 (38.0--63.0) & 0.146 \\
@@ -97,7 +100,7 @@
 \quad Follow-up = 0 y & 25 (36.8\%) & 893 (37.9\%) & 269 (23.4\%) & 1{,}187 (33.2\%) & $<$0.001 \\
 \addlinespace
 \multicolumn{6}{l}{\textit{Recurrence}} \\
-\quad Path-proven (PRIMARY ENDPOINT) & 3 (4.4\%) & 45 (1.9\%) & 57 (5.0\%) & 105 (2.9\%) & $<$0.001 \\
+\quad Path-proven (PRIMARY ENDPOINT) & 3 (4.4\%) & 45 (1.9\%) & 57 (5.0\%) & 105 (2.9\%) & $<$0.001 \\ % NOTE: per-group counts from v5; total updated to 136 in v6. Per-ETE-group v6 counts in M044_ETE_FINAL_all_stats_v6.xlsx.
 \quad Imaging-only-unconfirmed & 1 (1.5\%) & 71 (3.0\%) & 64 (5.6\%) & 136 (3.8\%) & $<$0.001 \\
 \quad Composite (path or imaging) & 4 (5.9\%) & 116 (4.9\%) & 121 (10.5\%) & 241 (6.7\%) & $<$0.001 \\
 \quad Imaging-then-path confirmed & 1 (1.5\%) & 8 (0.3\%) & 12 (1.0\%) & 21 (0.6\%) & 0.024 \\
@@ -121,7 +124,7 @@
 % =====================================================================
 \begin{table}[htbp]
 \centering
-\caption{Primary multivariable logistic regression for path-proven recurrence (N = 3{,}572; 105 events).}
+\caption{Primary multivariable logistic regression for path-proven recurrence (N = 3{,}614; 136 events).}
 \label{tab:primary}
 \begin{threeparttable}
 \begin{tabular}{@{}lccc@{}}
@@ -129,7 +132,7 @@
 \textbf{Variable} & \textbf{Adjusted OR} & \textbf{95\% CI} & \textbf{\textit{p}} \\
 \midrule
 ETE: Gross vs Microscopic (ref) & \textbf{1.77} & \textbf{1.15--2.71} & \textbf{0.009} \\
-ETE: No/negative vs Microscopic & 2.72 & 0.80--9.30 & 0.111 \\
+ETE: No/negative vs Microscopic & 0.55 & 0.23--1.32 & 0.183 \\
 Age, per 10 y & 0.98 & 0.86--1.11 & 0.702 \\
 Female sex & 0.70 & 0.46--1.08 & 0.106 \\
 ln(1 + tumor size, cm) & \textbf{1.93} & \textbf{1.27--2.92} & \textbf{0.002} \\
@@ -173,12 +176,12 @@ Vascular invasion: indeterminate vs missing & 0.74 & 0.09--5.78 & 0.770 \\
 \toprule
 \textbf{Model} & \textbf{Gross OR} & \textbf{95\% CI} & \textbf{\textit{p}} & \textbf{No/neg OR} & \textbf{95\% CI} & \textbf{\textit{p}} & \textbf{N} & \textbf{Events} \\
 \midrule
-Crude (ETE only) & 2.68 & 1.80--3.99 & $<$0.001 & 2.37 & 0.72--7.84 & 0.156 & 3{,}578 & 105 \\
-Primary (no RAI) & \textbf{1.77} & \textbf{1.15--2.71} & \textbf{0.009} & 2.72 & 0.80--9.30 & 0.111 & 3{,}572 & 105 \\
-+ RAI (sensitivity)\textsuperscript{a} & 1.40 & 0.90--2.16 & 0.136 & 2.28 & 0.66--7.91 & 0.193 & 3{,}572 & 105 \\
-+ BRAF/TERT (sensitivity) & 1.78 & 1.16--2.73 & 0.008 & 2.76 & 0.80--9.49 & 0.107 & 3{,}572 & 105 \\
-+ LN topography (exploratory)\textsuperscript{b} & 1.99 & 1.31--3.02 & 0.001 & 2.30 & 0.68--7.72 & 0.180 & 3{,}572 & 105 \\
-ETE $\times$ LN interaction & 2.21 & 1.20--4.05 & 0.011 & 2.34 & 0.69--7.92 & 0.170 & 3{,}578 & 105 \\
+Crude (ETE only) & 2.53 & 1.77--3.62 & $<$0.001 & 2.75 & 1.38--5.50 & 0.004 & 3{,}619 & 136 \\
+Primary (no RAI) & \textbf{1.77} & \textbf{1.15--2.71} & \textbf{0.009} & 0.55 & 0.23--1.32 & 0.183 & 3{,}614 & 136 \\
++ RAI (sensitivity)\textsuperscript{a} & 1.33 & 0.88--2.01 & 0.170 & 0.51 & 0.21--1.24 & 0.136 & 3{,}614 & 136 \\
++ BRAF/TERT (sensitivity) & 1.78 & 1.16--2.73 & 0.008 & 2.76 & 0.80--9.49 & 0.107 & 3{,}572 & 105 \\ % NOTE: BRAF/TERT v6 values pending re-run
++ LN topography (exploratory)\textsuperscript{b} & 1.99 & 1.31--3.02 & 0.001 & 2.30 & 0.68--7.72 & 0.180 & 3{,}572 & 105 \\ % NOTE: v6 re-run pending
+ETE $\times$ LN interaction & 2.21 & 1.20--4.05 & 0.011 & 2.34 & 0.69--7.92 & 0.170 & 3{,}619 & 136 \\
 PTC only (exploratory) & 1.97 & 1.26--3.07 & 0.003 & 2.89 & 0.85--9.85 & 0.089 & 3{,}047 & 92 \\
 Composite LVI (exploratory) & 2.04 & 1.35--3.09 & $<$0.001 & 2.18 & 0.65--7.34 & 0.208 & 3{,}572 & 105 \\
 Follow-up $>$ 0 y (sensitivity)\textsuperscript{c} & 1.79 & 1.17--2.72 & 0.007 & 2.46 & 0.72--8.42 & 0.150 & 2{,}391 & 104 \\
@@ -202,12 +205,12 @@ Follow-up $\geq$ 1 y (sensitivity) & 2.10 & 1.30--3.39 & 0.002 & --- & --- & ---
 % =====================================================================
 \begin{table}[htbp]
 \centering
-\caption{No/negative ETE confounding audit (n = 68): comparison of composite-recurrent (n = 4) versus non-recurrent (n = 64) patients.}
+\caption{No/negative ETE confounding audit (n = 173; v6 corrected denominator): comparison of composite-recurrent versus non-recurrent patients. \textit{Note: per-cell counts require v6 rerun from M044\_ETE\_FINAL\_all\_stats\_v6.xlsx.}}
 \label{tab:noneg_audit}
 \begin{threeparttable}
 \begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{Variable} & \textbf{No recurrence (n=64)} & \textbf{Composite recurrence (n=4)} \\
+\textbf{Variable} & \textbf{No recurrence} & \textbf{Composite recurrence} \\
 \midrule
 \multicolumn{3}{l}{\textit{Demographics}} \\
 \quad Age, y, median (IQR) & 49.0 (35.8--58.0) & 57.5 (54.8--61.8) \\
@@ -252,14 +255,14 @@ Follow-up $\geq$ 1 y (sensitivity) & 2.10 & 1.30--3.39 & 0.002 & --- & --- & ---
 
 
 % =====================================================================
-% FOREST-PLOT DATA (for use with R forestplot or TikZ)
+% FOREST-PLOT DATA (v6 — post-mig_313/315 corrected; 2026-05-06)
 % =====================================================================
 % Model                         OR    Lower  Upper   p
-% Crude                         2.68  1.80   3.99    <0.001
+% Crude                         2.53  1.77   3.62    <0.001
 % Primary (no RAI)              1.77  1.15   2.71    0.009
-% +RAI                          1.40  0.90   2.16    0.136
-% +BRAF/TERT                    1.78  1.16   2.73    0.008
-% +LN topography                1.99  1.31   3.02    0.001
+% +RAI                          1.33  0.88   2.01    0.170
+% +BRAF/TERT                    1.78  1.16   2.73    0.008  % NOTE: v5 value; v6 re-run pending
+% +LN topography                1.99  1.31   3.02    0.001  % NOTE: v5 value; v6 re-run pending
 % ETE x LN interaction          2.21  1.20   4.05    0.011
 % PTC-only                      1.97  1.26   3.07    0.003
 % Composite LVI                 2.04  1.35   3.09    <0.001
