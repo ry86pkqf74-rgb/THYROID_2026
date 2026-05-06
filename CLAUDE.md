@@ -19,6 +19,11 @@ Logan's multi-year thyroid surgical / pathological / molecular research database
 | Daily sync anchor issue | THY-6 | https://linear.app/rostemp/issue/THY-6/ |
 | Scheduled task | `thyroid-daily-sync` | runs daily at 7:04 AM local |
 
+**Feedback log table locations (explicit, to prevent confusion):**
+- `Data Feedback Log` → Base B THYROID_MANUSCRIPT (`appJYOnUb7KrHKwpV`), table ID `tblsiYKJtKcktkzze`
+- `Manuscript Feedback Log` → Base B THYROID_MANUSCRIPT (`appJYOnUb7KrHKwpV`), table ID `tblYSCBzRFC4RGPMq`
+- All data-verification/BQ-infrastructure edits log to **Data Feedback Log in base B**, NOT in DATA_REGISTRY (base A).
+
 Full ID reference: `.cowork/skills/thyroid-integration/references/airtable_ids.md` and `linear_ids.md`.
 
 ## Hard rules — never break these
