@@ -7,10 +7,13 @@ Materializes:
   * pub_workspace.cohort_tgdc_primary_v1 — path_synoptics primary text arm ∪ manual
     addons (manual rows that are not already in primary).
 
-Hard gate: COUNT(DISTINCT research_id) == 227 for cohort_tgdc_primary_v1.
+Hard gate: COUNT(DISTINCT research_id) == 227 for cohort_tgdc_primary_v1
+  on MotherDuck and (when --bq-load) in BigQuery ``thyroid-canonical-pub-2026.pub_workspace``.
 
 Usage (from repo root, token via motherduck.local.toml or env):
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --apply
+  .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --apply --bq-load
+  .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --bq-load
   .venv/bin/python studies/tgdc_reconciliation/build_cohort.py --dry-run
 """
 
@@ -18,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import tempfile
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parent.parent.parent
@@ -29,6 +33,71 @@ from motherduck_client import MotherDuckClient, MotherDuckConfig  # noqa: E402
 PUB_DB = "thyroid_canonical_publication_v1_0"
 CSV_PATH = Path(__file__).resolve().parent / "sources" / "tgdc_manual_addons_v1.csv"
 _EXPECTED_N = 227
+BQ_PROJECT_DEFAULT = "thyroid-canonical-pub-2026"
+
+_BQ_TABLES = (
+    ("tgdc_manual_addons_v1", "pub_workspace.tgdc_manual_addons_v1"),
+    ("cohort_tgdc_primary_v1", "pub_workspace.cohort_tgdc_primary_v1"),
+)
+
+
+def _bq_upload_parquet(parquet_path: Path, dataset_table: str, project: str) -> int:
+    """WRITE_TRUNCATE Parquet into BigQuery ``project.dataset_table`` (``dataset.table``)."""
+    from google.cloud import bigquery
+    from google.auth.exceptions import DefaultCredentialsError
+
+    dest = f"{project}.{dataset_table}"
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.PARQUET,
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+    )
+    try:
+        client = bigquery.Client(project=project)
+        with open(parquet_path, "rb") as f:
+            job = client.load_table_from_file(f, dest, job_config=job_config)
+        job.result()
+        return int(client.get_table(dest).num_rows)
+    except DefaultCredentialsError as e:
+        raise RuntimeError(
+            "BigQuery credentials missing. Run `gcloud auth application-default login` "
+            "(project thyroid-canonical-pub-2026) or set GOOGLE_APPLICATION_CREDENTIALS "
+            "to a service account JSON with bigquery.jobs.create and tables.updateData."
+        ) from e
+
+
+def mirror_pub_workspace_to_bigquery(con, bq_project: str, expected_distinct: int) -> None:
+    """Export ``pub_workspace`` TGDC tables from MotherDuck to local Parquet, load into BQ, assert DISTINCT gate."""
+    from google.auth.exceptions import DefaultCredentialsError
+    from google.cloud import bigquery
+
+    with tempfile.TemporaryDirectory() as td:
+        tdp = Path(td)
+        for stem, fq in _BQ_TABLES:
+            out = tdp / f"{stem}.parquet"
+            esc = str(out.resolve()).replace("'", "''")
+            con.execute(f"COPY (SELECT * FROM {fq}) TO '{esc}' (FORMAT PARQUET)")
+            n = _bq_upload_parquet(out, fq, bq_project)
+            print(f"BigQuery {bq_project}.{fq} rows={n}")
+
+    try:
+        client = bigquery.Client(project=bq_project)
+    except DefaultCredentialsError as e:
+        raise RuntimeError(
+            "BigQuery credentials missing (verify query step). "
+            "Run `gcloud auth application-default login` for project "
+            f"{bq_project}."
+        ) from e
+    sql = f"""
+    SELECT COUNT(DISTINCT research_id) AS n
+    FROM `{bq_project}.pub_workspace.cohort_tgdc_primary_v1`
+    """
+    row = next(iter(client.query(sql).result()))
+    dist = int(row["n"])
+    if dist != expected_distinct:
+        raise SystemExit(
+            f"FAIL BigQuery gate: cohort_tgdc_primary_v1 DISTINCT research_id={dist}, expected {expected_distinct}"
+        )
+    print(f"PASS BigQuery gate: cohort_tgdc_primary_v1 DISTINCT research_id={dist}")
 
 
 PRIMARY_SQL = """
@@ -63,19 +132,38 @@ def main() -> int:
         action="store_true",
         help="Create/replace pub_workspace.tgdc_manual_addons_v1 and cohort_tgdc_primary_v1.",
     )
+    p.add_argument(
+        "--bq-load",
+        action="store_true",
+        help="After MotherDuck tables exist, export Parquet and WRITE_TRUNCATE into canonical BigQuery.",
+    )
+    p.add_argument(
+        "--bq-project",
+        default=BQ_PROJECT_DEFAULT,
+        help=f"GCP project id for --bq-load (default {BQ_PROJECT_DEFAULT}).",
+    )
     args = p.parse_args()
 
-    if not args.apply and not args.dry_run:
-        print("Specify --apply and/or --dry-run", file=sys.stderr)
+    if not args.apply and not args.dry_run and not args.bq_load:
+        print("Specify --apply, --dry-run, and/or --bq-load", file=sys.stderr)
         return 2
 
-    if not CSV_PATH.is_file():
+    if (args.apply or args.dry_run) and not CSV_PATH.is_file():
         print(f"Missing CSV: {CSV_PATH}", file=sys.stderr)
         return 1
 
     cfg = MotherDuckConfig(database=args.md_database)
     con = MotherDuckClient(cfg).connect_rw()
     con.execute(f'USE "{args.md_database}"')
+
+    if args.bq_load and not args.apply and not args.dry_run:
+        try:
+            mirror_pub_workspace_to_bigquery(con, args.bq_project, args.expected_n)
+        finally:
+            con.close()
+        print("PASS: TGDC BQ mirror")
+        return 0
+
     con.execute(PRIMARY_SQL)
     n_primary = con.execute("SELECT COUNT(*) FROM _tgdc_primary_path_text").fetchone()[0]
 
@@ -132,8 +220,10 @@ def main() -> int:
         con.close()
         return 1
 
-    if args.dry_run and not args.apply:
+    if args.dry_run:
         print("DRY-RUN complete (gate PASS).")
+        if args.bq_load:
+            print("(Skipping --bq-load during dry-run.)", file=sys.stderr)
         con.close()
         return 0
 
@@ -191,7 +281,11 @@ def main() -> int:
             con.close()
             return 1
 
-    con.close()
+    try:
+        if args.bq_load:
+            mirror_pub_workspace_to_bigquery(con, args.bq_project, args.expected_n)
+    finally:
+        con.close()
     print("PASS: TGDC cohort gate")
     return 0
 
