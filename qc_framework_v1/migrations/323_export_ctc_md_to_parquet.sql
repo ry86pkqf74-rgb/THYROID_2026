@@ -1,0 +1,22 @@
+-- =============================================================================
+-- mig_323_export_ctc_md_to_parquet (SQL runbook — executable path is Python)
+-- =============================================================================
+-- Issue:      THY-18
+-- DFL:        DFL-20260506-CTCBQ (Data Feedback Log, THYROID_MANUSCRIPT)
+-- Linear:     https://linear.app/rostemp/issue/THY-18/
+--
+-- MotherDuck one-liner equivalent (after PHI column review — prefer Python export):
+--
+--   COPY (
+--     SELECT * EXCLUDE (col_to_drop_if_any)
+--     FROM thyroid_canonical_publication_v1_0.main.canonical_tumor_characteristics_v1
+--   ) TO 'canonical_tumor_characteristics_v1.parquet' (FORMAT PARQUET, COMPRESSION ZSTD);
+--
+-- Authoritative exporter (drops name/MRN/DOB columns by pattern):
+--   cd <repo>
+--   .venv/bin/python qc_framework_v1/migrations/323_export_ctc_md_to_parquet.py
+--
+-- Expected PK grain: (research_id, surgery_episode_id, tumor_ordinal).
+-- Post-export: run `324_load_ctc_bq.py`, then apply `325_register_ctc_signoff.sql`
+-- and `326_view_Pathology_Tumor_Characteristics_rebuild.sql` in BigQuery.
+-- =============================================================================

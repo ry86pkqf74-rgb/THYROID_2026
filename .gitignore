@@ -159,6 +159,9 @@ processed/remaining/
 processed/output/
 exports/canonical_patient_master_pre*.parquet
 exports/mig*_postapply_*/
+
+# THY-18 — MotherDuck CTC parquet staging (regenerate via mig_323)
+exports/bq_ctc_mig323/
 dive_audit_20260418/
 extraction.sbatch
 
