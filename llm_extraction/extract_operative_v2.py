@@ -735,23 +735,48 @@ class OperativeDetailExtractor(BaseExtractor):
         _INTRAOP_COMPLICATION_PATTERNS,
     ]
 
+    # Per-bank note-type allow-listing. Default = op_note only (avoids H&P / consent
+    # false positives for the operative-procedure banks). _LOS_PATTERNS additionally
+    # fires on DC summaries because the date-pair pattern targets the Cerner DC
+    # template ('Date of admission ... Date of discharge'), which lives in dc_sum
+    # notes — not op-notes. (B1 fix 2026-05-07; M038-FOLLOWUP-F7 LOS extraction.)
+    _OP_NOTE_TYPES = frozenset({"op_note", "opnote"})
+    _DC_NOTE_TYPES = frozenset({
+        "dc_sum", "dc_summary", "discharge_summary",
+        "dc_sum_1", "dc_sum_2", "dc_sum_3", "dc_sum_4",
+    })
+
     def extract(self, note_row_id, research_id, note_type, note_text, note_date=None):
         results: list[EntityMatch] = []
         seen: set[tuple[str, int]] = set()
         if not note_text:
             return results
-        # Avoid H&P / consent false positives (operative patterns appear in risk discussions).
-        if (note_type or "").strip().lower() not in ("op_note", "opnote"):
+        nt = (note_type or "").strip().lower()
+        is_op_note = nt in self._OP_NOTE_TYPES
+        is_dc_note = nt in self._DC_NOTE_TYPES
+        if not (is_op_note or is_dc_note):
             return results
 
         for bank in self._DOMAIN_PATTERNS:
+            # The LOS bank fires on both op-notes and DC summaries (its date-pair
+            # pattern targets DC-summary text). All other banks are op-note only.
+            if not is_op_note and bank is not _LOS_PATTERNS:
+                continue
             for pat, norm_val, etype, conf in bank:
                 for m in pat.finditer(note_text):
                     key = (etype + ":" + norm_val, m.start())
                     if key in seen:
                         continue
                     seen.add(key)
-                    raw = m.group(1) if m.lastindex else m.group(0)
+                    # For patterns with 2+ capture groups (e.g. date-pair, HH:MM pair)
+                    # store the full match so downstream parsers can access both groups.
+                    # Single-group patterns still use group(1) to avoid large context strings.
+                    if m.lastindex and m.lastindex >= 2:
+                        raw = m.group(0)
+                    elif m.lastindex:
+                        raw = m.group(1)
+                    else:
+                        raw = m.group(0)
                     results.append(EntityMatch(
                         research_id=research_id,
                         note_row_id=note_row_id,
