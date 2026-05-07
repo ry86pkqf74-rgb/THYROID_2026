@@ -1022,6 +1022,20 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                     AND present_or_negated = 'present'
                     AND entity_value_norm IN ('tracheostomy_history', 'tracheostomy_anatomy_only', 'tracheostomy_negated')
                     THEN entity_value_norm END) AS trach_nonperioperative_evidence,
+                -- F6/F7/F9 (mig_331 v2.3) — op_time / LOS / vessel sealant NLP entities
+                BOOL_OR(entity_type = 'op_time'
+                    AND present_or_negated = 'present') AS op_time_nlp_present,
+                BOOL_OR(entity_type = 'length_of_stay'
+                    AND present_or_negated = 'present') AS los_nlp_present,
+                -- F9 (renamed 2026-05-06): device-specific BOOLs replace generic vessel_sealant
+                BOOL_OR(entity_type = 'ligasure'
+                    AND present_or_negated = 'present') AS ligasure_used_nlp,
+                BOOL_OR(entity_type = 'harmonic'
+                    AND present_or_negated = 'present') AS harmonic_used_nlp,
+                BOOL_OR(entity_type = 'energy_device_other'
+                    AND present_or_negated = 'present') AS energy_device_other_used_nlp,
+                BOOL_OR(entity_type = 'suture_ligation'
+                    AND present_or_negated = 'present') AS suture_ligation_only_nlp,
                 STRING_AGG(DISTINCT CASE WHEN entity_type IN (
                         'gross_invasion', 'rln_finding', 'tracheal_involvement',
                         'esophageal_involvement', 'strap_muscle', 'intraop_complication',
@@ -1041,12 +1055,18 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 except Exception:
                     pass
             return
-        # Ensure new F2/F4/F5 columns exist on operative_episode_detail_v2
+        # Ensure new F2/F4/F5/F6/F7/F9 columns exist on operative_episode_detail_v2
         # (idempotent — safe to re-run; skipped if columns already present).
         for ddl in [
             "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS rln_signal_status_nlp VARCHAR",
             "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS trach_concurrent_evidence VARCHAR",
             "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS trach_nonperioperative_evidence VARCHAR",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS op_time_nlp_present BOOLEAN",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS los_nlp_present BOOLEAN",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS ligasure_used_nlp BOOLEAN",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS harmonic_used_nlp BOOLEAN",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS energy_device_other_used_nlp BOOLEAN",
+            "ALTER TABLE operative_episode_detail_v2 ADD COLUMN IF NOT EXISTS suture_ligation_only_nlp BOOLEAN",
         ]:
             try:
                 con.execute(ddl)
@@ -1079,7 +1099,14 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 rln_signal_status_nlp = COALESCE(e.rln_signal_status_nlp, o.rln_signal_status_nlp),
                 -- F2 (mig_331 v2.2) — trach temporal evidence
                 trach_concurrent_evidence = COALESCE(e.trach_concurrent_evidence, o.trach_concurrent_evidence),
-                trach_nonperioperative_evidence = COALESCE(e.trach_nonperioperative_evidence, o.trach_nonperioperative_evidence)
+                trach_nonperioperative_evidence = COALESCE(e.trach_nonperioperative_evidence, o.trach_nonperioperative_evidence),
+                -- F6/F7/F9 (mig_331 v2.3) — op_time / LOS / vessel sealant NLP
+                op_time_nlp_present = COALESCE(e.op_time_nlp_present, o.op_time_nlp_present),
+                los_nlp_present = COALESCE(e.los_nlp_present, o.los_nlp_present),
+                ligasure_used_nlp = COALESCE(e.ligasure_used_nlp, o.ligasure_used_nlp),
+                harmonic_used_nlp = COALESCE(e.harmonic_used_nlp, o.harmonic_used_nlp),
+                energy_device_other_used_nlp = COALESCE(e.energy_device_other_used_nlp, o.energy_device_other_used_nlp),
+                suture_ligation_only_nlp = COALESCE(e.suture_ligation_only_nlp, o.suture_ligation_only_nlp)
             FROM (
                 SELECT DISTINCT ON (o2.research_id, o2.surgery_episode_id)
                     o2.research_id, o2.surgery_episode_id, e2.*

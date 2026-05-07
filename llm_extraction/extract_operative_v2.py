@@ -230,6 +230,119 @@ _NECK_DISSECTION_PATTERNS: list[_PatternRow] = [
 ]
 
 
+_OP_TIME_PATTERNS: list[_PatternRow] = [
+    # ── F6 (v2.3, 2026-05-06; M038-FOLLOWUP-F6-OpDuration) ───────────────
+    # Operative time / case time / OR time — capture minutes (numeric is in
+    # the regex group 1; downstream parser converts H:MM and hh hours mm min)
+    (re.compile(
+        r"(?<!time\s)(?<!preoperative\s)"  # don't match 'time out' adjacents
+        r"\b(?:operative\s+time|operating\s+time|OR\s+time|procedure\s+time|"
+        r"case\s+time|operation\s+(?:total\s+)?time|total\s+operation\s+time|"
+        r"duration\s+of\s+(?:the\s+)?(?:procedure|operation|surgery))"
+        r"\s*(?:was\s+|of\s+|:?\s*)"
+        r"(\d{1,3})\s*(?:minutes?|min|mins)\b",
+        re.I),
+     "op_time_minutes_explicit", "op_time", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:operative\s+time|operating\s+time|OR\s+time|procedure\s+time|"
+        r"case\s+time|duration\s+of\s+(?:the\s+)?(?:procedure|operation|surgery))"
+        r"\s*(?:was\s+|of\s+|:?\s*)"
+        r"(\d{1,2})\s*(?:hours?|hrs?|h)\s+(?:and\s+)?(\d{1,2})\s*(?:minutes?|min|mins)\b",
+        re.I),
+     "op_time_hours_minutes", "op_time", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:start|incision)\s+time\s*[:=]\s*(\d{1,2}:\d{2})\s*"
+        r"(?:.{1,80})?\b(?:end|closure|stop)\s+time\s*[:=]\s*(\d{1,2}:\d{2})\b",
+        re.I),
+     "op_time_start_end", "op_time", CONF_CONTEXTUAL),
+]
+
+
+_LOS_PATTERNS: list[_PatternRow] = [
+    # ── F7 (v2.3, 2026-05-06; M038-FOLLOWUP-F7-LengthOfStay) ─────────────
+    (re.compile(
+        r"\b(?:discharged?|d/c'?d?)\s+(?:home\s+)?(?:on\s+)?(?:POD|postoperative\s+day|post[\s-]?op\s+day)\s*(\d{1,2})\b",
+        re.I),
+     "los_pod_discharge", "length_of_stay", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:length\s+of\s+stay|LOS|hospital\s+stay|inpatient\s+stay)"
+        r"\s*(?:was\s+|of\s+|:?\s*)"
+        r"(\d{1,3})\s*(?:days?|d)\b",
+        re.I),
+     "los_days_explicit", "length_of_stay", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:patient\s+(?:was\s+)?)?(?:discharged|sent\s+home|went\s+home)"
+        r"\s+(?:the\s+)?(?:same\s+day|day\s+of\s+surgery|same[\s-]day)\b",
+        re.I),
+     "los_zero_same_day", "length_of_stay", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:overnight\s+stay|admitted\s+overnight|kept\s+overnight)\b",
+        re.I),
+     "los_one_overnight", "length_of_stay", CONF_CONTEXTUAL),
+    (re.compile(
+        r"\b(?:POD|postoperative\s+day)\s*(\d{1,2})\s*(?:to|->|→)\s*(?:home|discharge)\b",
+        re.I),
+     "los_pod_discharge", "length_of_stay", CONF_EXPLICIT),
+    # DC summary date-pair pattern (very common in dc_sum notes):
+    #   "Date of admission\n3/30/2021"  +  "Date of discharge\n4/2/2021"
+    # Captures the two dates so the rollup can compute LOS = discharge - admission
+    (re.compile(
+        r"Date\s+of\s+admission\s*[\n\r:.\s]*?(\d{1,2}/\d{1,2}/\d{2,4})"
+        r"[\s\S]{0,400}?"
+        r"Date\s+of\s+discharge\s*[\n\r:.\s]*?(\d{1,2}/\d{1,2}/\d{2,4})",
+        re.I),
+     "los_admission_discharge_pair", "length_of_stay", CONF_EXPLICIT),
+    # Inverse order (some templates swap)
+    (re.compile(
+        r"(?:admit(?:ted)?|admission)\s+date\s*[:\-]\s*(\d{1,2}/\d{1,2}/\d{2,4})"
+        r"[\s\S]{0,400}?"
+        r"(?:discharge|dc)\s+date\s*[:\-]\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+        re.I),
+     "los_admission_discharge_pair", "length_of_stay", CONF_EXPLICIT),
+]
+
+
+_ENERGY_DEVICE_PATTERNS: list[_PatternRow] = [
+    # ── F9 (v2.3, 2026-05-06; M038-FOLLOWUP-F9-VesselSealant -> LigaSure) ──
+    # Device-specific entity_types so the canonical can expose op_nlp_ligasure_used
+    # and op_nlp_harmonic_used as separate BOOLs (per PI direction: LigaSure is the
+    # practice's standard since ~2017; Harmonic n=153 cases mostly 2019-2020 era).
+    # LigaSure family
+    (re.compile(
+        r"\b(LigaSure(?:\s+(?:small\s+jaw|exact|impact|maryland|advance|atlas|dolphin))?)\b",
+        re.I),
+     "ligasure", "ligasure", CONF_EXPLICIT),
+    # Harmonic family
+    (re.compile(
+        r"\b(Harmonic\s+(?:scalpel|focus|ace|hd1000i|shears?|device)|Harmonic\b)",
+        re.I),
+     "harmonic_scalpel", "harmonic", CONF_EXPLICIT),
+    # Other modern energy devices — kept separately so they don't pollute either
+    # primary BOOL. Currently zero cases in cohort.
+    (re.compile(
+        r"\b(EnSeal(?:\s+(?:trio|G2|tissue\s+sealer))?)\b",
+        re.I),
+     "enseal", "energy_device_other", CONF_EXPLICIT),
+    (re.compile(r"\b(ThunderBeat|Thunder[\s-]?Beat)\b", re.I),
+     "thunderbeat", "energy_device_other", CONF_EXPLICIT),
+    (re.compile(r"\b(Caiman(?:\s+\d+)?)\b", re.I),
+     "caiman", "energy_device_other", CONF_EXPLICIT),
+    (re.compile(
+        r"\b(?:bipolar\s+)?(?:vessel[\s-]?sealing\s+(?:device|system)|"
+        r"electrothermal\s+bipolar\s+(?:vessel\s+)?(?:sealer|sealing)|"
+        r"advanced\s+bipolar\s+(?:device|sealer))\b",
+        re.I),
+     "vessel_sealing_device_generic", "energy_device_other", CONF_CONTEXTUAL),
+    # Negative / suture-only documentation — separate entity_type so the
+    # combined energy-device rollup doesn't accidentally count these as positive.
+    (re.compile(
+        r"\b(?:vessels?\s+(?:were\s+)?(?:tied|ligated|suture[\s-]?ligated)\s+with(?:out|\s+only)\s+"
+        r"(?:silk|vicryl|chromic|prolene)|conventional\s+suture\s+ligation)\b",
+        re.I),
+     "suture_ligation_only", "suture_ligation", CONF_CONTEXTUAL),
+]
+
+
 _TRACHEOSTOMY_TEMPORAL_PATTERNS: list[_PatternRow] = [
     # ── F2 (v2.2, 2026-05-06; M038-AUDIT-F2-Tracheostomy-Perioperative) ───
     # CONCURRENT/PERIOPERATIVE — high confidence the trach is THIS admission
@@ -606,6 +719,9 @@ class OperativeDetailExtractor(BaseExtractor):
         _NECK_DISSECTION_PATTERNS,
         _TRACHEOSTOMY_TEMPORAL_PATTERNS,
         _RLN_SIGNAL_STATUS_PATTERNS,
+        _OP_TIME_PATTERNS,
+        _LOS_PATTERNS,
+        _ENERGY_DEVICE_PATTERNS,
         _PARATHYROID_AUTOGRAFT_PATTERNS,
         _PARATHYROID_MGMT_PATTERNS,
         _GROSS_INVASION_PATTERNS,
