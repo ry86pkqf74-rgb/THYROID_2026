@@ -173,6 +173,16 @@ PATIENT_OP_FIELDS: list[tuple[str, str, str]] = [
      "THEN surgery_episode_id END)"),
     ("op_findings_summary",       "VARCHAR",
      "STRING_AGG(DISTINCT NULLIF(operative_findings_raw,''), ' | ')"),
+    # F4 (mig_331 v2.2) — neck dissection NLP flags
+    ("op_nlp_central_dissection",   "BOOLEAN",
+     "BOOL_OR(central_neck_dissection_flag)"),
+    ("op_nlp_lateral_dissection",   "BOOLEAN",
+     "BOOL_OR(lateral_neck_dissection_flag)"),
+    # F9 (mig_331 v2.3) — device-specific vessel sealant NLP flags
+    ("op_nlp_ligasure_used",        "BOOLEAN",
+     "BOOL_OR(ligasure_used_nlp)"),
+    ("op_nlp_harmonic_used",        "BOOLEAN",
+     "BOOL_OR(harmonic_used_nlp)"),
 ]
 
 # ─── Phase A: BEFORE snapshot ─────────────────────────────────────────────────

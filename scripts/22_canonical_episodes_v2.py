@@ -1211,6 +1211,66 @@ def enrich_from_v2_extractors(con: duckdb.DuckDBPyConnection) -> None:
                 f"rln_signal={f5_signal}, trach_concurrent={f2_trach}"
             )
 
+        # ── F6/F7/F9 patient-level OR-fold (mig_331 v2.3) ─────────────
+        # ligasure/harmonic/op_time/los were excluded from the first-pass
+        # UPDATE WHERE filter (which only gates on rln_monitoring and core
+        # findings fields).  Run a second patient-level BOOL_OR so that any
+        # note for the patient propagates to ALL of that patient's episodes.
+        if table_available(con, "_v2_operative_enrichment"):
+            con.execute("""
+                CREATE OR REPLACE TABLE _v2_op_f679_patient_max AS
+                SELECT
+                    research_id,
+                    BOOL_OR(ligasure_used_nlp)          AS ligasure_any,
+                    BOOL_OR(harmonic_used_nlp)           AS harmonic_any,
+                    BOOL_OR(energy_device_other_used_nlp) AS energy_other_any,
+                    BOOL_OR(suture_ligation_only_nlp)    AS suture_lig_any,
+                    BOOL_OR(op_time_nlp_present)         AS op_time_any,
+                    BOOL_OR(los_nlp_present)             AS los_any
+                FROM _v2_operative_enrichment
+                GROUP BY research_id
+            """)
+            con.execute("""
+                UPDATE operative_episode_detail_v2 o
+                SET
+                    ligasure_used_nlp          = COALESCE(pm.ligasure_any,    o.ligasure_used_nlp),
+                    harmonic_used_nlp          = COALESCE(pm.harmonic_any,    o.harmonic_used_nlp),
+                    energy_device_other_used_nlp = COALESCE(pm.energy_other_any, o.energy_device_other_used_nlp),
+                    suture_ligation_only_nlp   = COALESCE(pm.suture_lig_any, o.suture_ligation_only_nlp),
+                    op_time_nlp_present        = COALESCE(pm.op_time_any,    o.op_time_nlp_present),
+                    los_nlp_present            = COALESCE(pm.los_any,        o.los_nlp_present)
+                FROM _v2_op_f679_patient_max pm
+                WHERE o.research_id = pm.research_id
+                  AND (pm.ligasure_any OR pm.harmonic_any
+                       OR pm.energy_other_any OR pm.suture_lig_any
+                       OR pm.op_time_any OR pm.los_any)
+            """)
+            try:
+                con.execute("DROP TABLE IF EXISTS _v2_op_f679_patient_max")
+            except Exception:
+                pass
+            f9_ligasure = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE ligasure_used_nlp"
+            ).fetchone()[0]
+            f9_harmonic = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE harmonic_used_nlp"
+            ).fetchone()[0]
+            f6_op_time = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE op_time_nlp_present"
+            ).fetchone()[0]
+            f7_los = con.execute(
+                "SELECT COUNT(*) FROM operative_episode_detail_v2 "
+                "WHERE los_nlp_present"
+            ).fetchone()[0]
+            print(
+                f"  F6/F7/F9 patient-level OR-fold: "
+                f"ligasure={f9_ligasure}, harmonic={f9_harmonic}, "
+                f"op_time={f6_op_time}, los={f7_los}"
+            )
+
     # ── Molecular enrichment ────────────────────────────────────────
     if mol_results and table_available(con, "molecular_test_episode_v2"):
         mol_df = pd.DataFrame(mol_results)
