@@ -37,6 +37,9 @@ The Park 2009 Korean-cohort coefficients show null discrimination (AUC 0.5365) o
 - `01_aims_and_hypotheses.md` — Primary and secondary aims, pre-specified hypotheses
 - `02_cohort_definition.md` — Inclusion / exclusion, denominators
 - `03_analysis_plan.md` — Statistical methods, McNemar tests, Cochran's Q
+- `04_park_prevalence_audit.md` — Park 2009 null-discrimination finding
+- `05_horvath_subgroup_findings.md` — Horvath pattern subgroup analysis
+- `06_cluster_replication_analysis.md` — **Pre-registered** 11-system cluster replication analysis (H1–H4; 76.06% unanimous Phase B baseline; ACR/K-TIRADS vs Kwak/C-TIRADS cluster structure)
 
 ---
 
@@ -49,3 +52,15 @@ The Park 2009 Korean-cohort coefficients show null discrimination (AUC 0.5365) o
 ## Notable Finding cross-links
 
 - `NF-2026-05-07-park2009-noncalibration` — Park 2009 null discrimination (AUC 0.54)
+- `NF-2026-05-07-tirads-pipeline-version-state-mismatch` — Step 7 of Path A patch; evidence_summary includes the 76.06% Phase B unanimous rate and the ACR/K-TIRADS vs Kwak/C-TIRADS cluster pattern as a publishable observation
+
+## Cluster replication analysis (pre-registered 2026-05-08)
+
+The 76.06% 4-system unanimous-agreement rate and cluster structure from Phase A.3
+(commit 3c727e6) are formally pre-registered as M085 Results § "Cross-system
+concordance cluster structure" via `06_cluster_replication_analysis.md`.
+Execution script: `scripts/429_tirads_cluster_replication.py` (runs post-Step 5).
+
+Phase A.3 coverage context: aggregate-denominator gate (scorer-success-rate ≥ 98%
+on feasible rows) substituted for the infeasible absolute ≥ 30,000 threshold
+because echogenic-foci coverage was 24.8%, shape 58%, margins 60%.
