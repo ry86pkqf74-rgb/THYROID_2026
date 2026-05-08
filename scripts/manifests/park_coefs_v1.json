@@ -1,0 +1,73 @@
+{
+  "manifest_version": "v1",
+  "created_at": "2026-05-08",
+  "notes": "Park / T-US 2009 logistic-regression coefficient manifest. Three sets: park_2009_original (sourced from published paper), park_cosmos_validation (external validation refit), park_cohort_refit (this-cohort held-out GLM). NULL-default policy: when a primitive feature (composition, echogenicity, etc.) is NULL for a nodule, the corresponding binary X variable defaults to FALSE (absence-of-finding treated as negative). This is documented in the Phase B.6 README and the qc_phase_b6_park_x_completeness_v1 table.",
+  "sets": {
+    "park_2009_original": {
+      "source": "Park JY, Lee HJ, Jang HW, Kim HK, Yi JH, Lee W, Kim SH. A proposal for a thyroid imaging reporting and data system for ultrasound features of thyroid carcinoma. Thyroid. 2009;19(11):1257-1264. doi:10.1089/thy.2008.0021. PMID:19754280.",
+      "source_note": "Coefficients from Table 3 (multivariate logistic regression analysis) of the original paper. DO NOT FABRICATE \u2014 Logan must supply the exact \u03b2 values from the paper PDF. Placeholder values below are marked __FILL__.",
+      "coefficients_status": "PENDING \u2014 awaiting Logan to supply from paper PDF",
+      "intercept": "__FILL_intercept__",
+      "betas": {
+        "x1_taller": "__FILL_x1__",
+        "x2_halo": "__FILL_x2__",
+        "x3_well_circumscribed": "__FILL_x3__",
+        "x4_microlobulation": "__FILL_x4__",
+        "x5_infiltrative_margin": "__FILL_x5__",
+        "x6_marked_hypo": "__FILL_x6__",
+        "x7_hypo": "__FILL_x7__",
+        "x8_homogeneous": "__FILL_x8__",
+        "x9_mainly_cystic": "__FILL_x9__",
+        "x10_solid": "__FILL_x10__",
+        "x11_microcalc": "__FILL_x11__",
+        "x12_abnormal_ln": "__FILL_x12__"
+      }
+    },
+    "park_cosmos_validation": {
+      "source": "PENDING \u2014 Logan to cite the external validation paper. If a published refit cannot be located, source = 'park_2009_original' and notes updated accordingly.",
+      "source_note": "External validation refit on a separate cohort. If no published validation with explicit \u03b2 values is available, fallback = park_2009_original and this set is aliased. Document in README.",
+      "coefficients_status": "PENDING \u2014 awaiting Logan to supply source paper",
+      "intercept": "__FILL_intercept__",
+      "betas": {
+        "x1_taller": "__FILL_x1__",
+        "x2_halo": "__FILL_x2__",
+        "x3_well_circumscribed": "__FILL_x3__",
+        "x4_microlobulation": "__FILL_x4__",
+        "x5_infiltrative_margin": "__FILL_x5__",
+        "x6_marked_hypo": "__FILL_x6__",
+        "x7_hypo": "__FILL_x7__",
+        "x8_homogeneous": "__FILL_x8__",
+        "x9_mainly_cystic": "__FILL_x9__",
+        "x10_solid": "__FILL_x10__",
+        "x11_microcalc": "__FILL_x11__",
+        "x12_abnormal_ln": "__FILL_x12__"
+      }
+    },
+    "park_cohort_refit": {
+      "source": "This cohort (thyroid-canonical-pub-2026), 70/30 train/holdout, random_state=42, sklearn LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=1000). Train n=5079, test n=2178. Train AUC=0.6688, Test AUC=0.6611.",
+      "source_note": "Populated by 417b_park_cohort_refit.py after park_2009_original coefficients are filled. Trains on nodules with all 12 X non-null AND final-pathology label within \u00b190d of US exam.",
+      "coefficients_status": "READY (confidence=low)",
+      "intercept": -0.07981190402627271,
+      "betas": {
+        "x1_taller": 0.4439005812970179,
+        "x2_halo": 0.049868159437559886,
+        "x3_well_circumscribed": -0.23679079499194355,
+        "x4_microlobulation": 0.6141535330537875,
+        "x5_infiltrative_margin": -0.12584797327581618,
+        "x6_marked_hypo": -0.5285972821378796,
+        "x7_hypo": 0.8241599152632829,
+        "x8_homogeneous": 0.2784824802256857,
+        "x9_mainly_cystic": -1.0057340047522008,
+        "x10_solid": -0.36224198428815585,
+        "x11_microcalc": 1.5635085131556912,
+        "x12_abnormal_ln": 1.020770252933037
+      },
+      "refit_at": "2026-05-08T07:47:47.156589+00:00",
+      "refit_n_train": 5079,
+      "refit_n_test": 2178,
+      "refit_auc_train": 0.6688,
+      "refit_auc_test": 0.6611,
+      "confidence": "low"
+    }
+  }
+}
