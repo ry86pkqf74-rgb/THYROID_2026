@@ -1,0 +1,19 @@
+research_id,category,nlp_flag,manual_flag,adjudication,rationale,source_table_used
+10087,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+10573,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+10596,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11122,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11151,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11221,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11283,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11314,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11693,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+11760,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+12008,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+12082,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+12167,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+7108,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+9244,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+9513,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+9705,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
+9734,atypical_adenoma,True,False,AMBIGUOUS,[DRY RUN — no API call made],pub_canonical.path_synoptics
