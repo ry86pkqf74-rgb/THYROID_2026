@@ -1,0 +1,4 @@
+platform,n,n_malignant,rom_pct_overall,n_b3,rom_b3,n_b4,rom_b4,n_braf,braf_pct,n_recurrence,recurrence_pct
+Afirma,75,40,53.3,36,47.2,39,59.0,35,46.7,4,5.3
+Dual,73,41,56.2,36,38.9,37,73.0,63,86.3,5,6.8
+ThyroSeq,372,196,52.7,234,53.4,138,51.4,29,7.8,16,4.3

@@ -1,0 +1,7 @@
+platform,bethesda_cat,n,n_malignant,rom_pct,rom_ci_lo,rom_ci_hi
+Afirma,3,36,17,47.2,0.309,0.635
+Afirma,4,39,23,59.0,0.435,0.744
+Dual,3,36,14,38.9,0.23,0.548
+Dual,4,37,27,73.0,0.587,0.873
+ThyroSeq,3,234,125,53.4,0.47,0.598
+ThyroSeq,4,138,71,51.4,0.431,0.598
