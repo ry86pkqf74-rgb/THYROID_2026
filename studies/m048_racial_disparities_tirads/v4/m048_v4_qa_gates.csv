@@ -1,0 +1,9 @@
+gate,status,actual,expected
+v4_master_rowcount,PASS,3375,3375
+analytic_n_reconciles,PASS,3121,3121
+fna_coverage_pct,PASS,71.67,~70.5
+m4_background_path_signal_ok,PASS,mng=2107 clt=684 graves=106,mng>1500 AND clt>600 AND graves>50
+cascade_has_m4_row,PASS,"['Black', 'Asian']",M4 rows for Black and Asian
+cohort_n_reconciles,PASS,3121,3121
+mediation_has_m4_mediators,PASS,"['n_nodules_total', 'had_any_genetics', 'had_any_nm', 'n_fnas_total', 'days_us_to_surg_approx', 'has_mng', 'has_clt', 'has_graves']","has_mng, has_clt, has_graves for Black and Asian"
+arm_D_no_clt_removes_patients,PASS,2496,< 3121 (has_clt patients removed)
