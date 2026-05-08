@@ -1,0 +1,149 @@
+{
+  "script": "run_h2_v32_phase34_mi_sensitivity.py",
+  "phase": "3.4",
+  "linear_issue": "THY-35.4",
+  "audit_anchor": "DFL-20260508-H2-PHASE34-MI-SENSITIVITY",
+  "dfl_record_id": "reck1IE5SHBYwcuLp",
+  "run_start_utc": "2026-05-08T08:45:19.763688+00:00",
+  "run_end_utc": "2026-05-08T08:46:45.031895+00:00",
+  "elapsed_seconds": 85.3,
+  "bq_source": "thyroid-canonical-pub-2026.pub_workspace.cohort_h2_pathology_outcome_v2",
+  "data_hash_sha256": "d0890a6297589cac01484b1ff4e260cf62b014df1f606b508845b7893d47e269",
+  "numpy_seed": 42,
+  "imputer": {
+    "library": "sklearn.impute.IterativeImputer",
+    "estimator": "sklearn.linear_model.BayesianRidge",
+    "m_imputations": 20,
+    "burn_in_iters": 10,
+    "tol": 0.001,
+    "initial_strategy": "mean",
+    "imputation_order": "ascending",
+    "seed_strategy": "seed = 42 + i, i in range(20)",
+    "pmm_note": "True PMM not available in sklearn IterativeImputer; BayesianRidge with Gaussian noise approximates PMM for continuous variables. This choice is documented per Phase 3.4 pre-registration discipline."
+  },
+  "imputed_covariates": {
+    "bmi_combined": {
+      "missing_pct": 79.47,
+      "strategy": "BayesianRidge on raw scale"
+    },
+    "bethesda_final": {
+      "missing_pct": 53.53,
+      "strategy": "BayesianRidge ordinal 1-6, rounded+clamped post-impute"
+    },
+    "prm_first_fna_days_from_surg": {
+      "missing_pct": 51.9,
+      "strategy": "BayesianRidge on raw scale, clipped \u22650"
+    },
+    "gland_weight_final_g": {
+      "missing_pct": 13.7,
+      "strategy": "BayesianRidge on raw scale, clipped >0"
+    }
+  },
+  "not_imputed": {
+    "smoking": "DEGENERATE \u2014 data never collected for this cohort (99.9% unknown)",
+    "outcomes": [
+      "is_malignant",
+      "pathology_outcome_class",
+      "dominant_malignant_group",
+      "any_substernal_extension"
+    ]
+  },
+  "predictor_pool_in_imputation_model": "bmi, bethesda, fna_days, gland_wt, age, sex, pmh\u00d75, mol_tested, n_fna, substernal, is_malignant (auxiliary), oc_num (auxiliary), race_dummies\u00d74",
+  "pooling": {
+    "method": "Rubin's rules",
+    "Q_bar": "mean of m params",
+    "U_bar": "mean of m squared SEs",
+    "B": "between-imputation variance (var of params, ddof=1)",
+    "T": "U_bar + (1+1/m)*B",
+    "pooled_SE": "sqrt(T)",
+    "df_BR": "Barnard-Rubin approx df = (m-1)*(1+1/RIV)^2",
+    "CI": "pooled_coef \u00b1 1.96*pooled_SE (normal approx)"
+  },
+  "cohort_denominators": {
+    "cc_phase33": {
+      "M1": 518,
+      "M2": 518,
+      "M3": 159,
+      "M4": 93
+    },
+    "mi_phase34_mean": {
+      "M1": 6075.0,
+      "M2": 6075.0,
+      "M3": 1528.0,
+      "M4": 666.0
+    }
+  },
+  "convergence": {
+    "n_converged_per_model": {
+      "M1": 20,
+      "M2": 20,
+      "M3": 20,
+      "M4": 20
+    },
+    "trace_verdicts": {
+      "bmi": {
+        "sd_early_5": 0.0,
+        "sd_late_5": 0.0,
+        "converged": true
+      },
+      "bethesda": {
+        "sd_early_5": 0.0,
+        "sd_late_5": 0.0,
+        "converged": false
+      },
+      "fna_days": {
+        "sd_early_5": 0.0,
+        "sd_late_5": 0.0,
+        "converged": false
+      },
+      "gland_wt": {
+        "sd_early_5": 0.0,
+        "sd_late_5": 0.0,
+        "converged": false
+      }
+    },
+    "overall_verdict": false
+  },
+  "comparison_summary": {
+    "n_rows_in_11f": 23,
+    "n_direction_shift": 0,
+    "n_significance_shift": 2,
+    "n_magnitude_shift_ge20": 7,
+    "n_stable": 1,
+    "riv_gt2_warnings": []
+  },
+  "headline_M1_black_aa": {
+    "cc": {
+      "OR": 0.6632,
+      "ci": "0.385\u20131.143",
+      "p": 0.1392,
+      "n": 518
+    },
+    "mi": {
+      "OR": 0.8522,
+      "ci_low": 0.6957,
+      "ci_high": 1.044,
+      "p": 0.122552,
+      "RIV": 0.0,
+      "FMI": 0.087
+    }
+  },
+  "validation_gates": {
+    "GATE_1_cohort_n_6075": "PASS",
+    "GATE_2_malignant_1528": "PASS",
+    "GATE_3_atypical_7": "PASS",
+    "GATE_4_thymic_252": "PASS",
+    "GATE_MI1_convergence_trace": false,
+    "GATE_MI2_m20_confirmed": true,
+    "GATE_MI3_outcome_not_imputed": true,
+    "GATE_MI4_denom_mi_ge_cc": {
+      "M1_mi_ge_cc": true,
+      "M2_mi_ge_cc": true,
+      "M3_mi_ge_cc": true,
+      "M4_mi_ge_cc": true
+    },
+    "GATE_MI5_direction_shifts": 0,
+    "GATE_MI6_riv_le2_race_contrasts": 0
+  },
+  "rare_bethesda_categories_collapsed": []
+}

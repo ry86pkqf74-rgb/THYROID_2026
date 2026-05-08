@@ -1,0 +1,70 @@
+model_id,outcome_contrast,term,coef,std_err,z,p,OR,ci_low,ci_high,Q_bar,U_bar,B_var,T,df_BR,RIV,FMI,relative_increase_in_variance,m_imputations,m_valid,pooled_method,n_obs_mean
+M2,Indeterminate_vs_Benign,Intercept,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Asian]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Black/AA]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Other]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Unknown]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B1]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B2]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B3]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B4]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B5]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,age_at_surgery,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,sex_bin,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,bmi_combined,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,pmh_diabetes_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,pmh_htn_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,pmh_radiation_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,pmh_famhx_thyroid_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,pmh_prior_cancer_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,mol_tested_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,n_fna_episodes,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,log1p_first_fna_days,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,log_gland_weight,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Indeterminate_vs_Benign,substernal_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,Intercept,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Asian]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Black/AA]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Other]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Unknown]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B1]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B2]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B3]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B4]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B5]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,age_at_surgery,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,sex_bin,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,bmi_combined,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,pmh_diabetes_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,pmh_htn_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,pmh_radiation_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,pmh_famhx_thyroid_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,pmh_prior_cancer_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,mol_tested_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,n_fna_episodes,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,log1p_first_fna_days,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,log_gland_weight,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,Malignant_vs_Benign,substernal_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,Intercept,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Asian]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Black/AA]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Other]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(race_bucket, Treatment(reference='White'))[T.Unknown]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B1]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B2]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B3]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B4]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,"C(bethesda_cat, Treatment(reference='B6'))[T.B5]",,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,age_at_surgery,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,sex_bin,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,bmi_combined,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,pmh_diabetes_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,pmh_htn_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,pmh_radiation_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,pmh_famhx_thyroid_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,pmh_prior_cancer_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,mol_tested_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,n_fna_episodes,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,log1p_first_fna_days,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,log_gland_weight,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0
+M2,IncidentalMicro_vs_Benign,substernal_int,,,,,,,,,,,,,,,,20,,Rubin_BayesianRidge_IterativeImputer,6075.0

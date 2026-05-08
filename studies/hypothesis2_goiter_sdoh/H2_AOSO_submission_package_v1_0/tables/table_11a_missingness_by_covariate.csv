@@ -1,0 +1,16 @@
+covariate,n_total,n_missing,pct_missing,imputed,imputation_method
+bmi_combined,6075,4828,79.47,YES,"IterativeImputer/BayesianRidge (continuous, raw-scale)"
+bethesda_final,6075,3252,53.53,YES,"IterativeImputer/BayesianRidge (ordinal 1-6, rounded post-impute)"
+prm_first_fna_days_from_surg,6075,3153,51.9,YES,"IterativeImputer/BayesianRidge (continuous, raw-scale)"
+gland_weight_final_g,6075,832,13.7,YES,"IterativeImputer/BayesianRidge (continuous, raw-scale)"
+age_at_surgery,6075,0,0.0,NO,N/A
+sex_bin,6075,0,0.0,NO,N/A
+pmh_diabetes_int,6075,0,0.0,NO,N/A
+pmh_htn_int,6075,0,0.0,NO,N/A
+pmh_radiation_int,6075,0,0.0,NO,N/A
+pmh_famhx_thyroid_int,6075,0,0.0,NO,N/A
+pmh_prior_cancer_int,6075,0,0.0,NO,N/A
+mol_tested_int,6075,0,0.0,NO,N/A
+n_fna_episodes,6075,0,0.0,NO,N/A
+substernal_int,6075,0,0.0,NO,N/A
+smoking,6075,6070,99.92,NO — degenerate (never collected),N/A
