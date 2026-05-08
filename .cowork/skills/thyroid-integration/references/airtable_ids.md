@@ -147,7 +147,10 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 
 ### Notable Findings & Research Insights project
 - Linear project for tracking notable findings (cross-linked to Airtable Notable Findings table `tbl7GL0eFSiNPwabW`)
-- Label: `type:notable-finding` (color `#9333EA`)
-- IDs: populated by Linear subagent — see CHANGELOG v1.8.0 for IDs once confirmed
+- Project ID: `db85100d-5480-4ab6-b972-2f0db8cf5a4a`
+- URL: https://linear.app/rostemp/project/notable-findings-and-research-insights-7f4de86bcdf4
+- Label: `type:notable-finding` — ID `c7bc51b7-403a-4dad-baf9-267e43d8b315`, color `#9333EA`, team-scoped to THY
+- Inaugural issue: THY-45 (NF-2026-05-07-park2009-noncalibration)
+  - URL: https://linear.app/rostemp/issue/THY-45/nf-2026-05-07-park2009-noncalibration-park-2009-korean-coefficients
 
 To create projects, use `save_project` with `addTeams: ["c4afb51b-8bca-413a-a53e-15eb825cffbd"]`.
