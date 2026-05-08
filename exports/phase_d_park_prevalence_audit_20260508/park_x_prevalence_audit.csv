@@ -1,0 +1,4 @@
+path_label,n,prev_x1_taller,prev_x2_halo,prev_x3_well_circumscribed,prev_x4_microlobulation,prev_x5_infiltrative_margin,prev_x6_marked_hypo,prev_x7_hypo,prev_x8_homogeneous,prev_x9_mainly_cystic,prev_x10_solid,prev_x11_microcalc,prev_x12_abnormal_ln
+benign,10818,0.067,0.0061,0.4823,0.0065,0.0857,0.003,0.199,0.0017,0.0119,0.4359,0.0472,0.0466
+malignant,3432,0.1687,0.0082,0.655,0.0288,0.1469,0.0015,0.3313,0.0017,0.0032,0.491,0.1544,0.1198
+unlabeled,23329,0.0506,0.0055,0.5062,0.0049,0.0582,0.0038,0.1658,0.0024,0.0115,0.3554,0.0366,0.0096
