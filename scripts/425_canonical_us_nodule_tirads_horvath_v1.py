@@ -88,12 +88,26 @@ PRO_MODEL = f"`{PROJECT}.{DATASET_WS}.gemini_25_pro`"
 PIPELINE_VERSION = "phase_c5_horvath_v1"
 RUN_TS = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
-# Cost guardrail: $80 total
+# Cost guardrail: $80 total ($60 Horvath + $20 Phase E)
 COST_CEILING_USD = 80.0
-# Gemini 2.5 Pro input pricing (per-1M-token estimate, conservative)
-# Approximate: $3.50/M input tokens. Average prompt ~1,200 tokens → $0.0042/row.
-COST_PER_ROW_ESTIMATE = 0.0042
+HORVATH_COST_CEILING_USD = 60.0
+# Gemini 2.5 Pro pricing via BigQuery ML AI.GENERATE_TABLE.
+# Measured: prompt avg ~2,454 chars = ~614 tokens at 4 chars/token.
+# Input: $3.50/M tokens = $0.00215/row. Output: ~50 tokens × $10.50/M = $0.000525/row.
+# Total per-row: ~$0.00268. Rounded to $0.003 with 12% safety margin.
+# (Original 1,200-token assumption of $0.0042/row was 1.6x overstated.)
+COST_PER_ROW_ESTIMATE = 0.003
 DRY_RUN_N = 200
+
+# Deterministic pre-classification: composition-determined patterns that require no LLM.
+# These map directly from composition (primary Horvath branch) with high confidence.
+DETERMINISTIC_COMPOSITIONS = frozenset([
+    "anechoic", "cystic",        # -> colloid_type_1 / TIRADS_2
+    "spongiform",                # -> colloid_type_2 / TIRADS_2
+    "predominantly_cystic",      # -> colloid_type_3 / TIRADS_3
+])
+# NULL composition is also deterministic (unassignable) — Horvath requires composition
+# as the primary branch; without it no pattern can be assigned.
 
 
 # ---------------------------------------------------------------------------
@@ -385,50 +399,50 @@ SELECT
   COALESCE(st.source_text_short, '')             AS source_text_paraphrase,
   -- LN context
   COALESCE(CAST(ln.has_suspicious_ln_within_60d AS BOOL), FALSE) AS has_suspicious_ln_within_60d,
-  -- Pre-built Horvath Gemini prompt (concatenated inline for AI.GENERATE_TABLE)
+  -- Pre-built Horvath Gemini prompt concatenated inline for AI.GENERATE_TABLE
   CONCAT(
-    -- System instructions compressed into user turn (AI.GENERATE_TABLE uses single prompt)
-    'HORVATH/CHILEAN 2009 TI-RADS CLASSIFICATION\n',
+    -- System instructions compressed into user turn
+    'HORVATH/CHILEAN 2009 TI-RADS CLASSIFICATION\\n',
     'Assign exactly ONE pattern from: colloid_type_1, colloid_type_2, colloid_type_3, ',
     'hashimoto_pseudonodule, white_knight_hashimoto, isolated_intraparenchymal_calc, ',
     'benign_concordant_aspirated, de_quervain_unifocal, simple_neoplastic, ',
-    'suspicious_neoplastic, malignant_type_a, malignant_type_b, malignant_type_c, unassignable.\n\n',
+    'suspicious_neoplastic, malignant_type_a, malignant_type_b, malignant_type_c, unassignable.\\n\\n',
     -- Pattern guidance summary
-    'Pattern rules (pick best match):\n',
-    '- colloid_type_1: cystic/spongiform, colloid cyst with trabecular pattern → TIRADS_2\n',
-    '- colloid_type_2: spongiform sponge-like isoechoic → TIRADS_2\n',
-    '- colloid_type_3: hyperplastic colloid nodule, partially solid, expansive → TIRADS_3\n',
-    '- hashimoto_pseudonodule: hypoechoic/heterogeneous in Hashimoto gland → TIRADS_2/3\n',
-    '- white_knight_hashimoto: hyperechoic nodule in Hashimoto (benign) → TIRADS_2\n',
-    '- isolated_intraparenchymal_calc: calcification without true nodule → TIRADS_2\n',
-    '- benign_concordant_aspirated: already-aspirated benign cytology → TIRADS_2\n',
-    '- de_quervain_unifocal: hypoechoic lesion in subacute thyroiditis context → TIRADS_4A\n',
-    '- simple_neoplastic: solid, well-defined, no high-risk features, follicular-like → TIRADS_4A\n',
-    '- suspicious_neoplastic: solid, ≥1 suspicious feature (not overtly malignant) → TIRADS_4B\n',
-    '- malignant_type_a: calc + penetrating vessels (PTC pattern) → TIRADS_4B/4C\n',
-    '- malignant_type_b: solid hypoechoic, TTW/microcalc/irregular margins/ETE → TIRADS_5\n',
-    '- malignant_type_c: atypical malignant features not fitting A or B → TIRADS_4C\n',
-    '- unassignable: no pattern clearly fits → TIRADS_3 (use sparingly)\n\n',
-    '<structured_features>\n',
-    'composition: ', COALESCE(n.composition, 'unknown'), '\n',
-    'echogenicity: ', COALESCE(n.echogenicity, 'unknown'), '\n',
-    'shape: ', COALESCE(n.shape, 'unknown'), '\n',
-    'margins: ', COALESCE(n.margins, 'unknown'), '\n',
-    'echogenic_foci: ', COALESCE(n.echogenic_foci, '[]'), '\n',
-    'halo_presence: ', COALESCE(n.halo_presence_simple, 'unstated'), '\n',
-    'vascularity: ', COALESCE(n.vascularity_distribution_simple, 'unstated'), '\n',
-    'ete_on_us: ', COALESCE(n.ete_on_us_presence_simple, 'unstated'), '\n',
-    'size_cm: ', COALESCE(CAST(n.size_cm_max AS STRING), 'unknown'), '\n',
-    '</structured_features>\n',
-    '<gland_context>\n',
-    'background_echogenicity: ', COALESCE(g.background_echogenicity, 'unknown'), '\n',
-    'hashimoto_pattern: ', COALESCE(g.hashimoto_pattern, 'none'), '\n',
-    'goiter_flag: ', COALESCE(CAST(g.goiter_flag AS STRING), 'unknown'), '\n',
-    '</gland_context>\n',
-    '<source_text_paraphrase>\n',
-    COALESCE(st.source_text_short, '[no source text available]'), '\n',
-    '</source_text_paraphrase>\n\n',
-    'Output JSON: {{pattern: STRING, category: STRING, evidence_short: STRING (<=140 chars no PHI), confidence: FLOAT64}}\n',
+    'Pattern rules (pick best match):\\n',
+    '- colloid_type_1: cystic/spongiform, colloid cyst with trabecular pattern -> TIRADS_2\\n',
+    '- colloid_type_2: spongiform sponge-like isoechoic -> TIRADS_2\\n',
+    '- colloid_type_3: hyperplastic colloid nodule, partially solid, expansive -> TIRADS_3\\n',
+    '- hashimoto_pseudonodule: hypoechoic/heterogeneous in Hashimoto gland -> TIRADS_2/3\\n',
+    '- white_knight_hashimoto: hyperechoic nodule in Hashimoto (benign) -> TIRADS_2\\n',
+    '- isolated_intraparenchymal_calc: calcification without true nodule -> TIRADS_2\\n',
+    '- benign_concordant_aspirated: already-aspirated benign cytology -> TIRADS_2\\n',
+    '- de_quervain_unifocal: hypoechoic lesion in subacute thyroiditis context -> TIRADS_4A\\n',
+    '- simple_neoplastic: solid, well-defined, no high-risk features, follicular-like -> TIRADS_4A\\n',
+    '- suspicious_neoplastic: solid, >=1 suspicious feature (not overtly malignant) -> TIRADS_4B\\n',
+    '- malignant_type_a: calc + penetrating vessels (PTC pattern) -> TIRADS_4B/4C\\n',
+    '- malignant_type_b: solid hypoechoic, TTW/microcalc/irregular margins/ETE -> TIRADS_5\\n',
+    '- malignant_type_c: atypical malignant features not fitting A or B -> TIRADS_4C\\n',
+    '- unassignable: no pattern clearly fits -> TIRADS_3 (use sparingly)\\n\\n',
+    '<structured_features>\\n',
+    'composition: ', COALESCE(n.composition, 'unknown'), '\\n',
+    'echogenicity: ', COALESCE(n.echogenicity, 'unknown'), '\\n',
+    'shape: ', COALESCE(n.shape, 'unknown'), '\\n',
+    'margins: ', COALESCE(n.margins, 'unknown'), '\\n',
+    'echogenic_foci: ', COALESCE(n.echogenic_foci, '[]'), '\\n',
+    'halo_presence: ', COALESCE(n.halo_presence_simple, 'unstated'), '\\n',
+    'vascularity: ', COALESCE(n.vascularity_distribution_simple, 'unstated'), '\\n',
+    'ete_on_us: ', COALESCE(n.ete_on_us_presence_simple, 'unstated'), '\\n',
+    'size_cm: ', COALESCE(CAST(n.size_cm_max AS STRING), 'unknown'), '\\n',
+    '</structured_features>\\n',
+    '<gland_context>\\n',
+    'background_echogenicity: ', COALESCE(g.background_echogenicity, 'unknown'), '\\n',
+    'hashimoto_pattern: ', COALESCE(g.hashimoto_pattern, 'none'), '\\n',
+    'goiter_flag: ', COALESCE(CAST(g.goiter_flag AS STRING), 'unknown'), '\\n',
+    '</gland_context>\\n',
+    '<source_text_paraphrase>\\n',
+    COALESCE(st.source_text_short, '[no source text available]'), '\\n',
+    '</source_text_paraphrase>\\n\\n',
+    'Output JSON: {{pattern: STRING, category: STRING, evidence_short: STRING (<=140 chars no PHI), confidence: FLOAT64}}\\n',
     'CRITICAL: evidence_short must be <=140 chars and must NEVER contain dates of service, ',
     'patient names, MRN, or DOB. Paraphrase only. Return ONLY the JSON object.'
   ) AS horvath_prompt
@@ -439,7 +453,48 @@ LEFT JOIN `{TABLE_LN_CTX}` ln ON n.nodule_id = ln.nodule_id;
 """
 
 # ---------------------------------------------------------------------------
-# Step 2: 200-row dry run
+# Step 1b: Deterministic pre-classification (composition-determined patterns)
+# Saves ~50% of LLM cost by assigning obvious patterns without model inference.
+# ---------------------------------------------------------------------------
+
+TABLE_HORVATH_DET = f"{PROJECT}.{DATASET_WS}.tirads_horvath_deterministic_v1"
+
+DETERMINISTIC_SQL = f"""
+CREATE OR REPLACE TABLE `{TABLE_HORVATH_DET}`
+CLUSTER BY research_id AS
+SELECT
+  nodule_id,
+  research_id,
+  CASE
+    WHEN composition IN ('anechoic','cystic')  THEN 'colloid_type_1'
+    WHEN composition = 'spongiform'            THEN 'colloid_type_2'
+    WHEN composition = 'predominantly_cystic'  THEN 'colloid_type_3'
+    ELSE 'unassignable'
+  END AS pattern,
+  CASE
+    WHEN composition IN ('anechoic','cystic')  THEN 'TIRADS_2'
+    WHEN composition = 'spongiform'            THEN 'TIRADS_2'
+    WHEN composition = 'predominantly_cystic'  THEN 'TIRADS_3'
+    ELSE 'TIRADS_3'
+  END AS category,
+  CASE
+    WHEN composition IN ('anechoic','cystic')  THEN 'cystic/anechoic composition -> colloid_type_1'
+    WHEN composition = 'spongiform'            THEN 'spongiform composition -> colloid_type_2'
+    WHEN composition = 'predominantly_cystic'  THEN 'predominantly cystic composition -> colloid_type_3'
+    ELSE 'composition NULL: unassignable by Horvath rules'
+  END AS evidence_short,
+  1.0 AS confidence,
+  TRUE AS post_validation_consistent,
+  CAST(NULL AS STRING) AS inconsistency_reason,
+  FALSE AS revised,
+  'deterministic_preclass' AS assignment_method
+FROM `{TABLE_HORVATH_INPUT}`
+WHERE composition IN ('anechoic','cystic','spongiform','predominantly_cystic')
+   OR composition IS NULL;
+"""
+
+# ---------------------------------------------------------------------------
+# Step 2: 200-row dry run (LLM-required rows only)
 # ---------------------------------------------------------------------------
 
 DRY_RUN_SQL = f"""
@@ -451,19 +506,21 @@ FROM AI.GENERATE_TABLE(
   (
     SELECT horvath_prompt AS prompt, nodule_id, research_id
     FROM `{TABLE_HORVATH_INPUT}`
+    WHERE composition NOT IN ('anechoic','cystic','spongiform','predominantly_cystic')
+      AND composition IS NOT NULL
     LIMIT {DRY_RUN_N}
   ),
   STRUCT(
     'pattern STRING, category STRING, evidence_short STRING, confidence FLOAT64'
       AS output_schema,
     0.0 AS temperature,
-    256 AS max_output_tokens
+    2048 AS max_output_tokens
   )
 );
 """
 
 # ---------------------------------------------------------------------------
-# Step 3: Full Gemini 2.5 Pro run
+# Step 3: Full Gemini 2.5 Pro run (LLM-required rows only; deterministic merged later)
 # ---------------------------------------------------------------------------
 
 FULL_RUN_SQL = f"""
@@ -472,12 +529,17 @@ CLUSTER BY research_id AS
 SELECT *
 FROM AI.GENERATE_TABLE(
   MODEL {PRO_MODEL},
-  (SELECT horvath_prompt AS prompt, nodule_id, research_id FROM `{TABLE_HORVATH_INPUT}`),
+  (
+    SELECT horvath_prompt AS prompt, nodule_id, research_id
+    FROM `{TABLE_HORVATH_INPUT}`
+    WHERE composition NOT IN ('anechoic','cystic','spongiform','predominantly_cystic')
+      AND composition IS NOT NULL
+  ),
   STRUCT(
     'pattern STRING, category STRING, evidence_short STRING, confidence FLOAT64'
       AS output_schema,
     0.0 AS temperature,
-    256 AS max_output_tokens
+    2048 AS max_output_tokens
   )
 );
 """
@@ -548,7 +610,7 @@ FROM AI.GENERATE_TABLE(
     'pattern STRING, category STRING, evidence_short STRING, confidence FLOAT64'
       AS output_schema,
     0.0 AS temperature,
-    256 AS max_output_tokens
+    2048 AS max_output_tokens
   )
 );
 """
@@ -722,26 +784,39 @@ def main() -> None:
     n_input = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_INPUT}`")
     _log(f"  Input rows: {n_input}")
 
+    # ------------------------------------------------------------------
+    # Step 2b: Deterministic pre-classification (composition-determined patterns)
+    # Runs BEFORE skip_llm check so deterministic rows always get assigned.
+    # ------------------------------------------------------------------
+    _log("Step 2b: Deterministic pre-classification (cystic/spongiform/predominantly_cystic/NULL)")
+    _run_sql(bq, DETERMINISTIC_SQL, "Deterministic pre-classification")
+    n_deterministic = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_DET}`")
+    n_llm_required = n_input - n_deterministic
+    _log(f"  Deterministic rows: {n_deterministic} | LLM-required rows: {n_llm_required}")
+
     if args.skip_llm:
-        _log("--skip-llm: skipping all LLM inference. Horvath columns will be NULL.")
-        _log("CTAS rebuild not performed (no data to write). Exiting.")
+        _log("--skip-llm: skipping LLM inference. Only deterministic rows will be in NLE table.")
+        _log("CTAS rebuild not performed (no LLM data to write). Exiting.")
         return
 
     # ------------------------------------------------------------------
-    # Step 3: 200-row dry run + cost projection
+    # Step 3: 200-row dry run + cost projection (LLM-required rows only)
     # ------------------------------------------------------------------
-    _log(f"Step 3: 200-row dry run for cost validation")
+    _log(f"Step 3: 200-row dry run for cost validation (LLM-required rows only)")
     _run_sql(bq, DRY_RUN_SQL, "Horvath dry-run (200 rows)")
     n_dry = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_DRY}`")
     _log(f"  Dry-run output rows: {n_dry} (expected ≈ {DRY_RUN_N})")
 
-    projected_total = n_input * COST_PER_ROW_ESTIMATE
-    _log(f"  Projected total cost: ${projected_total:.2f} "
-         f"({n_input} rows × ${COST_PER_ROW_ESTIMATE}/row)")
-    if projected_total > COST_CEILING_USD:
-        _halt(f"Projected cost ${projected_total:.2f} exceeds ceiling ${COST_CEILING_USD}. "
-              "Halting. Review input table size or cost estimate before proceeding.")
-    _log(f"  Cost projection: PASS (${projected_total:.2f} ≤ ${COST_CEILING_USD})")
+    # Cost projection: LLM-required rows only (deterministic rows are free)
+    projected_horvath = n_llm_required * COST_PER_ROW_ESTIMATE
+    _log(f"  LLM-required rows: {n_llm_required} (saved {n_deterministic} via deterministic preclass)")
+    _log(f"  Projected Horvath LLM cost: ${projected_horvath:.2f} "
+         f"({n_llm_required} rows × ${COST_PER_ROW_ESTIMATE}/row)")
+    if projected_horvath > HORVATH_COST_CEILING_USD:
+        _halt(f"Projected Horvath cost ${projected_horvath:.2f} exceeds Horvath ceiling "
+              f"${HORVATH_COST_CEILING_USD}. Halting. "
+              "Increase deterministic scope or reduce prompt size.")
+    _log(f"  Cost projection: PASS (${projected_horvath:.2f} ≤ ${HORVATH_COST_CEILING_USD})")
 
     # Validate dry-run output quality
     dry_rows = list(bq.query(
@@ -763,18 +838,20 @@ def main() -> None:
         return
 
     # ------------------------------------------------------------------
-    # Step 4: Full Gemini 2.5 Pro run
+    # Step 4: Full Gemini 2.5 Pro run (LLM-required rows only)
     # ------------------------------------------------------------------
-    _log(f"Step 4: Full Gemini 2.5 Pro run ({n_input} rows)")
+    _log(f"Step 4: Full Gemini 2.5 Pro run ({n_llm_required} LLM-required rows)")
     _run_sql(bq, FULL_RUN_SQL, "Full Horvath LLM run")
     n_raw = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_RAW}`")
     _log(f"  Raw output rows: {n_raw}")
 
-    # Parse into NLE table
-    _log("Step 4b: Parse + normalize into NLE table")
+    # Parse into NLE table (LLM rows only first)
+    _log("Step 4b: Parse + normalize LLM results into NLE table")
     _run_sql(bq, PARSE_TO_NLE_SQL, "Parse Horvath raw → NLE")
-    n_nle = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_NLE}`")
-    _log(f"  NLE rows: {n_nle}")
+    n_nle_llm = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_NLE}`")
+    _log(f"  NLE rows (LLM): {n_nle_llm}")
+
+    n_nle = n_nle_llm  # Deterministic rows merged after post-validation (Step 6b)
 
     # ------------------------------------------------------------------
     # Step 5: Deterministic post-validation (Python loop)
@@ -939,14 +1016,60 @@ def main() -> None:
     df_final["post_validation_consistent"] = df_final["post_validation_consistent"].astype(bool)
     df_final["revised"] = df_final["revised"].astype(bool)
 
+    # Add assignment_method column if missing (LLM rows get tagged)
+    if "assignment_method" not in df_final.columns:
+        df_final["assignment_method"] = "llm_gemini_25_pro"
+
     job_cfg = bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE", autodetect=True)
     load_job = bq.load_table_from_dataframe(
         df_final, TABLE_HORVATH_NLE,
         job_config=job_cfg, location=LOCATION
     )
     load_job.result()
+    n_llm_nle = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_NLE}`")
+    _log(f"  LLM NLE rows written: {n_llm_nle}")
+
+    # Step 6c: Append deterministic pre-classified rows into NLE table
+    # These rows are composition-determined, pass post-validation by definition.
+    _log("Step 6c: Append deterministic pre-classified rows into NLE table")
+    det_rows = list(bq.query(
+        f"SELECT * FROM `{TABLE_HORVATH_DET}`",
+        location=LOCATION,
+    ).result())
+    if det_rows:
+        df_det = pd.DataFrame([dict(r) for r in det_rows])
+        # Align schema with final NLE table
+        for col in df_final.columns:
+            if col not in df_det.columns:
+                if col == "processed_at":
+                    df_det[col] = RUN_TS
+                elif col in ("post_validation_consistent", "revised"):
+                    df_det[col] = True
+                elif col == "category_llm":
+                    df_det[col] = df_det.get("category", None)
+                elif col == "category_adjusted":
+                    df_det[col] = df_det.get("category", None)
+                elif col == "pattern_raw":
+                    df_det[col] = df_det.get("pattern", None)
+                else:
+                    df_det[col] = None
+        # Reorder to match df_final column order
+        det_cols = [c for c in df_final.columns if c in df_det.columns]
+        df_det = df_det[det_cols]
+        df_det["confidence"] = df_det["confidence"].astype("float64")
+        df_det["post_validation_consistent"] = df_det["post_validation_consistent"].astype(bool)
+        df_det["revised"] = df_det["revised"].fillna(False).astype(bool)
+        job_cfg_app = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND", autodetect=False,
+                                             schema=load_job.result() if False else None)
+        job_cfg_app = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND", autodetect=True)
+        app_job = bq.load_table_from_dataframe(
+            df_det, TABLE_HORVATH_NLE,
+            job_config=job_cfg_app, location=LOCATION
+        )
+        app_job.result()
+        _log(f"  Appended {len(df_det)} deterministic rows")
     n_final_nle = _scalar(bq, f"SELECT COUNT(*) FROM `{TABLE_HORVATH_NLE}`")
-    _log(f"  Final NLE rows: {n_final_nle}")
+    _log(f"  Final NLE rows (LLM + deterministic): {n_final_nle}")
 
     # ------------------------------------------------------------------
     # Step 7: CTAS rebuild
