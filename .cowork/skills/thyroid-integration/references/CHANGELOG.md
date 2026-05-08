@@ -1,5 +1,29 @@
 # thyroid-integration skill — changelog
 
+## v1.9.0 — 2026-05-08
+
+Phase B + Phase C complete. Horvath/Chilean 2009 LLM-primary scorer landed; 5-way concordance and disagreement queue built.
+
+- **Phase C.5 — Horvath/Chilean 2009 (LLM-primary):** `scripts/425_canonical_us_nodule_tirads_horvath_v1.py` implements the 10-named-pattern Horvath system (colloid type 1/2/3, Hashimoto pseudonodule, white-knight Hashimoto, De Quervain unifocal, simple neoplastic, suspicious neoplastic, malignant type A/B/C, unassignable). Architecture: LLM-primary (Gemini 2.5 Pro via `AI.GENERATE_TABLE`) → deterministic post-validation → second-pass revision for inconsistent rows → CTAS rebuild. Gland-level context (hashimoto_pattern, goiter_flag from `canonical_us_thyroid_gland_v2`) included in every prompt. PHI guard: paraphrased evidence ≤140 chars; source text ≤500 chars.
+- **New BQ columns:** `horvath_pattern`, `horvath_category`, `horvath_evidence_short`, `horvath_confidence`, `horvath_post_validation_consistent`, `horvath_decision_method` added to `pub_canonical.canonical_us_nodule_tirads_multisystem_v1`.
+- **New BQ tables:** `pub_workspace.tirads_horvath_input_v1`, `tirads_horvath_dryrun_v1`, `tirads_horvath_raw_v1`, `note_entities_llm_horvath_v1`, `tirads_horvath_inconsistent_v1`, `tirads_horvath_revised_v1`.
+- **Cost guardrail:** 200-row dry run + cost extrapolation; halts if projected cost > $80. Estimated ~$30–60 for full 37k-row run.
+- **Post-validation rules:** Per-pattern feature-consistency checks (13 patterns). Category adjustments: hashimoto_pseudonodule → TIRADS_3 if hyperechoic/non-cystic; malignant_type_a → TIRADS_4C if penetrating vessels confirmed.
+- **Second-pass revision:** Inconsistent rows get a focused Gemini 2.5 Pro revision; revisions committed only if revised pattern itself passes post-validation.
+- **5-way concordance:** `scripts/424_phase_c_concordance_audit.py` updated to include Horvath as 5th system. New table `pub_workspace.tirads_phase_c5_concordance_v1` with 10 pairwise agreement rates + 5-way full-agreement rate. Target: pairwise ≥75%; 5-way ≥60%.
+- **Disagreement queue:** `pub_workspace.qc_tirads_multisystem_disagreement_v1` built — per-nodule rows where max-system and min-system differ by ≥2 categories, prioritized critical/high/medium. This is the Phase E (Sonnet/Opus adjudication) input.
+- **Signoff registry:** Row inserted for `canonical_us_nodule_tirads_multisystem_v1 v1.1` (v1.0 was Phase B closure; v1.1 reflects Phase C additions EU/ATA/BTA/AACE/Horvath).
+- **Study scaffold:** `studies/m085_multisystem_tirads_comparison/05_horvath_subgroup_findings.md` with pattern-frequency table, quality metric targets, anticipated notable findings (colloid-frequency American vs Chilean cohort; Hashimoto pseudonodule inter-system disagreement; 5-system gray-zone analysis).
+- **DFL row:** Applied for Phase C.5.
+- **THY-30 comment:** Posted with 5-way concordance, disagreement queue size, Horvath pattern distribution, post-validation rate.
+- **Notable Findings candidates:** (a) Horvath colloid-type prevalence in American surgical cohort vs Chilean screening cohort; (b) Hashimoto pseudonodule systematic EU-TIRADS disagreement.
+
+Anti-patterns avoided per Phase C.5 prompt:
+- Did NOT skip deterministic post-validation.
+- Did NOT use `gemini_25_flash` for Horvath (Pro only).
+- Did NOT default unassignable without flagging (rate tracked as quality metric).
+- Skill version NOT bumped until after disagreement queue and signoff registry were confirmed complete.
+
 ## v1.8.0 — 2026-05-08
 
 M085 scaffolded; Notable Findings tracker launched.
