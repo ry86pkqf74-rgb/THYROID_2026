@@ -594,11 +594,11 @@ FROM AI.GENERATE_TABLE(
   (
     SELECT
       CONCAT(
-        'The Horvath/Chilean pattern assigned was: ', i.pattern, '\n',
-        'Post-validation inconsistency reason: ', i.inconsistency_reason, '\n\n',
-        'Please revise to a DIFFERENT, more consistent pattern from the enum.\n',
-        'If no valid pattern fits, use unassignable.\n\n',
-        'Original structured features:\n',
+        'The Horvath/Chilean pattern assigned was: ', i.pattern, '\\n',
+        'Post-validation inconsistency reason: ', i.inconsistency_reason, '\\n\\n',
+        'Please revise to a DIFFERENT, more consistent pattern from the enum.\\n',
+        'If no valid pattern fits, use unassignable.\\n\\n',
+        'Original structured features:\\n',
         h.horvath_prompt
       ) AS prompt,
       i.nodule_id,
