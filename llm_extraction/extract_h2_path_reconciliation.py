@@ -124,7 +124,11 @@ def _fetch_candidates(bq, min_n: int) -> list[dict]:
     """
     Pull candidates from h2_path_reconciliation_candidates_v1 restricted to
     categories with ≥min_n NLP_ONLY or ≥min_n MANUAL_ONLY rows.
-    thymic_tissue is excluded (coverage gap, not an NLP error).
+
+    Phase 2a v2 (2026-05-08): thymic_tissue now INCLUDED (previously excluded as
+    'coverage gap').  After mig_338 + mig_338b, nlp_thymic_tissue is canonically
+    populated; the 20 NLP_ONLY rows are Phase 2a adjudication targets.
+    DFL anchor: DFL-20260508-H2-RECONCILE-EXTRACTOR-EXTEND.
     """
     sql = f"""
     WITH counts AS (
@@ -136,7 +140,6 @@ def _fetch_candidates(bq, min_n: int) -> list[dict]:
       SELECT DISTINCT category
       FROM counts
       WHERE n >= {min_n}
-        AND category != 'thymic_tissue'   -- coverage gap, not adjudication scope
     )
     SELECT c.research_id, c.category, c.manual_flag, c.nlp_flag, c.discrepancy_type
     FROM `{CANDIDATES_TABLE}` c
@@ -190,7 +193,8 @@ def _build_source_text(row_data: dict, include_substernal: bool) -> str:
 
 def _build_prompt(category: str, nlp_flag: bool, manual_flag: bool,
                   source_text: str, is_atypical_adenoma: bool,
-                  substernal_resection: str | None) -> str:
+                  substernal_resection: str | None,
+                  is_thymic_tissue: bool = False) -> str:
     """Build the Anthropic user-turn message for adjudication."""
 
     # Category-specific framing
@@ -204,6 +208,24 @@ def _build_prompt(category: str, nlp_flag: bool, manual_flag: bool,
             "  - NLP_FALSE_POSITIVE if the NLP fired on a related but distinct entity "
             "(atypical follicular nodule, follicular adenoma with atypia, cellular adenoma, etc.)\n"
             "  - AMBIGUOUS if the text is too vague to determine.\n"
+        )
+    elif is_thymic_tissue:
+        frame = (
+            "IMPORTANT NOTE FOR THIS CATEGORY: This is a thymic tissue (intrathyroidal thymus) "
+            "adjudication. The NLP used a broad regex matching 'thymic', 'thymus', or 'thymic "
+            "tissue' in synoptic text. Classify as:\n"
+            "  - NLP_TRUE_POSITIVE  if the path text confirms thymic tissue IS present in the "
+            "specimen — e.g. thymic remnant, intrathyroidal thymus, ectopic thymic tissue, "
+            "thymic inclusion, lymphoid tissue consistent with thymus, thymoma component.\n"
+            "  - NLP_FALSE_POSITIVE if the mention is incidental/negation/anatomical-context only "
+            "— e.g. 'thymus not identified', 'no thymic involvement', 'adjacent to thymus', "
+            "'thymic involution', 'atrophic thymus' as a background structure, or a anatomical "
+            "landmark reference without confirmed thymic tissue in the thyroid specimen.\n"
+            "  - AMBIGUOUS if the text is genuinely unclear about whether thymic tissue is a "
+            "pathological finding in the specimen.\n"
+            "NOTE: Based on prior negative-control checks, the FP rate for this category is "
+            "expected to be LOW (bare-thymus mentions with clear anatomical context are rare "
+            "in this cohort). Default to NLP_TRUE_POSITIVE when the mention is specific.\n"
         )
     else:
         frame = (
@@ -374,6 +396,7 @@ def main() -> None:
 
             src_data = source_map.get(rid, {})
             is_atypical = category == "atypical_adenoma"
+            is_thymic = category == "thymic_tissue"
             include_sub_hint = category == "substernal_mng"
 
             # substernal_resection hint (for substernal_mng category)
@@ -393,6 +416,7 @@ def main() -> None:
                     source_text=source_text,
                     is_atypical_adenoma=is_atypical,
                     substernal_resection=sub_resection_val,
+                    is_thymic_tissue=is_thymic,
                 )
                 adjudication, rationale, input_tok, output_tok = _call_anthropic(
                     client, prompt, rid, category
