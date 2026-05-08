@@ -1,9 +1,9 @@
 ---
 name: thyroid-integration
 metadata:
-  version: 1.4.0
+  version: 1.6.0
 description: |
-  MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies thyroid_master.duckdb or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, thyroid_master, parquet, MIG_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
+  MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + BigQuery + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies BigQuery (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`), or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
 ---
 
 # THYROID_2026 Integration Skill
@@ -51,13 +51,13 @@ This protocol takes ~15 seconds and prevents 95% of audit-trail breaks. If the u
 
 ## Why this exists
 
-Logan runs ~90+ planned manuscripts at varying maturity, an evolving DuckDB master with dozens of source tables, and a multi-year reconciliation effort between manuscripts and database. To prevent drift, every column, verification check, override decision, manuscript section, and cohort metadata record lives in a structured Airtable system. Active work-in-flight lives in Linear. Claude orchestrates daily sync, drift detection, and feedback logging.
+Logan runs ~90+ planned manuscripts at varying maturity, an evolving **BigQuery canonical layer** (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`) with dozens of source tables, and a multi-year reconciliation effort between manuscripts and database. (Legacy MotherDuck cloud trial expired; the BQ migration completed and BQ is now the only canonical layer. Any local `thyroid_master.duckdb` artifacts are historical reference only.) To prevent drift, every column, verification check, override decision, manuscript section, and cohort metadata record lives in a structured Airtable system. Active work-in-flight lives in Linear. Claude orchestrates daily sync, drift detection, and feedback logging.
 
 If you bypass this system — e.g. silently edit a manuscript without logging the change, close a Linear issue without updating Airtable, or push raw clinical text into either tool — you break the audit trail and potentially the HIPAA posture. Don't do that.
 
 ## Hard rules (in order of importance)
 
-1. **No PHI in Airtable or Linear, ever.** `research_id` is fine (de-identified per HIPAA Safe Harbor). Pathology text excerpts, operative notes, MRNs, dates of service narrower than year, names, and DOB beyond year all stay in DuckDB and local files. If a finding cites evidence, the field stores a Claude-summarized 1–2 sentence summary, not the source text.
+1. **No PHI in Airtable or Linear, ever.** `research_id` is fine (de-identified per HIPAA Safe Harbor) and acceptable for the BigQuery canonical layer. Pathology text excerpts, operative notes, MRNs, dates of service narrower than year, names, and DOB beyond year all stay in **local PHI-restricted files** (e.g., the 8/11/25 surgical-pathology Excel and any local note-text caches). The BQ canonical layer holds only de-identified data; even there, evidence fields cite Claude-summarized 1–2 sentence summaries, never raw source text.
 
 2. **Nothing is ever deleted.** Linear issues close, never delete. Airtable records archive (`lifecycle = Archived`), never delete. Manuscript-Locked records cannot be edited at all without explicit unlock. The Issue Ledger and the Manuscript/Data Feedback Logs are append-only.
 
@@ -109,7 +109,7 @@ Run via scheduled task. Full prompt is in `references/daily_sync_prompt.md`. Pha
 4. AUTO-RESOLVE (Linear → Airtable): closed issues with `resolved-verified` advance lifecycle
 5. ISSUE LEDGER: every transition appended (immutable)
 6. MANUSCRIPT LIFECYCLE: status changes create/archive Linear projects
-7. DRIFT DETECTION: parquet/DuckDB schema vs Columns table
+7. DRIFT DETECTION: parquet / BigQuery (`pub_canonical`, `pub_workspace`) schema vs Columns table
 8. AI JOURNAL REC REFRESH: top-5 hierarchy for active manuscripts
 9. MANUSCRIPT SNAPSHOT (event): freezes evidence base on Submitted/Accepted
 10. DIGEST: comment to "Daily Sync" issue with counts
@@ -139,7 +139,7 @@ E.g. "I just noticed M044 is using the wrong cohort definition." Don't fix silen
 
 ## Versioning
 
-This skill is at v1.0.0. Bump:
+This skill is at v1.5.0. Bump:
 - **patch** (1.0.x) for clarification edits
 - **minor** (1.x.0) for new tables, fields, or sync phases
 - **major** (x.0.0) for changes to the hard rules or lifecycle states

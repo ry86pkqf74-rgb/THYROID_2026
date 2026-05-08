@@ -1,5 +1,28 @@
 # thyroid-integration skill — changelog
 
+## v1.6.0 — 2026-05-08
+
+Phase A.3 TI-RADS primitive backfill landed via hybrid regex → Flash → Pro approach.
+
+- **A.3 hybrid pivot:** `ML.GENERATE_TEXT` with `response_schema` was blocked; `AI.GENERATE_TABLE` on Pro for all 37k rows exceeded budget. Logan approved Option C (hybrid) 2026-05-07. Three tiers: regex (script 411, free, 87.1% coverage), Gemini 2.5 Flash (script 412, ~16k residual rows), Gemini 2.5 Pro (script 412, ~1.5–2.5k re-route rows).
+- **New scripts:** `scripts/411_tirads_primitive_regex_v1.py` (Tier 1 extractor + 67-test suite), `scripts/412_tirads_hybrid_pipeline.py` (C.2–C.9 orchestrator with cost guardrails).
+- **New BQ tables:** `tirads_primitive_regex_v1_v1`, `tirads_primitive_residual_v1`, `tirads_primitive_flash_raw_v1`, `tirads_primitive_pro_reroute_v1`, `tirads_primitive_pro_raw_v1`, `note_entities_llm_us_nodule_primitives_hybrid_v1`, `gemini_25_flash` model.
+- **Canonical impact:** `pub_canonical.canonical_us_nodule_v2` rebuilt with 20 new primitive backfill columns (composition_llm, echogenicity_llm, shape_llm, margins_llm, echogenic_foci_llm_jsonarray, halo_jsonb, vascularity_jsonb, ete_us_jsonb, and provenance). COALESCE existing-wins applied.
+- **Cost guardrails:** Flash full-run extrapolation ≤ $80; Pro re-route extrapolation ≤ $40; total A.3 ≤ $60. Pipeline halts if any cap is breached.
+- **PHI guard:** evidence_short ≤ 140 chars enforced at C.7 merge; overlong rows truncated or quarantined to `qc_phase_a_parse_failures_v1`.
+- **Logged via:** DFL A.3 row flipped to `Applied`. THY-30 comment posted with hybrid breakdown.
+
+## v1.5.0 — 2026-05-07
+
+MotherDuck cloud trial expired; BigQuery is the only canonical layer.
+
+- **`SKILL.md` description:** Replaced "thyroid_master, parquet" trigger fragment with "BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_". Updated the (b) load-trigger from "opens/queries/modifies thyroid_master.duckdb" to BigQuery dataset references.
+- **Hard rule #1 (PHI):** Reworded so PHI lives in **local PHI-restricted files** (8/11/25 Excel, local note-text caches) rather than "DuckDB and local files". Clarified that the BQ canonical layer holds only de-identified `research_id`-keyed data per HIPAA Safe Harbor.
+- **Why this exists section:** Replaced "evolving DuckDB master" with "evolving BigQuery canonical layer (`pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`)" and added a one-sentence note that the MotherDuck migration is complete.
+- **Daily sync phase 7 (drift detection):** Updated to "parquet / BigQuery (`pub_canonical`, `pub_workspace`) schema vs Columns table".
+- **`CLAUDE.md`:** Same canonical-layer changes propagated. Trigger list now references BigQuery / pub_canonical / pub_workspace / pub_signoff. Hard rule #1 PHI language reworded to match SKILL.md. The "Master analytical store" line now points to BigQuery and notes the MotherDuck trial expiration.
+- **Logged via:** DFL-20260507-005 (Data Feedback Log). No edits to airtable_ids.md, linear_ids.md, daily_sync_prompt.md, or schema files — those were already BQ-anchored.
+
 ## Reference inventory v1.1.0 / `CLAUDE.md` sync — 2026-05-06
 
 - **Manuscript inventory:** Regenerated `references/manuscript_inventory.md` from `pub_workspace.manuscript_feasibility_v1` (83 manuscripts; mirrored in repo-root `manuscript_feasibility_full_20260506.csv`). Added verified status counts and a full table (code, title, status, feasibility color). Bumped inventory snapshot header to skill reference **v1.1.0**.
