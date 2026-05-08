@@ -1,0 +1,5 @@
+contrast_id,contrast_label,race,ref_race,race_n,ref_n,race_pos,ref_pos,OR,ci_low,ci_high,p_unadjusted,p_bonferroni_primary,bonferroni_k,interpretation,test_used,min_expected_count
+C1_primary,Black/AA vs White: frank_malignancy (binary),Black/AA,White,2918,2500,188.0,342.0,0.4345,0.3605,0.5237,3.8845e-19,1.5538e-18,4,Bonferroni-significant (p_bonf<0.05),fisher_exact,244.56
+C2_primary,Black/AA vs White: outcome_class 4-level (global chi²),Black/AA,White,2918,2500,,,,,,5.5232e-45,2.20928e-44,4,Bonferroni-significant (p_bonf<0.05),chi2_contingency_4level,23.07
+C3_primary,Black/AA vs White: nlp_atypical_adenoma (v2 corrected),Black/AA,White,2918,2500,1.0,4.0,0.2139,0.0239,1.9152,0.18812,0.75248,4,Not Bonferroni-significant,fisher_exact,2.31
+C4_primary,Black/AA vs White: nlp_thymic_tissue (v2 corrected),Black/AA,White,2918,2500,112.0,105.0,0.9104,0.6938,1.1947,0.53181,1.0,4,Not Bonferroni-significant,fisher_exact,100.13

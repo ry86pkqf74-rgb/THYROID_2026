@@ -1,0 +1,17 @@
+contrast_id,contrast_label,family,race,ref_race,category,race_n,ref_n,race_pos,ref_pos,OR,ci_low,ci_high,p_unadjusted,p_bonferroni_exploratory,bonferroni_k,q_fdr,test_used,min_expected_count
+EXP_001,Black/AA vs White: outcome_class=pure_benign,outcome_class,Black/AA,White,pure_benign,2918,2500,2413,1641,2.5012,2.2039,2.8386,0.0,0.0,168,0.0,fisher_exact,629.38
+EXP_002,Black/AA vs White: outcome_class=indeterminate,outcome_class,Black/AA,White,indeterminate,2918,2500,19,31,0.522,0.2941,0.9263,0.03157175,1.0,168,0.22100225,fisher_exact,23.07
+EXP_003,Black/AA vs White: outcome_class=frank_malignancy,outcome_class,Black/AA,White,frank_malignancy,2918,2500,188,342,0.4345,0.3605,0.5237,0.0,0.0,168,0.0,fisher_exact,244.56
+EXP_004,Black/AA vs White: outcome_class=benign_plus_incidental_microcarcinoma,outcome_class,Black/AA,White,benign_plus_incidental_microcarcinoma,2918,2500,298,486,0.4713,0.4035,0.5506,0.0,0.0,168,0.0,fisher_exact,361.76
+EXP_005,Asian vs White: outcome_class=pure_benign,outcome_class,Asian,White,pure_benign,193,2500,96,1641,0.5181,0.3861,0.6951,1.532e-05,0.00257376,168,0.00032172,fisher_exact,68.51
+EXP_006,Asian vs White: outcome_class=indeterminate,outcome_class,Asian,White,indeterminate,193,2500,6,31,2.5555,1.0529,6.2026,0.04505463,1.0,168,0.28980796,fisher_exact,2.65
+EXP_007,Asian vs White: outcome_class=frank_malignancy,outcome_class,Asian,White,frank_malignancy,193,2500,31,342,1.2075,0.8087,1.8028,0.38624569,1.0,168,0.88616477,fisher_exact,26.73
+EXP_008,Asian vs White: outcome_class=benign_plus_incidental_microcarcinoma,outcome_class,Asian,White,benign_plus_incidental_microcarcinoma,193,2500,60,486,1.8695,1.3568,2.5758,0.00025932,0.04356576,168,0.00396052,fisher_exact,39.13
+EXP_009,Other vs White: outcome_class=pure_benign,outcome_class,Other,White,pure_benign,105,2500,75,1641,1.3087,0.8501,2.0145,0.24820374,1.0,168,0.75176031,fisher_exact,35.83
+EXP_010,Other vs White: outcome_class=indeterminate,outcome_class,Other,White,indeterminate,105,2500,0,31,0.3715,0.0226,6.1134,0.63468071,1.0,168,0.9939105,fisher_exact,1.25
+EXP_011,Other vs White: outcome_class=frank_malignancy,outcome_class,Other,White,frank_malignancy,105,2500,6,342,0.3824,0.1664,0.8787,0.01805688,1.0,168,0.15944435,fisher_exact,14.03
+EXP_012,Other vs White: outcome_class=benign_plus_incidental_microcarcinoma,outcome_class,Other,White,benign_plus_incidental_microcarcinoma,105,2500,24,486,1.2279,0.7704,1.957,0.38058009,1.0,168,0.88616477,fisher_exact,20.56
+EXP_013,Unknown vs White: outcome_class=pure_benign,outcome_class,Unknown,White,pure_benign,359,2500,262,1641,1.4139,1.1043,1.8103,0.00588453,0.98860104,168,0.06590674,fisher_exact,120.04
+EXP_014,Unknown vs White: outcome_class=indeterminate,outcome_class,Unknown,White,indeterminate,359,2500,4,31,0.8974,0.3149,2.5574,1.0,1.0,168,1.0,fisher_exact,4.39
+EXP_015,Unknown vs White: outcome_class=frank_malignancy,outcome_class,Unknown,White,frank_malignancy,359,2500,39,342,0.769,0.5411,1.0929,0.15791738,1.0,168,0.66234702,fisher_exact,47.84
+EXP_016,Unknown vs White: outcome_class=benign_plus_incidental_microcarcinoma,outcome_class,Unknown,White,benign_plus_incidental_microcarcinoma,359,2500,54,486,0.7337,0.5404,0.9962,0.05130828,1.0,168,0.29011108,fisher_exact,67.81

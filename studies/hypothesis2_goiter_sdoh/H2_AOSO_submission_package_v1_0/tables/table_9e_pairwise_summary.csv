@@ -1,0 +1,30 @@
+section,metric,value,contrast_id,contrast_label,race,category,OR,ci_low,ci_high,p_unadjusted,p_bonferroni_exploratory,q_fdr
+summary_stats,total_exploratory_tests,168,,,,,,,,,,
+summary_stats,bonferroni_k_exploratory,168,,,,,,,,,,
+summary_stats,fdr_method,Benjamini-Hochberg,,,,,,,,,,
+summary_stats,fdr_alpha,0.05,,,,,,,,,,
+summary_stats,fdr_significant_at_0.05,14,,,,,,,,,,
+summary_stats,fdr_significant_at_0.01,13,,,,,,,,,,
+summary_stats,bonferroni_significant_at_0.05,11,,,,,,,,,,
+summary_stats,both_fdr_and_bonferroni_sig_0.05,11,,,,,,,,,,
+summary_stats,top20_start_row,below,,,,,,,,,,
+top20_by_fdr_q,,,EXP_001,Black/AA vs White: outcome_class=pure_benign,Black/AA,pure_benign,2.5012,2.2039,2.8386,0.0,0.0,0.0
+top20_by_fdr_q,,,EXP_003,Black/AA vs White: outcome_class=frank_malignancy,Black/AA,frank_malignancy,0.4345,0.3605,0.5237,0.0,0.0,0.0
+top20_by_fdr_q,,,EXP_004,Black/AA vs White: outcome_class=benign_plus_incidental_microcarcinoma,Black/AA,benign_plus_incidental_microcarcinoma,0.4713,0.4035,0.5506,0.0,0.0,0.0
+top20_by_fdr_q,,,EXP_057,Black/AA vs White: nlp_chronic_lymphocytic_thyroiditis,Black/AA,nlp_chronic_lymphocytic_thyroiditis,0.3621,0.291,0.4506,0.0,0.0,0.0
+top20_by_fdr_q,,,EXP_056,Black/AA vs White: nlp_lymphocytic_thyroiditis,Black/AA,nlp_lymphocytic_thyroiditis,0.4409,0.3605,0.5393,0.0,0.0,0.0
+top20_by_fdr_q,,,EXP_067,Black/AA vs White: nlp_hurthle_change,Black/AA,nlp_hurthle_change,0.372,0.2607,0.5308,2e-08,3.36e-06,5.6e-07
+top20_by_fdr_q,,,EXP_050,Black/AA vs White: nlp_substernal_mng,Black/AA,nlp_substernal_mng,1.8235,1.4016,2.3724,4.76e-06,0.00079968,0.00011424
+top20_by_fdr_q,,,EXP_005,Asian vs White: outcome_class=pure_benign,Asian,pure_benign,0.5181,0.3861,0.6951,1.532e-05,0.00257376,0.00032172
+top20_by_fdr_q,,,EXP_058,Black/AA vs White: nlp_hashimotos,Black/AA,nlp_hashimotos,0.2821,0.1537,0.5178,1.783e-05,0.00299544,0.00033283
+top20_by_fdr_q,,,EXP_008,Asian vs White: outcome_class=benign_plus_incidental_microcarcinoma,Asian,benign_plus_incidental_microcarcinoma,1.8695,1.3568,2.5758,0.00025932,0.04356576,0.00396052
+top20_by_fdr_q,,,EXP_066,Black/AA vs White: nlp_c_cell_hyperplasia,Black/AA,nlp_c_cell_hyperplasia,0.0609,0.008,0.4633,0.00025798,0.04334064,0.00396052
+top20_by_fdr_q,,,EXP_053,Black/AA vs White: nlp_hurthle_adenoma,Black/AA,nlp_hurthle_adenoma,0.4602,0.2962,0.7151,0.00049796,0.08365728,0.00680956
+top20_by_fdr_q,,,EXP_068,Black/AA vs White: nlp_hurthle_metaplasia,Black/AA,nlp_hurthle_metaplasia,0.293,0.1425,0.6024,0.00052693,0.08852424,0.00680956
+top20_by_fdr_q,,,EXP_060,Black/AA vs White: nlp_chronic_thyroiditis,Black/AA,nlp_chronic_thyroiditis,0.315,0.1522,0.652,0.00133911,0.22497048,0.01606932
+top20_by_fdr_q,,,EXP_013,Unknown vs White: outcome_class=pure_benign,Unknown,pure_benign,1.4139,1.1043,1.8103,0.00588453,0.98860104,0.06590674
+top20_by_fdr_q,,,EXP_054,Black/AA vs White: nlp_follicular_adenoma,Black/AA,nlp_follicular_adenoma,0.7012,0.5437,0.9044,0.00643058,1.0,0.06752109
+top20_by_fdr_q,,,EXP_017,Black/AA vs White: mal_group=PTC_classical (malignant subset),Black/AA,PTC_classical,0.7105,0.5471,0.9228,0.01200769,1.0,0.11866423
+top20_by_fdr_q,,,EXP_026,Asian vs White: mal_group=PTC_variants (malignant subset),Asian,PTC_variants,2.7302,1.2595,5.9183,0.01484824,1.0,0.13858357
+top20_by_fdr_q,,,EXP_080,Asian vs White: nlp_substernal_mng,Asian,nlp_substernal_mng,0.1462,0.0202,1.0555,0.01898147,1.0,0.15944435
+top20_by_fdr_q,,,EXP_011,Other vs White: outcome_class=frank_malignancy,Other,frank_malignancy,0.3824,0.1664,0.8787,0.01805688,1.0,0.15944435
