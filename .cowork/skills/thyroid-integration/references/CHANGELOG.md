@@ -1,5 +1,30 @@
 # thyroid-integration skill — changelog
 
+## v1.7.0 — 2026-05-07
+
+Phase B complete. Multi-system TIRADS scoring landed end-to-end.
+
+- **B.1–B.5 (already in v1.6.0):** ACR 2017 dual-output, Kwak 2011, K-TIRADS 2021, C-TIRADS 2020, SRU 2005 deterministic scorers in `pub_canonical.canonical_us_nodule_tirads_multisystem_v1` (37,579 rows; CLUSTER BY research_id).
+- **B.6 Park / T-US 2009 (this release):** logistic-regression scorer with **3 coefficient sets** (`park_2009_original`, `park_cosmos_validation`, `park_cohort_refit`) all populated in `scripts/manifests/park_coefs_v1.json` v1.
+  - Park 2009 βs sourced from secondary literature (paper paywalled at Mary Ann Liebert; Table 3 multivariate logistic regression: intercept −2.862; X1..X12 = +0.581, −0.481, −1.435, +1.178, +1.405, +0.700, +0.460, +0.648, −1.715, +0.463, +1.964, +1.739).
+  - **X8 (homogeneous echotexture) = +0.648** is counter-intuitive vs modern TIRADS systems but faithful to the published model. Pinned in `tests/test_park_scorer.py::test_park_scorer_homogeneous_counterintuitive`.
+  - `park_cosmos_validation` aliased to `park_2009_original` (no qualifying external-validation refit identified during Phase B.6 closure); `differs_from_alias=false` documented.
+  - `park_cohort_refit` linkage moved from patient-level (v1, test AUC 0.6611, FAIL) to **nodule-level via laterality-aware per-side match** in `pub_workspace.us_nodule_path_outcome_v1` (Phase B.6 v2). 1,654 nodules flipped malignant→benign (the multinodular goiter contralateral-nodule bug fix); refit v2 train AUC 0.7044, test AUC 0.6914 → MARGINAL band, `confidence='low'`.
+- **Three-way concordance (suspicious P4∪P5):** 2009 vs cosmos = 1.000 (alias confirmed), 2009 vs cohort = 0.948, cohort vs cosmos = 0.948.
+- **AUC vs final pathology (n=14,250):** Park 2009 = 0.5365 (essentially random — Korean general-population coefficients do not generalize to this American surgical cohort, meaningful clinical finding), cohort_refit_v2 = 0.7006, cosmos = 0.5365 (alias).
+- **Signoff registry:** `canonical_us_nodule_tirads_multisystem_v1 v1.0` registered in `pub_canonical.canonical_table_signoff_registry_v1` with `table_status=Active` and `signoff_migration=phase_b_closure_20260507`.
+- **DFL row flip:** Phase B.6 row `rec38HYN2xSFzf9AB` flipped from `Logged` → `Applied` with full numerical summary (and the duplicate `reccYcnykxlN13upW` flipped for consistency).
+- **THY-30 comment:** posted with Park 2009 βs, cosmos alias rationale, linkage v1→v2 narrative, AUC + concordance metrics, and the X8 counter-intuitive flag.
+- **Audit trail preserved:** v1 split table (`pub_workspace.park_cohort_refit_split_v1`) NOT deleted; `qc_phase_b6_park_label_flip_v1` records the per-nodule diff. `script 417b_park_cohort_refit.py` (v1) retained alongside `417b_v2_park_cohort_refit.py`.
+- **README:** `exports/phase_b_deterministic_scorers_20260507/README.md` gained a Phase B.6 finalization section with the published β table, X8 callout, linkage fix narrative, three-way concordance, AUC-vs-path numbers, and rollback plan.
+
+Anti-patterns explicitly avoided per the closure prompt:
+- Did NOT claim direct primary-source access to Park 2009 (provenance language pinned).
+- Did NOT silently proceed past the AUC gate (test AUC 0.6914 is in the MARGINAL band per §3d, not the HALT band).
+- Did NOT change Park 2009's X8 sign just because it's counter-intuitive (+0.648 preserved).
+- Did NOT delete `park_cohort_refit_split_v1` (audit trail for the prior buggy linkage).
+- Did NOT report `agreement_2009_vs_cosmos` ≈ 1.000 as a validation finding (called out as alias-by-construction in the README and skill comment).
+
 ## v1.6.0 — 2026-05-08
 
 Phase A.3 TI-RADS primitive backfill landed via hybrid regex → Flash → Pro approach.

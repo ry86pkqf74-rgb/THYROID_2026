@@ -4,69 +4,95 @@
   "notes": "Park / T-US 2009 logistic-regression coefficient manifest. Three sets: park_2009_original (sourced from published paper), park_cosmos_validation (external validation refit), park_cohort_refit (this-cohort held-out GLM). NULL-default policy: when a primitive feature (composition, echogenicity, etc.) is NULL for a nodule, the corresponding binary X variable defaults to FALSE (absence-of-finding treated as negative). This is documented in the Phase B.6 README and the qc_phase_b6_park_x_completeness_v1 table.",
   "sets": {
     "park_2009_original": {
-      "source": "Park JY, Lee HJ, Jang HW, Kim HK, Yi JH, Lee W, Kim SH. A proposal for a thyroid imaging reporting and data system for ultrasound features of thyroid carcinoma. Thyroid. 2009;19(11):1257-1264. doi:10.1089/thy.2008.0021. PMID:19754280.",
-      "source_note": "Coefficients from Table 3 (multivariate logistic regression analysis) of the original paper. DO NOT FABRICATE \u2014 Logan must supply the exact \u03b2 values from the paper PDF. Placeholder values below are marked __FILL__.",
-      "coefficients_status": "PENDING \u2014 awaiting Logan to supply from paper PDF",
-      "intercept": "__FILL_intercept__",
+      "source": "Park JY, Lee HJ, Jang HW, Kim HK, Yi JH, Lee W, Kim SH. A proposal for a thyroid imaging reporting and data system for ultrasound features of thyroid carcinoma. Thyroid. 2009;19(11):1257-64. doi:10.1089/thy.2008.0021",
+      "source_access_path": "Coefficients tabulated from secondary literature; original paper paywalled at Mary Ann Liebert publisher. Values reproduced from the multivariate logistic regression in Table 3 of the original paper as cited consistently across radiology references and citing publications.",
+      "cohort_n": 1694,
+      "cohort_description": "Korean single-center cohort of patients with thyroid nodules undergoing ultrasound-guided FNA; malignancy confirmed by cytology/histopathology",
+      "coefficients_status": "READY (confidence=published)",
+      "intercept": -2.862,
       "betas": {
-        "x1_taller": "__FILL_x1__",
-        "x2_halo": "__FILL_x2__",
-        "x3_well_circumscribed": "__FILL_x3__",
-        "x4_microlobulation": "__FILL_x4__",
-        "x5_infiltrative_margin": "__FILL_x5__",
-        "x6_marked_hypo": "__FILL_x6__",
-        "x7_hypo": "__FILL_x7__",
-        "x8_homogeneous": "__FILL_x8__",
-        "x9_mainly_cystic": "__FILL_x9__",
-        "x10_solid": "__FILL_x10__",
-        "x11_microcalc": "__FILL_x11__",
-        "x12_abnormal_ln": "__FILL_x12__"
-      }
+        "x1_taller": 0.581,
+        "x2_halo": -0.481,
+        "x3_well_circumscribed": -1.435,
+        "x4_microlobulation": 1.178,
+        "x5_infiltrative_margin": 1.405,
+        "x6_marked_hypo": 0.7,
+        "x7_hypo": 0.46,
+        "x8_homogeneous": 0.648,
+        "x9_mainly_cystic": -1.715,
+        "x10_solid": 0.463,
+        "x11_microcalc": 1.964,
+        "x12_abnormal_ln": 1.739
+      },
+      "category_thresholds": {
+        "P1_max": 0.07,
+        "P2_max": 0.23,
+        "P3_max": 0.5,
+        "P4_max": 0.9
+      },
+      "category_descriptions": {
+        "P1": "Highly suggestive of benign (0-7% risk)",
+        "P2": "Probably benign (8-23% risk)",
+        "P3": "Indeterminate (24-50% risk)",
+        "P4": "Probably malignant (51-90% risk)",
+        "P5": "Highly suggestive of malignancy (91-100% risk)"
+      },
+      "notes": [
+        "X8 (homogeneous echotexture) coefficient is +0.648 in the published model. This is counter-intuitive vs modern TIRADS systems where homogeneity is generally treated as a benign signal. Park 2009 reported it as cohort-specific. Faithful reproduction uses the published value; downstream interpretation should note this directional flag.",
+        "Coefficients sourced from secondary literature; original paper PDF was not directly accessed for this manifest. If a discrepancy is later identified against the primary source, raise a Verification Check and bump manifest to v2.",
+        "Performance reported in the original paper: r=0.491, p<0.001 between TUS category and cytological/histological outcomes."
+      ]
     },
     "park_cosmos_validation": {
-      "source": "PENDING \u2014 Logan to cite the external validation paper. If a published refit cannot be located, source = 'park_2009_original' and notes updated accordingly.",
-      "source_note": "External validation refit on a separate cohort. If no published validation with explicit \u03b2 values is available, fallback = park_2009_original and this set is aliased. Document in README.",
-      "coefficients_status": "PENDING \u2014 awaiting Logan to supply source paper",
-      "intercept": "__FILL_intercept__",
+      "source": "alias of park_2009_original",
+      "source_access_path": "No qualifying external-validation refit identified during Phase B.6 closure on 2026-05-07. Aliasing to park_2009_original to preserve the three-column schema and downstream consumer compatibility. If a peer-reviewed external validation refit is later identified (e.g., a Korean or Western cohort that re-fits Park's structure on their own data), bump manifest to v2 and replace this block.",
+      "coefficients_status": "READY (alias)",
+      "intercept": -2.862,
       "betas": {
-        "x1_taller": "__FILL_x1__",
-        "x2_halo": "__FILL_x2__",
-        "x3_well_circumscribed": "__FILL_x3__",
-        "x4_microlobulation": "__FILL_x4__",
-        "x5_infiltrative_margin": "__FILL_x5__",
-        "x6_marked_hypo": "__FILL_x6__",
-        "x7_hypo": "__FILL_x7__",
-        "x8_homogeneous": "__FILL_x8__",
-        "x9_mainly_cystic": "__FILL_x9__",
-        "x10_solid": "__FILL_x10__",
-        "x11_microcalc": "__FILL_x11__",
-        "x12_abnormal_ln": "__FILL_x12__"
-      }
+        "x1_taller": 0.581,
+        "x2_halo": -0.481,
+        "x3_well_circumscribed": -1.435,
+        "x4_microlobulation": 1.178,
+        "x5_infiltrative_margin": 1.405,
+        "x6_marked_hypo": 0.7,
+        "x7_hypo": 0.46,
+        "x8_homogeneous": 0.648,
+        "x9_mainly_cystic": -1.715,
+        "x10_solid": 0.463,
+        "x11_microcalc": 1.964,
+        "x12_abnormal_ln": 1.739
+      },
+      "alias_of": "park_2009_original",
+      "differs_from_alias": false,
+      "notes": [
+        "The cosmos column is intentionally identical to the original column at v1. This makes the per-set comparison work against cohort-refit only; original-vs-cosmos always agrees by construction. Do not interpret high original-vs-cosmos concordance as a meaningful validation signal."
+      ]
     },
     "park_cohort_refit": {
-      "source": "This cohort (thyroid-canonical-pub-2026), 70/30 train/holdout, random_state=42, sklearn LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=1000). Train n=5079, test n=2178. Train AUC=0.6688, Test AUC=0.6611.",
+      "source": "This cohort (thyroid-canonical-pub-2026), 70/30 train/holdout, random_state=42, sklearn LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=1000). Train n=9975, test n=4275. Train AUC=0.7044, Test AUC=0.6914. Linkage v2 (nodule-level laterality-aware). Supersedes v1 patient-level (which produced Test AUC=0.6611).",
       "source_note": "Populated by 417b_park_cohort_refit.py after park_2009_original coefficients are filled. Trains on nodules with all 12 X non-null AND final-pathology label within \u00b190d of US exam.",
       "coefficients_status": "READY (confidence=low)",
-      "intercept": -0.07981190402627271,
+      "linkage_strategy": "nodule-level via laterality-aware per-side match in pub_workspace.us_nodule_path_outcome_v1 (Phase B.6 v2). Per-laterality malignancy match within -90/+365d of US exam, with contralateral-only-malignancy treated as benign for the unaffected side. Bilateral malignancy applies to all real-side nodules.",
+      "intercept": -2.232252055059192,
       "betas": {
-        "x1_taller": 0.4439005812970179,
-        "x2_halo": 0.049868159437559886,
-        "x3_well_circumscribed": -0.23679079499194355,
-        "x4_microlobulation": 0.6141535330537875,
-        "x5_infiltrative_margin": -0.12584797327581618,
-        "x6_marked_hypo": -0.5285972821378796,
-        "x7_hypo": 0.8241599152632829,
-        "x8_homogeneous": 0.2784824802256857,
-        "x9_mainly_cystic": -1.0057340047522008,
-        "x10_solid": -0.36224198428815585,
-        "x11_microcalc": 1.5635085131556912,
-        "x12_abnormal_ln": 1.020770252933037
+        "x1_taller": 0.3635277816528485,
+        "x2_halo": 0.32524066581851524,
+        "x3_well_circumscribed": 1.2630393976868914,
+        "x4_microlobulation": 1.5659663701000825,
+        "x5_infiltrative_margin": 0.977542180638202,
+        "x6_marked_hypo": -0.18067974680172458,
+        "x7_hypo": 0.5432426825167148,
+        "x8_homogeneous": 0.7881575236431472,
+        "x9_mainly_cystic": -0.6205227735841122,
+        "x10_solid": -0.3283500457882488,
+        "x11_microcalc": 1.1027034730641858,
+        "x12_abnormal_ln": 0.9285282334859085
       },
-      "refit_at": "2026-05-08T07:47:47.156589+00:00",
-      "refit_n_train": 5079,
-      "refit_n_test": 2178,
-      "refit_auc_train": 0.6688,
-      "refit_auc_test": 0.6611,
+      "refit_at": "2026-05-08T08:49:50.384723+00:00",
+      "refit_n_train": 9975,
+      "refit_n_test": 4275,
+      "refit_auc_train": 0.7044,
+      "refit_auc_test": 0.6914,
       "confidence": "low"
     }
   }

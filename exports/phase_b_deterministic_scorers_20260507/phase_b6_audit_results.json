@@ -1,0 +1,107 @@
+{
+  "5a_distribution": [
+    {
+      "set_name": "park_2009_original",
+      "cat": "P1",
+      "n": 27479,
+      "frac": 0.7312
+    },
+    {
+      "set_name": "park_2009_original",
+      "cat": "P2",
+      "n": 6140,
+      "frac": 0.1634
+    },
+    {
+      "set_name": "park_2009_original",
+      "cat": "P3",
+      "n": 2259,
+      "frac": 0.0601
+    },
+    {
+      "set_name": "park_2009_original",
+      "cat": "P4",
+      "n": 1665,
+      "frac": 0.0443
+    },
+    {
+      "set_name": "park_2009_original",
+      "cat": "P5",
+      "n": 36,
+      "frac": 0.001
+    },
+    {
+      "set_name": "park_cohort_refit_v2",
+      "cat": "P1",
+      "n": 302,
+      "frac": 0.008
+    },
+    {
+      "set_name": "park_cohort_refit_v2",
+      "cat": "P2",
+      "n": 19516,
+      "frac": 0.5193
+    },
+    {
+      "set_name": "park_cohort_refit_v2",
+      "cat": "P3",
+      "n": 16508,
+      "frac": 0.4393
+    },
+    {
+      "set_name": "park_cohort_refit_v2",
+      "cat": "P4",
+      "n": 1253,
+      "frac": 0.0333
+    },
+    {
+      "set_name": "park_cosmos_validation",
+      "cat": "P1",
+      "n": 27479,
+      "frac": 0.7312
+    },
+    {
+      "set_name": "park_cosmos_validation",
+      "cat": "P2",
+      "n": 6140,
+      "frac": 0.1634
+    },
+    {
+      "set_name": "park_cosmos_validation",
+      "cat": "P3",
+      "n": 2259,
+      "frac": 0.0601
+    },
+    {
+      "set_name": "park_cosmos_validation",
+      "cat": "P4",
+      "n": 1665,
+      "frac": 0.0443
+    },
+    {
+      "set_name": "park_cosmos_validation",
+      "cat": "P5",
+      "n": 36,
+      "frac": 0.001
+    }
+  ],
+  "5b_concordance": [
+    {
+      "n": 37579,
+      "agreement_2009_vs_cohort": 0.9484,
+      "agreement_2009_vs_cosmos": 1.0,
+      "agreement_cohort_vs_cosmos": 0.9484,
+      "n_2009_suspicious": 1701,
+      "n_cosmos_suspicious": 1701,
+      "n_cohort_suspicious": 1253
+    }
+  ],
+  "5c_auc_vs_path": {
+    "n": 14250,
+    "auc": {
+      "park_2009_original": 0.5365,
+      "park_cosmos_validation": 0.5365,
+      "park_cohort_refit_v2": 0.7006
+    }
+  }
+}

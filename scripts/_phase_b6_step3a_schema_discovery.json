@@ -1,0 +1,1664 @@
+{
+  "pub_canonical": {
+    "canonical_diagnosis_unified_v1": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "diagnosis_primary",
+        "type": "STRING"
+      },
+      {
+        "col": "diagnosis_variant",
+        "type": "STRING"
+      },
+      {
+        "col": "diagnosis_full",
+        "type": "STRING"
+      },
+      {
+        "col": "is_malignant",
+        "type": "BOOL"
+      },
+      {
+        "col": "n_tumors",
+        "type": "INT64"
+      },
+      {
+        "col": "source_table",
+        "type": "STRING"
+      }
+    ],
+    "canonical_fna_events_v1": [
+      {
+        "col": "fna_event_id",
+        "type": "STRING"
+      },
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_index",
+        "type": "INT64"
+      },
+      {
+        "col": "fna_seq_n",
+        "type": "INT64"
+      },
+      {
+        "col": "fna_total_n_for_patient",
+        "type": "INT64"
+      },
+      {
+        "col": "is_first_fna",
+        "type": "BOOL"
+      },
+      {
+        "col": "is_last_fna",
+        "type": "BOOL"
+      },
+      {
+        "col": "fna_date_raw",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_date_resolved",
+        "type": "DATE"
+      },
+      {
+        "col": "fna_date_status",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_date_confidence",
+        "type": "INT64"
+      },
+      {
+        "col": "days_from_first_fna",
+        "type": "INT64"
+      },
+      {
+        "col": "days_to_surgery",
+        "type": "INT64"
+      },
+      {
+        "col": "specimen_location",
+        "type": "STRING"
+      },
+      {
+        "col": "laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_original_text",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_calculated_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_2010_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_2010_name",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_2015_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_2015_name",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_2023_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_2023_name",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_final_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_confidence",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "bethesda_derivation_method",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_rules_category",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_rules_confidence",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "bethesda_provider",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_reasoning",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_evidence_present",
+        "type": "BOOL"
+      },
+      {
+        "col": "fna_history",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_pathology_report",
+        "type": "STRING"
+      },
+      {
+        "col": "path_text_length",
+        "type": "INT64"
+      },
+      {
+        "col": "source_tables_represented",
+        "type": "STRING"
+      },
+      {
+        "col": "ingest_script_version",
+        "type": "STRING"
+      },
+      {
+        "col": "ingested_at_utc",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "fna_site",
+        "type": "STRING"
+      }
+    ],
+    "canonical_fna_patient_rollup_v1": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "n_fnas",
+        "type": "INT64"
+      },
+      {
+        "col": "n_bethesda_calculated",
+        "type": "INT64"
+      },
+      {
+        "col": "n_nondiagnostic",
+        "type": "INT64"
+      },
+      {
+        "col": "first_fna_date",
+        "type": "DATE"
+      },
+      {
+        "col": "last_fna_date",
+        "type": "DATE"
+      },
+      {
+        "col": "worst_bethesda_num",
+        "type": "INT64"
+      },
+      {
+        "col": "best_bethesda_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_final",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_final_name",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_index_nodule",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_index_nodule_linkage_source",
+        "type": "STRING"
+      },
+      {
+        "col": "bethesda_max_preop_2010",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_max_preop_2015",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_max_preop_2023",
+        "type": "INT64"
+      },
+      {
+        "col": "cross_fna_concordance",
+        "type": "STRING"
+      },
+      {
+        "col": "latest_bethesda_num",
+        "type": "INT64"
+      },
+      {
+        "col": "bethesda_confidence",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "bethesda_derivation_methods",
+        "type": "STRING"
+      },
+      {
+        "col": "ingest_script_version",
+        "type": "STRING"
+      }
+    ],
+    "canonical_path_benign_events_v1": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "synoptic_row_ord",
+        "type": "INT64"
+      },
+      {
+        "col": "surgery_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "specimen_id",
+        "type": "STRING"
+      },
+      {
+        "col": "accession_or_source_id",
+        "type": "STRING"
+      },
+      {
+        "col": "path_date",
+        "type": "DATE"
+      },
+      {
+        "col": "sm_n_specimens_for_date",
+        "type": "INT64"
+      },
+      {
+        "col": "linkage_quality",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_ambiguous_multi_specimen",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_table",
+        "type": "STRING"
+      },
+      {
+        "col": "source_text_type",
+        "type": "STRING"
+      },
+      {
+        "col": "source_report_id",
+        "type": "STRING"
+      },
+      {
+        "col": "nlp_mng",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_multinodular_goiter",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_substernal_mng",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_follicular_adenoma",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hurthle_cell_adenoma",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hurthle_cell_change",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hurthle_cell_metaplasia",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hurthle_cell_nodule",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_adenomatoid_nodule",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_colloid_nodule",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_colloid_cyst",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_cystic_change",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_follicular_nodule",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hyperplastic_nodules",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_atypical_adenoma",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hyalinizing_trabecular_tumor",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_graves",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_graves_disease",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_thyroglossal_duct_cyst",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_nifcp",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_nifp",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_nifpt",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hyperplasia",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_normal_thyroid",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_nodular_hyperplasia",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_papillary_hyperplasia",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_c_cell_hyperplasia",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hashimotos_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_hashimotos",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_lymphocytic_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_chronic_lymphocytic_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_chronic_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_riedels_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_de_quervains_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_granulomatous_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_palpation_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_autoimmune_thyroiditis",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_chronic_inflammation",
+        "type": "BOOL"
+      },
+      {
+        "col": "placeholder_flag_cols",
+        "type": "STRUCT<list ARRAY<STRUCT<element STRING>>>"
+      },
+      {
+        "col": "has_concomitant_malignant_event",
+        "type": "BOOL"
+      },
+      {
+        "col": "build_script",
+        "type": "STRING"
+      },
+      {
+        "col": "build_ts",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "nlp_thymic_tissue",
+        "type": "BOOL"
+      }
+    ],
+    "canonical_path_malignant_events_v1": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "surgery_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "tumor_ordinal",
+        "type": "INT64"
+      },
+      {
+        "col": "surgery_date",
+        "type": "DATE"
+      },
+      {
+        "col": "path_surgery_id",
+        "type": "INT64"
+      },
+      {
+        "col": "specimen_id",
+        "type": "STRING"
+      },
+      {
+        "col": "synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "site",
+        "type": "STRING"
+      },
+      {
+        "col": "size_greatest_dimension_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "tumor_size_cm_per_surgery",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "primary_histology",
+        "type": "STRING"
+      },
+      {
+        "col": "histology_variant",
+        "type": "STRING"
+      },
+      {
+        "col": "histology_source",
+        "type": "STRING"
+      },
+      {
+        "col": "extrathyroidal_extension",
+        "type": "STRING"
+      },
+      {
+        "col": "gross_ete",
+        "type": "INT64"
+      },
+      {
+        "col": "lymphatic_invasion",
+        "type": "STRING"
+      },
+      {
+        "col": "vascular_invasion",
+        "type": "STRING"
+      },
+      {
+        "col": "angioinvasion_quantify",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "perineural_invasion",
+        "type": "STRING"
+      },
+      {
+        "col": "capsular_invasion",
+        "type": "STRING"
+      },
+      {
+        "col": "margin_status",
+        "type": "STRING"
+      },
+      {
+        "col": "ln_examined",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "ln_involved",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "nodal_disease_positive_count",
+        "type": "INT64"
+      },
+      {
+        "col": "nodal_disease_total_count",
+        "type": "INT64"
+      },
+      {
+        "col": "extranodal_extension",
+        "type": "STRING"
+      },
+      {
+        "col": "number_of_tumors",
+        "type": "INT64"
+      },
+      {
+        "col": "multifocality_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_tables",
+        "type": "STRING"
+      },
+      {
+        "col": "resolution_rule",
+        "type": "STRING"
+      },
+      {
+        "col": "data_completeness_pct",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "t_stage_ajcc7",
+        "type": "STRING"
+      },
+      {
+        "col": "n_stage_ajcc7",
+        "type": "STRING"
+      },
+      {
+        "col": "m_stage_ajcc7",
+        "type": "STRING"
+      },
+      {
+        "col": "overall_stage_ajcc7",
+        "type": "STRING"
+      },
+      {
+        "col": "stage_group_ajcc7",
+        "type": "STRING"
+      },
+      {
+        "col": "t_stage_ajcc8",
+        "type": "STRING"
+      },
+      {
+        "col": "n_stage_ajcc8",
+        "type": "STRING"
+      },
+      {
+        "col": "m_stage_ajcc8",
+        "type": "STRING"
+      },
+      {
+        "col": "overall_stage_ajcc8",
+        "type": "STRING"
+      },
+      {
+        "col": "stage_group_ajcc8",
+        "type": "STRING"
+      },
+      {
+        "col": "ajcc7_stage_calculable_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "ajcc8_stage_calculable_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "staging_source_note",
+        "type": "STRING"
+      },
+      {
+        "col": "stage_migration_7_to_8",
+        "type": "STRING"
+      },
+      {
+        "col": "discordance_histology_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "discordance_t_stage_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "discordance_laterality_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "discordance_notes",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_focus_id",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_confidence_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "build_script",
+        "type": "STRING"
+      },
+      {
+        "col": "build_ts",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "consolidation_source",
+        "type": "STRING"
+      },
+      {
+        "col": "t_stage_ajcc8_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "n_stage_ajcc8_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "m_stage_ajcc8_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "t_stage_ajcc7_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "n_stage_ajcc7_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "m_stage_ajcc7_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "ajcc_resolution_source",
+        "type": "STRING"
+      },
+      {
+        "col": "ajcc_resolution_confidence",
+        "type": "STRING"
+      },
+      {
+        "col": "is_source_distinct_duplicate_grain",
+        "type": "BOOL"
+      },
+      {
+        "col": "is_borderline_or_benign_with_staging",
+        "type": "BOOL"
+      }
+    ],
+    "canonical_us_nodule_v2": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "us_exam_id",
+        "type": "STRING"
+      },
+      {
+        "col": "exam_date",
+        "type": "DATE"
+      },
+      {
+        "col": "nodule_index_within_exam",
+        "type": "INT64"
+      },
+      {
+        "col": "nodule_id",
+        "type": "STRING"
+      },
+      {
+        "col": "laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "location_raw",
+        "type": "STRING"
+      },
+      {
+        "col": "location_detail",
+        "type": "STRING"
+      },
+      {
+        "col": "length_mm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "width_mm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "height_mm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "volume_ml",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "size_cm_max",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "extracted_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "composition",
+        "type": "STRING"
+      },
+      {
+        "col": "echogenicity",
+        "type": "STRING"
+      },
+      {
+        "col": "shape",
+        "type": "STRING"
+      },
+      {
+        "col": "margins",
+        "type": "STRING"
+      },
+      {
+        "col": "calcifications",
+        "type": "STRING"
+      },
+      {
+        "col": "echogenic_foci",
+        "type": "STRING"
+      },
+      {
+        "col": "halo",
+        "type": "STRING"
+      },
+      {
+        "col": "vascularity",
+        "type": "STRING"
+      },
+      {
+        "col": "extrathyroidal_extension_on_us",
+        "type": "STRING"
+      },
+      {
+        "col": "chammas_type",
+        "type": "STRING"
+      },
+      {
+        "col": "elastography_category",
+        "type": "STRING"
+      },
+      {
+        "col": "composition_pts",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "echogenicity_pts",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "shape_pts",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "margin_pts",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "foci_pts",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "tirads_reported_in_text",
+        "type": "INT64"
+      },
+      {
+        "col": "acr2017_tirads_points",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "acr2017_tirads_category",
+        "type": "STRING"
+      },
+      {
+        "col": "updated_tirads_category",
+        "type": "STRING"
+      },
+      {
+        "col": "acr2017_band_ambiguous",
+        "type": "BOOL"
+      },
+      {
+        "col": "acr2017_vs_updated_concordant",
+        "type": "BOOL"
+      },
+      {
+        "col": "suspicious_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "acr2017_feature_points_complete",
+        "type": "BOOL"
+      },
+      {
+        "col": "interval_growth_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "prior_size_mm_max",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "fna_recommended_this_nodule",
+        "type": "BOOL"
+      },
+      {
+        "col": "fna_performed_prior_or_concurrent",
+        "type": "BOOL"
+      },
+      {
+        "col": "comparison_statement",
+        "type": "STRING"
+      },
+      {
+        "col": "source_base",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_tirads_v2",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_tirads_llm",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_dynamics_llm",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_fna_linkage",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_us_nodules_tirads",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_tables_cunc_legacy",
+        "type": "STRING"
+      },
+      {
+        "col": "data_completeness_pct",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "resolution_rule",
+        "type": "STRING"
+      },
+      {
+        "col": "calcifications_coverage_status",
+        "type": "STRING"
+      },
+      {
+        "col": "nodule_master_id",
+        "type": "INT64"
+      },
+      {
+        "col": "is_aggregate_row",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_backfill_pending",
+        "type": "BOOL"
+      },
+      {
+        "col": "source_modality",
+        "type": "STRING"
+      },
+      {
+        "col": "is_size_outlier_quarantine",
+        "type": "BOOL"
+      },
+      {
+        "col": "multi_nodule_attribution_unresolved",
+        "type": "BOOL"
+      },
+      {
+        "col": "tirads_conflict_resolution_source",
+        "type": "STRING"
+      },
+      {
+        "col": "composition_llm",
+        "type": "STRING"
+      },
+      {
+        "col": "echogenicity_llm",
+        "type": "STRING"
+      },
+      {
+        "col": "shape_llm",
+        "type": "STRING"
+      },
+      {
+        "col": "margins_llm",
+        "type": "STRING"
+      },
+      {
+        "col": "echogenic_foci_llm_jsonarray",
+        "type": "STRING"
+      },
+      {
+        "col": "halo_jsonb",
+        "type": "STRING"
+      },
+      {
+        "col": "vascularity_jsonb",
+        "type": "STRING"
+      },
+      {
+        "col": "ete_us_jsonb",
+        "type": "STRING"
+      },
+      {
+        "col": "halo_presence_simple",
+        "type": "STRING"
+      },
+      {
+        "col": "vascularity_distribution_simple",
+        "type": "STRING"
+      },
+      {
+        "col": "ete_on_us_presence_simple",
+        "type": "STRING"
+      },
+      {
+        "col": "chammas_type_llm",
+        "type": "STRING"
+      },
+      {
+        "col": "entirely_calcified",
+        "type": "BOOL"
+      },
+      {
+        "col": "homogeneous_echotexture",
+        "type": "BOOL"
+      },
+      {
+        "col": "rim_calcification_subtype",
+        "type": "STRING"
+      },
+      {
+        "col": "interval_growth",
+        "type": "BOOL"
+      },
+      {
+        "col": "tirads_reported_system",
+        "type": "STRING"
+      },
+      {
+        "col": "evidence_short",
+        "type": "STRING"
+      },
+      {
+        "col": "primitive_backfill_model",
+        "type": "STRING"
+      },
+      {
+        "col": "primitive_backfill_extracted_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "primitive_backfill_confidence",
+        "type": "FLOAT64"
+      }
+    ],
+    "imaging_fna_linkage_v3": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "nodule_id",
+        "type": "STRING"
+      },
+      {
+        "col": "imaging_exam_id",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "img_date",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "fna_date",
+        "type": "DATE"
+      },
+      {
+        "col": "day_gap",
+        "type": "INT64"
+      },
+      {
+        "col": "img_laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "img_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "fna_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "n_candidates",
+        "type": "INT64"
+      },
+      {
+        "col": "temporal_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "laterality_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "size_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "linkage_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "score_rank",
+        "type": "INT64"
+      },
+      {
+        "col": "linkage_confidence_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_reason_summary",
+        "type": "STRING"
+      },
+      {
+        "col": "analysis_eligible_link_flag",
+        "type": "BOOL"
+      }
+    ],
+    "imaging_nodule_long_v2": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "modality",
+        "type": "STRING"
+      },
+      {
+        "col": "exam_date_native",
+        "type": "DATE"
+      },
+      {
+        "col": "date_status",
+        "type": "STRING"
+      },
+      {
+        "col": "date_confidence",
+        "type": "INT64"
+      },
+      {
+        "col": "imaging_exam_id",
+        "type": "INT64"
+      },
+      {
+        "col": "nodule_index_within_exam",
+        "type": "INT64"
+      },
+      {
+        "col": "composition",
+        "type": "STRING"
+      },
+      {
+        "col": "echogenicity",
+        "type": "STRING"
+      },
+      {
+        "col": "shape",
+        "type": "STRING"
+      },
+      {
+        "col": "margins",
+        "type": "STRING"
+      },
+      {
+        "col": "calcifications",
+        "type": "STRING"
+      },
+      {
+        "col": "tirads_score",
+        "type": "INT64"
+      },
+      {
+        "col": "tirads_category",
+        "type": "STRING"
+      },
+      {
+        "col": "size_cm_max",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "size_cm_x",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "size_cm_y",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "size_cm_z",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "location_detail",
+        "type": "STRING"
+      },
+      {
+        "col": "report_source_table",
+        "type": "STRING"
+      },
+      {
+        "col": "exam_impression_raw",
+        "type": "STRING"
+      },
+      {
+        "col": "suspicious_node_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "suspicious_node_details",
+        "type": "STRING"
+      },
+      {
+        "col": "growth_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "dominant_nodule_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "nodule_id",
+        "type": "STRING"
+      },
+      {
+        "col": "resolved_exam_date",
+        "type": "DATE"
+      },
+      {
+        "col": "nodule_count_in_exam",
+        "type": "INT64"
+      },
+      {
+        "col": "imaging_confidence",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "linked_fna_episode_id",
+        "type": "STRING"
+      },
+      {
+        "col": "linked_molecular_episode_id",
+        "type": "STRING"
+      },
+      {
+        "col": "linked_pathology_tumor_id",
+        "type": "STRING"
+      }
+    ],
+    "specimen_master_v1": [
+      {
+        "col": "specimen_id",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_fingerprint_sha256",
+        "type": "STRING"
+      },
+      {
+        "col": "research_id",
+        "type": "INT64"
+      },
+      {
+        "col": "source_system",
+        "type": "STRING"
+      },
+      {
+        "col": "procedure_date_day",
+        "type": "STRING"
+      },
+      {
+        "col": "accession_or_source_id",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_role",
+        "type": "STRING"
+      },
+      {
+        "col": "anatomic_site",
+        "type": "STRING"
+      },
+      {
+        "col": "laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "surgery_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "surgery_episode_ordinal_per_patient",
+        "type": "INT64"
+      },
+      {
+        "col": "encounter_synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "materialized_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "fingerprint_input_canonical",
+        "type": "STRING"
+      },
+      {
+        "col": "synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "source_candidate_kind",
+        "type": "STRING"
+      },
+      {
+        "col": "identity_build_run_id",
+        "type": "STRING"
+      },
+      {
+        "col": "identity_built_at",
+        "type": "TIMESTAMP"
+      }
+    ],
+    "specimen_source_xref_v1": [
+      {
+        "col": "xref_id",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_id",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_focus_id",
+        "type": "STRING"
+      },
+      {
+        "col": "domain",
+        "type": "STRING"
+      },
+      {
+        "col": "source_table",
+        "type": "STRING"
+      },
+      {
+        "col": "source_row_key",
+        "type": "STRING"
+      },
+      {
+        "col": "created_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "linkage_confidence_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "identity_build_run_id",
+        "type": "STRING"
+      }
+    ],
+    "specimen_tumor_focus_v1": [
+      {
+        "col": "specimen_focus_id",
+        "type": "STRING"
+      },
+      {
+        "col": "focus_fingerprint_sha256",
+        "type": "STRING"
+      },
+      {
+        "col": "specimen_id",
+        "type": "STRING"
+      },
+      {
+        "col": "master_fingerprint_sha256",
+        "type": "STRING"
+      },
+      {
+        "col": "synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "research_id",
+        "type": "INT64"
+      },
+      {
+        "col": "surg_date",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "surg_date_canonical",
+        "type": "DATE"
+      },
+      {
+        "col": "encounter_synoptic_row_ix",
+        "type": "INT64"
+      },
+      {
+        "col": "tumor_index",
+        "type": "INT64"
+      },
+      {
+        "col": "site_text",
+        "type": "STRING"
+      },
+      {
+        "col": "histologic_type",
+        "type": "STRING"
+      },
+      {
+        "col": "surgery_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "path_surgery_id",
+        "type": "INT64"
+      },
+      {
+        "col": "tumor_ordinal",
+        "type": "INT64"
+      },
+      {
+        "col": "linkage_confidence_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "materialized_at",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "fingerprint_input_focus_canonical",
+        "type": "STRING"
+      },
+      {
+        "col": "identity_build_run_id",
+        "type": "STRING"
+      },
+      {
+        "col": "identity_built_at",
+        "type": "TIMESTAMP"
+      }
+    ]
+  },
+  "pub_workspace": {
+    "imaging_fna_linkage_v4": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "nodule_id",
+        "type": "STRING"
+      },
+      {
+        "col": "imaging_exam_id",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_episode_id",
+        "type": "INT64"
+      },
+      {
+        "col": "img_date",
+        "type": "TIMESTAMP"
+      },
+      {
+        "col": "fna_date",
+        "type": "DATE"
+      },
+      {
+        "col": "day_gap",
+        "type": "INT64"
+      },
+      {
+        "col": "img_laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "img_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "fna_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "n_candidates",
+        "type": "INT64"
+      },
+      {
+        "col": "temporal_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "laterality_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "size_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "linkage_score",
+        "type": "NUMERIC"
+      },
+      {
+        "col": "score_rank",
+        "type": "INT64"
+      },
+      {
+        "col": "linkage_confidence_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_reason_summary",
+        "type": "STRING"
+      },
+      {
+        "col": "analysis_eligible_link_flag",
+        "type": "BOOL"
+      },
+      {
+        "col": "nlp_extracted_size_cm",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "nlp_extracted_laterality",
+        "type": "STRING"
+      },
+      {
+        "col": "nlp_extracted_nodule_count",
+        "type": "INT64"
+      },
+      {
+        "col": "nlp_extracted_bethesda",
+        "type": "INT64"
+      },
+      {
+        "col": "nlp_extraction_confidence",
+        "type": "STRING"
+      },
+      {
+        "col": "nlp_size_extract_score",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "nlp_lat_extract_score",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "fna_size_cm_resolved",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "fna_laterality_resolved",
+        "type": "STRING"
+      },
+      {
+        "col": "fna_size_source_v4",
+        "type": "STRING"
+      },
+      {
+        "col": "size_score_v4",
+        "type": "NUMERIC"
+      }
+    ],
+    "path_focus_link_v1": [
+      {
+        "col": "research_id",
+        "type": "STRING"
+      },
+      {
+        "col": "surgery_episode_uid",
+        "type": "STRING"
+      },
+      {
+        "col": "tumor_ordinal",
+        "type": "INT64"
+      },
+      {
+        "col": "specimen_focus_id",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_tier",
+        "type": "STRING"
+      },
+      {
+        "col": "linkage_confidence",
+        "type": "FLOAT64"
+      },
+      {
+        "col": "path_surgery_id",
+        "type": "INT64"
+      },
+      {
+        "col": "synoptic_row_ix",
+        "type": "INT64"
+      }
+    ]
+  }
+}

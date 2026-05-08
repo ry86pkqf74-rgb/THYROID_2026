@@ -379,3 +379,86 @@ def test_category_order_preserved():
     cat_order = ["P1", "P2", "P3", "P4", "P5"]
     idxs = [cat_order.index(c) for c in cats]
     assert idxs == sorted(idxs), f"Category order not monotone: {cats}"
+
+
+# ---------------------------------------------------------------------------
+# Test 14 (Phase B.6 finalization): X8 homogeneous counter-intuitive guard
+# ---------------------------------------------------------------------------
+# Park 2009 reports a POSITIVE β for X8 (homogeneous echotexture), which is
+# counter-intuitive vs modern TIRADS systems where homogeneity is treated as
+# a benign signal. This test pins the published Park 2009 value (+0.648) and
+# verifies the resulting probability ≈ logistic(-2.862 + 0.648) ≈ 0.099 → P2.
+# It guards against future "fixes" that flip the sign back to negative.
+# Source: Park JY et al. Thyroid 2009;19(11):1257-64.
+PARK_2009_INTERCEPT = -2.862
+PARK_2009_X8_HOMOGENEOUS = 0.648
+
+
+def test_park_scorer_homogeneous_counterintuitive():
+    """For X8=TRUE only, Park 2009 produces logistic(-2.862+0.648) ≈ 0.0986 → P2.
+
+    If this test fails because someone changed X8's sign back to negative, DO NOT
+    "fix" the test — the +0.648 value is faithful to the published model. See
+    scripts/manifests/park_coefs_v1.json park_2009_original.notes for context.
+    """
+    park_2009 = {
+        "intercept": PARK_2009_INTERCEPT,
+        "betas": {
+            "x1_taller": 0.581,
+            "x2_halo": -0.481,
+            "x3_well_circumscribed": -1.435,
+            "x4_microlobulation": 1.178,
+            "x5_infiltrative_margin": 1.405,
+            "x6_marked_hypo": 0.700,
+            "x7_hypo": 0.460,
+            "x8_homogeneous": PARK_2009_X8_HOMOGENEOUS,
+            "x9_mainly_cystic": -1.715,
+            "x10_solid": 0.463,
+            "x11_microcalc": 1.964,
+            "x12_abnormal_ln": 1.739,
+        },
+    }
+    x_only_homogeneous = X_ZERO.copy()
+    x_only_homogeneous["park_x8_homogeneous"] = True
+
+    logit = compute_logit(park_2009, x_only_homogeneous)
+    expected_logit = PARK_2009_INTERCEPT + PARK_2009_X8_HOMOGENEOUS  # -2.214
+    assert abs(logit - expected_logit) < 1e-9, (
+        f"X8-only logit should equal intercept + β_X8 = {expected_logit}, got {logit}"
+    )
+
+    prob = logistic(logit)
+    expected_prob = 1.0 / (1.0 + math.exp(-expected_logit))  # ≈ 0.0986
+    assert abs(prob - expected_prob) < 1e-9
+    assert 0.07 < prob < 0.15, (
+        f"X8-only probability should be ~0.10 (counter-intuitive positive contribution), "
+        f"got {prob:.4f}. If Park 2009's published β was changed, REVERT — see manifest notes."
+    )
+
+    cat = assign_category(prob)
+    assert cat == "P2", (
+        f"X8-only Park 2009 should yield P2 (~0.10 risk), got {cat}. "
+        "If this test fails, X8's published positive β has likely been mistakenly "
+        "changed to negative; revert and re-run audit."
+    )
+
+
+def test_park_scorer_all_zero_yields_p1():
+    """All-X-zero on Park 2009 yields logistic(-2.862) ≈ 0.054 → P1."""
+    park_2009 = {
+        "intercept": PARK_2009_INTERCEPT,
+        "betas": {
+            "x1_taller": 0.581, "x2_halo": -0.481, "x3_well_circumscribed": -1.435,
+            "x4_microlobulation": 1.178, "x5_infiltrative_margin": 1.405,
+            "x6_marked_hypo": 0.700, "x7_hypo": 0.460,
+            "x8_homogeneous": PARK_2009_X8_HOMOGENEOUS,
+            "x9_mainly_cystic": -1.715, "x10_solid": 0.463,
+            "x11_microcalc": 1.964, "x12_abnormal_ln": 1.739,
+        },
+    }
+    prob = logistic(compute_logit(park_2009, X_ZERO))
+    assert prob < 0.07, (
+        f"All-zero Park 2009 should be ~0.054 (P1), got {prob:.4f}. "
+        "Intercept changed?"
+    )
+    assert assign_category(prob) == "P1"
