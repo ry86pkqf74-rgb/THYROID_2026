@@ -1,0 +1,30 @@
+{
+  "run_ts": "20260508T100344Z",
+  "concordance": {
+    "n_all_scored": 7480,
+    "agree_eu_ata": 0.982,
+    "agree_eu_bta": 0.9325,
+    "agree_eu_aace": 0.7981,
+    "agree_ata_bta": 0.9412,
+    "agree_ata_aace": 0.7878,
+    "agree_bta_aace": 0.8033,
+    "pct_eu_susp": 0.5694,
+    "pct_ata_susp": 0.5513,
+    "pct_bta_susp": 0.5925,
+    "pct_aace_susp": 0.4598,
+    "computed_at": "20260508T100344Z"
+  },
+  "auc_proxy": {
+    "n_path_linked": 15328,
+    "eu_diff": 0.5449182531695569,
+    "ata_diff": 0.5365862500990692,
+    "bta_diff": 0.5446403492367518,
+    "aace_diff": 0.36853780088120836
+  },
+  "notable_findings": [],
+  "targets": {
+    "pairwise_agreement_min": 0.75,
+    "pairwise_alert_threshold": 0.7
+  },
+  "distribution_n_rows": 16
+}
