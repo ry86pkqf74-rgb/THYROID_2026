@@ -65,6 +65,7 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 | Submission Targets | `tblwEDG6PA8aOYh0j` |
 | Data Feedback Log | `tblsiYKJtKcktkzze` |
 | Manuscript Feedback Log | `tblYSCBzRFC4RGPMq` |
+| Notable Findings | `tbl7GL0eFSiNPwabW` |
 
 ### Manuscripts key fields
 
@@ -81,6 +82,29 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 | ai_journal_rec_last_refreshed | `fldAtau6czQkot1yT` |
 | journal_chosen | `fldryVwMsLCa7UG3G` |
 | linked_linear_project | `fldcWJqDnardZJfOL` |
+| owner | `fldPthOVGEKD1k8E2` |
+| lifecycle | `fldsokU6dgR5xYsru` |
+| bq_manuscript_id | `fldSO5KJ9XHdCIcxI` |
+| rationale | `fldoyaywsATZH5fcd` |
+
+### Notable Findings key fields
+
+| Field | Field ID |
+|---|---|
+| finding_id (primary) | `fldt70RW16S8Mqqya` |
+| title | `fldn0rtUzEEH6WvIS` |
+| date_found | `fldg9Y24IYhLq4BgN` |
+| domain | `fldTHzzbIFnw15wNe` |
+| severity | `fldZShM8LcMblw2oA` |
+| finding_summary | `fldIgknZbDHJFxaPl` |
+| evidence_summary | `fld3Ehs4XEaoixhzW` |
+| supporting_artifacts | `fldwOlWchkHky5lzG` |
+| applies_to_manuscripts | `fldBz1hv5Xxexp7iF` |
+| linked_linear_issue_id | `fld9jJXIFANzY2IiR` |
+| discovery_session | `fldvtR7mZinElKjCJ` |
+| next_action | `fldxnEB2BuNB5g0BH` |
+| lifecycle | `fldHA2e1rjylgW80c` |
+| created_by | `fldUvw5I7sP0StM0d` |
 
 ## Manuscript record IDs (for cross-base joins)
 
@@ -106,6 +130,8 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 | NSQIP-PTH | `recHyloOjBHKH7Jk3` |
 | LOBMOL | `recsFDy2NFfs452hD` |
 | M004 | `recpSCzbr4KNhXHIK` |
+| M085 | `recotdCiIuU8UQbLs` |
+| M075 | `recsPTyiV6awoS217` |
 | M019 | `recMJ8rYjYxEbyytk` |
 | M027 | `recgRzYTPtam1BNUl` |
 | M028 | `recJfXLiO9etKUEcz` |
@@ -117,6 +143,11 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 ## Linear
 
 - Existing team: ROS — `ce8175e5-4c09-4e95-9bea-038eb4f783a1`
-- THYROID team: pending user creation (Linear MCP doesn't expose team-create)
+- THYROID team: `c4afb51b-8bca-413a-a53e-15eb825cffbd` (Thyroid Database)
 
-To resume scaffolding once THYROID team exists, call `list_teams` and find the THYROID team's UUID, then create projects with `save_project` setting `addTeams: ["THYROID"]`.
+### Notable Findings & Research Insights project
+- Linear project for tracking notable findings (cross-linked to Airtable Notable Findings table `tbl7GL0eFSiNPwabW`)
+- Label: `type:notable-finding` (color `#9333EA`)
+- IDs: populated by Linear subagent — see CHANGELOG v1.8.0 for IDs once confirmed
+
+To create projects, use `save_project` with `addTeams: ["c4afb51b-8bca-413a-a53e-15eb825cffbd"]`.

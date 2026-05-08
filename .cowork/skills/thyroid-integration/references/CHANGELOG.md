@@ -1,5 +1,19 @@
 # thyroid-integration skill — changelog
 
+## v1.8.0 — 2026-05-08
+
+M085 scaffolded; Notable Findings tracker launched.
+
+- **M085 created:** Airtable Manuscripts record `recotdCiIuU8UQbLs`, BQ `pub_workspace.manuscript_feasibility_v1` manuscript_id=85. Study scaffold at `studies/m085_multisystem_tirads_comparison/` (README + 3 sub-files: aims, cohort, analysis plan). Status=Idea, candidate_cohort_n=37,579, owner=Logan Glosser.
+- **Notable Findings table:** New Airtable table `tbl7GL0eFSiNPwabW` in THYROID_MANUSCRIPT base with 14 fields. `applies_to_manuscripts` linked-record field cross-links to Manuscripts table.
+- **Skill §"Notable findings — when and how to log":** Added procedure (≤5 min), triggers, severity ladder with examples, and full field-ID table for future robotic writes.
+- **Linear:** `Notable Findings & Research Insights` project created under Thyroid Database team. Label `type:notable-finding` (#9333EA) created.
+- **Inaugural finding:** NF-2026-05-07-park2009-noncalibration logged in Airtable + Linear. Park 2009 AUC=0.5365 (null discrimination) vs cohort-refit AUC=0.6914 on this American surgical cohort. Applies to M025, M048, M075, M085.
+- **airtable_ids.md:** Added Notable Findings table + field IDs, M085 record ID, M075 record ID, and additional Manuscripts fields (owner, lifecycle, bq_manuscript_id, rationale).
+- **manuscript_inventory.md:** Added M085 row; updated header (84 total manuscripts), Idea count to 61.
+- **DFL:** One row logged for this setup work (target_type=Other, change_type=new_table_view).
+- **THY-30:** Comment posted noting M085 scaffold + Notable Findings tracker live.
+
 ## v1.7.0 — 2026-05-07
 
 Phase B complete. Multi-system TIRADS scoring landed end-to-end.

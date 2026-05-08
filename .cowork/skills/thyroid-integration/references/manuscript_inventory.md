@@ -1,6 +1,6 @@
-# THYROID_2026 Manuscript Inventory (skill v1.1.0 snapshot)
+# THYROID_2026 Manuscript Inventory (skill v1.8.0 snapshot)
 
-## All 83 manuscripts (MD-migrated, source: `pub_workspace.manuscript_feasibility_v1`)
+## All 84 manuscripts (83 MD-migrated + M085 added 2026-05-08; source: `pub_workspace.manuscript_feasibility_v1`)
 
 Canonical full export: `manuscript_feasibility_full_20260506.csv` (repo root). The Airtable **Manuscripts** table remains the workflow surface once a row is scaffolded; this file mirrors the BigQuery feasibility master list.
 
@@ -11,7 +11,7 @@ Canonical full export: `manuscript_feasibility_full_20260506.csv` (repo root). T
 - Proposed: 5
 - Analysis: 1 (M026)
 - Data Collection: 2 (M027, M041)
-- Idea: 60
+- Idea: 61 (includes M085 added 2026-05-08)
 
 **Pipeline:** 27 manuscripts are scaffolded into Airtable Manuscripts; 56 await scaffolding (manuscripts backfill).
 
@@ -100,3 +100,4 @@ Canonical full export: `manuscript_feasibility_full_20260506.csv` (repo root). T
 | M081 | RAI-resistant tumors: detection and recurrence patterns | Idea | RED |
 | M082 | Parathyroid tumors in thyroid pathology | Idea | RED |
 | M083 | Metastatic pancreatic endocrine tumor and struma ovarii | Idea | RED |
+| M085 | Comparative performance of eleven thyroid imaging reporting and data systems in a 25-year American surgical thyroid cancer cohort | Idea | YELLOW |

@@ -1,7 +1,7 @@
 ---
 name: thyroid-integration
 metadata:
-  version: 1.7.0
+  version: 1.8.0
 description: |
   MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + BigQuery + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies BigQuery (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`), or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
 ---
@@ -137,9 +137,52 @@ When the user asks you to change something in this system:
 
 E.g. "I just noticed M044 is using the wrong cohort definition." Don't fix silently — open a Verification Check with severity, link it to M044, the daily sync will spawn a Linear issue. Then ask the user what evidence to attach (no PHI), and update the Verification Check with the summary.
 
+## Notable findings — when and how to log
+
+Anytime an analysis turns up something more than a routine audit number — a result that could change how a manuscript is framed, a generalization failure of a published model, an unexpected effect size, a contradiction of a prior internal finding, a new hypothesis worth following up — log it as a Notable Finding **before continuing other work**.
+
+**Triggers (any of these = log):**
+- A scoring/risk model trained elsewhere produces near-random discrimination (AUC ~0.5) on this cohort.
+- Two methods that should agree disagree by ≥10 percentage points on a primary outcome metric.
+- A subgroup analysis reveals an effect size that contradicts a published external comparison.
+- A data-integrity finding that changes how an existing or planned manuscript should report numbers.
+- A hypothesis-generating signal worth tracking even if not yet causal.
+
+**Procedure (≤5 minutes):**
+1. Append a row to Airtable Notable Findings table (base `appJYOnUb7KrHKwpV`, table `tbl7GL0eFSiNPwabW`). `finding_id = NF-YYYY-MM-DD-<short-slug>`. Severity per the options. Cross-link to `applies_to_manuscripts` (M-codes).
+2. File a Linear issue under the `Notable Findings & Research Insights` project, label `type:notable-finding`. Title = the finding's title. Body = full finding details paraphrased, with links to evidence artifacts. Issue ID back-fills `linked_linear_issue_id` in Airtable.
+3. If the finding applies to a Manuscript-Locked manuscript, ALSO append a Manuscript Feedback Log row noting the finding and its potential implications.
+4. Reference the discovery session (chat ID or git commit) so the audit trail is reproducible.
+
+**Severity ladder, with examples:**
+- `informational` — a verified data-coverage number worth recording but not novel. (e.g., "ACR feature complete rate is 67% post-Phase A.3.")
+- `hypothesis_generating` — a signal that's interesting and worth pursuing but hasn't been validated. (e.g., "Substernal goiter patients with chronic laryngeal symptoms show higher RLN injury rate in retrospective sample.")
+- `publishable` — a finding strong enough to anchor a paper or a section of one. (e.g., the Park 2009 generalization failure, NF-2026-05-07-park2009-noncalibration.)
+- `contradicts_prior` — a finding that contradicts an external publication or an internal prior finding. Always log; treat as a Verification Check trigger too.
+- `clinically_actionable` — a finding that should change clinical practice if validated. Highest bar; route to coauthor review immediately.
+
+**Field IDs for Airtable Notable Findings table `tbl7GL0eFSiNPwabW` (base `appJYOnUb7KrHKwpV`):**
+
+| Field | Field ID |
+|---|---|
+| finding_id (primary) | `fldt70RW16S8Mqqya` |
+| title | `fldn0rtUzEEH6WvIS` |
+| date_found | `fldg9Y24IYhLq4BgN` |
+| domain | `fldTHzzbIFnw15wNe` |
+| severity | `fldZShM8LcMblw2oA` |
+| finding_summary | `fldIgknZbDHJFxaPl` |
+| evidence_summary | `fld3Ehs4XEaoixhzW` |
+| supporting_artifacts | `fldwOlWchkHky5lzG` |
+| applies_to_manuscripts | `fldBz1hv5Xxexp7iF` |
+| linked_linear_issue_id | `fld9jJXIFANzY2IiR` |
+| discovery_session | `fldvtR7mZinElKjCJ` |
+| next_action | `fldxnEB2BuNB5g0BH` |
+| lifecycle | `fldHA2e1rjylgW80c` |
+| created_by | `fldUvw5I7sP0StM0d` |
+
 ## Versioning
 
-This skill is at v1.7.0. Bump:
+This skill is at v1.8.0. Bump:
 - **patch** (1.0.x) for clarification edits
 - **minor** (1.x.0) for new tables, fields, or sync phases
 - **major** (x.0.0) for changes to the hard rules or lifecycle states
@@ -178,5 +221,7 @@ When you change anything, also bump the `version` in the YAML frontmatter and ap
 | 2–4cm Extent / Molecular | Draft v1 | studies/proposal_2to4cm_extent_molecular_20260326/ |
 | NSQIP-PTH Protocol | Active | studies/nsqip_pth_protocol_manuscript/ |
 | Lobectomy Molecular | Drafting | studies/lobectomy_molecular_202603/ |
+
+| M085 | Idea, scaffolded 2026-05-08 | studies/m085_multisystem_tirads_comparison/ |
 
 Other M-codes mentioned on disk but not yet given Linear projects: M004, M019, M027, M028, M029, M033, M043, M047. Treat as Manuscripts records in `Idea` / `Planned` until the user tells you otherwise.
