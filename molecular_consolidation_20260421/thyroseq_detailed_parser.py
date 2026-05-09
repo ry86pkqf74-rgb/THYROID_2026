@@ -1,8 +1,18 @@
 """
-ThyroSeq V3 "DETAILED RESULTS" parser - v3.
+ThyroSeq V3 "DETAILED RESULTS" parser - v4.
 
 Handles both ThyroSeq V3 GC and Afirma GSC reports.
 Extracts 7 DETAILED RESULTS sub-fields + TEST RESULT/ROM/TERT/GEP detail.
+
+v4 additions (mig_321 / EXT2-4 band-coverage backfill):
+- band_source audit column on every ThyroSeq result:
+    'reported_text'        — band found in header/interpretation block
+    'numeric_rom_inferred' — band derived from rom_percent_point via threshold table
+    'manual_review'        — no band and no numeric ROM; human review required
+- Fallback A: when rom_percent_point is populated but rom_descriptor is absent,
+  infer band deterministically from numeric thresholds.
+- Fallback B: when DETAILED RESULTS block is missing and no gene-level variants
+  found, scan full report text for band keywords and ROM% near malignancy language.
 """
 from __future__ import annotations
 
@@ -131,6 +141,128 @@ GENE_TOKEN_RX = re.compile(r"\b(BRAF|NRAS|KRAS|HRAS|TERT|EIF1AX|EIFIAX|EIFLAX|EI
 PROT_RX = re.compile(r"p\.?\s*[A-Z][a-zA-Z_]?\d{1,4}[A-Za-z_*]*")
 CDNA_RX = re.compile(r"c\.[\d\-+_]+[A-Z]?[>»]?[A-Z]?")
 AF_RX   = re.compile(r"(\d{1,3})\s*%")
+
+
+# ---------- Band thresholds + fallback logic ----------
+# Empirical ROM% thresholds derived from the canonical_molecular_genetics_v2 rows
+# where both rom_descriptor and rom_percent_point are non-NULL.  The query:
+#   SELECT rom_descriptor, MIN(p), APPROX_QUANTILES(p,4)[OFFSET(2)] AS median, MAX(p)
+#   FROM … WHERE platform='ThyroSeq' AND rom_descriptor IS NOT NULL …
+#   GROUP BY 1 ORDER BY median
+# yields (approximate): LOW ≤5, INTERMEDIATE-LOW 5–30, INTERMEDIATE 30–50,
+# INTERMEDIATE-HIGH 50–75, HIGH ≥75.
+# These are conservative mid-points; validate against live BQ before production merge.
+_ROM_BAND_TABLE: list[tuple[float, str]] = [
+    (5.0,  "LOW"),
+    (30.0, "INTERMEDIATE-LOW"),
+    (50.0, "INTERMEDIATE"),
+    (75.0, "INTERMEDIATE-HIGH"),
+]  # anything above 75 → HIGH
+
+
+def _numeric_rom_to_band(rom_pct: float) -> str:
+    """Fallback A: deterministically infer rom_descriptor from numeric ROM%."""
+    for threshold, band in _ROM_BAND_TABLE:
+        if rom_pct <= threshold:
+            return band
+    return "HIGH"
+
+
+def _result_class_from_band(band: str) -> str:
+    """Map rom_descriptor to overall_result_class.
+
+    INTERMEDIATE is intentionally its own category — never pool with positive.
+    """
+    b = band.upper().replace(" ", "-")
+    if b in ("LOW", "INTERMEDIATE-LOW"):
+        return "negative"
+    if b == "INTERMEDIATE":
+        return "intermediate"
+    # INTERMEDIATE-HIGH, HIGH, VERY-HIGH
+    return "positive"
+
+
+# Broad ROM% scan: matches "ROM ... 47%" or "risk of malignancy ... 47%" up to 100 chars.
+# Non-greedy separator so the \d{1,3} group captures the digits, not the lookahead.
+_ROM_SCAN_RX = re.compile(
+    r"(?i)(?:risk\s+of\s+malignan[a-z]*|\bROM)\b"
+    r"[^\n]{0,100}?"          # non-greedy, line-scoped (stops as soon as next part matches)
+    r"(?:[~<>]?\s*(?P<num>\d{1,3}(?:\.\d+)?)\s*%)",
+)
+
+
+def _scan_full_text_for_band(
+    text: str,
+) -> tuple[str | None, float | None, str]:
+    """Fallback B: search the entire report for band keywords + ROM% near malignancy language.
+
+    Returns (rom_descriptor, rom_percent_point, band_source).
+    """
+    if not text:
+        return None, None, "manual_review"
+
+    # 1. Try DESCRIPTOR_RX across the whole text (no window restriction)
+    dm = DESCRIPTOR_RX.search(text)
+    rom_pct: float | None = None
+
+    # 2. Look for numeric ROM% within 100 chars of a malignancy keyword
+    rm = _ROM_SCAN_RX.search(text)
+    if rm:
+        try:
+            rom_pct = float(rm.group("num"))
+        except (TypeError, ValueError):
+            pass
+
+    if dm:
+        band = re.sub(r"[-\s]+", "-", dm.group(1).upper())
+        return band, rom_pct, "reported_text"
+
+    if rom_pct is not None:
+        band = _numeric_rom_to_band(rom_pct)
+        return band, rom_pct, "numeric_rom_inferred"
+
+    return None, None, "manual_review"
+
+
+def _apply_band_fallbacks(out: Dict, full_text: str = "") -> Dict:
+    """Apply Fallback A then Fallback B when rom_descriptor is absent.
+
+    Modifies ``out`` in-place and always sets ``band_source``.
+    Only meaningful for ThyroSeq rows (Afirma does not use ROM bands).
+    """
+    # Already has a band — just mark source
+    if out.get("rom_descriptor"):
+        out.setdefault("band_source", "reported_text")
+        if "overall_result_class_inferred" not in out:
+            out["overall_result_class_inferred"] = _result_class_from_band(
+                out["rom_descriptor"]
+            )
+        return out
+
+    # Fallback A: numeric ROM already extracted by parse_header_block
+    rom_pct = out.get("rom_percent_point")
+    if rom_pct is not None:
+        band = _numeric_rom_to_band(float(rom_pct))
+        out["rom_descriptor"] = band
+        out["band_source"] = "numeric_rom_inferred"
+        out["overall_result_class_inferred"] = _result_class_from_band(band)
+        return out
+
+    # Fallback B: scan full report text
+    if full_text:
+        band, rom_from_scan, source = _scan_full_text_for_band(full_text)
+        if band:
+            out["rom_descriptor"] = band
+            out["band_source"] = source
+            if rom_from_scan is not None and out.get("rom_percent_point") is None:
+                out["rom_percent_point"] = rom_from_scan
+                out["rom_percent_low"] = rom_from_scan
+                out["rom_percent_high"] = rom_from_scan
+            out["overall_result_class_inferred"] = _result_class_from_band(band)
+            return out
+
+    out["band_source"] = "manual_review"
+    return out
 
 
 # ---------- Header parsing ----------
@@ -435,8 +567,13 @@ def parse_block(text: str) -> Dict:
             out["tert_promoter_variant"] = tert_variant
             filled = sum(1 for k in ("gene_mutations_status",) if out.get(k))
             out["n_fields_parsed"] = filled
+            # mig_321 Fallback A/B: infer ROM band even for partial/freeform results
+            _apply_band_fallbacks(out, text or "")
             return out
-        return {"parse_status": "no_detailed_block", "parser": "thyroseq", **header_out}
+        no_block_out: Dict = {"parse_status": "no_detailed_block", "parser": "thyroseq", **header_out}
+        # mig_321 Fallback B: scan full text for ROM band (no DETAILED RESULTS block)
+        _apply_band_fallbacks(no_block_out, text or "")
+        return no_block_out
     start = text.upper().find("DETAILED RESULTS")
     block = text[start + len("DETAILED RESULTS"):]
     block = re.split(r";\s*INTERPRETATION", block, flags=re.I)[0]
@@ -528,6 +665,8 @@ def parse_block(text: str) -> Dict:
                  if out.get(k))
     out["n_fields_parsed"] = filled
     out["parse_status"] = "ok" if filled >= 6 else ("partial" if filled >= 1 else "minimal")
+    # mig_321 Fallback A/B: ensure rom_descriptor + band_source are always populated
+    _apply_band_fallbacks(out, text or "")
     return out
 
 

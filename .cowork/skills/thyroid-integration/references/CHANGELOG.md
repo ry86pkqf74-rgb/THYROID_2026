@@ -1,5 +1,63 @@
 # thyroid-integration skill — changelog
 
+## v2.2.0 — PENDING (coverage gate 83.8% < 95%; bump deferred)
+
+**Target: ThyroSeq ROM-band backfill for EXT2-4 + parser v4.**
+Bump will be applied when COUNTIF(rom_descriptor IS NOT NULL)/COUNT(*) ≥ 0.95 for
+ThyroSeq rows in `pub_canonical.canonical_molecular_genetics_v2`.
+
+### What was completed (2026-05-09, run_id mig_321_20260509_1f675020)
+
+- **Parser v4 (`thyroseq_detailed_parser.py`):** Added `band_source` audit column; Fallback A
+  (numeric `rom_percent_point` → band via threshold table: ≤5=LOW, ≤30=INTERMEDIATE-LOW,
+  ≤50=INTERMEDIATE, ≤75=INTERMEDIATE-HIGH, >75=HIGH); Fallback B (full-text `_ROM_SCAN_RX`
+  scan for band keywords and ROM% near malignancy language when no DETAILED RESULTS block).
+  Unit tests: `tests/test_thyroseq_band_fallbacks.py` — 38/38 pass. 5 acceptance scenarios
+  all pass.
+
+- **BQ migration `scripts/mig_321_thyroseq_band_backfill_bq.py`:** Pulls 647 unclassified
+  ThyroSeq rows from `pub_canonical.canonical_molecular_genetics_v2` (joined to
+  `thyroseq_molecular_enrichment` + `molecular_testing`), re-parses locally with parser v4,
+  MERGE with `rom_descriptor IS NULL` guard (idempotent). Audit columns
+  `band_backfill_applied_at`, `band_backfill_source`, `band_backfill_run_id` added via DDL.
+  Archive: `pub_archive.canonical_molecular_genetics_v2_pre_band_backfill_20260509`.
+  Staging: `pub_workspace.canonical_molecular_genetics_v2_band_backfill_20260509`.
+  Metrics: `pub_workspace.mig_321_verification_20260509`.
+
+- **Results:** reported_text=150, numeric_rom_inferred=356, manual_review=141.
+  No-overwrite gate: PASS (0 pre-existing bands changed).
+  frac_with_band = **83.8% (742/885)** — BELOW 95% threshold.
+
+- **EXT2-4 manuscript impact:** ThyroSeq Bethesda III/IV `unknown_or_excluded`:
+  ~165 → 17 patients (90% reduction). Table 3 v3 cells refreshed from live BQ.
+  `build_table3_v2_actual_call.py` updated; CSVs rebuilt. V2 artifacts preserved in
+  `superseded_v2/` with `SUPERSEDED_NOTE.md`. MFL: `MFL-20260509-EXT2-4-PARSER-FIX-REFRESH`
+  (Airtable `recRImNEcxZYbRYnQ`). DFL: `DFL-20260509-EXT2-4-THYROSEQ-BAND-BACKFILL`
+  (`rec9zlFG8mH2j1DTn`). VC: VC-MOL-PARSE-001 (`rec6xTvsRN6KHqqGa`, verdict=PARTIAL_PASS).
+  Notable Findings: `reccqcuz80A9k7FWJ` (coverage), `recKi7cbVad976age` (manuscript impact).
+
+### Why the bump is blocked
+
+- 141 rows have no parseable report text AND no numeric `rom_percent_point` → `band_source =
+  manual_review`. These are genuine data gaps (no information available to infer a band).
+- The coverage gate (≥95%) per VC-MOL-PARSE-001 requires resolving at least 97 of the 141
+  (taking current 742/885 = 83.8% → 839/885 = 94.8%; need 101 more for 95% exactly:
+  (742+101)/885 = 95.25%).
+- **Paths to unlock:**
+  1. Locate upstream ThyroSeq PDF reports in the institutional archive — OCR the actual
+     ROM% from the test result section. Expected: most 141 rows would resolve.
+  2. Loosen `_ROM_SCAN_RX` to catch additional non-standard formats (e.g. RANGES
+     "10-29%" or "approximately 25%").
+  3. Check `thyroseq_molecular_enrichment.mutation_raw` / `fusion_raw` / `gep_raw` columns
+     for embedded ROM% strings not captured by `pathology_raw`.
+
+### Version note
+
+**This changelog entry is at v2.2.0 (pending).** The current skill is v2.1.0 (operative-rollup
+audit, 2026-05-09). The v2.2.0 bump will be applied when the coverage gate passes.
+
+---
+
 ## v2.1.0 — 2026-05-09
 
 **Minor:** Cross-source agreement audit infrastructure added for canonical_operative_patient_rollup promotion. Promotion blocked pending Logan review (92.3% < 98% threshold). New pub_workspace tables: canonical_operative_patient_rollup_v1_1_candidate (10,872 rows ✓), canonical_operative_patient_rollup_v1_1_audit (8,840 rows ✓), qc_v1_1_three_way_disagreement_v1 (28 rows ✓). Audit SQL at studies/m085_multisystem_tirads_comparison/sql/03_v1_1_cross_source_audit.sql. DFL: recUm5ZCSWU9AtmKd. Awaiting Logan sign-off before re-running promotion. Cross-reference: NF-2026-05-09-operative-rollup-surgery-type-undercount, THY-56.
