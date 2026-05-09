@@ -88,11 +88,11 @@ BUILD_SAMPLE_SQL = f"""
 CREATE OR REPLACE TABLE `{TABLE_AUDIT_SAMPLE}`
 CLUSTER BY research_id AS
 WITH stratified AS (
-  SELECT m.*, n.composition, n.echogenicity, n.size_cm_max,
+  SELECT m.*, n.composition, n.echogenicity,
     CASE
-      WHEN n.size_cm_max < 1.0 THEN 'lt_1cm'
-      WHEN n.size_cm_max < 2.0 THEN '1_to_2cm'
-      WHEN n.size_cm_max < 4.0 THEN '2_to_4cm'
+      WHEN m.size_cm_max < 1.0 THEN 'lt_1cm'
+      WHEN m.size_cm_max < 2.0 THEN '1_to_2cm'
+      WHEN m.size_cm_max < 4.0 THEN '2_to_4cm'
       ELSE 'gte_4cm'
     END AS size_band,
     CASE
@@ -308,15 +308,20 @@ def run_sonnet_audit(bq: bigquery.Client, client, dry_run: bool) -> list[dict]:
             total_input_tokens += response.usage.input_tokens
             total_output_tokens += response.usage.output_tokens
 
-            text = response.content[0].text
-            # Parse JSON from response
+            # Get text block (Sonnet may include thinking blocks in some configs)
+            import re
+            text = next((b.text for b in response.content if hasattr(b, "text")), "")
             try:
                 data = json.loads(text)
             except json.JSONDecodeError:
-                # Try to extract JSON block
-                import re
                 m = re.search(r'\{.*\}', text, re.DOTALL)
-                data = json.loads(m.group()) if m else {}
+                if m:
+                    try:
+                        data = json.loads(m.group())
+                    except json.JSONDecodeError:
+                        data = {}
+                else:
+                    data = {}
 
             result = {
                 "nodule_id": row["nodule_id"],
@@ -381,12 +386,19 @@ def run_opus_adjudication(bq: bigquery.Client, client, dry_run: bool) -> list[di
 
     queue_sql = f"""
     SELECT d.*,
+      -- Raw category strings from multisystem table (queue only has sus_* ordinals)
+      m.acr2017_category_imputed, m.kwak_category, m.ktirads_category,
+      m.ctirads_category, m.eutirads_category, m.ata_pattern, m.bta_category,
+      m.aace_class, m.horvath_category, m.park2009_category,
+      m.park_cohort_category, m.sru_recommendation,
+      -- Nodule features
       n.composition, n.echogenicity, n.shape, n.margins,
       n.echogenic_foci, n.halo_presence_simple,
       n.vascularity_distribution_simple, n.ete_on_us_presence_simple,
       COALESCE(LEFT(prim.source_text, 500), '[no source text]') AS source_text,
       COALESCE(g.hashimoto_pattern, 'none') AS hashimoto_pattern
     FROM `{TABLE_DISAGQ}` d
+    JOIN `{TABLE_MULTISYS}` m USING (nodule_id)
     JOIN `{TABLE_NODULE_V2}` n USING (nodule_id)
     LEFT JOIN `{PROJECT}.{DATASET_WS}.tirads_primitive_backfill_input_v1` prim USING (nodule_id)
     LEFT JOIN (
@@ -395,10 +407,10 @@ def run_opus_adjudication(bq: bigquery.Client, client, dry_run: bool) -> list[di
     ) g ON d.research_id = g.research_id
     WHERE d.adjudication_status IS NULL
     ORDER BY d.suspicion_spread DESC
-    LIMIT 500
+    LIMIT 150
     """
     queue_rows = [dict(r) for r in bq.query(queue_sql, location=LOCATION).result()]
-    _log(f"  Fetched {len(queue_rows)} rows from queue (capped at 500)")
+    _log(f"  Fetched {len(queue_rows)} rows from queue (capped at 150; budget-constrained)")
 
     if dry_run:
         _log("  [dry-run] Processing only first 3 rows")
@@ -496,20 +508,52 @@ def run_opus_adjudication(bq: bigquery.Client, client, dry_run: bool) -> list[di
         try:
             response = client.messages.create(
                 model=OPUS_MODEL,
-                max_tokens=1024,
+                max_tokens=2048,
                 system=OPUS_SYSTEM,
                 messages=[{"role": "user", "content": user_prompt}],
             )
             total_input_tokens += response.usage.input_tokens
             total_output_tokens += response.usage.output_tokens
 
-            text = response.content[0].text
-            try:
-                data = json.loads(text)
-            except json.JSONDecodeError:
-                import re
-                m = re.search(r'\{.*\}', text, re.DOTALL)
-                data = json.loads(m.group()) if m else {}
+            # Opus 4 may include thinking blocks; get the first text block
+            import re
+            text = ""
+            for block in response.content:
+                if hasattr(block, "text"):
+                    text = block.text
+                    break
+
+            def _extract_json(s: str) -> dict:
+                """Robustly extract JSON from LLM response, handling common issues."""
+                # Try direct parse first
+                try:
+                    return json.loads(s)
+                except json.JSONDecodeError:
+                    pass
+                # Extract first JSON object (handle markdown code fences)
+                m = re.search(r'```json\s*(.*?)```', s, re.DOTALL)
+                if m:
+                    s = m.group(1).strip()
+                else:
+                    m = re.search(r'\{.*\}', s, re.DOTALL)
+                    if m:
+                        s = m.group()
+                    else:
+                        return {}
+                # Fix bare newlines inside string values
+                # Replace newlines that appear inside JSON strings with \n escape
+                s = re.sub(r'(?<=: ")(.*?)(?=")', lambda x: x.group().replace('\n', '\\n'), s, flags=re.DOTALL)
+                try:
+                    return json.loads(s)
+                except json.JSONDecodeError:
+                    # Last resort: remove trailing commas and retry
+                    s2 = re.sub(r',\s*}', '}', re.sub(r',\s*]', ']', s))
+                    try:
+                        return json.loads(s2)
+                    except json.JSONDecodeError:
+                        return {}
+
+            data = _extract_json(text)
 
             overall_status = data.get("overall_adjudication_status", "unresolved")
             results.append({
@@ -532,6 +576,10 @@ def run_opus_adjudication(bq: bigquery.Client, client, dry_run: bool) -> list[di
                 est_cost = (total_input_tokens * 15.0 + total_output_tokens * 75.0) / 1_000_000
                 _log(f"  Progress: {i+1}/{len(queue_rows)} | tokens: {total_input_tokens}+{total_output_tokens}"
                      f" | est_cost: ${est_cost:.2f}")
+                # Mid-loop budget guard (E.1 cost already spent; E.2 ceiling is $16.45)
+                if est_cost > 16.0:
+                    _log(f"  Budget ceiling reached (${est_cost:.2f} > $16.00); stopping E.2 early.")
+                    break
 
         except Exception as e:
             _log(f"  ERROR on row {i} ({row.get('nodule_id')}): {e}")

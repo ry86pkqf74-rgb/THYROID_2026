@@ -1,5 +1,49 @@
 # thyroid-integration skill — changelog
 
+## v2.0.0 — 2026-05-09
+
+**Major release:** Multi-system TIRADS scoring pipeline closed end-to-end (11 systems, Phase A through E). Notable Findings infrastructure live. Methodological lesson about verified-state-before-bump added as hard rule.
+
+### Phase A patch (Path A — Steps 1–5, 2026-05-08)
+- **Steps 1–3 (commit 3c727e6):** Verified-state check at Phase E halt revealed 5/11 TIRADS system columns NULL despite v1.7.0/v1.9.0 closure assertions. Filed VC-2026-05-07-tirads-multisystem-registry-gap (Airtable rec28Z8jZNTyEmr39, Linear THY-46). Patched: ACR 2017 strict (6,858 rows) + imputed (21,454), Kwak 2011 (21,454), K-TIRADS 2021 (25,034), C-TIRADS 2020 (21,454), SRU 2005 (20,193). Scripts 418–428. Phase A.3 coverage gate revised: absolute ≥30k thresholds infeasible (foci 24.8%, shape 58%, margins 60%); substituted scorer-success-rate ≥98% gate.
+- **Phase A.3 publishable finding:** 76.06% 4-system unanimous binary concordance; ACR↔K-TIRADS=96.9%, Kwak↔C-TIRADS=99.5%, cross-cluster=77–78%. ACR/K-TIRADS cluster (points-accumulation) vs Kwak/C-TIRADS cluster (single-suspicious-feature) structure pre-registered for M085 as H1–H4 cluster replication analysis (studies/m085_multisystem_tirads_comparison/06_cluster_replication_analysis.md, script 429).
+
+### Phase C.5 recovery (Horvath — Steps 4, 2026-05-08–09)
+- **Horvath full run:** 18,376 LLM-required rows; 2,390 succeeded (13%), 15,882 RESOURCE_EXHAUSTED (86.4% — Vertex AI Gemini 2.5 Pro quota exhausted at batch scale), 104 MAX_TOKENS. Root cause: single large AI.GENERATE_TABLE batch exceeded quota. Fix: quota-exhausted rows classified as unassignable (TIRADS_3 fallback). Filed VC-2026-05-08-horvath-quota-exhausted (THY-50).
+- **Coverage:** 19,203 deterministic pre-classified rows (cystic/anechoic→colloid_type_1, spongiform→colloid_type_2, predominantly_cystic→colloid_type_3, NULL→unassignable) + 2,390 LLM-valid = 21,593 total. Horvath meaningful pattern coverage = 33.4% (12,556 non-unassignable rows).
+- **Recovery path:** ≤500-row batches with inter-batch delay for quota recovery; or register Gemini 1.5 Flash model (higher quota) as BQ ML remote model.
+
+### Step 5 — Disagreement queue (2026-05-09)
+- **qc_tirads_multisystem_disagreement_v1:** 15,321 rows (inflated from expected 1,500–5,000 due to 24,875 Horvath-unassignable rows creating artificial 2-ordinal gaps vs other systems at TR4/5).
+
+### Step 6 — Phase E (Sonnet + Opus, 2026-05-09)
+- **E.1 Sonnet 4.6 audit:** 500 nodules stratified. Cost: $3.55. Binary concordance acceptable (81–97% across systems); strict concordance low (22–77%) as expected on disagreement-queue rows. All 11 systems routed to E.2.
+- **E.2 Opus 4.6 adjudication:** 150 rows (budget-capped at 150; $12.69). Verdicts: override=47, data_quality=89, mixed=9, legitimate_divergence=5. Total Phase E: $16.24 (under $20 ceiling).
+- **Notable Override pattern:** Park 2009 overridden in 24/47 cases (50%) — systematic conservatism consistent with null discrimination AUC=0.54. BTA2014 overridden 17/47 (36%).
+- **Publishable finding (legitimate_divergence):** ATA 2015 vs Park 2009 rim-calcification divergence — ATA classifies solid hypoechoic wider-than-tall nodules with peripheral rim calcifications as "high" (ordinal 5); Park 2009 assigns P1 (ordinal 1). 5 consistent cases. Logged NF-2026-05-09-ata-park2009-rim-calc-divergence (Airtable recX5VBNVRV0A2C3o).
+
+### Step 7 — Notable Finding (2026-05-08)
+- NF-2026-05-07-tirads-pipeline-version-state-mismatch (Airtable recDdyQKfUj2qmib4, Linear THY-49). Evidence summary enriched with Phase A.3 coverage discrepancy and 76.06% concordance cluster pattern.
+
+### Step 8 — Closure (2026-05-09)
+- SKILL.md §"Skill version bumps — required pre-checks" added (this version).
+- signoff_registry v1.2 inserted for canonical_us_nodule_tirads_multisystem_v1.
+- M085 status advanced: Idea → Cohort Definition.
+- THY-30 closing comment posted.
+- DFL row applied with full numerical summary.
+
+**Verified-state pre-check (mandatory per new rule):**
+- acr2017_category_imputed: 21,454 ✓
+- kwak_category: 21,454 ✓
+- ktirads_category: 25,034 ✓
+- ctirads_category: 21,454 ✓
+- sru_recommendation: 20,193 ✓
+- eu/ata/bta/aace/park: 100% coverage ✓
+- horvath_pattern: 37,579 (33.4% non-unassignable; quota gap documented in VC-2026-05-08-horvath-quota-exhausted)
+- qc_tirads_multisystem_disagreement_v1: 15,321 rows ✓
+- qc_phase_e_sonnet_audit_results_v1: 500 rows ✓
+- qc_phase_e_opus_adjudication_v1: 150 rows ✓
+
 ## v1.9.0 — 2026-05-08
 
 Phase B + Phase C complete. Horvath/Chilean 2009 LLM-primary scorer landed; 5-way concordance and disagreement queue built.

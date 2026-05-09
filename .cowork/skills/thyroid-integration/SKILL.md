@@ -1,7 +1,7 @@
 ---
 name: thyroid-integration
 metadata:
-  version: 1.9.0
+  version: 2.0.0
 description: |
   MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + BigQuery + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies BigQuery (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`), or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
 ---
@@ -182,12 +182,43 @@ Anytime an analysis turns up something more than a routine audit number — a re
 
 ## Versioning
 
-This skill is at v1.8.0. Bump:
+This skill is at v2.0.0. Bump:
 - **patch** (1.0.x) for clarification edits
 - **minor** (1.x.0) for new tables, fields, or sync phases
 - **major** (x.0.0) for changes to the hard rules or lifecycle states
 
 When you change anything, also bump the `version` in the YAML frontmatter and append a one-line CHANGELOG entry to `references/CHANGELOG.md`.
+
+### Skill version bumps — required pre-checks
+
+**MANDATORY before any minor or major skill version bump.** Discovered via NF-2026-05-07-tirads-pipeline-version-state-mismatch: skill versions v1.7.0 and v1.9.0 were bumped asserting Phase B/C closure without verifying actual BQ state, creating a false closure record. This resulted in 5 of 11 TIRADS system columns being NULL at the Phase E halt.
+
+Before bumping skill version, run the following verified-state check in BigQuery for any table cited in the proposed CHANGELOG closure claim:
+
+```sql
+-- Template: verify every table cited as "closed" in the CHANGELOG entry
+SELECT
+  table_name,
+  row_count,
+  column_count
+FROM `thyroid-canonical-pub-2026.pub_canonical.INFORMATION_SCHEMA.TABLE_STORAGE`
+WHERE table_name IN (
+  -- List every table the CHANGELOG claims is complete
+  'canonical_us_nodule_tirads_multisystem_v1',
+  -- etc.
+)
+ORDER BY table_name;
+
+-- For each table, verify non-zero row counts on the specific columns that
+-- the CHANGELOG claims are populated:
+SELECT
+  COUNTIF(acr2017_category_imputed IS NOT NULL) AS n_acr,
+  COUNTIF(kwak_category IS NOT NULL) AS n_kwak,
+  -- etc.
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_us_nodule_tirads_multisystem_v1`;
+```
+
+**Assertion:** Every closure claim in the proposed CHANGELOG entry MUST have a corresponding verified BQ count ≥ the stated minimum before the version bump is applied. If any count is 0 or below minimum, the CHANGELOG entry must be revised or the bump deferred until the gap is fixed.
 
 ## Files in this skill
 
