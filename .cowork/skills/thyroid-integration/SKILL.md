@@ -1,7 +1,7 @@
 ---
 name: thyroid-integration
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 description: |
   MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + BigQuery + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies BigQuery (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`), or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
 ---
@@ -182,7 +182,7 @@ Anytime an analysis turns up something more than a routine audit number — a re
 
 ## Versioning
 
-This skill is at v2.0.0. Bump:
+This skill is at v2.1.0. Bump:
 - **patch** (1.0.x) for clarification edits
 - **minor** (1.x.0) for new tables, fields, or sync phases
 - **major** (x.0.0) for changes to the hard rules or lifecycle states

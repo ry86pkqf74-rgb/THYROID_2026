@@ -1,5 +1,9 @@
 # thyroid-integration skill — changelog
 
+## v2.1.0 — 2026-05-09
+
+**Minor:** Cross-source agreement audit infrastructure added for canonical_operative_patient_rollup promotion. Promotion blocked pending Logan review (92.3% < 98% threshold). New pub_workspace tables: canonical_operative_patient_rollup_v1_1_candidate (10,872 rows ✓), canonical_operative_patient_rollup_v1_1_audit (8,840 rows ✓), qc_v1_1_three_way_disagreement_v1 (28 rows ✓). Audit SQL at studies/m085_multisystem_tirads_comparison/sql/03_v1_1_cross_source_audit.sql. DFL: recUm5ZCSWU9AtmKd. Awaiting Logan sign-off before re-running promotion. Cross-reference: NF-2026-05-09-operative-rollup-surgery-type-undercount, THY-56.
+
 ## v2.0.0 — 2026-05-09
 
 **Major release:** Multi-system TIRADS scoring pipeline closed end-to-end (11 systems, Phase A through E). Notable Findings infrastructure live. Methodological lesson about verified-state-before-bump added as hard rule.
