@@ -1,0 +1,12 @@
+diagnosis_primary,ftc_variant,n_total,n_likely_received,n_lr_or_ambiguous,n_negated,pct_lr,pct_lr_amb
+DHGTC,,11,0,1,0,0.0,9.1
+FTC,(null variant),106,0,15,4,0.0,14.2
+FTC,minimally_invasive,169,0,9,4,0.0,5.3
+FTC,oncocytic_warthin,209,4,31,8,1.9,14.8
+FTC,widely_invasive,12,0,2,0,0.0,16.7
+FTUMP,,34,0,0,0,0.0,0.0
+HCC,,2,0,0,0,0.0,0.0
+NIFTP,,116,0,2,2,0.0,1.7
+atypical_follicular_adenoma,,33,0,4,0,0.0,12.1
+follicular_adenoma,,707,0,18,0,0.0,2.5
+hurthle_cell_adenoma,,143,0,5,0,0.0,3.5

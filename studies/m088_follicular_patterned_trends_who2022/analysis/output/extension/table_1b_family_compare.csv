@@ -1,0 +1,7 @@
+metric,oncocytic,conventional,test,stat,p
+"Age, mean (SD), years",55.4 (15.4) n=350,51.0 (15.1) n=1192,Welch t-test,t=4.66,4.03e-06
+"Age, median (IQR), years",56.0 (43.9-67.2),50.9 (39.5-62.8),Mann-Whitney U,U=242726,3.17e-06
+"Female, n (%)",251/350 (71.7%),907/1192 (76.1%),chi-square,χ²=2.54,1.11e-01
+"Dominant tumor size, median (IQR), cm",4.00 (2.60-5.20) n=203,3.10 (1.80-4.50) n=448,Mann-Whitney U,U=56288,1.14e-06
+Definitive total thyroidectomy at index,38.3% (33.3–43.5) (134/350),21.8% (19.6–24.2) (260/1192),chi-square,χ²=37.74,8.09e-10
+Pure hemi (initial hemi without completion),36.0% (31.1–41.2) (126/350),48.8% (46.0–51.7) (582/1192),chi-square,χ²=17.41,3.01e-05

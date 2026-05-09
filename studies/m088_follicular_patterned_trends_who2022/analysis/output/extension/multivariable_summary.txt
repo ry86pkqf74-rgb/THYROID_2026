@@ -1,0 +1,26 @@
+                           Logit Regression Results                           
+==============================================================================
+Dep. Variable:       definitive_total   No. Observations:                 1514
+Model:                          Logit   Df Residuals:                     1501
+Method:                           MLE   Df Model:                           12
+Date:                Sat, 09 May 2026   Pseudo R-squ.:                  0.1179
+Time:                        07:28:07   Log-Likelihood:                -753.40
+converged:                       True   LL-Null:                       -854.11
+Covariance Type:            nonrobust   LLR p-value:                 1.666e-36
+=================================================================================================================================================================
+                                                                                                    coef    std err          z      P>|z|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                                                        -1.8900      0.273     -6.927      0.000      -2.425      -1.355
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_minimally_invasive]          0.2244      0.580      0.387      0.699      -0.912       1.361
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_oncocytic_warthin]           1.2037      0.560      2.148      0.032       0.105       2.302
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.hurthle_cell_adenoma]            0.0460      0.254      0.181      0.856      -0.452       0.544
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.NIFTP]                           0.3988      0.595      0.670      0.503      -0.767       1.565
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_NOS]                         0.8238      0.561      1.469      0.142      -0.275       1.923
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTUMP]                          -0.8179      0.770     -1.063      0.288      -2.326       0.691
+C(historical_group, Treatment(reference='follicular_adenoma'))[T.atypical_follicular_adenoma]     0.1449      0.553      0.262      0.793      -0.938       1.228
+age_decade                                                                                        0.0666      0.043      1.551      0.121      -0.018       0.151
+male                                                                                             -0.1926      0.155     -1.243      0.214      -0.496       0.111
+size_imputed                                                                                      0.0932      0.044      2.101      0.036       0.006       0.180
+size_known                                                                                        0.8382      0.551      1.522      0.128      -0.241       1.917
+era_post2017                                                                                     -0.9302      0.150     -6.211      0.000      -1.224      -0.637
+=================================================================================================================================================================

@@ -1,0 +1,14 @@
+hist_group,n,n_female,n_male,n_sex_missing,mean_age,median_age,sd_age,n_age_missing,mean_dom_size_cm,median_dom_size_cm,n_size_missing
+DHGTC,11,6,5,0,61.7,64.1,15.9,0,5.09,5.0,0
+FTC_NOS,106,72,34,0,50.4,50.2,16.7,0,4.37,4.0,6
+FTC_minimally_invasive,169,129,40,0,52.7,52.4,16.5,0,3.22,3.0,0
+FTC_oncocytic_warthin,209,137,72,0,57.5,58.1,15.4,0,4.18,4.0,4
+FTC_widely_invasive,12,6,6,0,64.7,65.8,14.0,0,5.54,4.4,0
+FTUMP,34,29,5,0,52.2,51.9,15.0,0,3.38,3.1,0
+HCC,2,2,0,0,69.7,68.6,1.6,0,5.5,5.5,1
+NIFTP,116,84,32,0,52.7,52.7,15.1,0,2.16,1.8,1
+PDTC,1,0,1,0,60.2,60.2,,0,4.5,4.5,0
+atypical_follicular_adenoma,33,26,7,0,58.2,59.2,12.4,0,,,33
+follicular_adenoma,707,552,155,0,49.6,49.3,14.3,0,,,700
+hurthle_cell_adenoma,143,114,29,0,52.5,52.8,15.0,0,,,143
+hyalinizing_trabecular_tumor,4,4,0,0,52.0,50.0,8.4,0,,,4

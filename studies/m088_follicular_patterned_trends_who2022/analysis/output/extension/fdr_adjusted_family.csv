@@ -1,0 +1,5 @@
+hypothesis,p_value,q_value_BH
+H1 age-shift Oncocytic vs Conventional,4.031e-06,8.063e-06
+H2 FA: strict vs broad proportion,2.875e-01,2.875e-01
+H3 MI-FTC: strict vs broad proportion,4.531e-54,1.812e-53
+H4 MI-FTC vs FT-UMP definitive total,1.035e-01,1.380e-01

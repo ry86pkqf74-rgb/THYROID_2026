@@ -1,0 +1,347 @@
+7534|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|35.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7542|follicular_adenoma||follicular_adenoma|2019|2015-2019|male|67||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7552|FTC|minimally_invasive|FTC_minimally_invasive|2019|2015-2019|female|57.4|2.7|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|total|1|0
+7553|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|38.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7584|NIFTP||NIFTP|2019|2015-2019|female|51.8|4.7|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+7593|FTUMP||FTUMP|2019|2015-2019|female|32.8|4.5|Conventional follicular|FT-UMP||||||1|1|0|0|hemi|1|0
+7596|NIFTP||NIFTP|2019|2015-2019|female|47.6|2|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7597|hurthle_cell_adenoma||hurthle_cell_adenoma|2019|2015-2019|female|47.3||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+7620|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2019|2015-2019|female|49.9|1.3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+7628|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|65.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7632|NIFTP||NIFTP|2019|2015-2019|female|71.8|1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+7645|NIFTP||NIFTP|2019|2015-2019|male|74.4|3.2|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7653|hurthle_cell_adenoma||hurthle_cell_adenoma|2019|2015-2019|female|68.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+7663|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|51.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7665|PDTC||PDTC|2019|2015-2019|male|60.2|4.5|Conventional follicular|PDTC||||||0|0|1|0|total|1|0
+7669|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2019|2015-2019|female|37|4.3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+767|follicular_adenoma||follicular_adenoma|2011|2010-2014|male|43.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7696|follicular_adenoma||follicular_adenoma|2019|2015-2019|male|57.5|6|Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7697|NIFTP||NIFTP|2019|2015-2019|female|47.7|0.08|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+7715|hurthle_cell_adenoma||hurthle_cell_adenoma|2019|2015-2019|female|32.3||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+7725|hurthle_cell_adenoma||hurthle_cell_adenoma|2019|2015-2019|female|69.1||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+7742|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2019|2015-2019|female|61.9||Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+7754|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|30.4||Conventional follicular|Follicular adenoma|0|1||||0|1|0|0|hemi|0|0
+7794|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|59.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7799|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2019|2015-2019|female|55.3|3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|1|0
+78|follicular_adenoma||follicular_adenoma|2000|2000-2004|female|34.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7812|NIFTP||NIFTP|2019|2015-2019|female|46.2|4.8|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+7817|FTC|minimally_invasive|FTC_minimally_invasive|2019|2015-2019|male|64.2|1.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+7827|NIFTP||NIFTP|2019|2015-2019|female|43.3|3.1|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7829|NIFTP||NIFTP|2019|2015-2019|female|57.9|0.2|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+7842|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|55.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7851|NIFTP||NIFTP|2019|2015-2019|female|36.3|0.8|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7857|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|64.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+7873|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|46.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7886|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|45.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7887|follicular_adenoma||follicular_adenoma|2019|2015-2019|female|30.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+79|hyalinizing_trabecular_tumor||hyalinizing_trabecular_tumor|2000|2000-2004|female|50.9||Conventional follicular|hyalinizing_trabecular_tumor||||||0|0|0|0|hemi|0|0
+7906|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|49|2.6|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+7924|NIFTP||NIFTP|2020|2020-2025|female|45.4|4.2|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7926|NIFTP||NIFTP|2020|2020-2025|female|46.8|2.4|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+7940|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|73.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7943|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|38.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7956|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|female|52.8||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+797|follicular_adenoma||follicular_adenoma|2014|2010-2014|female|65.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+7970|NIFTP||NIFTP|2020|2020-2025|female|48.3|2|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8|follicular_adenoma||follicular_adenoma|2000|2000-2004|female|42.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8001|FTC|minimally_invasive|FTC_minimally_invasive|2020|2020-2025|female|71.6|3.5|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|total|1|0
+8004|NIFTP||NIFTP|2020|2020-2025|female|66.5|0.8|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8005|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|75.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+801|hurthle_cell_adenoma||hurthle_cell_adenoma|2014|2010-2014|male|61.5||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8019|NIFTP||NIFTP|2020|2020-2025|female|51.8|0.45|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8037|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|60|2.7|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+8043|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|58||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8055|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|43.2|2.2|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+8059|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|38||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|1|0
+8062|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|male|56.2||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+807|FTC||FTC_NOS|2015|2015-2019|male|25.4|5.7|Conventional follicular|FTC, NOS||||||0|1|1|0|hemi|0|0
+8072|NIFTP||NIFTP|2020|2020-2025|female|63.5|0.3|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8098|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|70.7|1.3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+81|follicular_adenoma||follicular_adenoma|2000|2000-2004|female|38.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+810|FTC|minimally_invasive|FTC_minimally_invasive|2013|2010-2014|female|42.5|1.7|Conventional follicular|FTC, minimally invasive|||0|0|0|1|1|1|0|total|1|0
+8110|FTC|minimally_invasive|FTC_minimally_invasive|2020|2020-2025|female|47.8|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+8115|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|73.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8117|FTC|minimally_invasive|FTC_minimally_invasive|2020|2020-2025|female|67.7|3.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+8119|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|45.3|4.3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|1|0
+8142|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|37.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8143|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|67.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8155|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|63.9|3|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|0|0
+8156|FTUMP||FTUMP|2020|2020-2025|female|53.2|4.6|Conventional follicular|FT-UMP||||||0|0|0|0|hemi|0|0
+8166|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|40.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8186|NIFTP||NIFTP|2020|2020-2025|male|67.1|2.3|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8194|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|39.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8204|FTC||FTC_NOS|2020|2020-2025|female|50.6|5.1|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+8214|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|53.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8233|NIFTP||NIFTP|2020|2020-2025|female|49.4|6.4|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8238|FTC|minimally_invasive|FTC_minimally_invasive|2020|2020-2025|female|32|4.2|Conventional follicular|FTC, minimally invasive|||1|1|1|1|1|0|0|hemi|0|0
+8239|FTC|minimally_invasive|FTC_minimally_invasive|2020|2020-2025|female|51.8|3.5|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|hemi|1|0
+8252|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|male|73.8|3.7|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|0|0
+8259|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|49.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8282|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|72.9|6.6|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+8286|atypical_follicular_adenoma||atypical_follicular_adenoma|2020|2020-2025|female|58.4||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+8300|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|male|49.9|1.9|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|0|0
+8323|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|78.2|8.5|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+8329|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|59.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8332|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|female|74.9||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8346|NIFTP||NIFTP|2020|2020-2025|female|69.3|0.3|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8347|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|48|4.2|Oncocytic|Oncocytic carcinoma||||||1|1|0|0|hemi|0|0
+8360|NIFTP||NIFTP|2020|2020-2025|male|55.9|1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8372|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|63.3|4.2|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+8375|NIFTP||NIFTP|2020|2020-2025|female|49.1|3.1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8388|DHGTC||DHGTC|2020|2020-2025|female|71.8|2.9|Conventional follicular|DHGTC||||||0|0|0|0|total|1|0
+8402|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|46||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8405|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|45.3||Conventional follicular|Follicular adenoma|0|1||||0|1|0|0|total|1|0
+8422|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|86.9|8.5|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|0|0
+8423|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|female|53.5||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8435|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|76.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8445|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|female|49.3||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+8447|FTUMP||FTUMP|2020|2020-2025|female|69.9|1.3|Conventional follicular|FT-UMP||||||0|0|0|0|hemi|1|0
+8461|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|36.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8464|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|29.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8466|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|40.6|4.5|Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8470|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|29.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8473|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|30.9|4.8|Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+848|hurthle_cell_adenoma||hurthle_cell_adenoma|2005|2005-2009|female|50.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8516|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|50.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8527|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|54.1|9|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+8537|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|30.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8539|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|24.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8540|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|42||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8548|hurthle_cell_adenoma||hurthle_cell_adenoma|2020|2020-2025|female|49.6||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+8551|FTC||FTC_NOS|2020|2020-2025|female|30.9|2.5|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+8563|follicular_adenoma||follicular_adenoma|2020|2020-2025|male|61||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8567|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|30.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+857|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|42.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8570|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|male|43|6.7|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|total|1|0
+8573|NIFTP||NIFTP|2020|2020-2025|female|50.7|0.1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8576|follicular_adenoma||follicular_adenoma|2020|2020-2025|female|23.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8582|FTC|widely_invasive|FTC_widely_invasive|2020|2020-2025|female|66.4|4.4|Conventional follicular|FTC, widely invasive||||||0|0|1|0|total|1|0
+8585|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|81.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+860|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|33.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8624|NIFTP||NIFTP|1992|1990-1994|female|29.1|2.7|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8628|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|53.5|3.3|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+8634|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|male|56.2||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8635|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|female|65.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8641|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|female|46.1||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8665|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|male|54.9||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+8679|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|88.3|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+8696|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|63.1||Conventional follicular|Follicular adenoma|0|1||||0|1|0|0|hemi|0|0
+8699|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|72.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+870|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|66.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8729|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|36.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+873|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|56.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8733|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|52.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8735|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|32.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8738|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|54.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8743|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|43.8|4.2|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+8750|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|52.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8755|NIFTP||NIFTP|2021|2020-2025|female|63.8|0.06|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8758|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|37.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8765|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|67.7|2.5|Oncocytic|Oncocytic carcinoma||||||0|0|0|0|hemi|0|0
+8766|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|59.3||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+8774|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|70.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8786|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|26.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+880|FTC||FTC_NOS|2005|2005-2009|male|60.4|2.5|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+8803|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|female|54.3||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+8818|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|male|56.5|2.6|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|0|0
+8827|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|49.6||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+8833|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|43.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8836|FTC|minimally_invasive|FTC_minimally_invasive|1997|1995-1999|female|23.4|4.5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+884|FTUMP||FTUMP|2005|2005-2009|female|36.7|2.2|Conventional follicular|FT-UMP||||||0|0|0|0|hemi|0|0
+885|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|55.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8855|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|77.4|2.8|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|0|0
+8868|follicular_adenoma||follicular_adenoma|1997|1995-1999|male|24.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8879|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|43.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8880|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|71.2|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+891|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|34.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8918|NIFTP||NIFTP|2021|2020-2025|female|70.2|0.15|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8938|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|53.5|4.3|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|hemi|1|0
+8943|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|48.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+8945|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|46.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+8956|NIFTP||NIFTP|2021|2020-2025|male|31.6|5.5|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+8958|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|male|54.9|6.8|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|total|1|0
+8971|FTC||FTC_NOS|2021|2020-2025|male|43|6.3|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+8984|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|51.9|2.8|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|total|1|0
+8993|NIFTP||NIFTP|2021|2020-2025|female|41.2|0.7|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+8994|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|57.7|2.4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9000|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|70.5|4.8|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+9008|FTC||FTC_NOS|2021|2020-2025|female|21|6.2|Conventional follicular|FTC, NOS||||||0|0|1|0|total|1|0
+901|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|40.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9010|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|42.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9013|NIFTP||NIFTP|2021|2020-2025|male|70.7|0.1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9015|FTC|widely_invasive|FTC_widely_invasive|2021|2020-2025|female|74.3|2.3|Conventional follicular|FTC, widely invasive||||||0|0|1|0|total|1|0
+9023|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|57.7|1.6|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+903|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|56.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9031|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|33.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9038|FTC||FTC_NOS|2021|2020-2025|female|30.8|5.1|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+9040|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|53.8||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9056|FTC||FTC_NOS|2021|2020-2025|female|57.1|5|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|1|0
+9062|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|65.9|6.4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9063|hurthle_cell_adenoma||hurthle_cell_adenoma|2021|2020-2025|female|58.5||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9064|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|37.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9066|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|male|59.4|2.7|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+9068|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|83.3|2.9|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|total|1|0
+9069|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|26.9|1.6|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9096|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|61.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9097|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|47.1|0.9|Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9098|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|77|3.2|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+910|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|52.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9100|FTC||FTC_NOS|2021|2020-2025|female|40.7|4.5|Conventional follicular|FTC, NOS||||||0|1|1|0|hemi|0|0
+9104|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|45.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9108|FTC|widely_invasive|FTC_widely_invasive|2021|2020-2025|male|65.8|3.5|Conventional follicular|FTC, widely invasive||||||0|0|1|0|total|1|0
+9116|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|female|42.4|1.2|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|0|0
+9123|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|70.5|3.2|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9132|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|46.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9147|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|50.2|2|Conventional follicular|FTC, minimally invasive|||0|0|0|0|1|1|0|hemi|0|0
+9149|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|71.5|4.5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9152|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|48.2|1.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9166|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|50.3|3.6|Conventional follicular|FTC, minimally invasive|||1|1|1|1|1|0|0|total|1|0
+9177|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|45.4|4.2|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+9195|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|male|66.2|4.1|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|total|1|0
+9211|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|37.4|2.6|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9220|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|40.8||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9221|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|63.2||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9222|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|62.2|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9226|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|73.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9228|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|50.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+923|hurthle_cell_adenoma||hurthle_cell_adenoma|2005|2005-2009|female|61.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9234|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|37.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9235|FTC||FTC_NOS|2021|2020-2025|female|52.7|4.4|Conventional follicular|FTC, NOS||||||0|0|1|0|total|1|0
+9239|FTC||FTC_NOS|2021|2020-2025|female|80.4|10.5|Conventional follicular|FTC, NOS||||||0|1|1|0|total|1|0
+9244|atypical_follicular_adenoma||atypical_follicular_adenoma|2021|2020-2025|female|46.6||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+925|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|49.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9250|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|54.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9255|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|female|31.8|3.5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9258|FTC|minimally_invasive|FTC_minimally_invasive|2021|2020-2025|male|51.5|0.9|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9267|follicular_adenoma||follicular_adenoma|2021|2020-2025|male|75.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9272|follicular_adenoma||follicular_adenoma|2021|2020-2025|female|40.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9274|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2021|2020-2025|male|47.5|5|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9277|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|80.1|1.2|Oncocytic|Oncocytic carcinoma||||||0|0|0|0|total|1|0
+9290|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|78.7|2.3|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9298|NIFTP||NIFTP|2022|2020-2025|male|57.3|3.5|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+93|hurthle_cell_adenoma||hurthle_cell_adenoma|2000|2000-2004|female|64||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9309|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|56.3|4.2|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|0|0
+931|FTC||FTC_NOS|2005|2005-2009|female|67.7|2.3|Conventional follicular|FTC, NOS||||||0|0|1|0|total|1|0
+9315|FTC||FTC_NOS|2022|2020-2025|male|59|5.1|Conventional follicular|FTC, NOS||||||0|0|1|0|total|1|0
+9321|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|66.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9323|NIFTP||NIFTP|2022|2020-2025|male|71.8|11.2|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+933|FTC|minimally_invasive|FTC_minimally_invasive|2005|2005-2009|female|38.7|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9330|NIFTP||NIFTP|2022|2020-2025|male|46.4|1.5|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9331|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|34.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9338|FTC||FTC_NOS|2022|2020-2025|female|48.5|4.6|Conventional follicular|FTC, NOS||||||0|1|1|0|hemi|0|0
+9345|NIFTP||NIFTP|2022|2020-2025|female|53.6|6.1|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9353|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|46.4|3.9|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|total|1|0
+9359|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|60.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9363|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|44.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9364|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|male|79.8||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9366|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|34.3|8.8|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9368|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|61.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+937|follicular_adenoma||follicular_adenoma|2005|2005-2009|female|69.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9371|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|male|37|3.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+9373|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|35.4|4|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|total|1|0
+9378|NIFTP||NIFTP|2022|2020-2025|male|56.7|7.3|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9379|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|male|65.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9400|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|58.7|5.2|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|total|1|0
+9405|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|51.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9408|FTC||FTC_NOS|2022|2020-2025|male|50.9|5.1|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|0|0
+9419|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|54.8|7.3|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|total|1|0
+942|hurthle_cell_adenoma||hurthle_cell_adenoma|2005|2005-2009|female|53.1||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9423|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|56.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9426|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|71.8||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9441|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|48.7|3.9|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9462|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|69|5.1|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9473|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|39.6||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9478|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|46.1||Conventional follicular|Follicular adenoma|1|1||||1|1|0|0|hemi|0|0
+9490|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|68.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9494|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|76.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+95|follicular_adenoma||follicular_adenoma|2000|2000-2004|male|47.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9501|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|62.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9503|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|38.7|2.3|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9509|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|68.8|5.6|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9513|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|70.7||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9520|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|76.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9521|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|51.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9539|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|70.4|3.6|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+9542|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|69.3|2.4|Oncocytic|Oncocytic carcinoma||||||0|1|0|0|hemi|0|0
+956|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2008|2005-2009|female|63.7|2.8|Oncocytic|Oncocytic carcinoma||||||0|0|0|0|hemi|0|0
+9577|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|male|52.8|3.3|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9578|NIFTP||NIFTP|2022|2020-2025|female|37.7|0.8|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9582|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|76.9|1.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9588|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|male|82.8|3.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9589|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|48.2|4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9591|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|72.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9598|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|53.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+96|follicular_adenoma||follicular_adenoma|2000|2000-2004|female|51.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9602|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|68.2|3.9|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9609|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|73.4|5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9614|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|53.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9615|follicular_adenoma||follicular_adenoma|1991|1990-1994|female|31.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9616|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|68.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9621|NIFTP||NIFTP|2022|2020-2025|female|66.3|0.25|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9631|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|51||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|hemi|0|0
+9632|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|41.5|2.9|Oncocytic|Oncocytic carcinoma||||||0|1|1|0|hemi|1|0
+9638|NIFTP||NIFTP|1999|1995-1999|female|23.1|1.6|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9647|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|40.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9659|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|37|3.5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9666|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|43.8|4.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+9668|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|male|51.5|3.6|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+967|FTC||FTC_NOS|2007|2005-2009|female|63.1|2.5|Conventional follicular|FTC, NOS||||||0|0|1|0|unknown|0|0
+9677|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|43.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9686|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|female|48.1||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9691|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|43.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9701|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|29.3|4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+9705|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|39||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|total|1|0
+9708|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|76.4|11|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9709|FTC|minimally_invasive|FTC_minimally_invasive|1992|1990-1994|female|29.6|3.4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9712|FTC|minimally_invasive|FTC_minimally_invasive|1999|1995-1999|female|22.6|5.2|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9715|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|42.5|1.2|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9724|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|80.3|3|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9725|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|female|66.8||Oncocytic|Oncocytic adenoma||||||0|0|0|0|total|1|0
+9726|NIFTP||NIFTP|2022|2020-2025|female|59.6|1.5|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9729|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|female|53.1|5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|0|0
+9734|atypical_follicular_adenoma||atypical_follicular_adenoma|2022|2020-2025|female|54.1||Conventional follicular|FT-UMP (from atypical FA)||||||0|0|0|0|total|1|0
+9748|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|53.7|1.6|Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+975|FTC|minimally_invasive|FTC_minimally_invasive|2007|2005-2009|female|37.1|2.8|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|total|1|0
+9754|NIFTP||NIFTP|2002|2000-2004|female|20.4|4.9|Conventional follicular|NIFTP||||||0|0|0|0|hemi|0|0
+9763|NIFTP||NIFTP|2022|2020-2025|female|43.5|0.4|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+9765|follicular_adenoma||follicular_adenoma|2022|2020-2025|female|67.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|total|1|0
+9772|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|female|64.4|5.8|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9782|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|female|45.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|hemi|0|0
+9786|FTC|minimally_invasive|FTC_minimally_invasive|2022|2020-2025|male|75|8.5|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|hemi|1|0
+9795|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2022|2020-2025|male|54.5|4|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|hemi|1|0
+9806|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|79.6||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9813|DHGTC||DHGTC|1999|1995-1999|female|23|3.9|Conventional follicular|DHGTC||||||0|0|1|0|hemi|1|0
+9816|NIFTP||NIFTP|2022|2020-2025|female|65|0.05|Conventional follicular|NIFTP||||||0|0|0|0|total|1|0
+9822|FTC||FTC_NOS|2022|2020-2025|male|82.5||Conventional follicular|FTC, NOS||||||0|0|0|0|unknown|0|0
+9825|follicular_adenoma||follicular_adenoma|2022|2020-2025|male|42.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+983|follicular_adenoma||follicular_adenoma|2007|2005-2009|female|50.5||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9831|FTC|minimally_invasive|FTC_minimally_invasive|2017|2015-2019|female|30.9|1.7|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+9836|follicular_adenoma||follicular_adenoma|2024|2020-2025|female|45.7||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9856|FTC||FTC_NOS|2024|2020-2025|female|70.3|4.3|Conventional follicular|FTC, NOS||||||0|0|1|0|unknown|0|0
+9862|FTC|minimally_invasive|FTC_minimally_invasive|2023|2020-2025|female|38|2.6|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+987|follicular_adenoma||follicular_adenoma|2007|2005-2009|female|48.1||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9871|follicular_adenoma||follicular_adenoma|2023|2020-2025|female|57.9||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+989|follicular_adenoma||follicular_adenoma|2007|2005-2009|female|51.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9891|follicular_adenoma||follicular_adenoma|2023|2020-2025|female|40||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9892|FTC|minimally_invasive|FTC_minimally_invasive|2023|2020-2025|female|55.3|2.9|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+9897|NIFTP||NIFTP|2023|2020-2025|female|22.3|2.5|Conventional follicular|NIFTP||||||0|0|0|0|unknown|0|0
+9898|follicular_adenoma||follicular_adenoma|2024|2020-2025|female|49||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9900|follicular_adenoma||follicular_adenoma|2011|2010-2014|male|56.3||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9903|follicular_adenoma||follicular_adenoma|2023|2020-2025|female|59.4||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+991|follicular_adenoma||follicular_adenoma|2008|2005-2009|male|32||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|hemi|0|0
+9921|FTC|oncocytic_warthin|FTC_oncocytic_warthin|2020|2020-2025|female|52.8|1.4|Oncocytic|Oncocytic carcinoma||||||0|0|1|0|unknown|0|0
+9921|FTC||FTC_NOS|2020|2020-2025|female|52.8|1.4|Conventional follicular|FTC, NOS||||||0|0|1|0|unknown|0|0
+9926|hurthle_cell_adenoma||hurthle_cell_adenoma|2023|2020-2025|male|35.8||Oncocytic|Oncocytic adenoma||||||0|0|0|0|unknown|0|0
+9937|hurthle_cell_adenoma||hurthle_cell_adenoma|2024|2020-2025|male|64.1||Oncocytic|Oncocytic adenoma||||||0|0|0|0|unknown|0|0
+9944|follicular_adenoma||follicular_adenoma|2023|2020-2025|female|29.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+995|FTC||FTC_NOS|2006|2005-2009|female|27.6|3.7|Conventional follicular|FTC, NOS||||||0|0|1|0|hemi|0|0
+9951|hurthle_cell_adenoma||hurthle_cell_adenoma|2022|2020-2025|male|62.4||Oncocytic|Oncocytic adenoma||||||0|0|0|0|unknown|0|0
+9960|FTUMP||FTUMP|2024|2020-2025|male|77.9|3.1|Conventional follicular|FT-UMP||||||0|0|0|0|unknown|0|0
+9961|FTC|minimally_invasive|FTC_minimally_invasive|2024|2020-2025|female|33.4|4.4|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+9969|follicular_adenoma||follicular_adenoma|2024|2020-2025|female|51.2||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9979|follicular_adenoma||follicular_adenoma|2024|2020-2025|female|55.8||Conventional follicular|Follicular adenoma|0|0||||0|0|0|0|unknown|0|0
+9986|FTUMP||FTUMP|2024|2020-2025|female|44.6|3.1|Conventional follicular|FT-UMP||||||0|0|0|0|unknown|0|0
+9988|FTC|minimally_invasive|FTC_minimally_invasive|2023|2020-2025|female|42.2|2|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+9991|FTUMP||FTUMP|2024|2020-2025|female|77.3|4.3|Conventional follicular|FT-UMP||||||0|0|0|0|unknown|0|0
+9995|FTC|minimally_invasive|FTC_minimally_invasive|2023|2020-2025|female|36.7|3.1|Conventional follicular|FTC, minimally invasive|||0|1|1|0|1|0|0|unknown|0|0
+9998|FTUMP||FTUMP|2024|2020-2025|female|42.6|3.4|Oncocytic|Oncocytic UMP||||||0|1|0|0|unknown|0|0

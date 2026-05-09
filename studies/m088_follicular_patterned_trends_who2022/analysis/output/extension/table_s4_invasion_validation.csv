@@ -1,0 +1,13 @@
+historical_group,n,n_strict_eq,pct_strict_eq,n_broad_eq,pct_broad_eq,n_vascular_doc,pct_vascular_doc,n_vascular_quant_ge1,pct_vascular_quant_ge1
+DHGTC,11,0,0.0,0,0.0,7,63.6,0,0.0
+FTC_NOS,106,0,0.0,20,18.9,89,84.0,0,0.0
+FTC_minimally_invasive,169,4,2.4,166,98.2,24,14.2,0,0.0
+FTC_oncocytic_warthin,206,7,3.4,124,60.2,112,54.4,0,0.0
+FTC_widely_invasive,12,0,0.0,0,0.0,10,83.3,0,0.0
+FTUMP,34,3,8.8,6,17.6,0,0.0,0,0.0
+NIFTP,116,0,0.0,0,0.0,1,0.9,0,0.0
+PDTC,1,0,0.0,0,0.0,1,100.0,0,0.0
+atypical_follicular_adenoma,33,1,3.0,3,9.1,0,0.0,0,0.0
+follicular_adenoma,707,2,0.3,6,0.8,0,0.0,0,0.0
+hurthle_cell_adenoma,143,0,0.0,2,1.4,0,0.0,0,0.0
+hyalinizing_trabecular_tumor,4,0,0.0,0,0.0,0,0.0,0,0.0

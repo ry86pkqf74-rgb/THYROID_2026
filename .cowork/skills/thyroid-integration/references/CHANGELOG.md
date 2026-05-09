@@ -1,5 +1,21 @@
 # thyroid-integration skill — changelog
 
+## v2.1.1 — 2026-05-09
+
+**canonical_operative_patient_rollup_v1 → v1_1 promotion (cascade refinement).**
+
+- Cascade refinement: `path_gland_override_single_surgery` rule for OPC=total/PG=hemi single-surgery patients. 343 patients (188 previously-pure-override + 155 multi-code) corrected. Root cause: OPC parser over-attributes "right total thyroidectomy" / "right total lobectomy" phrasings as `total_thyroidectomy` for single-surgery hemithyroidectomy patients.
+- Gate redefined as cascade-defensible agreement (`disagree_pg_op_events` and `disagree_opc_op_events` = expected op_events-as-deprecated-fallback dissent). Result: **98.25% (8,685/8,840)**.
+- 23 patients flagged `low_confidence=TRUE` staged to `pub_workspace.qc_v1_1_residual_review_v1`.
+- `canonical_operative_patient_rollup_v1_1` is now canonical in `pub_canonical`. v1 deprecated in signoff registry.
+- v1 snapshot: `pub_workspace.canonical_operative_patient_rollup_v1_pre_v1_1_promotion_20260509_snapshot`.
+- DFL: `DFL-2026-05-09-v1-1-canonical-promotion-execute` (Airtable rec `recEF0fpaciZjta41`).
+- M085 surgery type (cohort N=6,523): total 2,801→3,907; hemi 1,747→2,288; unknown 1,918→137.
+- M088 SQL files updated to reference v1_1. M025/M044/M048 unaffected (source ≠ rollup).
+- MULTIMODAL notified — check surgery_type XGBoost feature.
+- M085 v3 deliverable: `Thyroid_TIRADS_Analysis_Complete_Results_20260509_v3.zip`.
+- Linear: THY-56 moved to In Review with `auto-close:pending`.
+
 ## v2.2.0 — PENDING (coverage gate 83.8% < 95%; bump deferred)
 
 **Target: ThyroSeq ROM-band backfill for EXT2-4 + parser v4.**

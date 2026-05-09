@@ -1,0 +1,6 @@
+scenario,n_cohort,h1_pct_onco,h1_ci,h3_strict_pct,h3_strict_ci,h4_mi_to_ftump_delta
+"Primary (full cohort, n=1,542)",1542,22.7,(20.7-24.9),1.2,(0.3-4.2),-14.9 pp (-26.7 to -2.5)
+Excl. 2025 partial-year,1532,22.7,(20.7-24.9),1.2,(0.3-4.3),-14.4 pp (-26.7 to -1.5)
+Excl. 5 multi-primary patients,1537,22.6,(20.6-24.8),1.2,(0.3-4.2),-14.9 pp (-26.7 to -2.5)
+Excl. small-n entities (DHGTC/HCC/PDTC/HTT),1526,22.9,(20.9-25.1),1.2,(0.3-4.2),-14.9 pp (-26.7 to -2.5)
+All sensitivity exclusions combined,1511,22.9,(20.9-25.1),1.2,(0.3-4.3),-14.4 pp (-26.7 to -1.5)

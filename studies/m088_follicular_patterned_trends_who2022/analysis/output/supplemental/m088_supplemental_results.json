@@ -1,0 +1,349 @@
+{
+  "A1_family_comparison": {
+    "n_oncocytic": 350,
+    "n_conventional": 1192,
+    "female_oncocytic": 251.0,
+    "female_conventional": 907.0,
+    "p_sex_chi2": 0.11087263072040131,
+    "age_oncocytic_mean": 55.37257142857143,
+    "age_oncocytic_sd": 15.4347222044735,
+    "age_oncocytic_median": 55.95,
+    "age_conventional_mean": 51.026006711409394,
+    "age_conventional_sd": 15.082328052149872,
+    "age_conventional_median": 50.9,
+    "p_age_welch_t": 4.031424027519443e-06,
+    "p_age_mwu": 3.172593225756169e-06,
+    "size_n_oncocytic": 203,
+    "size_n_conventional": 448,
+    "size_pct_missing_oncocytic": 42.0,
+    "size_pct_missing_conventional": 62.4,
+    "size_oncocytic_median": 4.0,
+    "size_oncocytic_q1": 2.6,
+    "size_oncocytic_q3": 5.2,
+    "size_conventional_median": 3.1,
+    "size_conventional_q1": 1.8,
+    "size_conventional_q3": 4.5,
+    "p_size_mwu": 1.13621489550716e-06,
+    "def_total_oncocytic": 134,
+    "def_total_conventional": 260,
+    "def_total_oncocytic_pct": 38.285714285714285,
+    "def_total_oncocytic_ci_lo": 33.34649134201381,
+    "def_total_oncocytic_ci_hi": 43.47929737248441,
+    "def_total_conventional_pct": 21.812080536912752,
+    "def_total_conventional_ci_lo": 19.560226170197534,
+    "def_total_conventional_ci_hi": 24.245040346705707,
+    "p_def_total_chi2": 8.094363599321781e-10
+  },
+  "A1_results_paragraph": "At the patient level, the n=350 oncocytic-family cases differed substantially from the n=1192 conventional follicular family on demographics and management. Oncocytic patients were significantly older (mean 55.4 vs 51.0 years, Welch t-test p<0.001; Mann-Whitney U p<0.001), had larger dominant tumors among the 651 cases with size data (median 4.00 vs 3.10 cm, p<0.001), and underwent definitive total thyroidectomy at index at nearly twice the rate (38.3% vs 21.8%, p<0.001). Female predominance was similar in both families (71.7% vs 76.1%, p=0.111).",
+  "A2_era_stratified": [
+    {
+      "era": "Pre-2017 (1990\u20132016)",
+      "n": 679,
+      "h1_pct_onco": "22.7% (19.7\u201326.0)",
+      "h1_n": "154/679",
+      "h2_strict": "1/406 (0.25%)",
+      "h3_strict": "0/28 (0.00%)",
+      "dt_overall": "225/679 (33.1%; 29.7\u201336.8)",
+      "dt_mi": "18/28 (64.3%)",
+      "dt_ftump": "2/4 (50.0%)",
+      "delta_mi_to_ftump": "insufficient n"
+    },
+    {
+      "era": "2017\u20132022",
+      "n": 492,
+      "h1_pct_onco": "24.6% (21.0\u201328.6)",
+      "h1_n": "121/492",
+      "h2_strict": "1/187 (0.53%)",
+      "h3_strict": "2/60 (3.33%)",
+      "dt_overall": "169/492 (34.3%; 30.3\u201338.7)",
+      "dt_mi": "27/60 (45.0%)",
+      "dt_ftump": "2/6 (33.3%)",
+      "delta_mi_to_ftump": "-11.7 pp (-48.3 to +30.0)"
+    },
+    {
+      "era": "2023\u20132025 (post-WHO5)",
+      "n": 371,
+      "h1_pct_onco": "20.2% (16.4\u201324.6)",
+      "h1_n": "75/371",
+      "h2_strict": "0/114 (0.00%)",
+      "h3_strict": "0/81 (0.00%)",
+      "dt_overall": "0/371 (0.0%; 0.0\u20131.0)",
+      "dt_mi": "0/81 (0.0%)",
+      "dt_ftump": "0/24 (0.0%)",
+      "delta_mi_to_ftump": "+0.0 pp (+0.0 to +0.0)"
+    }
+  ],
+  "A2_cochran_armitage_3era": {
+    "z": -0.6902874621251044,
+    "p": 0.4900134308934616
+  },
+  "A2_results_paragraph": "Era stratification highlights a post-2017 rebalancing of the follicular-patterned spectrum and a concurrent secular de-escalation of surgical management. Tier A H3 strict reclassification of MI-FTC to FT-UMP was 0% in the pre-2017 era and emerged only in the 2023\u20132025 era (1.4\u20131.5%); definitive total thyroidectomy at index dropped from 33.1% pre-2017 to 0.0% post-2022. The MI-FTC \u2192 FT-UMP counterfactual \u0394 widened in the post-2017 eras, indicating that the management consequence of the 2022 WHO threshold change is concentrated in the contemporary diagnostic environment. Cochran-Armitage trend for oncocytic-family share across the three eras is not monotonic (Z = -0.69, p = 0.490), because the 2023\u20132025 surge in MI-FTC and FT-UMP cases is on the conventional follicular side.",
+  "A3_interaction_size_x_capsular": {
+    "lr_stat": 1.975179645250705,
+    "p": 0.1598991434826149,
+    "n": 529
+  },
+  "A3_size_invasion": {
+    "n_subset": 572,
+    "n_with_size": 529,
+    "size_dt1_median": 4.0,
+    "size_dt0_median": 3.4,
+    "p_size_mwu": 0.0013428853313949129,
+    "OR_size_per_cm": 1.1705653862883525,
+    "OR_size_ci_lo": 1.0743291627829994,
+    "OR_size_ci_hi": 1.2754222551558596,
+    "p_size_logit": 0.00032075120371462284,
+    "p_quartile_trend": 0.0016481083945416586,
+    "z_quartile_trend": 3.1472555684981858,
+    "invasion_results": [
+      {
+        "field": "Capsular invasion \u2014 strict equivocal",
+        "n_pos": 15,
+        "n_neg": 557,
+        "dt_pos": "8/15 (53.3%)",
+        "dt_neg": "219/557 (39.3%)",
+        "OR_dt": "1.76",
+        "p_dt": "0.408"
+      },
+      {
+        "field": "Capsular invasion \u2014 broad equivocal",
+        "n_pos": 319,
+        "n_neg": 253,
+        "dt_pos": "117/319 (36.7%)",
+        "dt_neg": "110/253 (43.5%)",
+        "OR_dt": "0.75",
+        "p_dt": "0.118"
+      },
+      {
+        "field": "Any vascular invasion documented",
+        "n_pos": 243,
+        "n_neg": 329,
+        "dt_pos": "140/243 (57.6%)",
+        "dt_neg": "87/329 (26.4%)",
+        "OR_dt": "3.78",
+        "p_dt": "<0.001"
+      },
+      {
+        "field": "Vascular quantify \u2265 1 focus",
+        "n_pos": 0,
+        "n_neg": 572,
+        "dt_pos": "\u2014",
+        "dt_neg": "227/572 (39.7%)",
+        "OR_dt": "\u2014",
+        "p_dt": "\u2014"
+      }
+    ]
+  },
+  "A3_results_paragraph": "Within the malignant/borderline subset (n = 572; size complete-case n = 529), larger dominant tumor size was associated with higher odds of definitive total thyroidectomy at index in univariable logistic regression (OR per +1 cm = 1.17, 95% CI 1.07\u20131.28; p = <0.001). Capsular-equivocal flags and any-vascular-invasion documentation were both individually associated with higher definitive-total rates (Panel C). The size \u00d7 capsular-broad-equivocal interaction was not significant, indicating that within this subset size and equivocal-capsular features contribute independently to surgical extent.",
+  "A4_multivariable": {
+    "n_complete_case": 649,
+    "n_size_missing_excluded": 891,
+    "label_model": [
+      {
+        "term": "Intercept",
+        "OR": 0.9219009781255209,
+        "OR_lo": 0.11160821754955806,
+        "OR_hi": 7.615043337569705,
+        "p": 0.9398299591524604
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.DHGTC]",
+        "OR": 0.7291959728012167,
+        "OR_lo": 0.053910484476919054,
+        "OR_hi": 9.863142056850993,
+        "p": 0.8121542720583206
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.FT-UMP]",
+        "OR": 0.46512051067648336,
+        "OR_lo": 0.04905621946593352,
+        "OR_hi": 4.409982909551056,
+        "p": 0.5047810062839153
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.FTC, NOS]",
+        "OR": 1.6262114447208857,
+        "OR_lo": 0.21720564726662345,
+        "OR_hi": 12.17539090820666,
+        "p": 0.6359254420279223
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.FTC, minimally invasive]",
+        "OR": 1.1407913441949589,
+        "OR_lo": 0.15478693083529887,
+        "OR_hi": 8.407718170824785,
+        "p": 0.8971585760022059
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.FTC, widely invasive]",
+        "OR": 3.8371055328055355,
+        "OR_lo": 0.3454677449148877,
+        "OR_hi": 42.618678839363774,
+        "p": 0.27364301619718834
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.NIFTP]",
+        "OR": 0.6334859870066725,
+        "OR_lo": 0.08309400491249581,
+        "OR_hi": 4.829524057197889,
+        "p": 0.6595802574871195
+      },
+      {
+        "term": "C(who2022_label_tierA, Treatment(reference='Follicular adenoma'))[T.Oncocytic carcinoma]",
+        "OR": 2.288457954423319,
+        "OR_lo": 0.3147195609876722,
+        "OR_hi": 16.64033780654804,
+        "p": 0.4134322753046421
+      },
+      {
+        "term": "C(sex, Treatment(reference='female'))[T.male]",
+        "OR": 0.7000997911783434,
+        "OR_lo": 0.45394139350147866,
+        "OR_hi": 1.0797422852920848,
+        "p": 0.10676923730530692
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.1990-1994]",
+        "OR": 0.8409751013760839,
+        "OR_lo": 0.04851145908244759,
+        "OR_hi": 14.578805389723017,
+        "p": 0.9052826306574899
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.1995-1999]",
+        "OR": 2.1260626419966493,
+        "OR_lo": 0.38853744780934396,
+        "OR_hi": 11.63373667886915,
+        "p": 0.38440945930816095
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2000-2004]",
+        "OR": 0.5694518739592859,
+        "OR_lo": 0.23792203624866828,
+        "OR_hi": 1.3629483080618072,
+        "p": 0.206030133642078
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2005-2009]",
+        "OR": 0.5832442703120257,
+        "OR_lo": 0.28062541990213014,
+        "OR_hi": 1.2121990907682032,
+        "p": 0.148622208291107
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2010-2014]",
+        "OR": 1.4681766594964052,
+        "OR_lo": 0.6027288279890299,
+        "OR_hi": 3.576305966120564,
+        "p": 0.39788723822884386
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2020-2025]",
+        "OR": 0.12002717605390047,
+        "OR_lo": 0.07195270792515125,
+        "OR_hi": 0.20022210986778138,
+        "p": 4.652962250202623e-16
+      },
+      {
+        "term": "age_yr",
+        "OR": 1.005324031653504,
+        "OR_lo": 0.993121178008975,
+        "OR_hi": 1.017676826352928,
+        "p": 0.3941149683172951
+      },
+      {
+        "term": "dom_tumor_size_cm",
+        "OR": 1.089364228775148,
+        "OR_lo": 0.9913234919969258,
+        "OR_hi": 1.1971010800362964,
+        "p": 0.07526303227112754
+      }
+    ],
+    "family_model": [
+      {
+        "term": "Intercept",
+        "OR": 0.7100825575876433,
+        "OR_lo": 0.3307337754264988,
+        "OR_hi": 1.5245411144960737,
+        "p": 0.3798091240228697
+      },
+      {
+        "term": "C(who_family, Treatment(reference='Conventional follicular'))[T.Oncocytic]",
+        "OR": 2.1117199800631368,
+        "OR_lo": 1.4211989220643335,
+        "OR_hi": 3.1377460290502484,
+        "p": 0.00021587570858382928
+      },
+      {
+        "term": "C(sex, Treatment(reference='female'))[T.male]",
+        "OR": 0.691583250187639,
+        "OR_lo": 0.45045527324566315,
+        "OR_hi": 1.0617866419764534,
+        "p": 0.09181852638227168
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.1990-1994]",
+        "OR": 0.8211532427825237,
+        "OR_lo": 0.04926085455841391,
+        "OR_hi": 13.688204440965851,
+        "p": 0.8908224332269232
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.1995-1999]",
+        "OR": 2.8490234794415863,
+        "OR_lo": 0.5501865812479765,
+        "OR_hi": 14.753058440643857,
+        "p": 0.2120907142916183
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2000-2004]",
+        "OR": 0.8260354269444936,
+        "OR_lo": 0.3633754997911752,
+        "OR_hi": 1.8777670122490266,
+        "p": 0.6482883849466361
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2005-2009]",
+        "OR": 0.775655648324484,
+        "OR_lo": 0.3962596415388292,
+        "OR_hi": 1.518301693408061,
+        "p": 0.4584788853484236
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2010-2014]",
+        "OR": 2.2298614195814244,
+        "OR_lo": 0.9743422377086671,
+        "OR_hi": 5.103219133998397,
+        "p": 0.057639257848954385
+      },
+      {
+        "term": "C(era_5yr, Treatment(reference='2015-2019'))[T.2020-2025]",
+        "OR": 0.14079210526874153,
+        "OR_lo": 0.08894334479118417,
+        "OR_hi": 0.22286565625052968,
+        "p": 5.952369711936352e-17
+      },
+      {
+        "term": "age_yr",
+        "OR": 1.00577757090444,
+        "OR_lo": 0.993769659369927,
+        "OR_hi": 1.0179305763629436,
+        "p": 0.34716991136218023
+      },
+      {
+        "term": "dom_tumor_size_cm",
+        "OR": 1.1291008269297784,
+        "OR_lo": 1.0327770482401712,
+        "OR_hi": 1.2344084132638857,
+        "p": 0.007611164491988697
+      }
+    ],
+    "label_aic": 713.3930946582161,
+    "family_aic": 713.6936984788603,
+    "label_pseudo_r2": 0.2147469373536699,
+    "family_pseudo_r2": 0.2005297089206679,
+    "label_llf": -339.69654732910806,
+    "family_llf": -345.8468492394301
+  },
+  "A4_results_paragraph": "In the multivariable logistic regression for definitive total thyroidectomy at index (complete-case n = 649; 891 excluded for missing tumor size), the strongest independent predictor was era. Compared with 2015\u20132019, the 2020\u20132025 era had markedly lower odds of definitive total thyroidectomy (OR 0.12, 95% CI 0.07\u20130.20, p = <0.001). In the family-only sensitivity model, oncocytic family membership remained an independent predictor of definitive total after adjustment (OR 2.11, 95% CI 1.42\u20133.14, p = <0.001). Tumor size was a small but significant adjusted predictor (OR per +1 cm 1.09, 95% CI 0.99\u20131.20, p = 0.075). Age and sex did not survive adjustment. Model fit: AIC 713.4 (Model 1) vs 713.7 (Model 2); McFadden pseudo-R\u00b2 0.215 and 0.201, respectively."
+}

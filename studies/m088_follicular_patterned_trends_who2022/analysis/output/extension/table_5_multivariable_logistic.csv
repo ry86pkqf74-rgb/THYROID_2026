@@ -1,0 +1,14 @@
+term,OR,OR_lo,OR_hi,p
+Intercept,0.151,0.088,0.258,4.305e-12
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_minimally_invasive]",1.252,0.402,3.899,6.987e-01
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_oncocytic_warthin]",3.332,1.111,9.994,3.171e-02
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.hurthle_cell_adenoma]",1.047,0.636,1.723,8.562e-01
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.NIFTP]",1.49,0.464,4.782,5.027e-01
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTC_NOS]",2.279,0.759,6.841,1.418e-01
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.FTUMP]",0.441,0.098,1.995,2.880e-01
+"C(historical_group, Treatment(reference='follicular_adenoma'))[T.atypical_follicular_adenoma]",1.156,0.391,3.415,7.932e-01
+age_decade,1.069,0.983,1.163,1.209e-01
+male,0.825,0.609,1.117,2.137e-01
+size_imputed,1.098,1.006,1.197,3.562e-02
+size_known,2.312,0.786,6.804,1.280e-01
+era_post2017,0.394,0.294,0.529,5.263e-10
