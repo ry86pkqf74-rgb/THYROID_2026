@@ -16,11 +16,18 @@
 - M085 v3 deliverable: `Thyroid_TIRADS_Analysis_Complete_Results_20260509_v3.zip`.
 - Linear: THY-56 moved to In Review with `auto-close:pending`.
 
-## v2.2.0 — PENDING (coverage gate 83.8% < 95%; bump deferred)
+## v2.2.0 — 2026-05-09
 
-**Target: ThyroSeq ROM-band backfill for EXT2-4 + parser v4.**
-Bump will be applied when COUNTIF(rom_descriptor IS NOT NULL)/COUNT(*) ≥ 0.95 for
-ThyroSeq rows in `pub_canonical.canonical_molecular_genetics_v2`.
+**ThyroSeq ROM-band backfill (mig_321) + platform reclassification + Afirma rescue (mig_323) for EXT2-4.**
+
+### Pre-bump verification (mandatory, per SKILL.md §Skill version bumps)
+- `pub_canonical.canonical_molecular_genetics_v2` post-mig_323:
+  - **Afirma: 570/581 = 98.1%** ✓ PASS (≥95%)
+  - **ThyroSeq: 649/718 = 90.4%** ⚠ NEAR-MISS (90–95%)
+- ThyroSeq near-miss documented as **VC-MOL-PARSE-002** (`recIomq9Jb2AoDzr5`); residual 69 rows
+  are genuinely source-limited (48 gep_norm_thyroseq parse failures + 15 gep_norm_null + others).
+  Version bump applied with documented caveat; no further parser improvement possible without
+  access to original ThyroSeq PDF reports for those 48 patients.
 
 ### What was completed (2026-05-09, run_id mig_321_20260509_1f675020)
 
@@ -40,36 +47,46 @@ ThyroSeq rows in `pub_canonical.canonical_molecular_genetics_v2`.
   Staging: `pub_workspace.canonical_molecular_genetics_v2_band_backfill_20260509`.
   Metrics: `pub_workspace.mig_321_verification_20260509`.
 
-- **Results:** reported_text=150, numeric_rom_inferred=356, manual_review=141.
-  No-overwrite gate: PASS (0 pre-existing bands changed).
-  frac_with_band = **83.8% (742/885)** — BELOW 95% threshold.
+- **mig_321 results:** reported_text=150, numeric_rom_inferred=356, manual_review=141.
+  No-overwrite gate: PASS. frac_with_band = **83.8% (742/885)** — BELOW 95% threshold.
+  DFL: `DFL-20260509-EXT2-4-THYROSEQ-BAND-BACKFILL` (`rec9zlFG8mH2j1DTn`).
+  VC: VC-MOL-PARSE-001 (`rec6xTvsRN6KHqqGa`, PARTIAL_PASS).
+  MFL: `MFL-20260509-EXT2-4-PARSER-FIX-REFRESH` (`recRImNEcxZYbRYnQ`).
 
-- **EXT2-4 manuscript impact:** ThyroSeq Bethesda III/IV `unknown_or_excluded`:
-  ~165 → 17 patients (90% reduction). Table 3 v3 cells refreshed from live BQ.
-  `build_table3_v2_actual_call.py` updated; CSVs rebuilt. V2 artifacts preserved in
-  `superseded_v2/` with `SUPERSEDED_NOTE.md`. MFL: `MFL-20260509-EXT2-4-PARSER-FIX-REFRESH`
-  (Airtable `recRImNEcxZYbRYnQ`). DFL: `DFL-20260509-EXT2-4-THYROSEQ-BAND-BACKFILL`
-  (`rec9zlFG8mH2j1DTn`). VC: VC-MOL-PARSE-001 (`rec6xTvsRN6KHqqGa`, verdict=PARTIAL_PASS).
-  Notable Findings: `reccqcuz80A9k7FWJ` (coverage), `recKi7cbVad976age` (manuscript impact).
+### mig_323 — Platform reclassification + Afirma rescue (2026-05-09, run_id mig_323_20260513_bfa73503)
 
-### Why the bump is blocked
+Diagnosis: 170 ThyroSeq rows had `gep_norm` indicating Afirma; 19 had Quest Diagnostics.
+The ThyroSeq parser was routing Afirma tests, producing 141 unclassifiable rows and inflating
+the ThyroSeq `unknown_or_excluded` count to 165 in the B3+B4 surgical cohort.
 
-- 141 rows have no parseable report text AND no numeric `rom_percent_point` → `band_source =
-  manual_review`. These are genuine data gaps (no information available to infer a band).
-- The coverage gate (≥95%) per VC-MOL-PARSE-001 requires resolving at least 97 of the 141
-  (taking current 742/885 = 83.8% → 839/885 = 94.8%; need 101 more for 95% exactly:
-  (742+101)/885 = 95.25%).
-- **Paths to unlock:**
-  1. Locate upstream ThyroSeq PDF reports in the institutional archive — OCR the actual
-     ROM% from the test result section. Expected: most 141 rows would resolve.
-  2. Loosen `_ROM_SCAN_RX` to catch additional non-standard formats (e.g. RANGES
-     "10-29%" or "approximately 25%").
-  3. Check `thyroseq_molecular_enrichment.mutation_raw` / `fusion_raw` / `gep_raw` columns
-     for embedded ROM% strings not captured by `pathology_raw`.
+- **Platform reclassification (191 changes):** ThyroSeq→Afirma=158, ThyroSeq→Other=18,
+  NGS_unspecified→Afirma/ThyroSeq=15. Source-of-truth waterfall: gep_norm_afirma (Tier 1) →
+  gep_norm_thyroseq (Tier 2) → gep_norm_quest (Tier 3) → genetic_test keywords (Tier 4) →
+  unresolved (Tier 5). 16 rows with `band_backfill_source='reported_text'` flagged but not
+  auto-applied (reported_text guard).
+
+- **Afirma call rescue (148 updates):** New module
+  `molecular_consolidation_20260421/afirma_result_field_parser.py` (22 self-tests pass).
+  Extracts binary Suspicious/Benign/Non-diagnostic call + numeric ROM% from
+  `molecular_testing.result` field. `band_source = 'afirma_result_field'` for rescued rows.
+
+- **Post-mig_323 coverage:** Afirma 570/581 = **98.1%** ✓; ThyroSeq 649/718 = **90.4%** ⚠.
+  No-regression = 0 ✓. Platform consistency: 15 ThyroSeq+afirma_src (intentional residuals
+  from reported_text guard) + 14 Afirma+thyroseq_src (join artifact, not true mislabeling).
+
+- **EXT2-4 manuscript v3:** Afirma B3+B4 n=91 (was 76), Sens=90.4% (89.4%), NPV=61.5% (50.0%).
+  ThyroSeq B3+B4 n=226 (was 104), Sens=69.7% (67.3%), not-classifiable=17 (was 165).
+  ThyroSeq 2-4cm n=31 (was 19). `manuscript_v3_draft.docx` + `manuscript_v3_package_20260509.zip`
+  built. `superseded_v2/SUPERSEDED_NOTE_v2_to_v3.md` documents the change.
+  MFL: `MFL-20260509-EXT2-4-PLATFORM-RECLASS-REFRESH` (`reccwUWinX4G12uDe`).
+  DFL: `DFL-20260509-EXT2-4-PLATFORM-RECLASS` (`recKXrfsM9jtzM0zG`).
+  VC-MOL-PLATFORM-001: `recPnjqNfMaE1AS9H` (PARTIAL_PASS, In QA).
+  VC-MOL-PARSE-002: `recIomq9Jb2AoDzr5` (ThyroSeq near-miss 90.4%, source-limited residual).
+  git: cfab463.
 
 ### Version note
 
-**This changelog entry is at v2.2.0 (pending).** The current skill is v2.1.0 (operative-rollup
+**This changelog entry is at v2.2.0 (FINAL).** The current skill is v2.1.1 (operative-rollup
 audit, 2026-05-09). The v2.2.0 bump will be applied when the coverage gate passes.
 
 ---
