@@ -4,11 +4,6 @@ build_table3_v2_actual_call.py — corrected Table 3 using the platform-reported
 test call from canonical_molecular_genetics_v2 (not the derived call from
 manuscript_cohort_v1's molecular_risk_tier + mutation flags).
 
-v3 update (2026-05-09): cells refreshed after ThyroSeq band-coverage backfill
-(mig_321). ThyroSeq unknown_or_excluded in Bethesda III/IV evaluable set
-reduced from ~165 → 17. Run DFL: DFL-20260509-EXT2-4-THYROSEQ-BAND-BACKFILL.
-Coverage gate: 83.8% (below 95% target; 141 rows remain manual_review).
-
 Inputs: hardcoded aggregate counts from BQ canonical_molecular_genetics_v2
         captured 2026-05-09. SQL in sql/04b_table3_v2_actual_reported_call.sql.
 

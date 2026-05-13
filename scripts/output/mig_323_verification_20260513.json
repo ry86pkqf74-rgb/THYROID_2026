@@ -1,0 +1,19 @@
+{
+  "coverage": {
+    "Afirma": {
+      "platform": "Afirma",
+      "n_total": 581,
+      "n_classified": 570,
+      "frac_classified": 0.981
+    },
+    "ThyroSeq": {
+      "platform": "ThyroSeq",
+      "n_total": 718,
+      "n_classified": 649,
+      "frac_classified": 0.904
+    }
+  },
+  "n_regressed": 0,
+  "n_thyroseq_with_afirma_source": 15,
+  "n_afirma_with_thyroseq_source": 14
+}
