@@ -1,0 +1,8 @@
+raw_rows_pulled,611
+distinct_patients_with_variants,218
+ocr_normalized,12
+truncated_AA_missing,1
+impossible_gene_protein,16
+negation_contradicted,32
+recovered_from_raw,8
+final_analytic_kept,576

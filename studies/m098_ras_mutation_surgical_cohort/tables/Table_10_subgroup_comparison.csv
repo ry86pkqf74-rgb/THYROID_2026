@@ -1,0 +1,21 @@
+item,value
+n — Isolated RAS,273
+n — Co-mutated,19
+age_med — Isolated RAS,52.0
+age_med — Co-mutated,68.0
+female_pct — Isolated RAS,79.48717948717949
+female_pct — Co-mutated,57.89473684210526
+malig_pct — Isolated RAS,58.24175824175824
+malig_pct — Co-mutated,89.47368421052632
+border_pct — Isolated RAS,7.6923076923076925
+border_pct — Co-mutated,5.2631578947368425
+benign_pct — Isolated RAS,34.065934065934066
+benign_pct — Co-mutated,5.2631578947368425
+ata25_high_n — Isolated RAS,69
+ata25_high_n — Co-mutated,15
+tt_pct — Isolated RAS,49.45054945054945
+tt_pct — Co-mutated,73.6842105263158
+— Per-codon ROM (n ≥3) —,
+  NRAS Q61R,"n=6, malig=5 (83%), malig+border=5 (83%)"
+  HRAS Q61R,"n=5, malig=1 (20%), malig+border=1 (20%)"
+  KRAS Q61R,"n=3, malig=1 (33%), malig+border=3 (100%)"
