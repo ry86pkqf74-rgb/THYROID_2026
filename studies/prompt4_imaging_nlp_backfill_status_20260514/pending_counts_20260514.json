@@ -1,0 +1,56 @@
+{
+  "project": "thyroid-canonical-pub-2026",
+  "dataset": "pub_canonical",
+  "queried_via": "bq query CLI",
+  "tables": [
+    {
+      "alias": "us_nodule_v2",
+      "table": "canonical_us_nodule_v2",
+      "total_rows": 37579,
+      "nlp_backfill_pending_true": 2061,
+      "pending_fraction": 0.054842864366800605
+    },
+    {
+      "alias": "ct_ln_v1",
+      "table": "canonical_ct_lymph_node_v1",
+      "total_rows": 6665,
+      "nlp_backfill_pending_true": 6665,
+      "pending_fraction": 1.0,
+      "llm_model_breakdown": {
+        "regex_heuristic_v3": 4701,
+        "regex_heuristic_v4_enriched": 1910,
+        "legacy_structured_mig329": 54
+      }
+    },
+    {
+      "alias": "mri_ln_v1",
+      "table": "canonical_mri_lymph_node_v1",
+      "total_rows": 306,
+      "nlp_backfill_pending_true": 306,
+      "pending_fraction": 1.0
+    },
+    {
+      "alias": "nucmed_ln_v1",
+      "table": "canonical_nucmed_lymph_node_v1",
+      "total_rows": 188,
+      "nlp_backfill_pending_true": 188,
+      "pending_fraction": 1.0
+    },
+    {
+      "alias": "us_ln_v2",
+      "table": "canonical_us_lymph_node_v2",
+      "total_rows": 7702,
+      "nlp_backfill_pending_true": 7694,
+      "pending_fraction": 0.9989613087509737,
+      "source_note_type_pending": {
+        "ultrasound_report": {"total": 6793, "pending": 6793},
+        "cpm_lnus_v3": {"total": 627, "pending": 627},
+        "cpm_lnus_v2": {"total": 274, "pending": 274},
+        "cpm_lnus": {"total": 8, "pending": 0}
+      }
+    }
+  ],
+  "us_nodule_pending_source_flags": {
+    "all_2061_rows_have": "source_base=false, source_tirads_v2=false, source_tirads_llm=false, source_us_nodules_tirads=false"
+  }
+}
