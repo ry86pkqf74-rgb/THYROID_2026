@@ -2,6 +2,7 @@
 -- Spine: pub_workspace.patient_analysis_resolved_v1 (replaces MotherDuck gold_master_patient_facts_v1)
 -- Feeders: pub_canonical.canonical_* (diagnosis, recurrence, survival, molecular_tested)
 -- Target (Phase 2 scratch): pub_workspace.cpm_stage_asm204_20260514
+-- Run: bq query --project_id=thyroid-canonical-pub-2026 --location=us-central1 --nouse_legacy_sql < studies/cpm_stage_asm204_20260514.sql
 -- Cohort invariant: 10,871 rows × 10,871 distinct research_id
 
 CREATE OR REPLACE TABLE `thyroid-canonical-pub-2026.pub_workspace.cpm_stage_asm204_20260514` AS
