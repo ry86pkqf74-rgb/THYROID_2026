@@ -43,6 +43,16 @@ CURATED_LINEAGE: dict[tuple[str, str], tuple[str, str]] = {
         "scripts/361_op_path_consolidation.py",
         "Built in scripts/361_op_path_consolidation.py (malignant patient rollup from path events); BQ hydrate via release mirror.",
     ),
+    (
+        "pub_canonical",
+        "canonical_patient_master",
+    ): (
+        "scripts/bq_replicate_canonical_patient_master.py",
+        "SSOT on MotherDuck thyroid_canonical_publication_v1_0.main.canonical_patient_master "
+        "(10,871 × distinct research_id — enforced by scripts/_md_connect.connect_locked); "
+        "pub_canonical table is recreated via Parquet export + `bq load --replace` (+ any "
+        "BQ-only ALTER follow-ups documented in Prompt 11 / bq_migrations). ",
+    ),
 }
 
 RE_CREATE_BT = re.compile(
