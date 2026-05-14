@@ -107,6 +107,26 @@
 
 ---
 
+## 4b. Iterative-build safeguards — run EVERY iteration
+
+The risk in iterative manuscript builds is not a wrong number once — it is a number that **quietly drifts between v1 and v3**. Wire these six checks into every rebuild. Reference implementation: `manuscripts/m011_beyond_bethesda_202605/sql/m011_safeguards.sql` + `m011_iteration_diff.sql`.
+
+**Order each iteration:** snapshot → cohort-scoped QC → provenance manifest → column audit → (rebuild) → iteration diff → route findings to Linear.
+
+1. **Snapshot before overwrite.** Before re-running the build, freeze the current locked-number tables to `pub_archive` as `m0XX_<table>_<version>_baseline_<YYYYMMDD>`. `pub_archive` convention is `<table>_pre_<reason>_<date>`. This is the safety net *and* the thing the next iteration diffs against.
+
+2. **Iteration diff (highest payoff).** After rebuilding, diff the fresh `pub_workspace.m0XX_*` against the most recent `pub_archive` baseline and report: (a) **patients added / dropped** from the cohort, (b) **locked metric values that moved** (model AUCs, cohort-audit counts) with magnitude, (c) **which feeder table's `last_modified` changed** since the provenance manifest. (a)+(b) catch "a number drifted"; (c) catches "builder didn't retrigger" and "legacy carry-over broke" *before* a co-author sees it. Explain every ADDED/DROPPED/CHANGED row.
+
+3. **Cohort-scoped QC.** Run the manuscript-relevant subset of `pub_signoff.qc_assertions_v1` (bethesda_enum, surgery_date_in_range, research_id uniqueness/integrity, master-join orphans) **filtered to the manuscript cohort**, plus temporal checks (FNA/US/molecular date ≤ surgery date) and domain-specific checks (LN non-negative/plausible). Materialize as `m0XX_cohort_qc`; every error-severity row must be 0 before numbers are locked. The project-wide pipeline `cowork_qc_nonblocking_pipeline_v1` runs daily at 06:00 CDT — but it is project-wide; scope it to the cohort so each build starts from a known-clean slice.
+
+4. **Provenance manifest.** Record, per iteration, every canonical table/view that fed the numbers with its `last_modified_time` and `row_count` at build time (from each dataset's `__TABLES__`). Materialize as `m0XX_provenance_manifest`. Three months later "where did N come from" is answerable, not archaeology.
+
+5. **Competing-source column flag.** For every column the manuscript uses, check `pub_signoff.canonical_column_verification_registry_v1` (`verification_status`) and `pub_signoff.deprecation_registry_v1`. Flag any column that is deprecated, or that touches a known open source-of-truth conflict — **surgery date (THY-87)**, **LN-positive (THY-89)**, **free-text histology**. If the manuscript leans on `first_surgery_date` or `ln_positive_final` while those issues are open, the report must say so, so a soon-to-be-deprecated column isn't baked in. Materialize as `m0XX_column_source_audit`.
+
+6. **Route findings to Linear; verify columns with the GCloud AI agent.** When a safeguard finds a violation or a competing-source dependency, file or update a **Linear issue** (workspace `rostemp`, `THY-` prefix) — don't leave it in a comment. As an independent second pass on column choice, point the BigQuery console **custom Agent** / `AI.GENERATE` over `pub_canonical.data_dictionary_v279` at the column audit (requires a BigQuery→Vertex AI connection; otherwise the human-ratified `canonical_column_verification_registry_v1` is the authoritative check).
+
+---
+
 ## 5. GitHub — version control
 
 - **Repo:** `THYROID_2026` — `github.com/ry86pkqf74-rgb/THYROID_2026` (owner Logan Glosser / `ry86pkqf74-rgb`). This is the **analysis/manuscript repo** — distinct from `ROS_FLOW_2_1` (the ResearchFlow ML training fleet, unrelated).
