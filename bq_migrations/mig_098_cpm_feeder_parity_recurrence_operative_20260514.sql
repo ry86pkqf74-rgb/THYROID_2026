@@ -14,7 +14,8 @@
 --
 -- Preconditions:
 --   - canonical_recurrence_v1 in pub_canonical is a BASE TABLE with 10,871 rows
---   - Legacy snapshot table includes the two clinical columns
+--   - Legacy snapshot may have the two columns typed INT64 and 100% NULL in BQ;
+--     §1b MERGE from canonical_patient_master restores population to match CPM.
 --
 -- Post-checks (run in BigQuery):
 --   SELECT COUNT(*) FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`;
@@ -36,8 +37,21 @@ MERGE `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1` AS T
 USING `thyroid-canonical-pub-2026.pub_legacy_source_20260416.canonical_recurrence_v1` AS S
 ON CAST(T.research_id AS STRING) = CAST(S.research_id AS STRING)
 WHEN MATCHED THEN UPDATE SET
-  T.recurrence_histology = S.recurrence_histology,
-  T.recurrence_evidence_source = S.recurrence_evidence_source;
+  T.recurrence_histology = CAST(S.recurrence_histology AS STRING),
+  T.recurrence_evidence_source = CAST(S.recurrence_evidence_source AS STRING);
+
+-- §1b Backfill when legacy clinical columns are NULL-only (live BQ 2026-05-14) -----
+-- Align feeder with CPM, which already carries Script-203–family recurrence histology
+-- / evidence fields for downstream assembly.
+MERGE `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1` AS T
+USING `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master` AS S
+ON CAST(T.research_id AS STRING) = CAST(S.research_id AS STRING)
+WHEN MATCHED THEN UPDATE SET
+  T.recurrence_histology = COALESCE(CAST(S.recurrence_histology AS STRING), T.recurrence_histology),
+  T.recurrence_evidence_source = COALESCE(
+    CAST(S.recurrence_evidence_source AS STRING),
+    T.recurrence_evidence_source
+  );
 
 -- §2 Operative episode facade — re-resolve SELECT * ---------------------------------
 CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_canonical.operative_episode_detail_v2`
