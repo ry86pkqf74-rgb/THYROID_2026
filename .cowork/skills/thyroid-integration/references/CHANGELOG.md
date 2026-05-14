@@ -1,5 +1,91 @@
 # thyroid-integration skill — changelog
 
+## v2.3.0 — 2026-05-13
+
+**Canonical master v1_2 → v1_6 cascade build (parse-but-not-propagated bug remediation).**
+
+### Pre-bump verification (mandatory)
+Coverage delta gate satisfied per BQ checks:
+- `canonical_patient_master_v1_6` row count: 10,871 (= v1_1 baseline; no patients dropped). ✓
+- Column count: 2,233 (v1_1 ≈ 1,650; net +583, after 17 conflict-renames to `*_v3`). ✓
+- `multifocality_flag_v2 = TRUE` row count: 1,304 patients (was 0 in v1). ✓
+- `total_thyroid_volume_cc_v2 IS NOT NULL`: 10,698 (98.4%); column previously did not exist. ✓
+- `syn_paraG_1_location IS NOT NULL`: 2,882; column previously did not exist. ✓
+- M084 v10 cohort (n=125): gland_weight 116/125; total_volume 125/125; syn_paraG_1_location 125/125; syn_pintent_removal_intent 125/125. ✓
+
+### What was completed (2026-05-13, Cowork session)
+
+**Notable Finding:** `NF-2026-05-13-canonical-master-parse-not-propagate-bug-pattern` (Airtable rec `recl3xy2H1okYLCn2`; Linear THY-81). Severity: **publishable**. Four sub-bugs uncovered through M084 v10 Table 7 audit (originally reported 42/125 patients with thyroid weight; actual = 116/125):
+  1. Thyroid weight wrong-column join — used sparse `gland_weight_total_reported_g` instead of synoptic-sourced richer column
+  2. `canonical_path_malignant_events_v1.multifocality_flag` = FALSE for all 6,469 rows (pipeline never set it)
+  3. LN levels parsed from sparse structured column (5.7%) instead of richer `Tumor_1_LN location` free-text (34.7%)
+  4. Tumor 3-5 not in master despite presence in event table
+
+**19 MIG tables + 3 canonical builds (all in `pub_workspace` / `pub_canonical`):**
+- `MIG_thyroid_gland_measurements_synoptic_v1` (10,871 pts) — initial gland weight backfill
+- `MIG_synoptic_gland_dimensions_v2` — per-lobe L×W×H + ellipsoid volume + total
+- `MIG_synoptic_ln_levels_v1` — LN level dissection + per-tumor positive
+- `MIG_synoptic_tumor_details_v1` — tumors 1-5 site/laterality/size/histology
+- `MIG_synoptic_full_fields_v1` (214 cols) — tumor 1-5 detail, parathyroid 1-6, surg flags, frozen, thyroiditis
+- `MIG_ct_thyroid_full_fields_v1` (3,086 pts) — CT thyroid concat fields + max LN size + contrast counts
+- `MIG_mri_thyroid_full_fields_v1` (462 pts) — MRI w/ NEW parathyroid + vocal cords + nodule1-5 detail
+- `MIG_nucmed_full_fields_v1` (10,862 pts) — sestamibi/iodine/parathyroid scan separation
+- `MIG_frozensec_full_fields_v1` — per-slot FS results + carcinoma flag
+- `MIG_op_sheet_full_fields_v1` (9,368 pts) — preop, intraop, per-parathyroid-gland AG/resection/visualized (PHI-stripped)
+- `MIG_complications_full_fields_v1` (10,864 pts) — note: source file mostly empty for hypocalcemia/LOS; NSQIP fills
+- `MIG_us_nodules_tirads_full_fields_v1` (6,118 pts) — TR scores tagged ORIGINAL-SOURCE; current TIRADS in `canonical_us_nodule_tirads_multisystem_v1`
+- `MIG_fnas_full_fields_v1` (5,240 pts) — Bethesda 2010/2015/2023 max + distribution + subtype text
+- `MIG_thyroseq_afirma_full_fields_v1` (3,366 pts) — platform flags + mutation gene regex
+- `MIG_parathyroid_intent_full_fields_v1` (3,873 pts) — NLP intent classification
+- `MIG_imaging_catalog_full_fields_v1` (7,323 pts) — per-modality study counts (no PHI text)
+- `MIG_tg_labs_full_fields_v1` (2,579 pts) — Tg + TgAb longitudinal min/max/last
+- `MIG_legacy_path_files_drift_v1` — adjudication source columns + AJCC8 stages
+- `MIG_notes_structured_summary_v1` (10,865 pts) — counts + flags + DEATH (raw narrative NOT in BQ)
+- `pub_canonical.canonical_path_malignant_events_v2` — multifocality_flag corrected
+- `pub_canonical.canonical_thyroid_gland_measurements_v1` — unified weight/size with source-priority hierarchy
+- `pub_canonical.canonical_patient_master_v1_2..v1_6` — progressively enriched (1,749 → 1,967 → 2,110 → 2,153 → 2,233 cols)
+
+**Convention introduced:** New columns suffixed `_v2`, `_v3`, `_v4` where they shadow existing names (e.g. `syn_io_rln_monitoring_v3`). Originals preserved per hard rule #2 ("nothing is deleted").
+
+**Linear:** THY-64..THY-78 (Database Reconciliation & QA project). THY-72 + THY-75 closed as already-integrated (NSQIP dupe + Case Details NSQIP-format dupe). THY-81 = the publishable Notable Finding. All others In Review with `auto-close:pending`.
+
+**DFL trail (Airtable Data Feedback Log):**
+- `DFL-2026-05-13-M084-thyroid-weight-size-backfill` (rec recGtdQVdW2ayeE2Q)
+- `DFL-2026-05-13-master-v1_2-dim-ln-multi-laterality` (rec recN3BffKZFYvn7qS)
+- `DFL-2026-05-13-master-v1_3-synoptic-full-fields` (rec recbWZHkG80iN1sKY)
+- `DFL-2026-05-13-master-v1_4-batch-5-MIGs` (rec rec8m3f2BC41nDcF9)
+- `DFL-2026-05-13-master-v1_5-batch2-5-sources` (rec recBRLjtJyvQ7bKMP)
+- `DFL-2026-05-13-master-v1_6-batch3-5-sources` (rec recNOvmZnoQtI4p9M)
+
+**Source Files registry updated** in THYROID_DATA_REGISTRY (Airtable base A): 22 new rows added (3 canonical_* + 19 MIG_*) for daily-sync drift watching.
+
+**Data dictionary:** `outputs/M084_gland_measurement_backfill/v1_6_DATA_DICTIONARY_20260513.md`
+
+**Cautions for downstream consumers:**
+- For TIRADS, use `canonical_us_nodule_tirads_multisystem_v1` / `tirads_resolved` not `syn_us_tr_*` (which may be outdated)
+- For Bethesda, use `syn_fna_bethesda_2023_max` (rescored long format) not `syn_op_dominant_nodule_bethesda` (legacy op-sheet text)
+- For thyroid weight, use `gland_weight_final_g_v2` (synoptic-priority), check `gland_weight_source_v2` provenance
+- For multifocality, use `multifocality_flag_v2`, not `multifocal_flag_path` (NLP partial)
+- For LN levels, use `ln_level_*_examined_v2`, not `ln_level_*_examined` (sparse structured-only)
+- For mortality, combine `nsqip_death_30d` + `syn_notes_death_flag_present_in_notes`
+
+### Extension — canonical molecular genetics completeness (`mig_324`, 2026-05-14)
+
+**BQ migration:** `scripts/mig_324_cmg_completeness_pass_bq.py`
+
+- Snapshot: `pub_archive.canonical_molecular_genetics_v2_pre_completeness_pass_20260514`
+- Staging: `pub_workspace.cmg_date_backfill_staging_20260514`
+- Backfills NULL `resolved_test_date` via `linked_fna_episode_id` → `canonical_fna_events_v1`, `linked_surgery_episode_id` → `canonical_operative_events_v1` (−14d proxy), then `thyroseq_molecular_enrichment.imported_at` (patient-level MAX dedupe).
+- New columns: `resolved_test_date_source`, `molecular_episode_id_v2`, `test_dedup_key` (row-stable: includes legacy `molecular_episode_id` + `report_source_table`), `semantic_test_cluster_key` (patient|date|platform for duplicate-route clustering), `completeness_pass_run_id`, `parse_status_v2` (baseline copy of `parse_status`; parser escalation deferred).
+- Live verification (`scripts/output/mig_324_verification_20260514.json`): `frac_with_date=1.0`, distinct `molecular_episode_id_v2`=1349 / 1384 rows (≥95%), row-level triple collisions on `test_dedup_key`=0, date regression=0 vs snapshot.
+- Phase 1 orphan sizing post-fix (`scripts/output/mig_324_phase1_orphan_signal_20260514.json`): orphan enrichment-content patients still out of CMG **n=139**, **strong_signal_pts=1** → Phase 4 orphan recovery minimal; Phase 7 manuscript package refresh skipped.
+
+**Airtable (THYROID_MANUSCRIPT):** DFL `DFL-20260514-CMG-COMPLETENESS-PASS` (`recEYbeJEZM2B24uX`); MFL `MFL-20260514-EXT2-4-CANONICAL-COMPLETENESS-PASS` (`rec02870wrtwT563X`).
+
+**Airtable (THYROID_DATA_REGISTRY):** VC `VC-MOL-COVERAGE-001` (`receFG6bxvVWyPZVH`), severity high.
+
+**Notable Finding:** `NF-2026-05-14-canonical-molecular-coverage-gap` (`recOdpga5tPXPAChW`).
+
 ## v2.1.1 — 2026-05-09
 
 **canonical_operative_patient_rollup_v1 → v1_1 promotion (cascade refinement).**

@@ -1,0 +1,12 @@
+{
+  "frac_with_date": 1.0,
+  "frac_with_episode_id_v2": 1.0,
+  "n_distinct_episodes_v2": 1349,
+  "n_rows": 1384,
+  "frac_distinct_dedup": 1.0,
+  "n_semantic_clusters_ge3": 3,
+  "n_rows_in_semantic_clusters_ge3": 9,
+  "n_row_clusters_ge3": 0,
+  "n_changed_prior_dates": 0,
+  "_advanced_verify": true
+}
