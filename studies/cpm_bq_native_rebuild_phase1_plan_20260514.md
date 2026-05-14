@@ -1,8 +1,10 @@
 # CPM BigQuery-native rebuild — Phase 1 (analysis & planning only)
 
-**Date:** 2026-05-14  
+**Date:** 2026-05-14 (Phase 1.5 pinning appended same date)  
 **Scope:** `canonical_patient_master` (CPM) — full lineage map, input inventory, coarse column provenance, staged port plan.  
 **Hard rule this phase:** no table builds, no BigQuery writes, no MotherDuck mutations.
+
+**Artifacts:** Read-only BQ validation memo `studies/CPM_Rebuild_Phase1_BQ_Validation.md`; machine DAG `studies/cpm_bq_native_rebuild_phase1_dag_20260514.json`.
 
 **Cohort invariant (publication):** `scripts/_md_connect.connect_locked()` requires exactly **10,871** rows and **10,871** distinct `research_id` on `thyroid_canonical_publication_v1_0.main.canonical_patient_master`.
 
@@ -15,8 +17,8 @@
 | Node | Inputs (representative) | Output | Row set / column block |
 |------|-------------------------|--------|------------------------|
 | Institutional Excel + DB extracts | `raw/*.xlsx`, `processed/*.parquet`, DVC-tracked parquets, `exports/*` rebuild artifacts | Base MD tables: `path_synoptics`, `tumor_pathology`, `operative_episode_detail_v2`, `fna_*`, `imaging_*`, `clinical_notes_long`, `molecular_*`, `longitudinal_lab_canonical_v1`, `thyroglobulin_lab_canonical_v1`, etc. | Multi-table, multi-grain; keyed by `research_id` |
-| Resolved analysis layer | Scripts **48–55** family (`patient_analysis_resolved_v1`, `episode_*`, `lesion_*`, linkage v3, scoring, complications, labs) | **`patient_analysis_resolved_v1`** (~12,886-row spine in dev docs; publication may subset) | Wide per-patient resolved fields |
-| **Gold alias / gold table** | On at least one MotherDuck catalog, **`gold_master_patient_facts_v1`** is deployed as **`CREATE VIEW … AS SELECT * FROM patient_analysis_resolved_v1`** (see `exports/md_migration_20260415.duckdb.views.sql` and query-history export under `studies/20260407_live_publication_signoff_reaudit/`). On **eras** account, 221 docstring describes `gold_master_patient_facts_v1` as **146-column** table merged from glosser parquet + eras-only columns — treat as **environment-specific** until a single BQ-native definition is chosen. | **`gold_master_patient_facts_v1`** | **Spine demographics, surgery, pathology rollups, labs, RAI flags, eligibility** — whatever columns exist in the underlying object |
+| Resolved analysis layer | Scripts **48–55** family (`patient_analysis_resolved_v1`, `episode_*`, `lesion_*`, linkage v3, scoring, complications, labs) | **`patient_analysis_resolved_v1`** (**10,871 × 146** on BigQuery `pub_workspace`; publication cohort) | Wide per-patient resolved fields |
+| **Gold alias / lineage root** | MotherDuck: **`gold_master_patient_facts_v1`** = **`CREATE VIEW … AS SELECT * FROM patient_analysis_resolved_v1`** (see `exports/md_migration_20260415.duckdb.views.sql`, `studies/20260407_live_publication_signoff_reaudit/`). **BigQuery Phase 2 spine:** treat **`pub_workspace.patient_analysis_resolved_v1`** as the gold surrogate — there is **no separate `gold_master`** table to materialize in BQ. | **`gold_master_patient_facts_v1`** (VIEW) / **`patient_analysis_resolved_v1`** (BQ TABLE) | **146** annotated columns — **140** share names with live CPM; **6** resolved-layer-only names (see §Phase 1.5) |
 
 ### 1.2 Canonical sub-models feeding assembly (same era as 200-series)
 
@@ -140,7 +142,7 @@ Documented in `scripts/213_data_dictionary.py` **Script Lineage** table:
 
 ---
 
-## Task 3 — Column provenance (coarse, ~1,500 columns)
+## Task 3 — Column provenance (coarse, **~2,314** columns on live `pub_canonical.canonical_patient_master`)
 
 Map by **stage / prefix / thematic cluster** (not column-by-column). Use **`scripts/207_canonical_master_expansion.py` blocks A–X**, **`scripts/214`/`215` prefixes**, and **`scripts/221_eras_canonical_sync.py` `AUTO_COL_DESC`** for NLP / imaging / lab prefixes.
 
@@ -170,6 +172,35 @@ For **registry-level** verification categories, see `qc_framework_v1/manuscript/
 
 ---
 
+## Phase 1.5 — Root pin, assembly substaging, parity ladder (analysis)
+
+**Evidence:** `studies/CPM_Rebuild_Phase1_BQ_Validation.md` (BigQuery `INFORMATION_SCHEMA` + row counts). **DAG:** `studies/cpm_bq_native_rebuild_phase1_dag_20260514.json`.
+
+### 1.5.1 Six `patient_analysis_resolved_v1` columns not present **by name** on `canonical_patient_master`
+
+BigQuery set-diff (`pub_workspace` PAR minus `pub_canonical` CPM) yields exactly **six** names. **140 / 146** PAR columns match CPM identifiers verbatim.
+
+| PAR column | Classification | CPM disposition |
+|------------|----------------|-----------------|
+| `imaging_tirads_best` | **Renamed / superseded** | TI-RADS signal on CPM is **not** carried under `imaging_tirads_*`. Live inventory includes **`tirads_resolved`** plus NLP telemetry (`nlp_tirads_*`). Historical MotherDuck expansion (**207**) audited **`preop_tirads_best` ↔ `imaging_tirads_best`** across gold vs canonical — current consolidated wide schema dropped the PAR-style quartet in favor of richer synoptic/US/TIRADS stacks (`syn_*`, `prm_*`, workbook-fed columns through **`P4`–`P8`** ladder). Phase 2 parity = **value reconciliation** via mapped column families, not literal name equality. |
+| `imaging_tirads_worst` | **Renamed / superseded** | Same as above — map to consolidated TI-RADS / worst-index logic in ladder tables. |
+| `imaging_tirads_category` | **Renamed / superseded** | Same — category strings/scores re-derived in canonical imaging layers. |
+| `imaging_tirads_source` | **Renamed / superseded** | PAR-specific provenance naming; CPM uses alternate provenance columns (`*_source`, `prm_*`, synoptic lineage). |
+| `path_multifocal_flag` | **Renamed** | Canonical pathology rollup uses **`multifocal_flag_path`** (deprecated legacy names were `multifocal_flag` / `path_multifocal_flag`). **`multifocality_flag_v2`** is the manuscript-facing multifocality fix on **`v1_6+`** per thyroid-integration skill. |
+| `path_n_tumors` | **Renamed** | Canonical analog **`n_tumors_path`** (+ extended **`n_tumors_*`** facet columns on CPM). MotherDuck **`scripts/prompt6_347b_*`** documented **zero non-null** payload for PAR `path_multifocal_flag` / `path_n_tumors` at time of review — semantic join still treats these as **resolved-layer placeholders** superseded by pathology rollup naming. |
+
+### 1.5.2 Authoritative builder for `patient_analysis_resolved_v1`
+
+| Layer | Authority |
+|-------|-----------|
+| **Semantic rebuild (MotherDuck)** | **`scripts/48_build_analysis_resolved_layer.py`** — single CTAS merging upstream extraction, linkage v3, scoring, complications, labs (runs **after** scripts **49–53** per file docstring). |
+| **Incremental patches** | **`scripts/86_operative_nlp_final_sync.py`** — adds patient-level operative NLP aggregates to `patient_analysis_resolved_v1` / mirrors. |
+| **Schema relocation / selective CPM backfill choreography** | **`scripts/prompt6_347b_patient_analysis_resolved.py`** — MotherDuck-only move + logging (not the semantic grain builder). |
+
+**BQ mirror gap (Prompt 10 index):** `pub_workspace.patient_analysis_resolved_v1` is **not** listed in `studies/bq_pub_authoritative_builders_20260514.py` **`CURATED_LINEAGE`**. Until a pinned **`bq load` / scheduled export** is registered, Phase 2 **relocates the orphan-builder problem one level up**: CPM rebuild must **explicitly** document the PAR→BQ hydrate step or accept **`ORPHAN_MIRROR`** risk for `pub_workspace`.
+
+---
+
 ## Task 4 — Staged BQ-native port plan
 
 ### Principles
@@ -177,24 +208,41 @@ For **registry-level** verification categories, see `qc_framework_v1/manuscript/
 1. **Single BQ rebuild driver** eventually replaces `MD → Parquet → bq load` for CPM, but **only after** stage-wise parity is demonstrated.
 2. Each stage produces a **named scratch table** (`cpm_stage_NN_*`) or dataset partition **PLUS** a **diff report** vs current production CPM (MD snapshot or `pub_canonical.canonical_patient_master`).
 
-### Proposed stages (ordered)
+### Proposed stages (ordered) — each names **input → BQ build step → pub_archive parity target → Δcols**
 
-| Stage | MD analogue (script group) | BQ deliverable | Parity check |
-|-------|---------------------------|----------------|--------------|
-| **S0** | Cohort spine only | `SELECT DISTINCT research_id` from authoritative spine query | **COUNT = 10871**, **DISTINCT = 10871** |
-| **S1** | **200–203** | BQ models: diagnosis, survival, molecular-tested, recurrence | Join keys present; row count 10871 per grain; hash sample 200 rids |
-| **S2** | **`gold_master` / `patient_analysis_resolved_v1` parity** | Materialize gold-equivalent from BQ silver tables | Column-block hash or typed compare for **gold surrogate** (~150 cols); document **VIEW vs TABLE** split (eras vs glosser) |
-| **S3** | **204–205** | Base CPM wide select (pre-207) | Compare against archived MD **`canonical_patient_master_v1`** if snapshot exists; else reconstruct from MD export manifest |
-| **S4** | **207–208** | Add expansion + LN rollup | Block-wise compare: **207 blocks A–X** |
-| **S5** | **211–215** | NLP + structured integration | Prefix families: **`nlp_*`, `prm_*`, `syn_*`, `op_nlp_*`** |
-| **S6** | **217** | Lab/LN recovery | Lab/LN column diffs |
-| **S7** | **221 temporal + multi-surgery** | Recompute `*_days_from_surg` + surgery counts | Compare to MD **`canonical_patient_master_v221`** export |
-| **S8** | **223 promotion** (if needed only for row identity) | Final spine join = publication shape | **Exact 10871 / 10871** |
-| **S9** | **230–231** | Rollups + true margin/LVI/multi | **`patient_tumor_rollup_v1` parity** then **`231` join parity** |
-| **S10** | **233–236** | ETE + finalization | `comp_*` timing + VC columns |
-| **S11** | **`mig_255` … `mig_313`, `271*`, `87`** | Re-run as **ordered** BQ scripts | One migration-id per diff artifact (`signoff` table) |
-| **S12** | **QC framework SQL** | Replay in **documented order** (from `signoff_migration` / git history) | Per-migration row diff ≤ 0 rows threshold unless expected |
-| **S13** | **BQ-only deltas** | `mig_080`, `mig_082`, `mig_088`, `334`, `Mo36` | Schema parity vs current BQ `INFORMATION_SCHEMA`; replay if load wipes |
+Parity ladder verified on **`thyroid-canonical-pub-2026`** (see `studies/CPM_Rebuild_Phase1_BQ_Validation.md`). Promotion archives use suffix **`_archived_20260514`**.
+
+| Stage | MD analogue (script group) | BQ deliverable | **pub_archive / workspace parity target** | **Expected cols / Δvs prior** |
+|-------|---------------------------|----------------|-------------------------------------------|-------------------------------|
+| **S0** | Cohort spine only | `SELECT DISTINCT research_id` from authoritative spine query | *(none — row gate only)* | **10871 / 10871** distinct |
+| **S1** | **200–203** | BQ models: diagnosis, survival, molecular-tested, recurrence | *(none until assembly completes)* | Feeder grain QA + hash samples |
+| **S2** | **`patient_analysis_resolved_v1`** (= MD `gold_master` VIEW body) | Materialize PAR-equivalent wide spine from BQ silvers | **`pub_workspace.patient_analysis_resolved_v1`** | **146** cols (Δ vs S0 = lineage column set) |
+| **ASM204** | **204** | First **`canonical_patient_master_v1`** wide assemble | **Scratch:** `cpm_stage_asm204_*` *(no historic archive)* | Measure IN SCHEMA vs S2 |
+| **ASM205** | **205** | Consolidation / FNA-path / imaging hooks | **Scratch:** `cpm_stage_asm205_*` | Measure vs ASM204 |
+| **ASM207** | **207** | Expansion (+ PRM / imaging / CT / NM / complications / Tg) | **Scratch:** `cpm_stage_asm207_*` | Measure vs ASM205 |
+| **ASM208** | **208** | LN master rollup | **Scratch:** `cpm_stage_asm208_*` | Measure vs ASM207 |
+| **ASM211** | **211** | Gap-fill from extracted / episode tables | **Scratch:** `cpm_stage_asm211_*` | Measure vs ASM208 |
+| **ASM212** | **212** | Note NLP rollup | **Scratch:** `cpm_stage_asm212_*` | Measure vs ASM211 |
+| **ASM214** | **214** | Structured integration (`gm_*`, `prm_*`, `syn_*`, `lab_*`, `us_*`) | **Scratch:** `cpm_stage_asm214_*` | Measure vs ASM212 |
+| **ASM215** | **215** | Deep NLP (`op_nlp_*`, `med_nlp_*`, `pmhx_*`, …) | **Scratch:** `cpm_stage_asm215_*` | Measure vs ASM214 |
+| **ASM217** | **217** | Lab recovery + LN rebuild — **end of assembly chain** | **`pub_archive.canonical_patient_master_base_archived_20260514`** | **1663** cols (**+1517 vs S2**) |
+| **P2** | *(BQ promotion track)* | Ladder step v1_2 | **`pub_archive.canonical_patient_master_v1_2_archived_20260514`** | **1749** cols (**+86 vs base**) |
+| **P3** | *(BQ promotion track)* | Ladder step v1_3 | **`pub_archive.canonical_patient_master_v1_3_archived_20260514`** | **1967** cols (**+218 vs v1_2**) |
+| **P4** | *(BQ promotion track)* | Ladder step v1_4 | **`pub_archive.canonical_patient_master_v1_4_archived_20260514`** | **2110** cols (**+143 vs v1_3**) |
+| **P5** | *(BQ promotion track)* | Ladder step v1_5 | **`pub_archive.canonical_patient_master_v1_5_archived_20260514`** | **2153** cols (**+43 vs v1_4**) |
+| **P6** | *(BQ promotion track)* | Ladder step v1_6 | **`pub_archive.canonical_patient_master_v1_6_archived_20260514`** | **2233** cols (**+80 vs v1_5**) |
+| **P7** | *(BQ promotion track)* | Ladder step v1_7 | **`pub_archive.canonical_patient_master_v1_7_archived_20260514`** | **2237** cols (**+4 vs v1_6**) |
+| **P8** | *(BQ promotion track)* | Ladder step v1_8 = consolidated prod shape | **`pub_archive.canonical_patient_master_v1_8_archived_20260514`** + **`pub_canonical.canonical_patient_master`** | **2314** cols (**+77 vs v1_7**) |
+| **S7** | **221 temporal + multi-surgery** | Recompute `*_days_from_surg` + surgery counts | *(No `pub_archive` snapshot enumerated for v221 — use MD export / future dated archive)* | Compare to **`canonical_patient_master_v221`** export manifest |
+| **S8** | **223 promotion** | Publication DB CTAS | Align with **`P8`** once consolidated | **10871 / 10871** |
+| **S9** | **230–231** | Rollups + true margin/LVI/multi | *(MD-era archives on MotherDuck `archive_pub_v1_0`; mirror or snapshot as needed)* | **`patient_tumor_rollup_v1`** parity → **231** join parity |
+| **S10** | **233–236** | ETE + finalization | *(migration-scoped archives)* | `comp_*` timing + VC columns |
+| **S11** | **`mig_255` … `mig_313`, `271*`, `87`** | Ordered BQ/Python replays | Per-migration **`canonical_patient_master_pre_*`** twins where registered | One migration-id per diff artifact |
+| **S12** | **QC framework SQL** | Replay in documented order | `signoff_migration` / ledger | Zero unexpected row deltas |
+| **S13** | **BQ-only deltas** | `mig_080`, `mig_082`, `mig_088`, `334`, `Mo36` | Live **`pub_canonical`** schema vs **`P8`** archive | Replay after any wholesale replace-load |
+| **VIEW** | **45c** | Rebuild strict-preop Bethesda | **`pub_canonical.canonical_patient_master_v1_1`** (VIEW — not ladder width) | After **`P8`** passes |
+
+**Risk zone:** **`S2 → ASM217`** (+1517 columns) has **no historical pub_archive intermediates** — assembly drift is localized only if Phase 2 materializes **`ASM204`–`ASM216`** scratch tables (or appends new dated archives).
 
 ### Final acceptance bar
 
@@ -216,6 +264,8 @@ For **registry-level** verification categories, see `qc_framework_v1/manuscript/
 
 ## References (in-repo)
 
+- `studies/CPM_Rebuild_Phase1_BQ_Validation.md`, `studies/cpm_bq_native_rebuild_phase1_dag_20260514.json`
+- `scripts/48_build_analysis_resolved_layer.py`, `scripts/86_operative_nlp_final_sync.py`, `scripts/prompt6_347b_patient_analysis_resolved.py`
 - `scripts/204_canonical_master_assembly.py`, `scripts/205_canonical_consolidation.py`, `scripts/207_canonical_master_expansion.py`, `scripts/214_final_canonical_integration.py`, `scripts/221_eras_canonical_sync.py`, `scripts/223_publish_canonical.py`, `scripts/231_update_canonical_master.sql`, `scripts/236_canonical_finalization.py`
 - `scripts/_md_connect.py`, `scripts/bq_replicate_canonical_patient_master.py`
 - `sql/mig_079_emr_demographics_import.sql`, `sql/mig_079_operator_emr_cohort_demo_apply.sql`, `bq_migrations/mig_080_*.sql`, `mig_082_*.sql`, `mig_088_*.sql`, `qc_framework_v1/migrations/45c_canonical_patient_master_v1_1_refresh.sql`, `qc_framework_v1/migrations/334_*.sql`

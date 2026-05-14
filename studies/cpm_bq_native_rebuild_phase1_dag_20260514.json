@@ -1,0 +1,236 @@
+{
+  "dag_id": "cpm_bq_native_rebuild_phase1",
+  "version": "2026-05-14",
+  "cohort_invariant_rows": 10871,
+  "description": "Phase 1 planning DAG: resolved spine → MotherDuck assembly (204-217) → pub_archive parity ladder (base..v1_8). No BigQuery writes implied.",
+  "parity_dataset_archive": "pub_archive",
+  "parity_dataset_workspace": "pub_workspace",
+  "parity_dataset_canonical": "pub_canonical",
+  "nodes": [
+    {
+      "id": "S0",
+      "label": "Cohort spine gate",
+      "inputs": ["silver research_id spine"],
+      "bq_build_step": "COUNT/DISTINCT QA only",
+      "parity_target": null,
+      "expected_columns": null,
+      "column_delta_vs_prior": null,
+      "notes": "10871 rows × 10871 distinct research_id — no archive."
+    },
+    {
+      "id": "S1",
+      "label": "Canonical feeder models",
+      "inputs": ["structured silver tables"],
+      "bq_build_step": "MD analogue scripts 200–203 → diagnosis / survival / molecular-tested / recurrence",
+      "parity_target": null,
+      "expected_columns": null,
+      "column_delta_vs_prior": null,
+      "notes": "Grain QA vs feeders; no pub_archive checkpoint until assembly completes."
+    },
+    {
+      "id": "S2",
+      "label": "Resolved patient spine (gold surrogate)",
+      "inputs": ["extraction/refinement/linkage/scoring/complications/labs → PAR grain"],
+      "bq_build_step": "BQ-native replay of `patient_analysis_resolved_v1` semantics (from scripts 49–53 + 48 upstream)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_workspace.patient_analysis_resolved_v1`",
+      "expected_columns": 146,
+      "column_delta_vs_prior": "+146 vs empty wide (conceptually starts lineage naming)",
+      "notes": "`gold_master_patient_facts_v1` VIEW-as-PAR on MotherDuck; BQ SSOT table is pub_workspace PAR."
+    },
+    {
+      "id": "ASM204",
+      "label": "First wide assemble",
+      "inputs": ["S2 spine + canonical_diagnosis_unified_v1 + canonical_recurrence_v1 + canonical_survival_followup_v1 + canonical_molecular_tested_v1"],
+      "bq_build_step": "`scripts/204_canonical_master_assembly.py` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm204_<YYYYMMDD>",
+      "notes": "No historical pub_archive snapshot — localize drift via scratch CTAS + column diff vs next step."
+    },
+    {
+      "id": "ASM205",
+      "label": "Consolidation / FNA-path / TIRADS hooks",
+      "inputs": ["ASM204 output + tirads_llm_extracted_v2 + fna_cytology + tumor_pathology + ultrasound_reports + patient_refined_master_clinical_v12"],
+      "bq_build_step": "`scripts/205_canonical_consolidation.py` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm205_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM207",
+      "label": "Master expansion",
+      "inputs": ["ASM205 canonical_patient_master_v1 + PRM + imaging + CT/NM + complications + Tg timeline"],
+      "bq_build_step": "`scripts/207_canonical_master_expansion.py` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm207_<YYYYMMDD>",
+      "notes": "Historic MD header: 125→~260 cols on old fork; live parity is empirical IN SCHEMA diff vs ASM208."
+    },
+    {
+      "id": "ASM208",
+      "label": "LN master rollup",
+      "inputs": ["ASM207 output"],
+      "bq_build_step": "`scripts/208_*` LN rollup family",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm208_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM211",
+      "label": "Episode/extracted gap-fill",
+      "inputs": ["ASM208 output + refined episode/extracted tables"],
+      "bq_build_step": "`scripts/211_*` gap-fill analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm211_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM212",
+      "label": "Note NLP rollup",
+      "inputs": ["ASM211 output + note_entities_* rollups"],
+      "bq_build_step": "`scripts/212_*` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm212_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM214",
+      "label": "Structured integration",
+      "inputs": ["ASM212 output"],
+      "bq_build_step": "`scripts/214_final_canonical_integration.py` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm214_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM215",
+      "label": "Deep NLP integration",
+      "inputs": ["ASM214 output"],
+      "bq_build_step": "`scripts/215_*` analogue",
+      "parity_target": null,
+      "expected_columns": "TBD_MEASURE_PHASE2",
+      "column_delta_vs_prior": "TBD",
+      "scratch_table_convention": "cpm_stage_asm215_<YYYYMMDD>"
+    },
+    {
+      "id": "ASM217",
+      "label": "Lab recovery + LN rebuild",
+      "inputs": ["ASM215 output"],
+      "bq_build_step": "`scripts/217_*` analogue — completes MotherDuck assembly prior to version ladder",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_base_archived_20260514`",
+      "expected_columns": 1663,
+      "column_delta_vs_prior": "+1517 vs S2 PAR (1663 - 146)",
+      "notes": "FIRST pub_archive checkpoint for full wide row — assembly jump localization requires ASM204–ASM216 scratches."
+    },
+    {
+      "id": "P2",
+      "label": "Promotion v1_2",
+      "inputs": ["ASM217 / base parity"],
+      "bq_build_step": "MotherDuck/BQ promotion pipeline that produced v1_2",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_2_archived_20260514`",
+      "expected_columns": 1749,
+      "column_delta_vs_prior": "+86 vs base"
+    },
+    {
+      "id": "P3",
+      "label": "Promotion v1_3",
+      "inputs": ["P2"],
+      "bq_build_step": "Synoptic full-field promotion (+218 cols)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_3_archived_20260514`",
+      "expected_columns": 1967,
+      "column_delta_vs_prior": "+218 vs v1_2"
+    },
+    {
+      "id": "P4",
+      "label": "Promotion v1_4",
+      "inputs": ["P3"],
+      "bq_build_step": "CT/MRI/NM/Frozen/OP sheet/complications promotion (+143 cols)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_4_archived_20260514`",
+      "expected_columns": 2110,
+      "column_delta_vs_prior": "+143 vs v1_3"
+    },
+    {
+      "id": "P5",
+      "label": "Promotion v1_5",
+      "inputs": ["P4"],
+      "bq_build_step": "US TIRADS / FNAs / molecular panels / parathyroid intent (+43 cols)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_5_archived_20260514`",
+      "expected_columns": 2153,
+      "column_delta_vs_prior": "+43 vs v1_4"
+    },
+    {
+      "id": "P6",
+      "label": "Promotion v1_6",
+      "inputs": ["P5"],
+      "bq_build_step": "Imaging catalog / Tg+TgAb / legacy path / PHI-safe notes (+80 cols)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_6_archived_20260514`",
+      "expected_columns": 2233,
+      "column_delta_vs_prior": "+80 vs v1_5"
+    },
+    {
+      "id": "P7",
+      "label": "Promotion v1_7",
+      "inputs": ["P6"],
+      "bq_build_step": "Incremental promotion (+4 cols)",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_7_archived_20260514`",
+      "expected_columns": 2237,
+      "column_delta_vs_prior": "+4 vs v1_6"
+    },
+    {
+      "id": "P8",
+      "label": "Promotion v1_8 — production shape",
+      "inputs": ["P7"],
+      "bq_build_step": "Final ladder increment (+77 cols) → consolidated `pub_canonical.canonical_patient_master`",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_archive.canonical_patient_master_v1_8_archived_20260514`",
+      "expected_columns": 2314,
+      "column_delta_vs_prior": "+77 vs v1_7",
+      "notes": "Live table equals v1_8 column inventory post-consolidation (thyroid-integration CHANGELOG v2.6.0)."
+    },
+    {
+      "id": "VIEW_45c",
+      "label": "Strict-preop Bethesda view",
+      "inputs": ["P8 / live CPM"],
+      "bq_build_step": "`qc_framework_v1/migrations/45c_canonical_patient_master_v1_1_refresh.sql`",
+      "parity_target": "`thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master_v1_1` (VIEW)",
+      "expected_columns": "VIEW overlay — compare separately",
+      "column_delta_vs_prior": null,
+      "notes": "Not part of numeric ladder; rebuild after base CPM passes."
+    }
+  ],
+  "edges": [
+    {"from": "S0", "to": "S1"},
+    {"from": "S1", "to": "S2"},
+    {"from": "S2", "to": "ASM204"},
+    {"from": "ASM204", "to": "ASM205"},
+    {"from": "ASM205", "to": "ASM207"},
+    {"from": "ASM207", "to": "ASM208"},
+    {"from": "ASM208", "to": "ASM211"},
+    {"from": "ASM211", "to": "ASM212"},
+    {"from": "ASM212", "to": "ASM214"},
+    {"from": "ASM214", "to": "ASM215"},
+    {"from": "ASM215", "to": "ASM217"},
+    {"from": "ASM217", "to": "P2"},
+    {"from": "P2", "to": "P3"},
+    {"from": "P3", "to": "P4"},
+    {"from": "P4", "to": "P5"},
+    {"from": "P5", "to": "P6"},
+    {"from": "P6", "to": "P7"},
+    {"from": "P7", "to": "P8"},
+    {"from": "P8", "to": "VIEW_45c"}
+  ],
+  "par_vs_cpm_columns_only_in_par": [
+    "imaging_tirads_best",
+    "imaging_tirads_worst",
+    "imaging_tirads_category",
+    "imaging_tirads_source",
+    "path_multifocal_flag",
+    "path_n_tumors"
+  ]
+}
