@@ -1,0 +1,6 @@
+variable,test,statistic,p_value,bh_rank,bh_q_value,bh_significant_q05
+bethesda_ge4,Chi-square,,6.022852955034106e-07,1,3.011426477517053e-06,TRUE
+age_at_surgery,Mann-Whitney U,43146.0,0.007146417665042618,2,0.017866044162606545,TRUE
+bilateral_nodule_indicator,Chi-square,,0.047539647562922734,3,0.07923274593820456,FALSE
+has_mol,Chi-square,,0.6552930584752044,4,0.8191163230940055,FALSE
+sex_f,Chi-square,,1.0,5,1.0,FALSE
