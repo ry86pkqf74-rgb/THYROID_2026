@@ -29,17 +29,19 @@ FIG.mkdir(exist_ok=True)
 # Numbers pulled directly from table3_v2 (Strict, NIFTP=benign).
 forest_rows = [
     # (label, sens, sens_lo, sens_hi, spec, spec_lo, spec_hi, ppv, ppv_lo, ppv_hi, npv, npv_lo, npv_hi, n)
-    # v3 numbers — post-mig_323 platform reclassification + Afirma rescue (2026-05-09)
-    # Afirma n grew from 76→91 (15 ThyroSeq-mislabeled rows correctly reclassified)
-    # ThyroSeq n grew from 104→226 (platform separation now correctly assigns dual-platform patients to each arm)
-    ("Afirma — B3+B4 all sizes (n=91)", 90.4, 79.4, 95.8, 20.5, 10.8, 35.5,
-     60.3, 49.2, 70.4, 61.5, 35.5, 82.3, 91),
+    # v3 numbers post-mig_325 (2026-05-14 Cursor cleanup of 16 reported_text guard rows).
+    # 13 ThyroSeq parser hallucinations superseded; 6 Afirma "other" rows corrected to "negative";
+    # 2 rid 5724 + 2 rid 9991 marked non_diagnostic; 1 rid 11156 reclassified to Other.
+    # Pre-mig_325 n: Afirma 91, ThyroSeq 226 (all sizes), 31 (2-4cm). Post-mig_325: 90, 222, 30.
+    # All Sens/Spec/PPV/NPV shifts within Wilson 95% CIs already reported.
+    ("Afirma — B3+B4 all sizes (n=90)", 90.4, 79.4, 95.8, 21.1, 11.1, 36.3,
+     61.0, 49.9, 71.2, 61.5, 35.5, 82.3, 90),
     ("Afirma — B3+B4 2–4 cm (n=5)", 75.0, 30.1, 95.4, 0.0, 0.0, 79.3,
      75.0, 30.1, 95.4, 0.0, 0.0, 79.3, 5),
-    ("ThyroSeq — B3+B4 all sizes (n=226)", 69.7, 60.5, 77.6, 63.2, 54.2, 71.4,
-     63.9, 54.9, 71.9, 69.2, 59.9, 77.1, 226),
-    ("ThyroSeq — B3+B4 2–4 cm (n=31)", 86.7, 62.1, 96.3, 75.0, 50.5, 89.8,
-     76.5, 52.7, 90.4, 85.7, 60.1, 96.0, 31),
+    ("ThyroSeq — B3+B4 all sizes (n=222)", 69.7, 60.5, 77.6, 63.7, 54.5, 72.0,
+     65.0, 55.9, 73.0, 68.6, 59.2, 76.7, 222),
+    ("ThyroSeq — B3+B4 2–4 cm (n=30)", 86.7, 62.1, 96.3, 73.3, 48.1, 89.1,
+     76.5, 52.7, 90.4, 84.6, 57.8, 95.7, 30),
 ]
 
 metrics = ["Sensitivity", "Specificity", "PPV", "NPV"]
