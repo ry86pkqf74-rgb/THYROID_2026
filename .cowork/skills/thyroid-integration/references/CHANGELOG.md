@@ -1,5 +1,26 @@
 # thyroid-integration skill — changelog
 
+## v2.4.1 — 2026-05-14
+
+**BigQuery — mig_328 `canonical_molecular_genetics_v2` Afirma contamination + ThyroSeq parser-tail (EXT2-4).**
+
+### Verified apply (`thyroid-canonical-pub-2026`, 2026-05-14)
+
+- **Archive:** `pub_archive.canonical_molecular_genetics_v2_pre_mig328_20260514`.
+- **Phase A:** `pub_workspace.mig328_afirma_contamination_20260514`; MERGE uses composite key `(research_id, molecular_episode_id, report_source_table)` (NULL episode-id safe). **Phase A3** clears any remaining Afirma `rom_descriptor` (platform_raw may omit literal “thyroseq”).
+- **Phase B:** **42** ThyroSeq tail MERGEs; audit `scripts/output/mig_328_thyroseq_parser_tail_recovery_20260514.csv`.
+- **Phase C:** **0** Afirma `overall_result_class` fills.
+- **Post (active):** Afirma `rom_descriptor` **0**; `rom_percent_point > 100` **0**; ThyroSeq `overall_result_class` regressions **0** vs snapshot.
+- **Coverage:** ThyroSeq band **~90.1%**, numeric ROM **~76.4%** — below handoff stretch 94%/85% without LLM pass; note for VC-MOL-PARSE-002.
+
+### Governance
+
+- **DFL:** `recXE6935BK4T1omU`
+- **MFL:** `recAjPQiNbHljhtx3` → EXT2-4
+- **Script:** `scripts/mig_328_genetics_full_parse_clean_bq.py` (`--skip-snapshot` for repair)
+
+---
+
 ## v2.4.0 — 2026-05-13
 
 **EXT2-4 manuscript v3 → v4 cohort-definition change (any preop US nodule 2.0–4.0 cm).**

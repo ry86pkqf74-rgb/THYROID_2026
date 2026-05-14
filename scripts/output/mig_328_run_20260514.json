@@ -1,0 +1,8 @@
+{
+  "run_id": "mig_328_20260514_fecb10dfa9",
+  "archive_table": "canonical_molecular_genetics_v2_pre_mig328_20260514",
+  "staging_a": "mig328_afirma_contamination_20260514",
+  "staging_b": "mig328_thyroseq_parser_tail_20260514",
+  "staging_c": "mig328_afirma_label_recovery_20260514",
+  "apply": true
+}

@@ -1,0 +1,348 @@
+molecular_episode_id,research_id,before_band,after_band,before_rom_pt,after_rom_pt,extraction_method,source_text_excerpt_first_200_chars
+2,10021,,INTERMEDIATE,45.0,45.0,hard_pattern,"INTERPRETATION
+Multiple high-level DNA copy number alterations were identified in this sample.
+The presence of clonal DNA copy number alterations indicates that the nodule is a neoplasm,
+typically a f…"
+3,10021,,INTERMEDIATE,45.0,45.0,hard_pattern,"INTERPRETATION
+Multiple high-level DNA copy number alterations were identified in this sample.
+The presence of clonal DNA copy number alterations indicates that the nodule is a neoplasm,
+typically a f…"
+2,10059,,LOW,5.0,5.0,hard_pattern,"INTERPRETATION
+The performed analysis was negative for all tested genetic alterations associated with thyroid
+cancer.
+Based on the results of prospective, double-blind, multicenter study, the probabil…"
+2,10558,,INTERMEDIATE-HIGH,75.0,75.0,hard_pattern,"INTERPRETATION
+• HRAS mutation was identified in this sample together with copy number alterations and gene expression alterations.
+• The presence of a clonal mutation indicates that the nodule is a n…"
+2,11527,,INTERMEDIATE-LOW,7.5,7.5,hard_pattern,"INTERPRETATION
+• No cancer-related point mutations or gene fusions were found, although low-level copy number alterations were identified in this sample.
+• Such molecular profile is typically found in…"
+2,11731,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"3/10/2022
+1.  	THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP22-4991
+Test Result Abnormality Probability of Cancer or NIFTP POSITIVE  ·          K601E mutation of BRAF
+·     Gene expr…"
+2,11774,,LOW,,,hard_pattern,"INTERPRETATION
+• The performed analysis was negative for all tested genetic alterations associated with thyroid cancer.
+• Based on the results of prospective multicenter validation study, the probabil…"
+2,11939,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"6/24/2022
+ 	THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP22-12302
+Test Result Abnormality Probability of Cancer or NIFTP POSITIVE           NRAS p.Q61R c.182A>G INTERMEDIATE  HIGH (~…"
+2,12008,,INTERMEDIATE,80.0,80.0,hard_pattern,"INTERPRETATION
+RAS mutation was identified in this sample.
+In large-size nodules, this molecular profile is associated with 70-80% probability of follicular or oncocytic
+(Hurthle cell) cancer or NIFTP…"
+2,12092,,VERY-HIGH,5.0,5.0,hard_pattern,"INTERPRETATION
+• RET/PTC1 (CCDC6/RET) fusion was identified in this sample.
+• RET/PTC fusions are associated with a very high probability of cancer, typically classical papillary carcinoma.
+• Risk of …"
+2,12094,,INTERMEDIATE,35.0,35.0,hard_pattern,"INTERPRETATION
+Multiple intermediate-level DNA copy number alterations of Hurthle cell type (ref 1,2) were identified in this
+sample.
+The presence of clonal genetic alterations indicates that the nodu…"
+2,12190,,LOW,5.0,5.0,hard_pattern,"INTERPRETATION
+• In this case, no mutations associated with thyroid cancer were identified. in addition, TSHR gene mutation was found at a low level, which is characteristic of benign and frequently a…"
+3,12190,,LOW,5.0,5.0,hard_pattern,"INTERPRETATION
+• In this case, no mutations associated with thyroid cancer were identified. in addition, TSHR gene mutation was found at a low level, which is characteristic of benign and frequently a…"
+2,4940,,LOW,5.0,5.0,hard_pattern,"INTERPRETATION
+• The performed analysis was negative for all tested genetic alterations associated with thyroid cancer.
+• Based on the results of prospective, double-blind, multicenter study, the prob…"
+,6651,,INTERMEDIATE-HIGH,65.0,65.0,hard_pattern,60-70%
+2,6771,,LOW,5.0,5.0,hard_pattern,"INTERPRETATION
+• The performed analysis was negative for all tested genetic alterations associated with thyroid cancer.
+• Based on the results of prospective, double-blind, multicenter study, the prob…"
+2,6802,,LOW,3.0,3.0,hard_pattern,"6/6/2025
+CLINICAL HISTORY
+FNA cytology: AUS/FLUS (Bethesda III)
+THYROSEQ® V3 GC RESULTS SUMMARY
+RIGHT THYROID, 1.7 CM NODULE, FNA
+
+NEGATIVE, WITH LOW THYROID
+CELL CONTENT
+Likely low Variable *
+*See in…"
+2,7395,,INTERMEDIATE-LOW,20.0,20.0,hard_pattern,"""THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP19-4955
+Test Result Probability of Cancer or NIFTP Negative Intermediate-low (-20%)
+
+Disclaimer: This test was not performed by Emory Un…"
+2,7593,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"""THYROSEQ
+
+
+(ThyroSeq v3)
+
+UPMC Presbyterian Accession Number: MGP19-8140
+
+Test Result Probability of Cancer or NIFTP POSITIVE INTERMEDIATE-HIGH (-70%)
+""; ""
+THYROSEQ
+
+
+(ThyroSeq v3)
+
+UPMC Presbyterian…"
+2,7712,,INTERMEDIATE,70.0,70.0,hard_pattern,"""1. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP19-8974
+Test Result Probability of Cancer or NIFTP POSITIVE INTERMEDIATE (-70%); 2. THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Access…"
+2,7779,,LOW,7.5,7.5,hard_pattern,"INTERPRETATION
+• No mutations at levels associated with high cancer risk were detected in this sample, whereas a very low level (<5% allelic frequency) NRAS mutation was identified.
+• Low level NRAS m…"
+2,7865,,LOW,3.0,3.0,hard_pattern,"""1. THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP18-6534
+Test Result Probability of Cancer or NIFTP NEGATIVE  LOW (-3%)
+
+
+	Last Resulted: 09/10/18 11:50; 2.THYROSEQ
+
+(ThyroSeq v3)
+UP…"
+2,7911,,INTERMEDIATE,70.0,70.0,hard_pattern,"""x2
+
+1. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP19-13811
+Test Result Probability of Cancer or NIFTP POSITIVE INTERMEDIATE (-70%)
+
+
+	Last Resulted: 12/10/19 12:49; 2. THYROSEQ
+
+…"
+2,8015,,LOW,3.0,3.0,hard_pattern,"""1. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyterian Accession Number: MGP19-13933 
+Test Result Probability of Cancer or NIFTP NEGATIVE LOW (-3%) 
+ 
+ 
+
+
+
+
+""; 2. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian …"
+2,8039,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"""1. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP20-678
+Test Result Probability of Cancer or NIFTP POSITIVE  INTERMEDIATE-HIGH (70%)
+
+
+	Last Resulted: 04/18/20 10:34
+
+
+ 
+INTERPRETAT…"
+2,8044,,LOW,3.0,3.0,hard_pattern,"INTERPRETATION
+• The performed analysis was negative for all tested genetic alterations associated with thyroid cancer.
+• Based on the results of studies at UPMC and prospective multicenter study, the…"
+2,8083,,LOW,70.0,70.0,hard_pattern,"""1. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyterian Accession Number: MGP20-3142 
+Test Result Probability of Cancer or NIFTP NEGATIVE LOW, SEE INTERPRETATION; 2. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyter…"
+,8370,,INTERMEDIATE,40.0,40.0,hard_pattern,"""The purpose of this addendum is to report the results of the Thyroseq Thyroid Genomic Classifier testing performed at UPMC.
+
+A:  Right Thyroid Nodule:
+
+RESULTS:   POSITIVE (suspicious for RET fusion,…"
+2,8390,,LOW,3.0,3.0,hard_pattern,"8/25/2020
+""1. THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP20-8543
+Test Result Probability of Cancer or NIFTP Negative  Low (~3%)
+CLINICAL HISTORY
+FNA cytology: FN/SFN (Bethesda IN)
+…"
+3,8390,,LOW,3.0,3.0,hard_pattern,"8/25/2020
+""1. THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP20-8543
+Test Result Probability of Cancer or NIFTP Negative  Low (~3%)
+CLINICAL HISTORY
+FNA cytology: FN/SFN (Bethesda IN)
+…"
+2,8392,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"""1. 
+ (CONVERSION)	THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP19-14770
+Test Result Probability of Cancer or NIFTP POSITIVE INTERMEDIATE HIGH (-70%)
+
+
+
+
+
+
+
+""; 2.
+THYROSEQ
+
+(ThyroSeq…"
+3,8392,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"""1. 
+ (CONVERSION)	THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP19-14770
+Test Result Probability of Cancer or NIFTP POSITIVE INTERMEDIATE HIGH (-70%)
+
+
+
+
+
+
+
+""; 2.
+THYROSEQ
+
+(ThyroSeq…"
+2,8600,,INTERMEDIATE-HIGH,60.0,60.0,hard_pattern,"""1. 
+ (CONVERSION)	  THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP20-5708
+Test Result Probability of Cancer or NIFTP POSITIVE  Intermediate-high (~60%)
+
+
+
+
+ 
+ ""; 2. THYROSEQ 
+ 
+(Thyr…"
+2,8655,,LOW,3.0,3.0,hard_pattern,"""1.  (CONVERSION)	THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP20-11027
+Test Result Probability of Cancer or NIFTP NEGATIVE LOW (~3%)
+
+
+
+
+
+
+
+""; 2. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presb…"
+2,8718,,HIGH,95.0,95.0,hard_pattern,"""1. 
+
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP21-1322
+Test Result Probability of Cancer or NIFTP POSITIVE High (>95%)
+
+
+
+
+
+""; 2. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Acces…"
+2,8729,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"8/17/2020
+CLINICAL HISTORY
+FNA cytology: FN/SFN (Bethesda IV)
+THYROSEQ® V3 GC RESULTS SUMMARY LEFT THYROID, 5.8 CM NODULE, FNA
+Test Result
+Probability of Cancer or NIFTPI
+¡ Potential Management
+POSITI…"
+2,8848,,HIGH,50.0,50.0,hard_pattern,"""1. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP21-4548
+Test Result Probability of Cancer or NIFTP POSITIVE High (>50%)
+
+
+
+
+
+
+
+""; 2. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Acce…"
+2,8867,,LOW,3.0,3.0,hard_pattern,"""1. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession Number: MGP21-5359
+Test Result Probability of Cancer or NIFTP NEGATIVE LOW (~3%)
+
+
+
+
+""; 2. 
+THYROSEQ
+
+(ThyroSeq v3)
+UPMC Presbyterian Accession…"
+2,8894,,HIGH,99.0,99.0,hard_pattern,"5/17/2021
+ 	THYROSEQ
+
+
+(ThyroSeq v3)
+
+UPMC Presbyterian Accession Number: MGP21-6116
+
+Test Result Abnormality Probability of Cancer or NIFTP POSITIVE ·          BRAF V600E mutation identified HIGH (~9…"
+2,9353,,INTERMEDIATE-HIGH,70.0,70.0,hard_pattern,"1 .THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyterian Accession Number: MGP21-20826 
+Test Result Probability of Cancer or NIFTP POSITIVE Intermediate-High (~70%); 2. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyte…"
+2,9509,,HIGH,75.0,75.0,hard_pattern,"""THYROSEQ® V3 GC RESULTS SUMMARY
+
+TEST RESULT Probability of Cancer or NIFTP Potential Management POSITIVE High (~70-80%) Surgical consultation*
+* See interpretation guidelines below
+ INTERPRETATION
+·…"
+2,9767,,LOW,3.0,3.0,hard_pattern,"""1. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyterian Accession Number: MGP22-9639 
+Test Result Probability of Cancer or NIFTP NEGATIVE Low (~3%) 
+ 
+ 
+ 
+ 
+""; 2. THYROSEQ 
+ 
+(ThyroSeq v3) 
+UPMC Presbyterian…"

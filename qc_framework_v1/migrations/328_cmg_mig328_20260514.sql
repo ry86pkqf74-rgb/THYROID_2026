@@ -1,0 +1,6 @@
+-- mig_328 — canonical_molecular_genetics_v2 (BigQuery)
+-- Authoritative orchestration: scripts/mig_328_genetics_full_parse_clean_bq.py
+-- Snapshot: pub_archive.canonical_molecular_genetics_v2_pre_mig328_20260514
+-- Workspace: pub_workspace.mig328_afirma_contamination_20260514,
+--            mig328_thyroseq_parser_tail_20260514 (if Phase B ran),
+--            mig328_afirma_label_recovery_20260514 (if Phase C ran)
