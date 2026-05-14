@@ -1,0 +1,9 @@
+m011_column,source_table,registry_status,competing_source_flag,linked_issue,ai_model,ai_verdict
+histology_final,manuscript_cohort_v1,verified,True,(none),gemini-2.5-flash,"CONFIRM — `histology_final` is the correct source column for the free-text data, even if its classification needs pathologist review."
+age_at_surgery / demo_sex_final,manuscript_cohort_v1,verified,False,(none),gemini-2.5-flash,CONFIRM — Columns are standard demographic covariates; source table implies suitability for manuscript and 'registry-verified' use.
+bethesda_final_num,canonical_fna_events_v1,passes assertion bethesda_enum,False,(none),gemini-2.5-flash,"CONFIRM — Column name, source table, QC assertion, and preoperative filter align with stated manuscript use."
+path_tumor_size_cm / path_ete_final / vascular_invasion_final / margin_status_final,manuscript_cohort_v1,verified,False,(none),gemini-2.5-flash,"CONFIRM — Pathology features (tumor size, ETE, vascular invasion, margins) are standard for assessing malignancy significance and aggressiveness."
+surgery_date / first_surgery_date / surg_first_date,manuscript_cohort_v1,verified,True,THY-87,gemini-2.5-flash,REVIEW — COALESCE uses `first_surgery_date` (known corrupt for 171 patients) if `surgery_date` is null; THY-87 suggests better source.
+ln_positive_final,manuscript_cohort_v1,verified,True,THY-89,gemini-2.5-flash,"REVIEW — SoT pending, plus 89 known data quality issues (disagreements/impossible rows) make column risky."
+fna_bethesda_final,manuscript_cohort_v1,verified,False,(none),gemini-2.5-flash,"CONFIRM — Note accurately states this column is not directly used, with independent derivation from another source."
+imaging_tirads_best,manuscript_cohort_v1,verified,False,(none),gemini-2.5-flash,"CONFIRM — Column is correctly marked ""Not used"" as a richer, less sparse source is available."

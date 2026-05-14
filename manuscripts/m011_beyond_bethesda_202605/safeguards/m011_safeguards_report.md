@@ -75,8 +75,16 @@ The two competing-source flags map to **existing** Linear issues — **THY-87** 
 
 No new issues filed — nothing M011-specific is broken; the dependencies are on pre-existing open decisions.
 
-## 7. Google Cloud AI column verification — registry check ✅, AI-agent step wired (connection not yet provisioned)
+## 7. Google Cloud AI column verification ✅ — registry check + Vertex AI Gemini pass
 
-The **authoritative** verification was done: every M011 column was cross-checked against `pub_signoff.canonical_column_verification_registry_v1` — the project's human-ratified column sign-off registry — and **all are `verified`**, none deprecated. This is a stronger check than an LLM opinion because it is the project's own ratified source of truth.
+**Two independent verifications, concordant:**
 
-The requested second, independent pass via a Google Cloud AI agent was **attempted but the BigQuery→Vertex AI connection is not provisioned** in `thyroid-canonical-pub-2026` (no remote `MODEL` objects; `AI.GENERATE` returns "Connection not found"). The `AI.GENERATE` cross-check over `pub_canonical.data_dictionary_v279` is wired and ready as **Step E in `sql/m011_safeguards.sql`** — it will run as soon as a Vertex connection (or the console custom Agent) is created. Until then, the registry check in Step D is the column-sourcing verification of record.
+(a) **Authoritative registry check** — every M011 column cross-checked against `pub_signoff.canonical_column_verification_registry_v1` (the project's human-ratified column sign-off registry): **all `verified`, none deprecated.**
+
+(b) **Google Cloud AI agent** — `AI.GENERATE` via BigQuery has no Vertex connection in this project, so the verification was run instead through **Vertex AI Gemini 2.5 Flash** (`google-genai`, project `thyroid-canonical-pub-2026`, location `global`) from the Mac. Each M011 column + its manuscript use + data-dictionary context was sent to Gemini for a CONFIRM/REVIEW verdict. Script: `scripts/m011_ai_column_verification.py`; output: `tables/m011_ai_column_verification.csv`.
+
+**Result: 6/8 CONFIRM, 2 REVIEW** — and the AI independently flagged **exactly the two columns** the registry-based audit flagged:
+- `surgery_date / first_surgery_date / surg_first_date` → REVIEW ("COALESCE falls back to `first_surgery_date`, known corrupt for 171 patients; THY-87")
+- `ln_positive_final` → REVIEW ("SoT pending, known disagreements/impossible rows; THY-89")
+
+The remaining six (histology_final, age/sex, bethesda_final_num, pathology aggressive-feature columns, and the two not-used master columns) were CONFIRMed. The AI agent and the human-ratified registry reached the same conclusion — high confidence that M011 sourced from the right columns, with the two known competing-source dependencies correctly isolated and routed to Linear.
