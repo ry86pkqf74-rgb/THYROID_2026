@@ -1,0 +1,32 @@
+config {
+  type: "assertion",
+  name: "cowork_pipeline_qc_assertions_v1",
+}
+
+-- Non-blocking QC assertion. One row per integrity violation; 0 rows = pass.
+-- Standalone pipeline (cowork_qc_nonblocking_pipeline_v1) - does NOT gate canonical publishing.
+-- Scheduled daily 06:00 CDT via schedule "cowork_qc_daily_check".
+-- Covers the pub_eval evaluation layer plus known critical QC rules on manuscript_cohort_v1.
+SELECT 'pub_eval_negative_preop_interval' AS violation_type, research_id
+FROM `thyroid-canonical-pub-2026.pub_eval.vw_patient_workup_census_v1`
+WHERE LEAST(COALESCE(us_preop_interval_days,0), COALESCE(ct_preop_interval_days,0), COALESCE(mri_preop_interval_days,0), COALESCE(fna_preop_interval_days,0), COALESCE(nucmed_preop_interval_days,0)) < 0
+UNION ALL
+SELECT 'pub_eval_null_surgery_anchor', research_id
+FROM `thyroid-canonical-pub-2026.pub_eval.vw_patient_workup_census_v1`
+WHERE surgery_anchor_date IS NULL
+UNION ALL
+SELECT 'SURG01_surgery_date_divergence', CAST(research_id AS STRING)
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE DATE(first_surgery_date) <> DATE(surg_first_date) OR DATE(first_surgery_date) <> DATE(surgery_date) OR DATE(surg_first_date) <> DATE(surgery_date)
+UNION ALL
+SELECT 'LN01_ln_positive_gt_examined', CAST(research_id AS STRING)
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE ln_positive_final > path_ln_examined_raw
+UNION ALL
+SELECT 'LN02_ln_positive_without_examined', CAST(research_id AS STRING)
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE ln_positive_final > 0 AND COALESCE(path_ln_examined_raw, 0) = 0
+UNION ALL
+SELECT 'LN03_ln_raw_vs_final_disagree', CAST(research_id AS STRING)
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE path_ln_positive_raw IS NOT NULL AND ln_positive_final IS NOT NULL AND path_ln_positive_raw <> ln_positive_final
