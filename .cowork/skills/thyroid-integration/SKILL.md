@@ -1,7 +1,7 @@
 ---
 name: thyroid-integration
 metadata:
-  version: 2.2.0
+  version: 2.3.1
 description: |
   MANDATORY playbook for THYROID_2026 — Logan's thyroid research program's Airtable + Linear + BigQuery + Claude integration. Load IMMEDIATELY before any other response when the user (a) works in THYROID_2026, (b) opens/queries/modifies BigQuery (`thyroid-canonical-pub-2026.pub_canonical.*`, `pub_workspace.*`, `pub_signoff.*`), or any parquet/notebook, or (c) drafts/edits/discusses ANY thyroid manuscript section (abstract, methods, results, discussion, figures, tables, reviewer response). Triggers: thyroid, TGDC, M025, M032, M036, M037, M038, M044, M048, M083, M-codes, Mo36, H1, H2, MULTIMODAL, MOLIMG, SURGEON, ETE, NSQIP-PTH, LOBMOL, manuscript, draft, abstract, methods, results, figure, table, reviewer, journal, IRB, cohort, research_id, Verification Check, Override Decision, Manuscript Snapshot, reconciliation, lifecycle, Manuscript-Locked, Issue Ledger, BigQuery, BQ, pub_canonical, pub_workspace, parquet, MIG_, mig_, Bethesda, TIRADS, ThyroSeq, Afirma, BRAF, RLN, parathyroid. Narrow requests need this too — Session Opening Protocol must run FIRST. Skipping = broken audit trail or PHI violation.
 ---
@@ -180,9 +180,38 @@ Anytime an analysis turns up something more than a routine audit number — a re
 | lifecycle | `fldHA2e1rjylgW80c` |
 | created_by | `fldUvw5I7sP0StM0d` |
 
+## Canonical patient_master version lineage (2026-05-13)
+
+Per the v2.3.0 build, the patient-master canonical now spans 7 versions; each is preserved (never deleted):
+
+| Table | Cols | Built | Purpose |
+|---|---:|---|---|
+| `canonical_patient_master` (v1) | ~1,400 | pre-existing | Original baseline |
+| `canonical_patient_master_v1_1` | ~1,650 | pre-existing | Extension |
+| `canonical_patient_master_v1_2` | 1,749 | 2026-05-13 | Dimensions/volume + LN levels + multifocality fix + per-tumor laterality |
+| `canonical_patient_master_v1_3` | 1,967 | 2026-05-13 | Synoptic full fields (218 cols) |
+| `canonical_patient_master_v1_4` | 2,110 | 2026-05-13 | CT / MRI / Nuclear Med / Frozen Section / OP Sheet / Complications |
+| `canonical_patient_master_v1_5` | 2,153 | 2026-05-13 | US TIRADS / FNAs / ThyroSeq+Afirma / Parathyroid intent |
+| **`canonical_patient_master_v1_6`** | **2,233** | **2026-05-13** | **Imaging catalog / Tg+TgAb / Legacy path drift / Notes (PHI-safe)** |
+
+**Always default to v1_6** for new analyses. v1, v1_1, v1_2..v1_5 retained for back-compat.
+
+**Downstream selection conventions:**
+- TIRADS: `tirads_resolved` (NOT `syn_us_tr_*`, which may be outdated)
+- Bethesda: `syn_fna_bethesda_2023_max` (rescored, current)
+- Thyroid weight: `gland_weight_final_g_v2` + `gland_weight_source_v2` provenance
+- Total thyroid volume: `total_thyroid_volume_cc_v2` (new)
+- Multifocality: `multifocality_flag_v2` (fixed; legacy `multifocal_flag_path` is NLP-partial)
+- LN levels: `ln_level_*_examined_v2` (richer regex over `Tumor_1_LN location`)
+- Per-tumor 3-5: `syn_tumor{3,4,5}_*` (newly exposed)
+- Parathyroid gland 1-6: `syn_paraG_{1..6}_*`
+- Mortality: combine `nsqip_death_30d` + `syn_notes_death_flag_present_in_notes`
+
+See `outputs/M084_gland_measurement_backfill/v1_6_DATA_DICTIONARY_20260513.md` for full field reference.
+
 ## Versioning
 
-This skill is at v2.2.0. Bump:
+This skill is at v2.3.0. Bump:
 - **patch** (1.0.x) for clarification edits
 - **minor** (1.x.0) for new tables, fields, or sync phases
 - **major** (x.0.0) for changes to the hard rules or lifecycle states

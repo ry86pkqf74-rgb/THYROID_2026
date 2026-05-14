@@ -127,6 +127,7 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 | SURGEON | `rec6zmI8Ka9ScZoQI` |
 | ETE | `reciotqXhaNTBA9EB` |
 | EXT2-4 | `rec1GJyrmKdKxjlaY` |
+| M084 (parathyroid + thyroid) | `recx6Jr6WFtF2hZxb` |
 | NSQIP-PTH | `recHyloOjBHKH7Jk3` |
 | LOBMOL | `recsFDy2NFfs452hD` |
 | M004 | `recpSCzbr4KNhXHIK` |
@@ -139,6 +140,7 @@ These IDs are needed by the daily sync prompt and any direct API calls. Keep thi
 | M033 | `recTm8PqDvHn3g0JU` |
 | M043 | `rec8T7TtSRtMzBB0Y` |
 | M047 | `recxI8uzH4S4gluQ6` |
+| M053 | `recjUILCjp6EPqcMk` |
 
 ## Linear
 

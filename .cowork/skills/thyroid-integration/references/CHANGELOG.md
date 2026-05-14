@@ -1,5 +1,17 @@
 # thyroid-integration skill — changelog
 
+## v2.3.1 — 2026-05-13
+
+**BigQuery additive columns — pathology thyroid 3D dimensions + parathyroid weight (mg).**
+
+- **Canonical:** `pub_canonical.thyroid_sizes` gains `rl_*_cm_path`, `ll_*_cm_path`, `total_*_cm_path`, optional `isthmus_*_cm_path`, `dim_parse_status`, `dim_parse_at` (L×W×H parsed from `*_formatted` strings; no change to existing formatted text).
+- **Canonical:** `pub_canonical.canonical_parathyroid_events_v1` gains `parathyroid_weight_mg`, `parathyroid_weight_source`, `parathyroid_weight_extracted_at` (regex over concatenated `evidence_quote` / `reasoning` / `parathyroid_pathology` with keyword proximity gate; source `llm_evidence_regex_v1`).
+- **Archive (pre-apply):** `pub_archive.thyroid_sizes_pre_3d_parse_<YYYYMMDD>`, `pub_archive.canonical_parathyroid_events_v1_pre_weight_extract_<YYYYMMDD>`.
+- **Runner:** `scripts/mig_326_thyroid_3d_parathyroid_weight_bq.py` (`--dry-run` / `--apply` / `--verify-only`).
+- **Prompt / audit:** `studies/proposal_2to4cm_extent_molecular_20260326/elicit_expansion_20260509/CURSOR_PROMPT_thyroid_size_3D_and_parathyroid_weight.md`, `WEIGHT_SIZE_AUDIT_20260513.md`.
+- **Governance:** DFL (Data Feedback Log, base B) **before** `--apply`; MFL `MFL-<date>-EXT2-4-WEIGHT-SIZE-EXTENSION` after verification, links **EXT2-4** (`rec1GJyrmKdKxjlaY`) + **M084 parathyroid** (`recx6Jr6WFtF2hZxb`).
+- **Residual:** Manual chart-review CSV (`EXPORT DATA` / bq) stays off-git (PHI).
+
 ## mig_325 — canonical_molecular_genetics_v2 reported_text guard cleanup (2026-05-14)
 
 **BigQuery** (`thyroid-canonical-pub-2026`): 13 fabricated ThyroSeq rows (mig_323 guard set) marked `platform_reclass_status = superseded_by_afirma_row`, `overall_result_class = superseded`, `rom_descriptor = NULL`; rid 5724 both rows `non_diagnostic` + `non_diagnostic_cancelled`; rid 11156 `platform = Other` (Quest panel); five Afirma rows `other → negative`; rid 9991 both Afirma rows `non_diagnostic`; rid 8729 untouched. Pre-merge snapshot: `pub_archive.canonical_molecular_genetics_v2_pre_guard_cleanup_20260514`. Script: `scripts/mig_325_reported_text_guard_cleanup_bq.py`. Table 3 SQL `04b_table3_v2_actual_reported_call.sql` updated to exclude superseded/cancelled rows. **Residual:** rids 8218 and 9154 have superseded ThyroSeq but no Afirma row in CMG (expected per matrix; optional future Afirma INSERT).
