@@ -11,7 +11,11 @@ TARGET STATE
 
 Tables (all under ``thyroid_canonical_publication_v1_0.main``):
 
-    canonical_labs_thyroglobulin_v1   -- Tg + TgAb (analyte column)
+    canonical_labs_thyroglobulin_v1   -- Tg + TgAb (analyte column),
+        cross-wave dedup on
+        (research_id, analyte, lab_datetime, value_numeric|value_raw);
+        ALL thyroglobulin-family rows in ``longitudinal_lab_canonical_v1``
+        (synonym / LIKE coverage per BigQuery validation queries).
     canonical_labs_tsh_v1
     canonical_labs_pth_v1
     canonical_labs_calcium_v1
@@ -105,7 +109,9 @@ PER_ANALYTE_TABLE: dict[str, str] = {
 }
 
 EXPECTED_ROW_RANGE: dict[str, tuple[int, int]] = {
-    "canonical_labs_thyroglobulin_v1": (50_000, 54_500),
+    # Tg/TgAb: must cover all thyroglobulin-family rows in longitudinal_lab_canonical_v1
+    # (~55.2k post–cross-wave dedup; full-timestamp dedup key per THY_DEDUP_SQL).
+    "canonical_labs_thyroglobulin_v1": (54_000, 57_000),
     "canonical_labs_tsh_v1":           (500, 800),
     "canonical_labs_pth_v1":           (180, 240),
     "canonical_labs_calcium_v1":       (170, 220),
@@ -196,6 +202,9 @@ def archive_snapshots(con: duckdb.DuckDBPyConnection, do_writes: bool) -> dict:
 # ---------------------------------------------------------------------------
 
 # Pull rows from longitudinal joined to thyroglobulin (for Tg/TgAb extras).
+# Tg/TgAb filter MUST stay aligned with pub_canonical coverage checks, e.g.
+#   LOWER(lab_name_standardized) LIKE '%thyroglobulin%'
+#   OR tg/tgab short names (see canonical_analyte_key).
 PULL_SQL = """
 SELECT
     l.research_id,
@@ -230,12 +239,73 @@ LEFT JOIN (
     AND tg.lab_date    = l.lab_date
     AND ((tg.result_numeric IS NULL AND l.value_numeric IS NULL)
          OR tg.result_numeric = l.value_numeric)
-    AND CASE WHEN tg.analyte = 'Tg'   THEN 'thyroglobulin'
-             WHEN tg.analyte = 'TgAb' THEN 'anti_thyroglobulin'
-             ELSE NULL END = l.lab_name_standardized
-WHERE l.lab_name_standardized IN
-    ('thyroglobulin','anti_thyroglobulin','tsh','pth','calcium','vitamin_d')
+    AND (
+          (CASE WHEN tg.analyte = 'Tg'   THEN 'thyroglobulin'
+                WHEN tg.analyte = 'TgAb' THEN 'anti_thyroglobulin'
+                ELSE NULL END) = l.lab_name_standardized
+          OR (tg.analyte = 'Tg'   AND l.lab_name_standardized = 'tg')
+          OR (tg.analyte = 'TgAb' AND l.lab_name_standardized = 'tgab')
+          OR (tg.analyte = 'Tg'
+              AND LOWER(COALESCE(l.lab_name_standardized, '')) LIKE '%thyroglobulin%'
+              AND LOWER(COALESCE(l.lab_name_standardized, '')) NOT LIKE '%anti%'
+              AND LOWER(COALESCE(l.lab_name_standardized, '')) NOT LIKE '%tgab%'
+              AND l.lab_name_standardized NOT IN ('anti_thyroglobulin', 'tgab'))
+          OR (tg.analyte = 'TgAb'
+              AND (
+                    l.lab_name_standardized IN ('anti_thyroglobulin', 'tgab')
+                    OR LOWER(COALESCE(l.lab_name_standardized, '')) LIKE '%tgab%'
+                    OR (LOWER(COALESCE(l.lab_name_standardized, '')) LIKE '%anti%'
+                        AND LOWER(COALESCE(l.lab_name_standardized, ''))
+                            LIKE '%thyroglobulin%')
+                  ))
+        )
+WHERE (
+    l.lab_name_standardized IN
+        ('tsh','pth','calcium','vitamin_d')
+    OR l.lab_name_standardized IN
+        ('thyroglobulin','anti_thyroglobulin','tg','tgab')
+    OR LOWER(COALESCE(l.lab_name_standardized, '')) LIKE '%thyroglobulin%'
+    OR LOWER(COALESCE(l.lab_name_standardized, '')) LIKE '%tgab%'
+  )
 """
+
+
+def canonical_analyte_key(lab_name_standardized: str) -> str:
+    """
+    Map longitudinal ``lab_name_standardized`` to Script 347 internal keys used
+    by :func:`normalize_lab_value` / ``PER_ANALYTE_TABLE``:
+    ``tsh``, ``pth``, ``calcium``, ``vitamin_d``, ``thyroglobulin``,
+    ``anti_thyroglobulin``.
+
+    Thyroglobulin/TgAb coverage matches BigQuery validation:
+
+        LOWER(lab_name_standardized) LIKE '%thyroglobulin%'
+        OR short aliases ``tg`` / ``tgab``.
+
+    Dedup grain for the canonical table (post-build) is documented on
+    ``THY_DEDUP_SQL``: partition by full ``lab_datetime`` plus analyte and
+    numeric/raw identity — **not** calendar date-only.
+    """
+    n = (lab_name_standardized or "").strip().lower()
+    if not n:
+        raise ValueError("empty lab_name_standardized")
+    if n in ("tsh", "pth", "calcium", "vitamin_d"):
+        return n
+    if n in ("anti_thyroglobulin", "tgab", "tg_antibody"):
+        return "anti_thyroglobulin"
+    if "anti-thyroglobulin" in n or "anti thyroglobulin" in n:
+        return "anti_thyroglobulin"
+    if "tgab" in n:
+        return "anti_thyroglobulin"
+    if "thyroglobulin" in n and "antibody" in n:
+        return "anti_thyroglobulin"
+    if "anti" in n and "thyroglobulin" in n:
+        return "anti_thyroglobulin"
+    if n in ("thyroglobulin", "tg"):
+        return "thyroglobulin"
+    if "thyroglobulin" in n:
+        return "thyroglobulin"
+    raise ValueError(f"unmapped lab_name_standardized: {lab_name_standardized!r}")
 
 
 def derive_source(ingestion_wave: Optional[str], source_table: Optional[str]) -> str:
@@ -289,7 +359,13 @@ def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
         return True
 
     for rec in df.to_dict(orient="records"):
-        analyte = rec["lab_test_name"]
+        try:
+            analyte = canonical_analyte_key(rec["lab_test_name"])
+        except ValueError as e:
+            raise RuntimeError(
+                "PULL_SQL row has lab_test_name that canonical_analyte_key "
+                f"cannot map: {e}"
+            ) from e
         canonical_unit = CANONICAL_UNIT[analyte]
 
         # 1. Normalize value_raw (always reparse from raw, ignore legacy numeric).
@@ -405,12 +481,19 @@ DEDUP_RANK_CASE = """
 
 # For the thyroglobulin table the partition key includes ``analyte``; for the
 # others it omits it (single-analyte table).
+#
+# Cross-wave dedup key (thyroglobulin family): one row per unique
+#   (research_id, analyte, lab_datetime, value_numeric, value_raw)
+# using tie-breakers on source priority + latest ingestion_date.  Using full
+# ``lab_datetime`` (not DATE_TRUNC) preserves multiple measurements on the
+# same calendar day when timestamps or pipeline metadata differ — required
+# for parity with ``longitudinal_lab_canonical_v1`` row counts / patients.
 THY_DEDUP_SQL = f"""
 WITH ranked AS (
     SELECT *,
         ROW_NUMBER() OVER (
             PARTITION BY research_id,
-                         CAST(lab_datetime AS DATE),
+                         lab_datetime,
                          analyte,
                          COALESCE(CAST(value_numeric AS VARCHAR), value_raw)
             ORDER BY {DEDUP_RANK_CASE}, ingestion_date DESC
@@ -506,10 +589,17 @@ def write_per_analyte_tables(
             n_post = con.execute(f"SELECT COUNT(*) FROM main.{table}").fetchone()[0]
             log(f"    {table} post-dedup rows: {n_post:,}")
             try:
+                thy_note = ""
+                if "thyroglobulin" in table:
+                    thy_note = (
+                        "Tg dedup key (research_id, analyte, lab_datetime, "
+                        "value_numeric|value_raw). "
+                    )
                 con.execute(
                     f"COMMENT ON TABLE main.{table} IS "
                     f"'Canonical per-analyte lab table. One row per unique "
-                    f"(research_id, lab_datetime, value) after cross-wave dedup. "
+                    f"(research_id, lab_datetime, value) after cross-wave dedup; "
+                    f"{thy_note}"
                     f"Normalized via _lab_value_normalizer.py (uniform pipeline "
                     f"across all analytes). Built by {SCRIPT_TAG} on {RUN_DATE}.'"
                 )
@@ -960,8 +1050,10 @@ def verify(con: duckdb.DuckDBPyConnection, archive_dest_long: str) -> dict:
     ).fetchone()[0]
     n_post_total = sum(table_rows.values())
     n_removed = n_pre - n_post_total
-    check(21000 <= n_removed <= 21500,
-          f"cross-wave dedup removed {n_removed:,} rows (target 21000-21500)")
+    # Pre-2026-05: ~21k rows removed vs archive (DATE-based Tg dedup).
+    # Full-timestamp Tg dedup + wider longitudinal filter lowers removal ~2k.
+    check(18500 <= n_removed <= 22500,
+          f"cross-wave dedup removed {n_removed:,} rows (target 18500-22500)")
 
     # is_censored TRUE -> value_numeric NOT NULL.
     n_bad = con.execute("""

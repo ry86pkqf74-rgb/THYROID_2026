@@ -19,9 +19,10 @@ Write strategy: FULL REBUILD.
     CREATE OR REPLACE TABLE main.canonical_labs_thyroglobulin_v1 AS <SELECT>
 This is atomic, idempotent for repeated re-runs from the same source
 data, and matches Script 347 semantics. Rationale: this script is the
-sole owner of ``source = 'structured_ehr_tg'`` rows (100 % of the
-current 53,006 rows in main.canonical_labs_thyroglobulin_v1 carry that
-source). 127 owns the institutional-append slice; the two never overlap
+sole owner of ``source = 'structured_ehr_tg'`` rows (the majority of
+Tg/TgAb rows; row counts track Script 347 parity with
+``longitudinal_lab_canonical_v1`` — do not hardcode legacy totals).
+127 owns the institutional-append slice; the two never overlap
 on the dedup key.
 
 Pipeline (CSV mode):
