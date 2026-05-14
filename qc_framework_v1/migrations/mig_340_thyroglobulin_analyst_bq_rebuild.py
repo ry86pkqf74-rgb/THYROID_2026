@@ -21,7 +21,8 @@ Usage:
 Options:
   --skip-snapshot   Do not write the pub_archive snapshot (only if intentional / first deploy).
 
-Validation: see qc_framework_v1/migrations/sql/mig_340_validation_queries.sql
+Validation: ``qc_framework_v1/migrations/sql/mig_340_validation_queries.sql`` (raw SQL) or
+``.venv/bin/python qc_framework_v1/migrations/mig_340_bq_validate.py`` for A–F output.
 """
 from __future__ import annotations
 
