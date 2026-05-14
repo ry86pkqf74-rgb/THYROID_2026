@@ -1,0 +1,13 @@
+{
+  "platforms": [
+    "Afirma",
+    "NGS_unspecified",
+    "ThyroSeq"
+  ],
+  "stats": {
+    "examined": 1132,
+    "eligible_merge": 26,
+    "skip_no_gain": 1106
+  },
+  "n_updated": 26
+}
