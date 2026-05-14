@@ -1,0 +1,46 @@
+[
+  {
+    "research_id": "8218",
+    "platform": "Afirma",
+    "molecular_episode_id": 2,
+    "overall_result_class": "suspicious",
+    "resolved_test_date": "2024-05-01",
+    "bethesda_category": null,
+    "report_source_table": "manual_insert_from_THYROSEQ_AFIRMA_12_5_xlsx_20260514",
+    "band_backfill_source": "manual_insert_v1",
+    "platform_reclass_status": null
+  },
+  {
+    "research_id": "8218",
+    "platform": "ThyroSeq",
+    "molecular_episode_id": 1,
+    "overall_result_class": "superseded",
+    "resolved_test_date": "2026-04-07",
+    "bethesda_category": null,
+    "report_source_table": "molecular_testing",
+    "band_backfill_source": "reported_text",
+    "platform_reclass_status": "superseded_by_afirma_row"
+  },
+  {
+    "research_id": "9154",
+    "platform": "Afirma",
+    "molecular_episode_id": 1,
+    "overall_result_class": "suspicious",
+    "resolved_test_date": "2020-10-28",
+    "bethesda_category": 3,
+    "report_source_table": "manual_insert_from_THYROSEQ_AFIRMA_12_5_xlsx_20260514",
+    "band_backfill_source": "manual_insert_v1",
+    "platform_reclass_status": null
+  },
+  {
+    "research_id": "9154",
+    "platform": "ThyroSeq",
+    "molecular_episode_id": null,
+    "overall_result_class": "superseded",
+    "resolved_test_date": "2026-04-07",
+    "bethesda_category": null,
+    "report_source_table": "thyroseq_molecular_enrichment",
+    "band_backfill_source": "reported_text",
+    "platform_reclass_status": "superseded_by_afirma_row"
+  }
+]
