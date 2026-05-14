@@ -143,9 +143,9 @@ These remain **`duckdb` the library** against **local files** (e.g. `thyroid_mas
 
 ---
 
-## Stale provenance in BigQuery data (task 4 — not code)
+## Stale provenance in BigQuery data (Task 4 — BQ cleanup, not this repo sweep)
 
-User-reported **`motherduck_database` column** values (e.g. `md:thyroid_research_2026`) in `pub_canonical.manuscript_cohort_v1`, `pub_semantic.release_manifest_v1`, and workspace copies — **data-documentation debt**, not Python import dependency. Remediation: **column comment + phased NULL/rename** in BQ migrations (out of scope for this file-level sweep).
+Several BQ tables still carry **`motherduck_database`** (or related) provenance strings that describe the **pre-BQ MotherDuck era**, e.g. `pub_canonical.manuscript_cohort_v1.motherduck_database = md:thyroid_research_2026`, `pub_semantic.release_manifest_v1.motherduck_database = thyroid_canonical_publication_v1_0`, plus workspace/archive copies (~12 objects). **Forward path:** when `manuscript_cohort_v1` (and the older manifest) are next rebuilt, **drop the column or repurpose it** to a BigQuery-native build id (job name / git SHA / `pub_release_manifest_v1_1` row already follows the newer pattern with **no** `motherduck_database` field — align `release_manifest_v1` with that contract).
 
 ---
 
@@ -214,13 +214,15 @@ Union of files containing any of:
 
 ### Disposition counts (must sum to footprint)
 
-| Disposition | N | Rule |
-|-------------|---:|------|
-| **ACTIVE** | **498** | Referenced in `.github/workflows/*.yml` or `Makefile`, **or** substring-hit against a live BigQuery `pub_*` table/view id, **or** listed infra (`scripts/_md_connect.py`, `scripts/_round2_helpers.py`, `motherduck_client.py`, `utils/md_connect.py`). |
-| **DEAD** | **92** | Under superseded prefixes (`snowflake_trial/`, `M0xx_submission_package*`, `scripts/archive/`, `scripts/frozen/`, `M025_FINAL_PACKAGE/`) **or** no orchestrator ref and no BQ id substring. |
-| **COMMENT** | **0** | Would be: MotherDuck/DuckDB tokens **only** in `#` comments (none matched in this footprint). |
-| **UNCERTAIN** | **16** | `scripts/output/` probes, `studies/`, private `_` helpers under `scripts/` with real code coupling but no CI/BQ string proof. |
-| **Sum** | **606** | `498 + 92 + 0 + 16` |
+| Disposition | N (Prompt 9) | N (Prompt 10 supersession-adjusted) | Rule |
+|-------------|---:|---:|------|
+| **ACTIVE** | **498** | **475** | Same as Prompt 9, **minus** one-shot `scripts/mig_NNN_*.py` rows that are only ACTIVE because of the **BQ substring crosswalk** but **do not** appear in `.github/workflows/*.yml` or `Makefile` (orchestrator haystack per `analyze_motherduck_publishers_20260514.py`). These are treated as **completed migrations** for port-backlog purposes (state already absorbed into canonical BQ/MD). |
+| **DEAD** | **92** | **115** | Prompt 9 DEAD **plus** the **23** reclassified `scripts/mig_*` one-shots above (`498 + 92 = 590` footprint excluding UNCERTAIN/COMMENT; after move: `475 + 115 + 16 = 606`). |
+| **COMMENT** | **0** | **0** | MotherDuck/DuckDB tokens **only** in `#` comments (none matched in this footprint). |
+| **UNCERTAIN** | **16** | **16** | Unchanged. |
+| **Sum** | **606** | **606** | Identity. |
+
+**Supersession spot-check (20 of 23 reclassified `scripts/mig_*` one-shots):** `mig_230`, `mig_232`, `mig_255`, `mig_257`, `mig_261`, `mig_262` (+ null-date probe), `mig_263`, `mig_264`, `mig_267`, `mig_268`, `mig_269`, `mig_271`, `mig_273`, `mig_275`, `mig_280`, `mig_281`, `mig_297`, `mig_298`, `mig_302`, `mig_313` — all are **numbered MotherDuck/BQ repair runners** documented in `AGENTS.md` / migration ledgers as **already applied**; none are referenced from Makefile/CI. **Remaining three** in the 23-set: `mig_320`, `mig_322` — same disposal (**one-shot**, not orchestrated). *Caveat:* “DEAD” here means **do not prioritize for MD→BQ port**; scripts stay in git as **audit replay** artifacts.
 
 ### “Publication-critical” column semantics (BQ crosswalk)
 
@@ -260,4 +262,46 @@ All rows with `disposition==DEAD` are listed in the TSV; the majority consolidat
 
 ---
 
-*Re-run `studies/analyze_motherduck_publishers_20260514.py` and the Prompt 8 grep block to refresh counts; `bq` must list datasets successfully for the BQ column.*
+## Prompt 10 — Authoritative `pub_*` builders (not substring crosswalk) + publication P0 port list (2026-05-14)
+
+**Problem:** Prompt 9’s `bq_tables_substring_mentions` column flags any file that **names** a live `pub_canonical` / `pub_semantic` / `pub_views_readable` object (readers, comments, probes), not the **writer**.
+
+**Scanner (CREATE / load / mig_327 catalogue / tuple-sync heuristics):** `studies/bq_pub_authoritative_builders_20260514.py`  
+**Outputs:** `studies/bq_pub_authoritative_builders_20260514.json`, `studies/bq_pub_authoritative_builders_table_20260514.tsv` (280 BigQuery objects from snapshot `studies/bq_pub_object_list_snapshot_20260514.json`).
+
+| Metric | Value |
+|--------|------:|
+| **`ORPHAN_BUILDER` objects** | **174** / 280 (no resolvable CREATE/load/mig_327/tuples hit + no curated lineage row) |
+| **Multi-builder conflicts** | **2** (resolved by **runbook ref then migration id**): `note_entities_llm_cervical_ln_detail` — `scripts/382_restore_7_cervical_ln_legacy_notes.py` wins over `mig_327`; `thyroglobulin_lab_VIEW_v1` — `mig_340` SQL wins over deprecated `mig_329` loader |
+
+**Curated lineage (MD SSOT → BQ mirror, no `CREATE … pub_canonical.*` in repo):** `canonical_path_malignant_events_v1` and `canonical_path_malignant_patient_rollup_v1` → **`scripts/361_op_path_consolidation.py`** (MotherDuck `main.*` CREATE; publication copy is release mirror / bulk load).
+
+**`canonical_patient_master` remains `ORPHAN_BUILDER` for strict pub_canonical DDL** — tracked assembly is a **long fork** of MotherDuck scripts (200-series / finalization family) plus ongoing BQ **ALTER/UPDATE** maintainers (`scripts/mig_322_sistrunk_procedure_bq.py`, `qc_framework_v1/migrations/334_*`, `bq_migrations/mig_088_*`, etc.); full-table promotion DDL may also live under **gitignored** operator SQL (`sql/*demographics_import*` pattern per `.gitignore`). **Remediation:** add a single **BQ-native CPM rebuild driver** or extend the scanner allowlist once the legal builder path is pinned.
+
+### Publication-critical spine — table → builder (`pub_canonical` only; from JSON `p0_publication_critical_table_map`)
+
+| Table | Authoritative builder | Notes |
+|-------|----------------------|-------|
+| `canonical_path_malignant_events_v1` | `scripts/361_op_path_consolidation.py` | CURATED_MD_LINEAGE |
+| `canonical_path_malignant_patient_rollup_v1` | `scripts/361_op_path_consolidation.py` | same (rollup step in 361) |
+| `canonical_tumor_characteristics_v1` | `qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` | parquet → `bq load` + inline CTC rebuild |
+| `manuscript_cohort_v1` | `qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` | mig_327 TABLES |
+| `path_synoptics` | `qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` | mig_327 TABLES |
+| `signoff_migration` | `qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` | mig_327 TABLES |
+| `synoptic_tumor_long_v1` | `bq_migrations/mig_086_legacy_promotion_sweep_views.sql` | BQ `CREATE OR REPLACE VIEW` |
+| `thyroid_scoring_py_v1` | `bq_migrations/mig_086_legacy_promotion_sweep_views.sql` | BQ view promotion |
+| `tumor_episode_master_v2` | `bq_migrations/mig_086_legacy_promotion_sweep_views.sql` | BQ view promotion |
+| `canonical_patient_master` | **`ORPHAN_BUILDER`** | see remediation above |
+
+### Deduplicated P0 port scripts (publication spine — execute / retire in this order)
+
+1. `qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` — bulk MD → parquet → `pub_canonical` for mig_327 catalogue + CTC rebuild.  
+2. `bq_migrations/mig_086_legacy_promotion_sweep_views.sql` — BQ-native view promotion for STL/TEM/scoring stack.  
+3. `scripts/361_op_path_consolidation.py` — MotherDuck SSOT for malignant path events + rollup (**BQ mirror** still owned by release / bulk parity).  
+4. **Blocker:** **`canonical_patient_master`** — assign a named BQ builder or keep `ORPHAN_BUILDER` until CPM driver is unified.
+
+Full per-object map: **`studies/bq_pub_authoritative_builders_table_20260514.tsv`**.
+
+---
+
+*Re-run `studies/analyze_motherduck_publishers_20260514.py` and the Prompt 8 grep block to refresh counts; `bq` must list datasets successfully for the BQ column. Re-run `studies/bq_pub_authoritative_builders_20260514.py` after BQ snapshot refresh.*
