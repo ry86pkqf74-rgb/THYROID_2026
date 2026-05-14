@@ -11,8 +11,10 @@ Usage:
   .venv/bin/python scripts/mig_332_recurrence_histology_evidence_apply.py --apply --force-apply
 
 Post-apply (BigQuery feeder + reconciliation):
-  scripts/mig_332_recurrence_export_reconcile.py
-  bq_migrations/mig_100_canonical_recurrence_v1_archive_feeder_mig332_20260514.sql
+  bq_migrations/mig_101_canonical_recurrence_v1_bq_native_histology_evidence_20260514.sql
+  (BQ-native rebuild of recurrence_histology / recurrence_evidence_source — replaces deprecated
+  mig_100 parquet-from-archive path.)
+  scripts/mig_332_recurrence_export_reconcile.py — optional MotherDuck reconcile only
   qc_framework_v1/migrations/333_recurrence_v1_bq_feeder_provenance_placeholder_20260514.sql (before BQ)
   qc_framework_v1/migrations/334_recurrence_v1_bq_feeder_provenance_post_mig100_20260514.sql (after BQ)
 """

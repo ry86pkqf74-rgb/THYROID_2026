@@ -16,9 +16,10 @@
 --   - canonical_recurrence_v1 in pub_canonical is a BASE TABLE with 10,871 rows
 --   - Legacy snapshot may have the two columns typed INT64 and 100% NULL in BQ.
 --
--- ⚠ §1b DEPRECATED (circular provenance: feeder ← CPM output). Use instead:
---     bq_migrations/mig_100_canonical_recurrence_v1_archive_feeder_mig332_20260514.sql
---     after MotherDuck mig_332 + parquet export (scripts/mig_332_recurrence_export_reconcile.py).
+-- ⚠ §1b DEPRECATED (circular provenance: feeder ← CPM output).
+--     Legacy MERGE from pub_legacy_source is parity-only; prefer BQ-native rebuild:
+--     bq_migrations/mig_101_canonical_recurrence_v1_bq_native_histology_evidence_20260514.sql
+--     (supersedes mig_100 parquet-from-archive path).
 --
 -- Post-checks (run in BigQuery):
 --   SELECT COUNT(*) FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`;
@@ -44,7 +45,7 @@ WHEN MATCHED THEN UPDATE SET
   T.recurrence_evidence_source = CAST(S.recurrence_evidence_source AS STRING);
 
 -- §1b REMOVED — was CPM MERGE (circular: canonical_recurrence_v1 is an INPUT to CPM assembly).
--- Replace with mig_100 staging load from MotherDuck mig_332 parquet export.
+-- Feed BigQuery-native rebuild via mig_101 (not parquet / not CPM).
 
 -- §2 Operative episode facade — re-resolve SELECT * ---------------------------------
 CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_canonical.operative_episode_detail_v2`

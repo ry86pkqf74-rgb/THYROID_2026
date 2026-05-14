@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-Companion to mig_332 — export archive-derived recurrence_histology / recurrence_evidence_source
-for BigQuery feeder reload, and reconcile against canonical_patient_master (interim CPM backfill).
+Companion to mig_332 — MotherDuck audit helpers (archive vs CPM, optional parquet export).
+
+BigQuery reload of recurrence_histology / recurrence_evidence_source is **BQ-native** via
+``bq_migrations/mig_101_canonical_recurrence_v1_bq_native_histology_evidence_20260514.sql``.
+The former parquet → ``stg_canonical_recurrence_v1_mig332`` → mig_100 MERGE path is **deprecated**.
 
 Requires MotherDuck publication DB + attached archive ("Thyroid 2026 UPdated"). Run AFTER:
   .venv/bin/python scripts/mig_332_recurrence_histology_evidence_apply.py --apply
