@@ -1,5 +1,31 @@
 # thyroid-integration skill — changelog
 
+## v2.4.0 — 2026-05-13
+
+**EXT2-4 manuscript v3 → v4 cohort-definition change (any preop US nodule 2.0–4.0 cm).**
+
+Cohort redefined from patient-grain “resolved index nodule 2.0–4.0 cm” (v3 ≈ `n=400`) to **any** pre-operative ultrasound nodule with `canonical_us_nodule_v2.size_cm_max` ∈ [2.0, 4.0] on an exam on or before surgery (v4 **`n=765`**). STRICT nodal-exclusion sensitivity arm: **`n=654`**. Decision driver: clinical co-author input + `cohort_reconciliation_v1_vs_v3.md` §DECISION (2026-05-14).
+
+### Pre-bump verified-state check (mandatory)
+
+BigQuery read-only reproduction (2026-05-13 handoff): `cohort_v4_pts` distinct **`765`**; `v4_strict` **`654`**.
+
+### Deliverables (study folder)
+
+- `studies/proposal_2to4cm_extent_molecular_20260326/elicit_expansion_20260509/manuscript_v4_draft.docx`
+- `manuscript_v4_package_20260513.zip` (staged from `/tmp`)
+- `tables/table{1,2,2b,3,4}_v4_*.csv`, `figures/fig{1,2,3,4}_*_v4.{png,pdf}`
+- `build_*_v4.{py,js}`, `sql/04b_table3_v4_actual_reported_call.sql`
+- v3 preserved under `elicit_expansion_20260509/superseded_v3/` + `SUPERSEDED_NOTE_v3_to_v4.md`
+- Bibliography: `references_working_20260514.md` (refs 11–18 cited in v4 docx)
+
+### Governance
+
+- **DFL (pre-work):** `DFL-20260513-EXT2-4-V4-COHORT-PRELOG` (`recwKfs4ZB9fZQmrC`) — Data Feedback Log; `change_type=migration` with major-revision-equivalent summary (schema has no `major_revision` on DFL).
+- **MFL (post-work):** `MFL-20260513-EXT2-4-V4-COHORT-REBUILD` (`recylT6gWb9raAiOr`).
+
+---
+
 ## v2.3.2 — 2026-05-14
 
 **BigQuery — CMG FNA episode-token bridge + `resolved_test_date_source` lift (`mig_324b`, VC-MOL-DATE-BRIDGE-001).**

@@ -1,18 +1,8 @@
 Step,n
-All patients in canonical_patient_master (1999–2025),10871
-Patients with first surgery date resolved,8731
-"Surgical extent ∈ {hemithyroidectomy, total_thyroidectomy}",8368
-    of which initial hemithyroidectomy,3809
-    of which initial total thyroidectomy,4559
-With Bethesda category resolved,3921
-    Bethesda III (AUS/FLUS),444
-    Bethesda IV (FN/SFN),489
-    Bethesda III+IV (indeterminate cytology),933
-With named molecular platform (Afirma or ThyroSeq),497
-Molecular head-to-head subset (Bethesda III/IV + Afirma|ThyroSeq + final histology),238
-    Afirma B3+B4 + histology,96
-    ThyroSeq B3+B4 + histology,142
-Preop nodule 2.0–4.0 cm (any Bethesda),400
-    Pre-2015 surgery,8
-    2015+ surgery,392
-    With named platform (Afirma|ThyroSeq),57
+All patients spine (canonical / manuscript cohort v1 rollup),10871
+Patients with first surgery resolved (study spine),8731
+Initial hemithyroidectomy or total thyroidectomy; surgery year 1999–2025,8368
+    initial hemithyroidectomy only,3809
+    initial total thyroidectomy,4559
+EXT2-4 v4 primary: ≥1 US nodule 2.0–4.0 cm (canonical_us_nodule_v2.size_cm_max) with exam_date ≤ DATE(surg_first_date),765
+v4 STRICT sensitivity arm — exclude suspicious CT/MRI neck nodes + Bethesda VI lymph-node-directed FNA (pre-operative),654

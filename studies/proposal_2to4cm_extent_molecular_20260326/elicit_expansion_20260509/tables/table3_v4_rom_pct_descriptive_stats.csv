@@ -1,0 +1,12 @@
+Platform,Reported call,Histology class,n,n with numeric ROM%,Mean ROM%,Median ROM% [IQR]
+Afirma,negative,malignant,2,0,n/a — Afirma reports binary call only,n/a
+Afirma,positive,benign,3,1,n/a — Afirma reports binary call only,n/a
+Afirma,positive,malignant,8,1,n/a — Afirma reports binary call only,n/a
+Afirma,unknown_or_excluded,benign,1,0,n/a — Afirma reports binary call only,n/a
+ThyroSeq,intermediate,benign,4,4,48.8,50.0 [40.0–50.0]
+ThyroSeq,intermediate,malignant,8,7,50.7,50.0 [50.0–50.0]
+ThyroSeq,intermediate,niftp,1,1,35.0,35.0 [35.0–35.0]
+ThyroSeq,negative,benign,27,24,4.7,3.0 [3.0–3.5]
+ThyroSeq,negative,malignant,4,4,11.2,4.0 [3.0–35.0]
+ThyroSeq,positive,benign,9,9,63.9,65.0 [60.0–70.0]
+ThyroSeq,positive,malignant,31,30,73.6,70.0 [70.0–70.0]

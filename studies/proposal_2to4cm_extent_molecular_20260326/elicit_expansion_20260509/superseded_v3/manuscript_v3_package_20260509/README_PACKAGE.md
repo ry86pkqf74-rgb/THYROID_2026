@@ -1,19 +1,4 @@
-# EXT2-4 Elicit-expansion manuscript packages
-
-## v4 rebuild (BigQuery ultrasound-inclusive cohort — 2026-05-13)
-
-Production zip & draft: **`manuscript_v4_package_20260513.zip`**, **`manuscript_v4_draft.docx`**.
-
-- **Primary cohort (`n=765`)** = surgeries (`n=8,368`) intersected with ≥1 qualifying `canonical_us_nodule_v2` row (`size_cm_max` 2.0–4.0 cm on an exam dated ≤ surgery calendar day).
-- **STRICT arm (`n=654`)** = primary minus suspicious CT/MRI nodal imaging + Bethesda‑VI LN-directed FNA exclusions.
-- superseded **`manuscript_v3_*`** lives in **`superseded_v3/`** with **`SUPERSEDED_NOTE_v3_to_v4.md`**.
-- Scripts: **`build_*_v4.py`**, **`build_manuscript_docx_v4.js`**.
-
----
-
-## v2 archival package — 2026-05-09
-
-This legacy section describes **`manuscript_v2_package_*`** retained for lineage.
+# EXT2-4 Elicit-expansion manuscript package v2 — 2026-05-09
 
 This zip is the fully updated manuscript package that consolidates the
 2026-05-09 BigQuery-canonical re-analysis of the EXT2-4 (2–4 cm Extent +
