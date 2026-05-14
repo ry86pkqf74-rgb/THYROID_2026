@@ -44,8 +44,29 @@ LOCATION = "us-central1"
 RAW_TABLE = "thyroglobulin_analyst_ehr_20251120"
 PROVENANCE_TABLE = "thyroglobulin_analyst_ehr_20251120_load_provenance"
 CANON_TABLE = "canonical_labs_thyroglobulin_v1"
+VIEW_CANON = "thyroglobulin_lab_VIEW_v1"
 SNAPSHOT_TABLE = "canonical_labs_thyroglobulin_v1_pre_tgrebuild_20260514"
 SQL_TRANSFORM = SCRIPT_DIR / "sql" / "mig_340_thy_canonical_from_analyst_raw.sql"
+
+# Must run after the table script: BigQuery disallows CREATE VIEW in the same script as TEMP JS UDFs.
+SQL_VIEW = """
+CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_canonical.thyroglobulin_lab_VIEW_v1`
+AS SELECT
+  research_id,
+  analyte,
+  assay_method,
+  lab_datetime AS specimen_collect_dt,
+  value_raw AS result_raw,
+  value_numeric AS result_numeric,
+  is_censored,
+  value_correction_note,
+  unit_standardized,
+  source AS ingestion_script,
+  is_in_canonical_cancer_cohort,
+  ingestion_date,
+  analyte_assignment_method
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_labs_thyroglobulin_v1`
+""".strip()
 
 
 def _sanitize_field(name: str) -> str:
@@ -213,7 +234,12 @@ def apply_transform_via_client(dry_run: bool) -> None:
     _print(f"[mig_340] Applying transform script ({SQL_TRANSFORM.relative_to(REPO_ROOT)}) …")
     job = client.query(sql)
     job.result(timeout=7200)
-    _print("[mig_340] Transform complete.")
+    _print("[mig_340] Table build complete; refreshing thyroglobulin_lab_VIEW_v1 …")
+    view_fq = f"{BQ_PROJECT}.{CANON_DS}.{VIEW_CANON}"
+    client.delete_table(view_fq, not_found_ok=True)
+    _print(f"[mig_340] Removed existing {view_fq} if present (may have been TABLE vs VIEW).")
+    client.query(SQL_VIEW).result(timeout=3600)
+    _print("[mig_340] Transform complete (table + view).")
 
 
 def _print(msg: str) -> None:

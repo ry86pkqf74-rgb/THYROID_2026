@@ -238,7 +238,9 @@ return main(result_raw);
 """
 ;
 
+-- CLUSTER BY must match the live table: BQ rejects CREATE OR REPLACE when clustering spec changes.
 CREATE OR REPLACE TABLE `thyroid-canonical-pub-2026.pub_canonical.canonical_labs_thyroglobulin_v1`
+CLUSTER BY research_id
 OPTIONS(
   description=(
     'mig_340 2026-05-14: row universe analyst CSV pub_raw.thyroglobulin_analyst_ehr_20251120; '
@@ -609,21 +611,7 @@ SELECT
 FROM ranked
 WHERE drn = 1;
 
-CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_canonical.thyroglobulin_lab_VIEW_v1`
-AS SELECT
-  research_id,
-  analyte,
-  assay_method,
-  lab_datetime AS specimen_collect_dt,
-  value_raw AS result_raw,
-  value_numeric AS result_numeric,
-  is_censored,
-  value_correction_note,
-  unit_standardized,
-  source AS ingestion_script,
-  is_in_canonical_cancer_cohort,
-  ingestion_date,
-  analyte_assignment_method
-FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_labs_thyroglobulin_v1`;
+-- thyroglobulin_lab_VIEW_v1 is created in a separate BQ job (mig_340 Python runner): BQ rejects
+-- CREATE VIEW in the same script as TEMP FUNCTIONS.
 
 END;
