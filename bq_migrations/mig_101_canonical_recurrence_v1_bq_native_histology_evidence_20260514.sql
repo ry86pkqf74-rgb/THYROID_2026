@@ -2,6 +2,7 @@
 -- recurrence_evidence_source BigQuery-native from Scripts 203 / 203b tier logic.
 --
 -- Inputs (all pub_canonical): canonical_operative_events_v1, path_synoptics,
+-- histology_vocab_normalization_map_v1 (raw → canonical_code),
 -- canonical_fna_events_v1, thyroglobulin_lab_canonical_v1,
 -- note_entities_llm_recurrence, recurrence_event_clean_v1.
 --
@@ -14,7 +15,8 @@
 --   6 imaging_suspicious_unconfirmed (LLM)
 --
 -- recurrence_histology: populated ONLY for tier 1 (closest path_synoptics row
--- within ±30d of reoperation); NULL elsewhere (203b / user spec).
+-- within ±30d of reoperation), as histology_vocab_normalization_map_v1.canonical_code
+-- (join on LOWER(TRIM(raw_value))) — not raw tumor_1_histologic_type; NULL elsewhere.
 --
 -- recurrence_evidence_source literals:
 --   reoperation_pathology | fna_cytology | tg_time_series |
@@ -41,6 +43,16 @@ FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`;
 CREATE OR REPLACE TABLE `thyroid-canonical-pub-2026.pub_workspace.stg_cr_v1_mig101_rebuilt_cols`
 AS
 WITH
+-- One row per normalized raw key (map has multiple source_col rows per raw_value).
+histology_vocab_map_dedup AS (
+  SELECT
+    LOWER(TRIM(CAST(raw_value AS STRING))) AS hist_raw_key,
+    MIN(CAST(canonical_code AS STRING)) AS canonical_code
+  FROM `thyroid-canonical-pub-2026.pub_canonical.histology_vocab_normalization_map_v1`
+  WHERE raw_value IS NOT NULL
+    AND TRIM(CAST(raw_value AS STRING)) != ''
+  GROUP BY LOWER(TRIM(CAST(raw_value AS STRING)))
+),
 -- First calendar surgery date: operative spine ∪ path_synoptics fallback (203b).
 oe_dates AS (
   SELECT
@@ -119,10 +131,12 @@ reop_path_join AS (
   SELECT
     r.research_id,
     r.reop_date,
-    ps.tumor_1_histologic_type AS recurrence_histology,
+    m.canonical_code AS recurrence_histology,
     ABS(DATE_DIFF(ps.path_surg_date, r.reop_date, DAY)) AS day_gap
   FROM reoperations r
   INNER JOIN path_syn_dates ps USING (research_id)
+  INNER JOIN histology_vocab_map_dedup m
+    ON m.hist_raw_key = LOWER(TRIM(CAST(ps.tumor_1_histologic_type AS STRING)))
   WHERE ps.tumor_1_histologic_type IS NOT NULL
     AND TRIM(CAST(ps.tumor_1_histologic_type AS STRING)) != ''
     AND ps.path_surg_date IS NOT NULL
