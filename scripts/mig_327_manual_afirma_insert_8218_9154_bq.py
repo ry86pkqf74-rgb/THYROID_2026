@@ -103,6 +103,7 @@ INSERT INTO `{args.project}.{CANONICAL_DATASET}.{CMG_TABLE}` (
   built_at,
   builder_version,
   ingestion_source,
+  parse_status,
   parse_status_v2
 )
 WITH new_rows AS (
@@ -164,6 +165,7 @@ SELECT
   CURRENT_TIMESTAMP() AS built_at,
     'mig_327_manual_afirma_insert_bq.py' AS builder_version,
   'manual_insert_afirma_xlsx_structured' AS ingestion_source,
+  'manual_structured_insert' AS parse_status,
   'manual_structured_insert' AS parse_status_v2
 FROM new_rows n
 """
