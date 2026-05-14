@@ -9,6 +9,12 @@ Usage:
   .venv/bin/python scripts/mig_332_recurrence_histology_evidence_apply.py --validate-only
   .venv/bin/python scripts/mig_332_recurrence_histology_evidence_apply.py --apply
   .venv/bin/python scripts/mig_332_recurrence_histology_evidence_apply.py --apply --force-apply
+
+Post-apply (BigQuery feeder + reconciliation):
+  scripts/mig_332_recurrence_export_reconcile.py
+  bq_migrations/mig_100_canonical_recurrence_v1_archive_feeder_mig332_20260514.sql
+  qc_framework_v1/migrations/333_recurrence_v1_bq_feeder_provenance_placeholder_20260514.sql (before BQ)
+  qc_framework_v1/migrations/334_recurrence_v1_bq_feeder_provenance_post_mig100_20260514.sql (after BQ)
 """
 
 from __future__ import annotations
