@@ -2,6 +2,13 @@
 """
 41_ingest_thyroseq_excel.py — ThyroSeq workbook integration pipeline.
 
+NOTE (BigQuery canonical genetics): Rows for ``canonical_molecular_genetics_v2`` are NOT
+built by this script. The MotherDuck/BQ molecular-genetics builder lives under
+``molecular_consolidation_20260421/08_build_master.py`` (parser:
+``thyroseq_detailed_parser.py``). That pipeline historically excluded ``platform='Other'``
+except when episodes carry meaningful episode text or driver flags — see ``SOURCE_QUERY``
+in ``08_build_master.py``.
+
 Ingests 'Thyroseq Data Complete.xlsx', matches patients to existing
 research_id spine, parses molecular/labs/imaging/treatment content,
 fills only missing canonical values, and generates QA/review outputs.

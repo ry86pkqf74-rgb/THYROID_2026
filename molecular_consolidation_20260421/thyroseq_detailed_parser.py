@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 import re
 import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Pattern, Tuple
 
 
 # ---------- OCR normalization ----------
@@ -27,6 +27,8 @@ def normalize(text: str) -> str:
     t = text
     t = t.replace("\x00", " ").replace("\u00a0", " ")
     repl = [
+        (r"(?i)\bgene\s+inutations?\b", "Gene mutations"),
+        (r"(?i)\bcapy\b", "Copy"),
         (r"(?i)gene\s*mul[aeto][a-z]*",  "Gene mutations"),
         (r"(?i)gene\s*mur?[at]tions?",   "Gene mutations"),
         (r"(?i)gene\s*raut[aeiouy]tions?","Gene mutations"),
@@ -140,7 +142,71 @@ FUSION_RX = re.compile(r"\b([A-Z][A-Z0-9]{1,8})\s*[\/\-]\s*([A-Z][A-Z0-9]{1,8})\
 GENE_TOKEN_RX = re.compile(r"\b(BRAF|NRAS|KRAS|HRAS|TERT|EIF1AX|EIFIAX|EIFLAX|EIFTAX|TP53|PTEN|GNAS|DICER1|DICERI|PAX8|PPARG|RET|NTRK1|NTRK3|ETV6|ALK|TSHR|THADA|IGF2BP3|VHL|STRN|AKT1|CTNNB1|APC|MET|PIK3CA|SMAD4|EGFR|ERBB2|FGFR2|FBXW7|FOXL2|GNAQ|KIT|MAP2K1|MSH6|PDGFRA|SRC|STK11|CDH1|NCOA4|EML4)\b")
 PROT_RX = re.compile(r"p\.?\s*[A-Z][a-zA-Z_]?\d{1,4}[A-Za-z_*]*")
 CDNA_RX = re.compile(r"c\.[\d\-+_]+[A-Z]?[>»]?[A-Z]?")
-AF_RX   = re.compile(r"(\d{1,3})\s*%")
+
+# Allele fraction: strict labeled patterns first, then bare nn% near HGVS (Issue 3).
+_AF_EXTRACTION_PATTERNS: Tuple[Pattern[str], ...] = (
+    re.compile(r"(?i)(?:AF|VAF|allele\s+freq(?:uency)?)[:\s]+(\d+(?:\.\d+)?)\s*%"),
+    re.compile(r"(?i)(\d+(?:\.\d+)?)\s*%\s*(?:AF|VAF|allele)\b"),
+    re.compile(r"(?i)c\.\S+\s+(\d+(?:\.\d+)?)\s*%"),
+    re.compile(r"(?i)p\.\S+\s+c\.\S+\s+(\d+(?:\.\d+)?)\s*%"),
+    re.compile(r"(?<!\d)(\d{1,3}(?:\.\d+)?)\s*%"),
+)
+
+
+def extract_af_pct(window: str) -> int | None:
+    """Best-effort VAF/AF percent from a variant-adjacent text window."""
+    if not window:
+        return None
+    for rx in _AF_EXTRACTION_PATTERNS:
+        m = rx.search(window)
+        if not m:
+            continue
+        try:
+            return int(round(float(m.group(1))))
+        except (ValueError, IndexError, TypeError):
+            continue
+    return None
+
+
+# ThyroSeq / OCR: standalone block headers with Negative on the next line (Issue 2).
+ALL_NEG_PATTERNS: Dict[str, Pattern[str]] = {
+    "gene_mutations_status": re.compile(
+        r"(?i)gene\s+m[a-z]{1,5}tations?\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+    "gene_fusions_status": re.compile(
+        r"(?i)gene\s+fusions?\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+    "cna_status": re.compile(
+        r"(?i)c[ao]py\s+number(?:\s+alterations?)?\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+    "gep_status": re.compile(
+        r"(?i)gene\s+expression(?:\s+profile)?\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+    "parathyroid_status": re.compile(
+        r"(?i)parathyroid\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+    "medullary_status": re.compile(
+        r"(?i)medullary[/\w\s-]*\s*[:\n\r]+\s*(negative|none|not\s+detected)\b"
+    ),
+}
+
+
+def _apply_all_negative_status_fallback(out: Dict, raw_text: str) -> None:
+    """Fill empty DETAILED RESULTS status fields when report states all-negative blocks."""
+    if not raw_text or not raw_text.strip():
+        return
+    detail_text = normalize(raw_text)
+    variants = out.get("gene_mutations_variants") or []
+    fusions = out.get("gene_fusions_list") or []
+    for field, rx in ALL_NEG_PATTERNS.items():
+        if out.get(field):
+            continue
+        if field == "gene_mutations_status" and variants:
+            continue
+        if field == "gene_fusions_status" and fusions:
+            continue
+        if rx.search(detail_text):
+            out[field] = "Negative"
 
 
 # ---------- Band thresholds + fallback logic ----------
@@ -416,6 +482,18 @@ def parse_afirma(text: str) -> Dict:
         variants.append({"gene": "TERT", "protein": "C228T", "cdna": "c.-124C>T", "af_pct": None, "source_call": "Afirma_TERT_C228T"})
     if tert250_val == "Positive":
         variants.append({"gene": "TERT", "protein": "C250T", "cdna": "c.-146C>T", "af_pct": None, "source_call": "Afirma_TERT_C250T"})
+    tx_full = text or ""
+    for v in variants:
+        if v.get("af_pct") is not None:
+            continue
+        gene = (v.get("gene") or "").strip()
+        if not gene:
+            continue
+        ix = tx_full.upper().find(gene.upper())
+        if ix >= 0:
+            ap = extract_af_pct(tx_full[ix : ix + 220])
+            if ap is not None:
+                v["af_pct"] = ap
     fusions: List[Dict] = []
     if ret_val == "Positive":
         fusions.append({"gene1": "RET", "gene2": "PTC?", "source_call": "Afirma_RET_PTC"})
@@ -431,6 +509,20 @@ def parse_afirma(text: str) -> Dict:
         fus_status = "Negative"
     else:
         fus_status = None
+    if fus_status is None:
+        tx = text or ""
+        fusion_pos = re.search(
+            r"(?i)(RET\s*/\s*PTC|RET/PTC|\bfusion\b).{0,160}?(detected|positive)\b",
+            tx,
+        )
+        fusion_neg = re.search(
+            r"(?i)(RET\s*/\s*PTC|RET/PTC|\bfusion\b).{0,160}?(not\s+detected|negative)\b",
+            tx,
+        )
+        if fusion_pos:
+            fus_status = "Positive"
+        elif fusion_neg:
+            fus_status = "Negative"
     med_status = mtc_val
     para_status = para_val
     tert_present = any(v.get("gene") == "TERT" for v in variants)
@@ -513,7 +605,6 @@ def _variants_from_freeform(mut_source: str) -> List[Dict]:
         window = mut_source[gene_m.start(): gene_m.start() + 220]
         prot = PROT_RX.search(window)
         cdna = CDNA_RX.search(window)
-        af = AF_RX.search(window)
         key = (g_norm, prot.group(0) if prot else None)
         if key in seen_keys:
             continue
@@ -522,7 +613,7 @@ def _variants_from_freeform(mut_source: str) -> List[Dict]:
             "gene": g_norm,
             "protein": prot.group(0) if prot else None,
             "cdna": cdna.group(0) if cdna else None,
-            "af_pct": int(af.group(1)) if af else None,
+            "af_pct": extract_af_pct(window),
             "source_call": "ThyroSeq_FREEFORM_FALLBACK",
         })
     return variants
@@ -565,6 +656,7 @@ def parse_block(text: str) -> Dict:
                     break
             out["tert_present"] = tert_present
             out["tert_promoter_variant"] = tert_variant
+            _apply_all_negative_status_fallback(out, text or "")
             filled = sum(1 for k in ("gene_mutations_status",) if out.get(k))
             out["n_fields_parsed"] = filled
             # mig_321 Fallback A/B: infer ROM band even for partial/freeform results
@@ -600,7 +692,6 @@ def parse_block(text: str) -> Dict:
         window = mut_raw[gene_m.start(): gene_m.start() + 200]
         prot = PROT_RX.search(window)
         cdna = CDNA_RX.search(window)
-        af = AF_RX.search(window)
         key = (g_norm, prot.group(0) if prot else None)
         if key in seen_keys:
             continue
@@ -609,7 +700,7 @@ def parse_block(text: str) -> Dict:
             "gene": g_norm,
             "protein": prot.group(0) if prot else None,
             "cdna":    cdna.group(0) if cdna else None,
-            "af_pct":  int(af.group(1)) if af else None,
+            "af_pct": extract_af_pct(window),
             "source_call": "ThyroSeq_DETAILED",
         })
     out["gene_mutations_variants"] = variants
@@ -660,6 +751,7 @@ def parse_block(text: str) -> Dict:
     else:
         out["gep_detail"] = None
     out.update(header_out)
+    _apply_all_negative_status_fallback(out, text or "")
     filled = sum(1 for k in ("specimen_adequacy_norm", "gene_mutations_status", "gene_fusions_status",
                              "cna_status", "gep_status", "parathyroid_status", "medullary_status")
                  if out.get(k))

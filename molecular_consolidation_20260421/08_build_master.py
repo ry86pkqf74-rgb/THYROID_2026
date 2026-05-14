@@ -63,7 +63,17 @@ WITH eps AS (
         e.overall_result_class
     FROM molecular_test_episode_v2 e
     WHERE e.platform IS NOT NULL
-      AND e.platform NOT IN ('Other', 'OTHER', 'other')
+      AND (
+          UPPER(TRIM(CAST(e.platform AS VARCHAR))) <> 'OTHER'
+          OR (
+              LENGTH(TRIM(COALESCE(e.detailed_findings_raw, ''))) > 50
+              OR LENGTH(TRIM(COALESCE(e.mutation, ''))) > 3
+              OR COALESCE(e.braf_flag, FALSE)
+              OR COALESCE(e.ras_flag, FALSE)
+              OR COALESCE(e.tert_flag, FALSE)
+              OR LOWER(TRIM(COALESCE(e.overall_result_class, ''))) IN ('positive', 'suspicious')
+          )
+      )
 ),
 enrich AS (
     SELECT research_id,

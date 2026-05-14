@@ -28,7 +28,10 @@ from thyroseq_detailed_parser import (
     _numeric_rom_to_band,
     _result_class_from_band,
     _scan_full_text_for_band,
+    extract_af_pct,
+    normalize,
     parse,
+    parse_afirma,
     parse_block,
 )
 
@@ -320,3 +323,69 @@ class TestAfirmaUnaffected:
         # Afirma path does not call _apply_band_fallbacks; band_source should be absent
         assert result.get("parser") == "afirma"
         assert "band_source" not in result
+
+
+class TestExtractAfPct:
+    def test_labeled_af(self):
+        assert extract_af_pct("Allele frequency: 23.6%") == 24
+
+    def test_after_cdna(self):
+        assert extract_af_pct("c.1799T>A 11%") == 11
+
+    def test_vaf_suffix(self):
+        assert extract_af_pct("45% VAF extra") == 45
+
+
+class TestOcrNormalizeMutationsHeader:
+    def test_inutations_fixed(self):
+        n = normalize("Gene Inutations\nNegative\n")
+        assert "Gene mutations" in n
+
+
+class TestThyroSeqDetailedAfExtraction:
+    def test_braf_percent_after_hgvs(self):
+        txt = """DETAILED RESULTS
+Gene mutations
+BRAF p.V600E c.1799T>A 11%
+Gene fusions
+Negative
+Copy number alterations
+Negative
+Gene expression profile
+Negative
+"""
+        r = parse_block(txt)
+        by_gene = {v["gene"]: v.get("af_pct") for v in r.get("gene_mutations_variants", [])}
+        assert by_gene.get("BRAF") == 11
+
+
+class TestAfirmaFusionFallback:
+    def test_ret_ptc_fusion_not_detected_without_colon_field(self):
+        t = (
+            "Afirma BRAF: Positive\n"
+            "Afirma MTC Result: Negative\n"
+            "RET/PTC fusion not detected in this specimen.\n"
+        )
+        r = parse_afirma(t)
+        assert r.get("gene_fusions_status") == "Negative"
+
+
+class TestAllNegativeFallbackThyroSeq:
+    """Issue 2 — header/body lines without ':' before Negative."""
+
+    def test_multiline_negative_sections(self):
+        txt = """DETAILED RESULTS
+Gene mutations
+Negative
+Gene fusions
+Negative
+Copy number alterations
+Negative
+Gene expression profile
+Negative
+"""
+        r = parse_block(txt)
+        assert r["gene_mutations_status"] == "Negative"
+        assert r["gene_fusions_status"] == "Negative"
+        assert r["cna_status"] == "Negative"
+        assert r["gep_status"] == "Negative"
