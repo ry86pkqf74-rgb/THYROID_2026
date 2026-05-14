@@ -197,7 +197,21 @@ BigQuery set-diff (`pub_workspace` PAR minus `pub_canonical` CPM) yields exactly
 | **Incremental patches** | **`scripts/86_operative_nlp_final_sync.py`** — adds patient-level operative NLP aggregates to `patient_analysis_resolved_v1` / mirrors. |
 | **Schema relocation / selective CPM backfill choreography** | **`scripts/prompt6_347b_patient_analysis_resolved.py`** — MotherDuck-only move + logging (not the semantic grain builder). |
 
-**BQ mirror gap (Prompt 10 index):** `pub_workspace.patient_analysis_resolved_v1` is **not** listed in `studies/bq_pub_authoritative_builders_20260514.py` **`CURATED_LINEAGE`**. Until a pinned **`bq load` / scheduled export** is registered, Phase 2 **relocates the orphan-builder problem one level up**: CPM rebuild must **explicitly** document the PAR→BQ hydrate step or accept **`ORPHAN_MIRROR`** risk for `pub_workspace`.
+**BQ mirror gap (Prompt 10 index):** `pub_workspace.patient_analysis_resolved_v1` was **not** listed in `studies/bq_pub_authoritative_builders_20260514.py` **`CURATED_LINEAGE`** until **2026-05-14** (see **Phase 2.0** below).
+
+### Phase 2.0 — PAR root pin (**S2 / ORPHAN_MIRROR**) — **executed 2026-05-14**
+
+**Decision — Option (a), not (b):** Accept a **pinned MotherDuck → Parquet → BigQuery `bq load` (or equivalent load job)** mirror for `thyroid-canonical-pub-2026.pub_workspace.patient_analysis_resolved_v1`. **There is no BigQuery-native semantic builder** in-repo for PAR; the authoritative grain remains **`scripts/48_build_analysis_resolved_layer.py`** (MotherDuck/DuckDB CTAS, plus incremental patches **`scripts/86_operative_nlp_final_sync.py`**). A full **S-1 BQ-native PAR replay** would require porting script 48’s upstream DAG (`patient_refined_master_clinical_v12`, `extracted_*`, `thyroid_scoring_systems_v1`, linkage tables, etc.) with many objects not yet first-class BQ builders — **out of scope** for the Phase 2 proof loop; it remains a **future** lane if MotherDuck must be retired.
+
+**Hydration path (documented, operator-repeatable):**
+
+1. **Semantic SSOT:** Run **`scripts/48_build_analysis_resolved_layer.py`** (and any required **49–53** + **86** prerequisites) on **`thyroid_canonical_publication_v1_0`** MotherDuck so `patient_analysis_resolved_v1` matches `gold_master_patient_facts_v1` VIEW body (**10,871** row cohort).
+2. **Mirror:** Export that table to Parquet and load into **`pub_workspace.patient_analysis_resolved_v1`** with **`WRITE_TRUNCATE`** (same pattern as publication house list in **`scripts/223_publish_canonical.py`** `PATIENT_SUMMARY`, which includes `patient_analysis_resolved_v1`). **Note:** Table is **not** in **`qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py` `TABLES`** — the hydrate step is **release/documented export**, not an automated catalogue row.
+3. **Pin:** Record **Git SHA + MotherDuck `connect_locked` stamp + row/col counts (10,871 / 10,871, 146 cols)** in release notes or `pub_release_manifest_v1_1` when used for a rebuild wave.
+
+**Curated lineage:** `studies/bq_pub_authoritative_builders_20260514.py` includes **`(pub_workspace, patient_analysis_resolved_v1)`** in **`CURATED_LINEAGE`** (MotherDuck script **48** + mirror hydrate; not BQ-DDL-native).
+
+**First assembly substage (ASM204):** `pub_workspace.cpm_stage_asm204_20260514` built via **`studies/cpm_stage_asm204_20260514.sql`** (BQ-only CTAS). Validation memo: **`studies/cpm_stage_asm204_validation_20260514.md`**.
 
 ---
 

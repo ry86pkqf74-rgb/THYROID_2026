@@ -3,6 +3,14 @@
   "orphan_count": 173,
   "multi_builder_conflicts": [
     {
+      "object": "pub_canonical.canonical_patient_master",
+      "winner": "sql/mig_079_operator_emr_cohort_demo_apply.sql",
+      "alternates": [
+        "scripts/bq_replicate_canonical_patient_master.py"
+      ],
+      "resolution": "runbook_then_mig_score"
+    },
+    {
       "object": "pub_canonical.note_entities_llm_cervical_ln_detail",
       "winner": "scripts/382_restore_7_cervical_ln_legacy_notes.py",
       "alternates": [
@@ -23,7 +31,7 @@
     "bq_migrations/mig_086_legacy_promotion_sweep_views.sql",
     "qc_framework_v1/migrations/327_bulk_md_to_bq_missing_tables.py",
     "scripts/361_op_path_consolidation.py",
-    "scripts/bq_replicate_canonical_patient_master.py"
+    "sql/mig_079_operator_emr_cohort_demo_apply.sql"
   ],
   "p0_publication_critical_table_map": [
     {
@@ -40,9 +48,9 @@
       "table": "canonical_patient_master",
       "builders_by_dataset": {
         "pub_canonical": {
-          "authoritative_builder": "scripts/bq_replicate_canonical_patient_master.py",
+          "authoritative_builder": "sql/mig_079_operator_emr_cohort_demo_apply.sql",
           "port_tier": "P0",
-          "lineage_note": "SSOT on MotherDuck thyroid_canonical_publication_v1_0.main.canonical_patient_master (10,871 \u00d7 distinct research_id \u2014 enforced by scripts/_md_connect.connect_locked); pub_canonical table is recreated via Parquet export + `bq load --replace` (+ any BQ-only ALTER follow-ups documented in Prompt 11 / bq_migrations). "
+          "lineage_note": null
         }
       }
     },
@@ -658,17 +666,23 @@
     "pub_canonical.canonical_patient_master": {
       "dataset": "pub_canonical",
       "table": "canonical_patient_master",
-      "authoritative_builder": "scripts/bq_replicate_canonical_patient_master.py",
+      "authoritative_builder": "sql/mig_079_operator_emr_cohort_demo_apply.sql",
       "port_tier": "P0",
-      "alternate_builders": [],
+      "alternate_builders": [
+        "scripts/bq_replicate_canonical_patient_master.py"
+      ],
       "evidence": [
         {
-          "file": "scripts/bq_replicate_canonical_patient_master.py",
-          "pattern": "CURATED_MD_LINEAGE",
-          "snippet": "SSOT on MotherDuck thyroid_canonical_publication_v1_0.main.canonical_patient_master (10,871 \u00d7 distinct research_id \u2014 enforced by scripts/_md_connect.connect_locked); pub_canonical table is recreated via Parquet export + `bq load --replace` (+ any BQ-only ALTER follow-ups document"
+          "file": "sql/mig_079_operator_emr_cohort_demo_apply.sql",
+          "pattern": "CREATE_BACKTICK",
+          "snippet": "CREATE OR REPLACE TABLE `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`"
+        },
+        {
+          "file": "sql/mig_079_operator_emr_cohort_demo_apply.sql",
+          "pattern": "CREATE_FULLPROJ",
+          "snippet": "CREATE OR REPLACE TABLE `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`"
         }
-      ],
-      "lineage_note": "SSOT on MotherDuck thyroid_canonical_publication_v1_0.main.canonical_patient_master (10,871 \u00d7 distinct research_id \u2014 enforced by scripts/_md_connect.connect_locked); pub_canonical table is recreated via Parquet export + `bq load --replace` (+ any BQ-only ALTER follow-ups documented in Prompt 11 / bq_migrations). "
+      ]
     },
     "pub_canonical.canonical_patient_master_hybrid_evidence_v1": {
       "dataset": "pub_canonical",

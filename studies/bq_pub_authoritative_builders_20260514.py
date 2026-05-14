@@ -29,6 +29,17 @@ OUT_TSV = REPO / "studies" / "bq_pub_authoritative_builders_table_20260514.tsv"
 # value: (builder_script, human_note)
 CURATED_LINEAGE: dict[tuple[str, str], tuple[str, str]] = {
     (
+        "pub_workspace",
+        "patient_analysis_resolved_v1",
+    ): (
+        "scripts/48_build_analysis_resolved_layer.py",
+        "Semantic SSOT on MotherDuck (CTAS patient_analysis_resolved_v1 after scripts 49–53; "
+        "patches scripts/86_operative_nlp_final_sync.py). "
+        "BigQuery table is a pinned MD→Parquet→bq load publication mirror (see "
+        "scripts/223_publish_canonical.py PATIENT_SUMMARY); not BQ-DDL-native. "
+        "Phase 2 pin documented in studies/cpm_bq_native_rebuild_phase1_plan_20260514.md §Phase 2.0.",
+    ),
+    (
         "pub_canonical",
         "canonical_path_malignant_events_v1",
     ): (
