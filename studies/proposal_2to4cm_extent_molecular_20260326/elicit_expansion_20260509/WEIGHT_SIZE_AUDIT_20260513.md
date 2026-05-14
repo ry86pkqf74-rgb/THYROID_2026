@@ -134,3 +134,50 @@ Expected yield: ~150 rows globally; ~72 in the surgical cohort. Small enough to 
 
 - `WEIGHT_SIZE_AUDIT_20260513.md` (this file)
 - `CURSOR_PROMPT_thyroid_size_3D_and_parathyroid_weight.md` (handoff)
+
+---
+
+## Post-apply addendum — 2026-05-14
+
+**Cursor wrote `scripts/mig_326_thyroid_3d_parathyroid_weight_bq.py` and Cowork ran `--apply` via Desktop Commander** (run_id `mig_326_20260514_c7a1ec0e`). Snapshots created at `pub_archive.thyroid_sizes_pre_3d_parse_20260514` and `pub_archive.canonical_parathyroid_events_v1_pre_weight_extract_20260514`.
+
+### Phase 1 verification — thyroid_sizes pathology-side 3D parsing — ✅ PASSED
+
+| Field | Source rows | Parsed | Parse frac |
+|---|---:|---:|---:|
+| `rl_length_cm_path` | 4,690 | 4,666 | **99.5%** |
+| `ll_length_cm_path` | 4,686 | 4,660 | **99.5%** |
+| `total_length_cm_path` | 915 | 914 | **99.9%** |
+
+All exceed the 97% acceptance gate. 42 distinct `dim_parse_status` values, covering 3D-parsed, 2D-only, 1D-only, empty, and unparseable edge cases.
+
+### Phase 2 verification — parathyroid_weight_mg — ⚠️ PARTIAL PASS
+
+| Metric | Value | Gate | Status |
+|---|---:|---|---|
+| Rows with `parathyroid_weight_mg` (global) | 16 | ≥ 50 | ⚠️ Below gate |
+| Rows in surgical cohort | 16 | ≥ 30 | ⚠️ Below gate |
+| Median weight | 561 mg | 200–800 mg | ✅ In range |
+| Min weight | 10 mg | ≥ 20 mg | ⚠️ Below floor (flagged) |
+| Max weight | 19,600 mg | ≤ 50,000 mg | ✅ In range |
+
+The keyword-proximity regex was conservative on purpose (require `weight|wt|weighed|weighing` within 30 chars of the number) — that yielded only 16 hits vs the ≥50 target. The median of 561 mg is consistent with a clinically reasonable distribution (normal parathyroid 30–60 mg; adenomas 100–10,000+ mg), so the values that DID extract look real. The min of 10 mg is below the 20 mg sanity floor and should be manually inspected; it could be a small specimen fragment or a unit-conversion edge case.
+
+### Recommended follow-up
+
+If M084 (parathyroid manuscript) needs more rows:
+1. **Manually inspect the 16 extracted values** for unit-conversion and small-specimen edge cases (export `parathyroid_event_id`, `parathyroid_weight_mg`, evidence keys — keep CSV off git, internal-share only).
+2. Either accept the 16 rows as-is (clinically informative, conservative regex), OR relax the keyword-proximity rule to widen the window (50 chars) and re-run, which might yield 30–50 more hits at the cost of additional false-positive risk.
+
+### Manuscript impact
+
+- **EXT2-4 v3**: nil. Table 1 uses `specimen_weight_combined` and `surg_total_thyroidectomy`/`surg_hemithyroidectomy` only. No rebuild needed.
+- **M084 (parathyroid adenoma)**: directly benefits. The new `parathyroid_weight_mg` column is now available as a covariate; n=16 with weight data may be enough for descriptive statistics but is small for inferential modeling.
+- **Future substernal-goiter analyses**: directly benefit from `rl_largest_dim_cm_path` / `ll_largest_dim_cm_path` / `rl_depth_cm_path` (substernal extension is often defined by inferior pole position relative to suprasternal notch — a depth/length question).
+
+### Audit trail
+
+- DFL row (pre-edit): `recxfnbbriG3rj4iB` (filed by Cursor)
+- MFL row (post-edit): `MFL-20260514-EXT2-4-WEIGHT-SIZE-EXTENSION` (`recslFSEwfVWyzv4P`) — linked to both EXT2-4 (`rec1GJyrmKdKxjlaY`) and M084 (`recx6Jr6WFtF2hZxb`)
+- Skill version: `thyroid-integration` bumped to **v2.3.1** by Cursor
+- Snapshots: `pub_archive.thyroid_sizes_pre_3d_parse_20260514`, `pub_archive.canonical_parathyroid_events_v1_pre_weight_extract_20260514`
