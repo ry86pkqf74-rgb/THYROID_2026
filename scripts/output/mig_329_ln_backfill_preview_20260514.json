@@ -1,0 +1,13 @@
+{
+  "script": "mig_329_ct_mri_ln_legacy_positive_backfill_bq",
+  "project": "thyroid-canonical-pub-2026",
+  "dry_run": true,
+  "apply": false,
+  "before": {
+    "ct_positive_pts_missing": 51,
+    "mri_positive_pts_missing": 10,
+    "n_rows_to_insert_ct": 54,
+    "n_rows_to_insert_mri": 10,
+    "unified_view_rows": 14795
+  }
+}
