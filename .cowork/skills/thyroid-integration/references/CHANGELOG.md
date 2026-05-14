@@ -1,6 +1,6 @@
 # thyroid-integration skill — changelog
 
-## v2.3.1 — 2026-05-13
+## v2.3.1 — 2026-05-14
 
 **BigQuery additive columns — pathology thyroid 3D dimensions + parathyroid weight (mg).**
 
