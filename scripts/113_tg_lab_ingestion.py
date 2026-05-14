@@ -630,6 +630,20 @@ def phase_h_build_canonical(df: pd.DataFrame, cancer_cohort: set[int]) -> pd.Dat
 
         rid = int(getattr(rec, "research_id"))
 
+        dm = getattr(rec, "disambiguation_method", None)
+        assign_method = None
+        if isinstance(dm, str):
+            if dm == "direct_label":
+                assign_method = "explicit_test_name_mapped"
+            elif dm == "combo_heuristic":
+                assign_method = "inferred_combo_pair_heuristic"
+            elif dm == "combo_crossref":
+                assign_method = "inferred_combo_pair_crossref"
+            else:
+                assign_method = dm or "explicit_test_name_mapped"
+        if assign_method is None:
+            assign_method = "explicit_test_name_mapped"
+
         am = getattr(rec, "assay_method", None)
         if isinstance(am, float) and am != am:
             am = None
@@ -647,6 +661,7 @@ def phase_h_build_canonical(df: pd.DataFrame, cancer_cohort: set[int]) -> pd.Dat
             "source": SOURCE_TAG,
             "is_in_canonical_cancer_cohort": rid in cancer_cohort,
             "ingestion_date": now_utc,
+            "analyte_assignment_method": assign_method,
         })
 
     if discordances:
@@ -710,7 +725,8 @@ SELECT
     unit_standardized,
     source,
     is_in_canonical_cancer_cohort,
-    ingestion_date
+    ingestion_date,
+    analyte_assignment_method
 FROM ranked
 WHERE rn = 1
 """

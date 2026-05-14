@@ -114,6 +114,7 @@ DEDUP_RANK_CASE = """
     CASE source
         WHEN 'institutional_append' THEN 0
         WHEN 'structured_ehr_tg'    THEN 1
+        WHEN 'analyst_ehr_tg'       THEN 1
         WHEN 'postop_structured'    THEN 2
         WHEN 'clinical_note'        THEN 3
         ELSE 9
@@ -300,6 +301,7 @@ def build_frames(path: Path, ingestion_wave: str) -> dict[str, pd.DataFrame]:
         if "thyroglobulin" in target:
             row["analyte"] = THY_ANALYTE_LABEL[canon_key]
             row["assay_method"] = None
+            row["analyte_assignment_method"] = "explicit_institutional_append"
         out_rows[target].append(row)
 
     if discordances:
@@ -383,6 +385,7 @@ def _replace_wave_per_table(
             "value_raw", "value_numeric", "is_censored",
             "value_correction_note", "unit_standardized", "source",
             "is_in_canonical_cancer_cohort", "ingestion_date",
+            "analyte_assignment_method",
         ]
     else:
         cols = [
@@ -417,6 +420,7 @@ def _replace_wave_per_table(
                 FALSE
             ) AS is_in_canonical_cancer_cohort,
             n.ingestion_date
+            {(', n.analyte_assignment_method' if has_analyte else '')}
         FROM _lab_127_new n
     """
 

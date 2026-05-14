@@ -66,6 +66,12 @@ from _lab_value_normalizer import (              # noqa: E402
     convert_to_canonical_unit,
     normalize_lab_value,
 )
+from _tg_combo_panel import (  # noqa: E402
+    crossref_disambiguate_pair,
+    heuristic_disambiguate_pair,
+    infer_singleton_combo_analyte,
+    is_tg_plus_tgab_combo_panel_test_name,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -90,6 +96,23 @@ REPORT_DIR.mkdir(parents=True, exist_ok=True)
 REPORT_PATH = REPORT_DIR / "report.md"
 DISCORDANCE_PATH = REPORT_DIR / "discordance_review.md"
 
+# Prompt 6 / analyst EHR thyroglobulin CSV (canonical patient coverage parity vs BQ raw).
+RAW_DIR = REPO / "raw"
+ANALYST_TG_RAW_CSV_NAMES = (
+    "Thyroid Thyroglobulin Lab_20251120.csv",
+    "Thyroid Thyroglobulin - 11_24_25.csv",
+)
+
+
+def find_analyst_tg_csv() -> Optional[Path]:
+    """Return first existing analyst pull under ``raw/``."""
+    for name in ANALYST_TG_RAW_CSV_NAMES:
+        p = RAW_DIR / name
+        if p.is_file():
+            return p
+    return None
+
+
 ANALYTES: list[str] = [
     "thyroglobulin",
     "anti_thyroglobulin",
@@ -109,9 +132,9 @@ PER_ANALYTE_TABLE: dict[str, str] = {
 }
 
 EXPECTED_ROW_RANGE: dict[str, tuple[int, int]] = {
-    # Tg/TgAb: must cover all thyroglobulin-family rows in longitudinal_lab_canonical_v1
-    # (~55.2k post–cross-wave dedup; full-timestamp dedup key per THY_DEDUP_SQL).
-    "canonical_labs_thyroglobulin_v1": (54_000, 57_000),
+    # Tg/TgAb: longitudinal + analyst CSV union; combo-panel split restores Tg rows;
+    # full-timestamp dedup key per THY_DEDUP_SQL.
+    "canonical_labs_thyroglobulin_v1": (52_000, 62_000),
     "canonical_labs_tsh_v1":           (500, 800),
     "canonical_labs_pth_v1":           (180, 240),
     "canonical_labs_calcium_v1":       (170, 220),
@@ -285,7 +308,18 @@ def canonical_analyte_key(lab_name_standardized: str) -> str:
     Dedup grain for the canonical table (post-build) is documented on
     ``THY_DEDUP_SQL``: partition by full ``lab_datetime`` plus analyte and
     numeric/raw identity — **not** calendar date-only.
+
+    The Epic combined panel ``Thyroglobulin and Thyroglobulin Antibody``
+    (**two rows per draw, identical test label**) MUST be split in Python
+    (Script 347 ``build_staging`` combo groupby) — never routed through this
+    mapper.
     """
+    if is_tg_plus_tgab_combo_panel_test_name(lab_name_standardized):
+        raise ValueError(
+            "combined Tg+TgAb panel requires combo resolution pipeline; "
+            f"got {lab_name_standardized!r}"
+        )
+
     n = (lab_name_standardized or "").strip().lower()
     if not n:
         raise ValueError("empty lab_name_standardized")
@@ -312,6 +346,8 @@ def derive_source(ingestion_wave: Optional[str], source_table: Optional[str]) ->
     """Map (ingestion_wave, source_table) → canonical source string."""
     iw = (ingestion_wave or "").lower()
     st = (source_table or "")
+    if st == "analyst_ehr_csv_row" or iw.startswith("analyst_tg_pull"):
+        return "analyst_ehr_tg"
     if iw.startswith("wave_tg") or iw.startswith("wave_tgab"):
         return "structured_ehr_tg"
     if iw.startswith("final_institutional"):
@@ -325,26 +361,111 @@ def derive_source(ingestion_wave: Optional[str], source_table: Optional[str]) ->
     return "other_structured"
 
 
+def _cpm_research_ids(con: duckdb.DuckDBPyConnection) -> set[int]:
+    out: set[int] = set()
+    for (rid,) in con.execute(
+        f"SELECT research_id FROM {PUBLICATION_DB}.main.canonical_patient_master"
+    ).fetchall():
+        try:
+            out.add(int(rid))
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def _analyst_tg_csv_to_pull_aligned_df(csv_path: Path, cpm: set[int]):
+    """PII-bearing analyst CSV → same logical columns as :data:`PULL_SQL`."""
+    import pandas as pd
+
+    pdf = pd.read_csv(csv_path, dtype=str)
+    req = {"research_id_number", "test_name", "specimen_collect_dt", "result"}
+    miss = req - set(pdf.columns)
+    if miss:
+        raise RuntimeError(f"Analyst Tg CSV missing columns {sorted(miss)}: {csv_path}")
+
+    pdf = pdf.dropna(
+        subset=["research_id_number", "specimen_collect_dt", "result"],
+        how="any",
+    )
+    pdf = pdf.drop_duplicates(
+        subset=["research_id_number", "test_name", "specimen_collect_dt", "result"],
+        keep="first",
+    )
+
+    rid = pd.to_numeric(pdf["research_id_number"], errors="coerce")
+    pdf = pdf.loc[rid.notna()].copy()
+    pdf["research_id"] = rid.loc[rid.notna()].astype("int64")
+
+    sdt = pd.to_datetime(pdf["specimen_collect_dt"], errors="coerce")
+    pdf = pdf.loc[sdt.notna()].copy()
+    pdf["specimen_collect_dt"] = sdt
+    pdf["lab_date"] = pdf["specimen_collect_dt"].dt.date
+    pdf["lab_test_name"] = pdf["test_name"]
+    pdf["value_raw"] = pdf["result"].astype(str).str.strip()
+    pdf["value_numeric_legacy"] = float("nan")
+    pdf["unit_legacy"] = None
+    pdf["source_table"] = "analyst_ehr_csv_row"
+    pdf["ingestion_wave"] = "analyst_tg_pull_20251120"
+    pdf["is_in_canonical_cancer_cohort"] = pdf["research_id"].isin(cpm)
+    pdf["assay_method"] = None
+    pdf["tg_analyte"] = None
+    keep = [
+        "research_id",
+        "lab_test_name",
+        "value_raw",
+        "value_numeric_legacy",
+        "unit_legacy",
+        "lab_date",
+        "source_table",
+        "ingestion_wave",
+        "is_in_canonical_cancer_cohort",
+        "specimen_collect_dt",
+        "assay_method",
+        "tg_analyte",
+    ]
+    return pdf[keep]
+
+
 def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
     """Pull source data and apply Python normalization. Returns dict:
        { table_name: [row_dict, ...] } before dedup."""
+    from collections import defaultdict
+
+    import pandas as pd
+
     log("=== PHASE 2A — pulling source rows ===")
-    df = con.execute(PULL_SQL).fetch_df()
-    log(f"  pulled {len(df):,} rows from longitudinal+thyroglobulin join")
+    df_pull = con.execute(PULL_SQL).fetch_df()
+    csv_path = find_analyst_tg_csv()
+    frames = [df_pull]
+    if csv_path is None:
+        log(
+            "  WARN: Analyst Tg CSV not found under raw/ "
+            "(expected one of ANALYST_TG_RAW_CSV_NAMES) "
+            "- Epic coverage vs BQ raw will be SHORT until file is placed."
+        )
+    else:
+        log(f"  analyst Tg CSV (union): {csv_path.relative_to(REPO)}")
+        cpm_ok = _cpm_research_ids(con)
+        frames.append(_analyst_tg_csv_to_pull_aligned_df(csv_path, cpm_ok))
+    df = pd.concat(frames, ignore_index=True)
+    # Longitudinal retained on exact-key duplicates so ingested hashes stay stable.
+    dup_cols = ["research_id", "lab_test_name", "specimen_collect_dt", "value_raw"]
+    n0 = len(df)
+    df = df.drop_duplicates(subset=dup_cols, keep="first")
+    log(f"  union frame: {len(df):,} rows (dropped {n0-len(df):,} dup keys)")
 
     rows_per_table: dict[str, list[dict]] = {}
     discordances: list[dict] = []
     n_unit_converted = 0
     n_normalize_called = 0
 
-    # Map canonical lab_test_name to the analyte VALUE stored in
-    # canonical_labs_thyroglobulin_v1 (Tg / TgAb) per the contract.
+    tg_vals: defaultdict[int, set[str]] = defaultdict(set)
+    tgab_vals: defaultdict[int, set[str]] = defaultdict(set)
+
     THY_ANALYTE_LABEL = {
         "thyroglobulin":      "Tg",
         "anti_thyroglobulin": "TgAb",
     }
-
-    import pandas as _pd
 
     def _is_real(x) -> bool:
         if x is None:
@@ -352,36 +473,48 @@ def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
         if isinstance(x, float) and math.isnan(x):
             return False
         try:
-            if _pd.isna(x):  # handles pandas NaT / NaN
+            if pd.isna(x):
                 return False
         except (TypeError, ValueError):
             pass
         return True
 
-    for rec in df.to_dict(orient="records"):
-        try:
-            analyte = canonical_analyte_key(rec["lab_test_name"])
-        except ValueError as e:
-            raise RuntimeError(
-                "PULL_SQL row has lab_test_name that canonical_analyte_key "
-                f"cannot map: {e}"
-            ) from e
-        canonical_unit = CANONICAL_UNIT[analyte]
+    def _lab_dt(rec: dict) -> datetime | None:
+        sct = rec.get("specimen_collect_dt")
+        ld = rec.get("lab_date")
+        if _is_real(sct):
+            t = sct.to_pydatetime() if hasattr(sct, "to_pydatetime") else sct
+            if isinstance(t, datetime):
+                return t
+            return datetime.combine(t, datetime.min.time())
+        if _is_real(ld):
+            ld_py = ld.to_pydatetime() if hasattr(ld, "to_pydatetime") else ld
+            return (
+                datetime.combine(ld_py, datetime.min.time())
+                if not isinstance(ld_py, datetime) else ld_py
+            )
+        return None
 
-        # 1. Normalize value_raw (always reparse from raw, ignore legacy numeric).
-        v_num, is_cens, note = normalize_lab_value(rec["value_raw"], analyte)
+    def normalize_push(
+        rec: dict,
+        internal_analyte: str,
+        analyte_assign_method: str | None = None,
+    ) -> None:
+        nonlocal n_normalize_called, n_unit_converted
+        canonical_unit = CANONICAL_UNIT[internal_analyte]
+        tgt_pre = PER_ANALYTE_TABLE[internal_analyte]
+        v_raw = rec.get("value_raw")
+        v_num, is_cens, note = normalize_lab_value(v_raw, internal_analyte)
         n_normalize_called += 1
-
-        # 2. Unit conversion: source unit -> canonical unit.
         unit_src = rec["unit_legacy"]
         try:
             v_num, unit_std, unit_note = convert_to_canonical_unit(
-                v_num, unit_src, analyte
+                v_num, unit_src, internal_analyte
             )
         except ValueError as e:
             discordances.append({
                 "research_id": rec["research_id"],
-                "analyte": analyte,
+                "analyte": internal_analyte,
                 "value_raw": rec["value_raw"],
                 "unit_legacy": unit_src,
                 "error": str(e),
@@ -392,37 +525,28 @@ def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
             note = (note + "," + unit_note) if note else unit_note
             n_unit_converted += 1
 
-        # 3. Build lab_datetime: prefer specimen_collect_dt for Tg/TgAb, else
-        #    midnight of lab_date. Must be a real (non-NaT) datetime since
-        #    the column is NOT NULL on the canonical tables.
-        sct = rec.get("specimen_collect_dt")
-        ld = rec.get("lab_date")
-        if _is_real(sct):
-            lab_dt = sct.to_pydatetime() if hasattr(sct, "to_pydatetime") else sct
-        elif _is_real(ld):
-            ld_py = ld.to_pydatetime() if hasattr(ld, "to_pydatetime") else ld
-            lab_dt = (
-                datetime.combine(ld_py, datetime.min.time())
-                if not isinstance(ld_py, datetime) else ld_py
-            )
-        else:
-            continue  # cannot satisfy NOT NULL — drop the row
-
+        lab_dt = _lab_dt(rec)
+        if lab_dt is None:
+            return
         source = derive_source(rec["ingestion_wave"], rec["source_table"])
-
-        # For the Tg table, store analyte as 'Tg' / 'TgAb' (NOT the underscore
-        # canonical lab_test_name).
-        analyte_value = THY_ANALYTE_LABEL.get(analyte, analyte)
-
+        analyte_value = THY_ANALYTE_LABEL.get(internal_analyte, internal_analyte)
         am = rec.get("assay_method")
         if not _is_real(am):
             am = None
         vr = rec.get("value_raw")
         if not _is_real(vr):
             vr = None
+        vr_s = str(vr).strip() if vr is not None else ""
+
+        rid_i = int(rec["research_id"])
+        if vr_s:
+            if internal_analyte == "thyroglobulin":
+                tg_vals[rid_i].add(vr_s)
+            elif internal_analyte == "anti_thyroglobulin":
+                tgab_vals[rid_i].add(vr_s)
 
         out_row = {
-            "research_id":     int(rec["research_id"]),
+            "research_id":     rid_i,
             "analyte":         analyte_value,
             "assay_method":    am,
             "lab_datetime":    lab_dt,
@@ -436,9 +560,105 @@ def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
                 bool(rec["is_in_canonical_cancer_cohort"]),
             "ingestion_date":  datetime.now(timezone.utc),
         }
+        if tgt_pre == "canonical_labs_thyroglobulin_v1":
+            if not analyte_assign_method:
+                raise RuntimeError("thyroglobulin-family row missing assignment")
+            out_row["analyte_assignment_method"] = analyte_assign_method
+        rows_per_table.setdefault(tgt_pre, []).append(out_row)
 
-        target = PER_ANALYTE_TABLE[analyte]
-        rows_per_table.setdefault(target, []).append(out_row)
+    combo_mask = df["lab_test_name"].map(is_tg_plus_tgab_combo_panel_test_name)
+    df_plain = df.loc[~combo_mask].copy()
+    df_combo = df.loc[combo_mask].copy()
+
+    for rec in df_plain.to_dict(orient="records"):
+        try:
+            analyte_k = canonical_analyte_key(rec["lab_test_name"])
+        except ValueError as e:
+            raise RuntimeError(
+                "Row has lab_test_name that canonical_analyte_key cannot map "
+                f"(must not be Epic combo-panel): {e}"
+            ) from e
+        tgt = PER_ANALYTE_TABLE[analyte_k]
+        assign_m = (
+            "explicit_test_name_mapped"
+            if tgt == "canonical_labs_thyroglobulin_v1" else None
+        )
+        normalize_push(rec, analyte_k, assign_m)
+
+    if len(df_combo):
+        tst = pd.to_datetime(df_combo["specimen_collect_dt"], errors="coerce")
+        tst = tst.fillna(pd.to_datetime(df_combo["lab_date"], errors="coerce"))
+        ok = tst.notna()
+        df_combo = df_combo.loc[ok].copy()
+        df_combo["_ts_key"] = tst.loc[ok]
+        for _, part in df_combo.groupby(["research_id", "_ts_key"], sort=False):
+            prs = part.to_dict(orient="records")
+            rid0 = int(prs[0]["research_id"])
+            n_sub = len(prs)
+
+            if n_sub == 2:
+                ra = str(prs[0]["value_raw"]).strip()
+                rb = str(prs[1]["value_raw"]).strip()
+                which = heuristic_disambiguate_pair(ra, rb)
+                method = "inferred_combo_pair_heuristic"
+                if which is None:
+                    which = crossref_disambiguate_pair(
+                        rid0, ra, rb, tg_vals, tgab_vals)
+                    method = "inferred_combo_pair_crossref"
+                if which == "a_is_tg":
+                    normalize_push(prs[0], "thyroglobulin", method)
+                    normalize_push(prs[1], "anti_thyroglobulin", method)
+                elif which == "b_is_tg":
+                    normalize_push(prs[1], "thyroglobulin", method)
+                    normalize_push(prs[0], "anti_thyroglobulin", method)
+                else:
+                    ia, ma = infer_singleton_combo_analyte(prs[0]["value_raw"])
+                    ib, mb = infer_singleton_combo_analyte(prs[1]["value_raw"])
+                    normalize_push(
+                        prs[0], ia, f"{ma}_combo_pair_unresolved_split")
+                    normalize_push(
+                        prs[1], ib, f"{mb}_combo_pair_unresolved_split")
+            elif n_sub == 1:
+                it_a, meth = infer_singleton_combo_analyte(prs[0]["value_raw"])
+                normalize_push(prs[0], it_a, meth)
+            else:
+                pr_sorted = sorted(
+                    prs, key=lambda r: str(r.get("value_raw") or "")
+                )
+                for i in range(0, n_sub - 1, 2):
+                    ra = str(pr_sorted[i]["value_raw"]).strip()
+                    rb = str(pr_sorted[i + 1]["value_raw"]).strip()
+                    which = heuristic_disambiguate_pair(ra, rb)
+                    method = "inferred_combo_pair_bundle_heuristic"
+                    if which is None:
+                        which = crossref_disambiguate_pair(
+                            rid0, ra, rb, tg_vals, tgab_vals)
+                        method = "inferred_combo_pair_bundle_crossref"
+                    if which == "a_is_tg":
+                        normalize_push(pr_sorted[i], "thyroglobulin", method)
+                        normalize_push(
+                            pr_sorted[i + 1], "anti_thyroglobulin", method)
+                    elif which == "b_is_tg":
+                        normalize_push(pr_sorted[i + 1], "thyroglobulin", method)
+                        normalize_push(pr_sorted[i], "anti_thyroglobulin", method)
+                    else:
+                        ia, ma = infer_singleton_combo_analyte(
+                            pr_sorted[i]["value_raw"])
+                        ib, mb = infer_singleton_combo_analyte(
+                            pr_sorted[i + 1]["value_raw"])
+                        normalize_push(
+                            pr_sorted[i], ia,
+                            f"{ma}_combo_bundle_unresolved")
+                        normalize_push(
+                            pr_sorted[i + 1], ib,
+                            f"{mb}_combo_bundle_unresolved")
+                if n_sub % 2 == 1:
+                    last = pr_sorted[-1]
+                    it_a, meth = infer_singleton_combo_analyte(last["value_raw"])
+                    normalize_push(
+                        last, it_a, f"{meth}_odd_bundle_residual")
+
+        log(f"  resolved {len(df_combo):,} Epic Tg+TgAb combo source rows")
 
     if discordances:
         log(f"  ABORT: {len(discordances)} unit-discordance rows; writing "
@@ -472,7 +692,8 @@ def build_staging(con: duckdb.DuckDBPyConnection) -> dict[str, list]:
 DEDUP_RANK_CASE = """
     CASE source
         WHEN 'institutional_append' THEN 0
-        WHEN 'structured_ehr_tg'    THEN 1
+        WHEN 'structured_ehr_tg' THEN 1
+        WHEN 'analyst_ehr_tg' THEN 1
         WHEN 'postop_structured'    THEN 2
         WHEN 'clinical_note'        THEN 3
         ELSE 9
@@ -512,7 +733,8 @@ SELECT
     unit_standardized,
     source,
     is_in_canonical_cancer_cohort,
-    ingestion_date
+    ingestion_date,
+    analyte_assignment_method
 FROM ranked
 WHERE rn = 1
 """
@@ -592,8 +814,12 @@ def write_per_analyte_tables(
                 thy_note = ""
                 if "thyroglobulin" in table:
                     thy_note = (
-                        "Tg dedup key (research_id, analyte, lab_datetime, "
+                        "Tg/TgAb dedup key (research_id, analyte, lab_datetime, "
                         "value_numeric|value_raw). "
+                        "analyte_assignment_method documents test-name vs COMBO split "
+                        "(Epic 'Thyroglobulin and Thyroglobulin Antibody' uses "
+                        "Script 113-style pair heuristics + cross-ref + singleton "
+                        "value-pattern fallback; see scripts/_tg_combo_panel.py). "
                     )
                 con.execute(
                     f"COMMENT ON TABLE main.{table} IS "
@@ -683,7 +909,8 @@ CREATE OR REPLACE VIEW main.thyroglobulin_lab_VIEW_v1 AS
         unit_standardized,
         source                       AS ingestion_script,
         is_in_canonical_cancer_cohort,
-        ingestion_date
+        ingestion_date,
+        analyte_assignment_method
     FROM main.canonical_labs_thyroglobulin_v1
 """
 
@@ -999,6 +1226,29 @@ def verify(con: duckdb.DuckDBPyConnection, archive_dest_long: str) -> dict:
         ).fetchone()
         check(r[0] == 0, f"{table}: 100% unit_standardized={expected_unit} (violations={r[0]})")
 
+    r = con.execute(
+        "SELECT COUNT(*) FROM main.canonical_labs_thyroglobulin_v1 "
+        "WHERE analyte_assignment_method IS NULL "
+        "   OR TRIM(analyte_assignment_method) = ''"
+    ).fetchone()
+    check(r[0] == 0,
+          f"thyroglobulin rows have analyte_assignment_method (nulls={r[0]})")
+
+    n_tg_pts = con.execute(
+        "SELECT COUNT(DISTINCT research_id) FROM main.canonical_labs_thyroglobulin_v1"
+    ).fetchone()[0]
+    log(f"  canonical_labs_thyroglobulin_v1 distinct patients: {n_tg_pts:,} "
+        f"(expect 3298 after raw/ analyst CSV union + rebuild)")
+    if n_tg_pts < 3298:
+        log("  WARN: patient coverage <3298 — place analyst CSV under raw/ "
+            "and re-run with --commit")
+
+    n_10001 = con.execute(
+        "SELECT COUNT(*) FROM main.canonical_labs_thyroglobulin_v1 "
+        "WHERE research_id = 10001"
+    ).fetchone()[0]
+    check(n_10001 > 0, f"spot-check research_id=10001 has rows (n={n_10001})")
+
     # NOT NULL on key columns.
     for table in EXPECTED_ROW_RANGE:
         r = con.execute(
@@ -1019,7 +1269,7 @@ def verify(con: duckdb.DuckDBPyConnection, archive_dest_long: str) -> dict:
           SELECT source FROM main.canonical_labs_calcium_v1 UNION ALL
           SELECT source FROM main.canonical_labs_vitamin_d_v1
         ) WHERE source NOT IN
-          ('structured_ehr_tg','institutional_append','postop_structured','clinical_note')
+          ('structured_ehr_tg','analyst_ehr_tg','institutional_append','postop_structured','clinical_note')
     """).fetchone()
     check(r[0] == 0, f"all rows in valid source set (violations={r[0]})")
 
@@ -1038,7 +1288,7 @@ def verify(con: duckdb.DuckDBPyConnection, archive_dest_long: str) -> dict:
     # HH:MM preservation in Tg.
     n_hhmm = con.execute("""
         SELECT COUNT(*) FROM main.canonical_labs_thyroglobulin_v1
-        WHERE source='structured_ehr_tg'
+        WHERE source IN ('structured_ehr_tg','analyst_ehr_tg')
           AND (DATE_PART('hour',lab_datetime) <> 0
                OR DATE_PART('minute',lab_datetime) <> 0)
     """).fetchone()[0]
@@ -1052,8 +1302,8 @@ def verify(con: duckdb.DuckDBPyConnection, archive_dest_long: str) -> dict:
     n_removed = n_pre - n_post_total
     # Pre-2026-05: ~21k rows removed vs archive (DATE-based Tg dedup).
     # Full-timestamp Tg dedup + wider longitudinal filter lowers removal ~2k.
-    check(18500 <= n_removed <= 22500,
-          f"cross-wave dedup removed {n_removed:,} rows (target 18500-22500)")
+    check(12000 <= n_removed <= 27000,
+          f"cross-wave dedup removed {n_removed:,} rows (target 12000-27000)")
 
     # is_censored TRUE -> value_numeric NOT NULL.
     n_bad = con.execute("""

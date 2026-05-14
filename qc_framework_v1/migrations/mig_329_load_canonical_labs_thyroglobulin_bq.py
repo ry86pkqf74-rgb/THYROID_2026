@@ -84,7 +84,8 @@ def main() -> None:
         "         value_raw AS result_raw, value_numeric AS result_numeric,\\n"
         "         is_censored, value_correction_note, unit_standardized,\\n"
         "         source AS ingestion_script,\\n"
-        "         is_in_canonical_cancer_cohort, ingestion_date\\n"
+        "         is_in_canonical_cancer_cohort, ingestion_date,\\n"
+        "         analyte_assignment_method\\n"
         "  FROM `thyroid-canonical-pub-2026.pub_canonical."
         "canonical_labs_thyroglobulin_v1`;"
     )
