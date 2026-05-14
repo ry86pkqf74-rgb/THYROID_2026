@@ -33,7 +33,7 @@ ASM204 is **not** a column superset of PAR: script **204** projects the first wi
 
 Live **`pub_canonical.canonical_survival_followup_v1`** uses `last_known_alive_date`, `days_from_first_surgery_to_last_contact`, etc. The SQL maps these to **`last_contact_date`**, **`followup_days`**, **`followup_years`** (days / 365.25), and sets **`followup_category`** to NULL.
 
-Live **`pub_canonical.canonical_recurrence_v1`** omits `recurrence_histology` and `recurrence_evidence_source`; those are **NULL** in ASM204 until feeders gain columns.
+**Update 2026-05-14:** After **mig_098** (BQ) + **mig_332** (MD), `canonical_recurrence_v1` carries `recurrence_histology` and `recurrence_evidence_source` again; **ASM204** selects them from `r.*` (no `CAST(NULL)` guard).
 
 ## Unexpected issues
 

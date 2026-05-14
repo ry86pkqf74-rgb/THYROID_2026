@@ -2,11 +2,24 @@
 
 **Date:** 2026-05-14  
 **Scope:** Phase 1 CPM DAG — every feeder the assembly chain (`scripts/200`–`217`) and promotion bridge (`221`+ where it reads structured inputs) consumes, compared to BigQuery `pub_canonical` / `pub_workspace` vs MotherDuck-export reference `pub_legacy_source_20260416`.  
-**Policy:** Audit and plan only — no table rebuilds in this artifact.
+**Policy:** Originally audit-only (2026-05-14 draft). **Update 2026-05-14 closeout:** feeder parity fixes landed as `mig_332` (MotherDuck), `mig_098` (BigQuery), and registry/ASM204 annotations — see § Independent BigQuery verification.
 
 **Machine-readable registry:** `studies/cpm_feeder_drift_registry_20260514.tsv` (one row per feeder or bundled domain).
 
 **Related:** `studies/cpm_bq_native_rebuild_phase1_plan_20260514.md`, `studies/cpm_stage_asm204_20260514.sql`, `studies/bq_pub_authoritative_builders_table_20260514.tsv`, `bq_migrations/mig_086_legacy_promotion_sweep_views.sql`.
+
+---
+
+## Independent BigQuery verification (2026-05-14)
+
+Cross-check vs column-name verification on live BigQuery (Prompt 15 feeder drift reconciliation):
+
+| Finding | Resolution (repo) |
+|---------|---------------------|
+| **`canonical_recurrence_v1`** — live `pub_canonical` had **10** columns; legacy **`pub_legacy_source_20260416`** has **12** (`recurrence_histology`, `recurrence_evidence_source` missing on rebuild). Root cause on MotherDuck: **mig_284** `vw_recurrence_rollup_legacy_compat_v1` projection, not Script **203** (203 already builds both columns). **Fix:** `qc_framework_v1/migrations/332_recurrence_v1_histology_evidence_restore_20260514.sql` + `scripts/mig_332_recurrence_histology_evidence_apply.py`; **BigQuery:** `bq_migrations/mig_098_cpm_feeder_parity_recurrence_operative_20260514.sql` (ADD + `MERGE` from legacy). **ASM204:** `studies/cpm_stage_asm204_20260514.sql` now selects `r.recurrence_*` instead of `CAST(NULL)`. |
+| **`canonical_survival_followup_v1`** — **no feeder change** in this closeout; remains **INTENTIONAL_RESTRUCTURE** (registry §2.2 / assembly remap). |
+| **`operative_episode_detail_v2`** — `pub_canonical` facade `SELECT *` over legacy held a **stale** resolved schema (**39** vs **48** columns on source after operative v2.3 NLP columns). **Fix:** `CREATE OR REPLACE VIEW` in **mig_098** forces re-resolution; expect all source columns including `rln_signal_status_nlp`, `op_time_nlp_present`, `los_nlp_present`, `ligasure_used_nlp`, `harmonic_used_nlp`, `energy_device_other_used_nlp`, `suture_ligation_only_nlp`, `trach_concurrent_evidence`, `trach_nonperioperative_evidence`. |
+| **`note_entities_llm_*` (tier-1 domains)** — three facades flagged where **BQ vs legacy column diff** reduced to **non-clinical LLM provenance metadata** only (no loss of entity / clinical payload columns): `note_entities_llm_pathology`, `note_entities_llm_synoptic_pathology_enrichment`, `note_entities_llm_cervical_ln_detail` — see TSV column `non_clinical_metadata_only_drift=TRUE`. |
 
 ---
 
@@ -27,13 +40,14 @@
 
 From your verification (and `cpm_stage_asm204` workaround code):
 
-### 2.1 `canonical_recurrence_v1` — **REGRESSION**
+### 2.1 `canonical_recurrence_v1` — **REGRESSION** (✓ **closed 2026-05-14**)
 
 - **Legacy reference:** `pub_legacy_source_20260416.canonical_recurrence_v1` — **12** columns (includes `recurrence_histology`, `recurrence_evidence_source`).
-- **Live BQ rebuild:** **10** columns — those two dropped.
-- **Consumers:** `scripts/204_canonical_master_assembly.py` and `205_canonical_consolidation.py` recur CTE uses `SELECT *` then projects `r.recurrence_histology`, `r.recurrence_evidence_source`. `studies/cpm_stage_asm204_20260514.sql` **NULL-fills** those two columns — acceptable only as a scratch guard, not production parity.
-- **Authoritative MD builder:** `scripts/203_canonical_recurrence.py`, `scripts/203b_canonical_recurrence_harmonized_20260429.py` (+ post-build QC migrations on MotherDuck, e.g. 269 family — see repo SQL under `qc_framework_v1/migrations/`).
-- **BQ builder:** **ORPHAN** in `studies/bq_pub_authoritative_builders_table_20260514.tsv` — no single checked-in `CREATE TABLE` for the rebuilt table (not in `mig_086` facades).
+- **Prior live BQ rebuild:** **10** columns — those two dropped (pre-closeout).
+- **Root cause (MotherDuck):** **mig_284** replaced the 12-column `TABLE` with `semantic_publication.vw_recurrence_rollup_legacy_compat_v1`, which omitted the two clinical columns. Script **203** / **203b** builders were already correct.
+- **Closeout:** **mig_332** (MD) joins `archive_pub_v1_0.canonical_recurrence_v1_pre_mig284_20260503` on `research_id` to restore both columns on `main.canonical_recurrence_v1`. **mig_098** (BQ) `MERGE`s from legacy. **ASM204** scratch SQL reads `r.recurrence_histology` / `r.recurrence_evidence_source` directly.
+- **Authoritative MD builder:** `scripts/203_canonical_recurrence.py`, `scripts/203b_canonical_recurrence_harmonized_20260429.py` (+ **mig_332** compat VIEW repair).
+- **BQ builder:** **ORPHAN** in builders TSV remains true for BQ-native rebuild; parity maintenance uses **mig_098** + legacy snapshot until a BQ-native 203 port exists.
 
 ### 2.2 `canonical_survival_followup_v1` — **INTENTIONAL_RESTRUCTURE**
 
@@ -111,7 +125,7 @@ Execute in order; later steps assume earlier parity or explicit SQL remapping.
 1. **Spine:** `pub_workspace.patient_analysis_resolved_v1` — row/column SSOT vs MotherDuck PAR (invariant 10,871).
 2. **VIEW facades sanity:** All `mig_086` `pub_canonical` views that feed 200-series — `INFORMATION_SCHEMA.TABLE_TYPE` + `COUNT(*)` vs legacy (spot-check).
 3. **Survival SSOT:** `canonical_survival_followup_v1` — finalize BQ schema as authoritative; **rewrite** 204-analog / downstream to use `last_known_alive_date`, `days_from_first_surgery_to_last_contact`, `vital_status_*` per migration 244 patterns; re-derive or drop `followup_category` with documentation.
-4. **Recurrence:** `canonical_recurrence_v1` — **restore** `recurrence_histology`, `recurrence_evidence_source` *or* amend assembly to stop selecting them with signoff; remove ASM204 `CAST(NULL AS STRING)` hacks after decision.
+4. **Recurrence:** `canonical_recurrence_v1` — **closed 2026-05-14** (`mig_332` MD + `mig_098` BQ); ASM204 `CAST(NULL)` removed from scratch SQL.
 5. **Diagnosis / molecular tested:** Keep VIEW facades until explicit BQ-native `200`/`202` replaces them (optional MotherDuck-independence track).
 6. **205 parity tables:** Confirm `patient_refined_master_clinical_v12` exists in live BQ (absent from 20260514 snapshot file); `imaging_nodule_master_v1`, `tirads_llm_extracted_v2`, `fna_cytology` facades.
 7. **208 LN rollup:** Materialize `ln_master_rollup_v1` into `pub_canonical` **or** precompute LN rollup columns on PAR.

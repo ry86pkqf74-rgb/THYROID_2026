@@ -1,0 +1,44 @@
+-- mig_098 — CPM feeder parity closeout (recurrence columns + operative facade refresh)
+-- Project: thyroid-canonical-pub-2026
+-- Date: 2026-05-14
+--
+-- (1) pub_canonical.canonical_recurrence_v1: restore recurrence_histology and
+--     recurrence_evidence_source from legacy snapshot (12-column parity vs
+--     pub_legacy_source_20260416; Script 203 contract).
+-- (2) pub_canonical.operative_episode_detail_v2: CREATE OR REPLACE VIEW to
+--     force BigQuery to re-resolve SELECT * against legacy (fixes stale 39-col
+--     cached schema after source grew to 48 cols including rln_signal_status_nlp,
+--     op_time_nlp_present, los_nlp_present, ligasure_used_nlp, harmonic_used_nlp,
+--     energy_device_other_used_nlp, suture_ligation_only_nlp,
+--     trach_concurrent_evidence, trach_nonperioperative_evidence).
+--
+-- Preconditions:
+--   - canonical_recurrence_v1 in pub_canonical is a BASE TABLE with 10,871 rows
+--   - Legacy snapshot table includes the two clinical columns
+--
+-- Post-checks (run in BigQuery):
+--   SELECT COUNT(*) FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`;
+--   SELECT column_name FROM `thyroid-canonical-pub-2026.pub_canonical.INFORMATION_SCHEMA.COLUMNS`
+--     WHERE table_name = 'canonical_recurrence_v1' ORDER BY ordinal_position;
+--   SELECT column_name FROM `thyroid-canonical-pub-2026.pub_canonical.INFORMATION_SCHEMA.COLUMNS`
+--     WHERE table_name = 'operative_episode_detail_v2' ORDER BY ordinal_position;
+-- =============================================================================
+
+-- §1 Recurrence clinical columns backfill from legacy ---------------------------------
+-- Run once per dataset. If columns already exist, skip the ALTERs or expect a benign error.
+ALTER TABLE `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`
+ADD COLUMN recurrence_histology STRING;
+
+ALTER TABLE `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1`
+ADD COLUMN recurrence_evidence_source STRING;
+
+MERGE `thyroid-canonical-pub-2026.pub_canonical.canonical_recurrence_v1` AS T
+USING `thyroid-canonical-pub-2026.pub_legacy_source_20260416.canonical_recurrence_v1` AS S
+ON CAST(T.research_id AS STRING) = CAST(S.research_id AS STRING)
+WHEN MATCHED THEN UPDATE SET
+  T.recurrence_histology = S.recurrence_histology,
+  T.recurrence_evidence_source = S.recurrence_evidence_source;
+
+-- §2 Operative episode facade — re-resolve SELECT * ---------------------------------
+CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_canonical.operative_episode_detail_v2`
+AS SELECT * FROM `thyroid-canonical-pub-2026.pub_legacy_source_20260416.operative_episode_detail_v2`;
