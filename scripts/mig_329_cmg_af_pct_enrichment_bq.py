@@ -4,9 +4,22 @@ mig_329 / af_fix_20260514 — Backfill AF% on canonical_molecular_genetics_v2 (B
 from thyroseq dry-run export with extended extract_af_pct.
 
 Scope (UPDATE) — default platforms:
-  ('Afirma', 'NGS_unspecified', 'ThyroSeq') so thyroseq_integration exports (mostly
-  ThyroSeq CMG rows) actually match. Strict Issue 3 only:
-  `--platforms Afirma,NGS_unspecified` (minimal overlap; may update very few rows).
+  ('Afirma', 'NGS_unspecified', 'ThyroSeq') so thyroseq_integration exports work
+  correctly.
+
+  Platform-label mismatch (important):
+    script-41 (41_ingest_thyroseq_excel.py) tags every exported variant row as
+    platform='ThyroSeq' — a vendor constant in that parser — regardless of how
+    BigQuery labels the same patient's test (Afirma, NGS_unspecified, etc.).
+    mig_329 uses BQ's platform column (not the CSV column) for all filtering,
+    and pre-filters the BQ query to only research_ids present in the CSV, so
+    Afirma/NGS rows for patients who also appear in the ThyroSeq export are
+    found and enriched correctly.
+
+    If --platforms Afirma,NGS_unspecified is used without ThyroSeq and the
+    export contains few Afirma/NGS research_ids, coverage will be low (the
+    script now warns in that case).  Include ThyroSeq in --platforms for
+    maximum AF backfill from a thyroseq_integration export.
 
 Per research_id, selects exactly one CMG row (same priority as ROW_NUMBER pass):
   thyroseq_molecular_enrichment > molecular_testing > manual THYROSEQ insert > else.
@@ -49,41 +62,44 @@ def _platform_list_sql(platforms: tuple[str, ...]) -> str:
     return ", ".join(f"'{p}'" for p in platforms)
 
 
-def _pick_rows_sql(platforms: tuple[str, ...]) -> str:
+def _pick_rows_sql(
+    platforms: tuple[str, ...],
+    csv_rids: frozenset[str] | None = None,
+) -> str:
+    """Return SQL that picks ALL CMG rows for the given platforms (and,
+    optionally, only for research_ids present in the CSV export).
+
+    NOTE — platform-label mismatch: script-41 dry-run exports tag every
+    variant row as platform='ThyroSeq' (a vendor constant in that parser).
+    In BigQuery the same patient's row may be labeled Afirma or
+    NGS_unspecified.  That is why --platforms must include 'ThyroSeq' when
+    running against a thyroseq_integration export; the csv_rids pre-filter
+    ensures BQ only fetches rows that actually have CSV data, avoiding a
+    silent empty result when strict --platforms Afirma,NGS_unspecified is
+    specified without 'ThyroSeq'.
+
+    The old ROW_NUMBER / one-per-research_id logic has been removed: every
+    CMG row that matches the platform list (and has a CSV entry) is now
+    returned, so a patient with both an Afirma row and a ThyroSeq row will
+    have both rows enriched independently.
+    """
     pl = _platform_list_sql(platforms)
+    rid_clause = ""
+    if csv_rids:
+        # BQ IN-list limit is 10 000 items; typical run is <2 000 rids.
+        rid_list = ", ".join(f"'{r}'" for r in sorted(csv_rids))
+        rid_clause = f"AND research_id IN ({rid_list})"
     return f"""
-WITH ranked AS (
-  SELECT
-    research_id,
-    molecular_episode_id,
-    platform,
-    report_source_table,
-    TO_JSON_STRING(gene_mutations_variants) AS gmv_json,
-    ROW_NUMBER() OVER (
-      PARTITION BY research_id
-      ORDER BY
-        CASE report_source_table
-          WHEN 'thyroseq_molecular_enrichment' THEN 1
-          WHEN 'molecular_testing' THEN 2
-          WHEN 'manual_insert_from_THYROSEQ_AFIRMA_12_5_xlsx_20260514' THEN 3
-          ELSE 4
-        END,
-        ARRAY_LENGTH(gene_mutations_variants.list) DESC,
-        built_at DESC,
-        report_source_table ASC
-    ) AS rn
-  FROM {CMG}
-  WHERE platform IN ({pl})
-    AND ingestion_source IS DISTINCT FROM 'retroactive_insert_missing_other_platform'
-)
 SELECT
   research_id,
   molecular_episode_id,
   platform,
   report_source_table,
-  gmv_json
-FROM ranked
-WHERE rn = 1
+  TO_JSON_STRING(gene_mutations_variants) AS gmv_json
+FROM {CMG}
+WHERE platform IN ({pl})
+  AND ingestion_source IS DISTINCT FROM 'retroactive_insert_missing_other_platform'
+  {rid_clause}
 """
 
 
@@ -352,7 +368,39 @@ def main() -> None:
 
     long_df = pd.read_csv(long_path)
     client = _bq_client()
-    bq_rows = list(client.query(_pick_rows_sql(platforms)).result())
+    # Pre-filter: collect research_ids that have at least one SNV variant in
+    # the CSV so the BQ query skips rows that can never improve.  This also
+    # fixes the platform-label mismatch: Afirma/NGS rows for patients whose
+    # CSV entry is labeled ThyroSeq are now found correctly.
+    csv_all_rids: frozenset[str] = frozenset(
+        long_df["research_id"].astype(str).unique()
+    )
+    csv_af_rids: frozenset[str] = frozenset(
+        long_df.loc[
+            (long_df["variant_class"].astype(str) == "SNV")
+            & long_df["allele_fraction"].notna(),
+            "research_id",
+        ]
+        .astype(str)
+        .unique()
+    )
+    print(
+        f"[mig_329] CSV rids total={len(csv_all_rids)}  with SNV+AF={len(csv_af_rids)}"
+    )
+    if csv_af_rids and not any(p == "ThyroSeq" for p in platforms):
+        # Warn when the export is ThyroSeq-labelled but platforms omit ThyroSeq.
+        # The pre-filter still works — BQ rows are looked up by research_id,
+        # not by CSV platform label — but coverage may be limited if few
+        # Afirma/NGS research_ids share rids with the ThyroSeq export.
+        print(
+            "[mig_329] WARNING: --platforms does not include 'ThyroSeq' but the "
+            "CSV export originates from script-41 which labels all rows as "
+            "ThyroSeq.  If few Afirma/NGS_unspecified patients appear in this "
+            "export, very few rows will be updated.  Add ThyroSeq to --platforms "
+            "to maximise AF coverage (BQ platform filter still restricts which "
+            "rows are written).",
+        )
+    bq_rows = list(client.query(_pick_rows_sql(platforms, csv_af_rids)).result())
     print(f"[mig_329] platforms={platforms}  Picked CMG rows: {len(bq_rows)}")
 
     updates: list[dict] = []
