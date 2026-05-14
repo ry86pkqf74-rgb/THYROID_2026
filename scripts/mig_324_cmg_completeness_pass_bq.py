@@ -16,11 +16,12 @@ Phase semantics (prompt alignment):
   - Optional Phase 4 (row INSERT recovery into CMG from enrichment) is **not implemented**
     here; low `n_strong_signal_pts` only means skip that separate recovery exercise.
 
-FNA join caveat (BQ verified 2026-05-13):
+FNA join caveat (BQ verified 2026-05-13; remediation mig_324b 2026-05-14):
   - CMG exposes `linked_fna_episode_id` (STRING) as numeric episode tokens (e.g. "3580").
   - `canonical_fna_events_v1.fna_event_id` are 32-char hex IDs — equality join yields **0**
-    hits despite populated links; date lift from the FNA arm is ineffective until a bridge
-    (episode-token → fna_event_id) exists or lineage is rebuilt on BQ-native keys.
+    hits unless bridged; see `scripts/mig_324b_fna_episode_bridge_date_lift_bq.py` which
+    builds `pub_workspace.fna_episode_id_bridge_<YYYYMMDD>` and lifts eligible
+    `imported_at_fallback` rows via surgery-anchored nearest FNA (VC-MOL-DATE-BRIDGE-001).
   - There is **no** `fna_episode_id` INT64 column on CMG in this dataset — drafts using
     `CAST(fna_episode_id AS STRING)` do not apply here.
 

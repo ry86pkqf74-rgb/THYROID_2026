@@ -1,5 +1,36 @@
 # thyroid-integration skill — changelog
 
+## v2.3.2 — 2026-05-14
+
+**BigQuery — CMG FNA episode-token bridge + `resolved_test_date_source` lift (`mig_324b`, VC-MOL-DATE-BRIDGE-001).**
+
+### Pre-bump verification (mandatory)
+
+Live `--apply` on `thyroid-canonical-pub-2026` (2026-05-14):
+
+- `canonical_molecular_genetics_v2` row count **1,384** (unchanged).
+- `resolved_test_date_source`: **native 481** (unchanged); **`fna_linkage_via_bridge` 409** (new); **`imported_at_fallback` 494** (was 903).
+- `frac_with_date` **1.0** (no regression).
+- Snapshot vs `pub_archive.canonical_molecular_genetics_v2_pre_fna_bridge_20260514`: **0** native-source rows with changed date or source.
+
+### Objects
+
+- **Bridge:** `pub_workspace.fna_episode_id_bridge_20260514` — legacy `linked_fna_episode_id` token → `fna_event_id` UUID (Path B date proximity on token-bearing CMG rows; **363** rows).
+- **Staging:** `pub_workspace.cmg_date_backfill_via_fna_bridge_20260514`.
+- **Archive (pre-merge):** `pub_archive.canonical_molecular_genetics_v2_pre_fna_bridge_20260514`.
+
+### Implementation notes
+
+- **Dataset constraint:** **Zero** CMG rows had both `imported_at_fallback` and non-null `linked_fna_episode_id`; token-only join cannot move imported-at cohort. **Path C** lifts `imported_at_fallback` rows using nearest `canonical_fna_events_v1.fna_date_resolved` within **±90 days** of the patient’s **earliest** `canonical_operative_events_v1.resolved_surgery_date` (enrichment `imported_at` anchors cluster near batch-upload dates and distort FNA distance).
+
+- **Runner:** `scripts/mig_324b_fna_episode_bridge_date_lift_bq.py` (`--investigate-only` / `--dry-run` / `--apply`).
+
+- **Prompt:** `studies/proposal_2to4cm_extent_molecular_20260326/elicit_expansion_20260509/CURSOR_PROMPT_FNA_bridge_VC_MOL_DATE_BRIDGE_001.md`.
+
+- **Governance:** DFL pre-apply `recLxXsDqq5lK7PKF`; MFL post-verify `rec5bhT0LOVvhlL2c` (EXT2-4). **Notable Finding** `NF-2026-05-13-canonical-molecular-date-coverage-with-fna-bridging-gap` (`recRPg7hWTWwRPzrV`) → **Verified** with refreshed evidence.
+
+- **Residual:** Airtable **Verification Checks** row `recDwv4CliD7MunoE` (VC-MOL-DATE-BRIDGE-001) could not be read/updated via MCP (token scope); set lifecycle **Verified** manually if required. No Linear **THY-*** issue matched that string — file or link if workflow needs it.
+
 ## v2.3.1 — 2026-05-14
 
 **BigQuery additive columns — pathology thyroid 3D dimensions + parathyroid weight (mg).**
@@ -100,6 +131,8 @@ Coverage delta gate satisfied per BQ checks:
     ```
 
     Interpretation: `linked_fna_episode_id` holds numeric tokens (e.g. `"3580"`); `fna_event_id` are **32-char hex** hashes — the equality join matches nothing until a bridge table or lineage rebuild aligns keys.
+
+  - **Follow-on closure:** `mig_324b` (skill **v2.3.2**, `scripts/mig_324b_fna_episode_bridge_date_lift_bq.py`) materializes `pub_workspace.fna_episode_id_bridge_20260514` and adds **`fna_linkage_via_bridge`** provenance on **409** rows (see **v2.3.2** header).
 
   - Surgery linkage diagnostic (`linked_surgery_episode_id` INT64 join to `canonical_operative_events_v1` on `(surgery_episode_id, research_id)`):
 

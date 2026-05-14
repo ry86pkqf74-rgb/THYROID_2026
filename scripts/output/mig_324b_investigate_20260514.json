@@ -1,0 +1,65 @@
+{
+  "legacy_column_candidates_found": [],
+  "token_fna_index_probe_sample": [
+    {
+      "tok": "7285",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "4663",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "4499",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "6731",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "7890",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "5868",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "7652",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "1424",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "7398",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    },
+    {
+      "tok": "7291",
+      "n_eq_fna_index_global": 0,
+      "n_fna_rows_if_any_join_bug": 0
+    }
+  ],
+  "resolved_test_date_source": [
+    {
+      "src": "imported_at_fallback",
+      "n": 903
+    },
+    {
+      "src": "native",
+      "n": 481
+    }
+  ]
+}

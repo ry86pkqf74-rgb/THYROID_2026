@@ -1,0 +1,21 @@
+{
+  "resolved_test_date_source_distribution": [
+    {
+      "src": "imported_at_fallback",
+      "n": 494
+    },
+    {
+      "src": "native",
+      "n": 481
+    },
+    {
+      "src": "fna_linkage_via_bridge",
+      "n": 409
+    }
+  ],
+  "frac_with_date": 1.0,
+  "n_fna_linkage_via_bridge": 409,
+  "n_rows": 1384,
+  "n_native_dates_changed": 0,
+  "run_id": "mig_324b_20260514_704759e8"
+}
