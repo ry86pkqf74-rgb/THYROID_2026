@@ -2,6 +2,11 @@
 """
 Script 347 — Lab Master Canonical v1 Build (per-analyte consolidation).
 
+DEPRECATED FOR THYROGLOBULIN REFRESH — 2026-05-14: Rebuilding canonical
+thyroglobulin rows from MotherDuck is retired. New analyst CSV loads use BigQuery mig_340:
+``qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py``.
+Script 347 remains for historical MotherDuck lab consolidation workflows and non-Tg analyzers only.
+
 Consolidates the lab layer into FIVE per-analyte canonical tables and TWO
 compatibility views, with uniform value normalization via
 ``scripts/_lab_value_normalizer.py``.

@@ -2,6 +2,12 @@
 """
 113_tg_lab_ingestion.py — Thyroglobulin & TgAb Lab Ingestion (per-analyte canonical).
 
+DEPRECATED OPERATIONAL PATH — 2026-05-14: MotherDuck was retired from this project's build.
+Official analyst EHR Thyroglobulin refresh is BigQuery-native:
+``qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py`` +
+``qc_framework_v1/migrations/sql/mig_340_thy_canonical_from_analyst_raw.sql``.
+Do not use this script for production Tg updates.
+
 Refactored by Script 348 (2026-04-21) to write directly to the per-analyte
 canonical lab table introduced by Script 347. The legacy targets
 ``main.thyroglobulin_lab_canonical_v1`` /

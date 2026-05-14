@@ -2,6 +2,14 @@
 """Append analyst-delivered institutional lab rows to the per-analyte
 canonical lab tables introduced by Script 347.
 
+DEPRECATED MOTHERDUCK OPERATIONS — 2026-05-14: Institutional / analyst lab
+staging on MotherDuck is no longer the publication build path for Tg refreshes.
+Thyroglobulin/TgAb canonical rows from the authoritative analyst EHR pull are rebuilt
+directly in BigQuery via mig_340
+(``qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py``).
+Continue using Script 127 only for historical reproducibility unless explicitly
+directed otherwise.
+
 Refactored by Script 348 (2026-04-21). The legacy target
 ``main.longitudinal_lab_canonical_v1`` was dropped by Script 347; rows
 are now routed by ``lab_name_standardized`` to the matching per-analyte

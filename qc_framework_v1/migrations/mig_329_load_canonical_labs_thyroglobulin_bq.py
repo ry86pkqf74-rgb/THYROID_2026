@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-"""mig_329_load_canonical_labs_thyroglobulin_bq — rebuild BQ thyroglobulin canonicals from MotherDuck.
+"""mig_329_load_canonical_labs_thyroglobulin_bq — legacy parquet shim (MotherDuck → BigQuery).
 
-Replaces:
+DEPRECATED — MotherDuck was retired from the publication build chain (2026-05-14).
+Analyst Thyroglobulin refreshes MUST use BigQuery-native mig_340:
+
+  qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py
+  qc_framework_v1/migrations/sql/mig_340_thy_canonical_from_analyst_raw.sql
+
+This script remains ONLY for archival parity exercises (reload a parquet export from MotherDuck
+into BigQuery).
+
+Historic description (parity load):
+Rebuilds thyroglobulin canonical parquet into:
+
   thyroid-canonical-pub-2026.pub_canonical.canonical_labs_thyroglobulin_v1
 
-And refreshes the legacy-shaped companion view (run separately in BQ or via
-MOTHERDUCK parity exports):
+Companion view refreshes MUST follow the parquet load (manual or via mig_340 SQL):
 
   pub_canonical.thyroglobulin_lab_VIEW_v1
 
-Source of truth for row contents: MotherDuck ``main.canonical_labs_thyroglobulin_v1``
-rebuilt by ``scripts/347_lab_master_canonical_v1_build.py --commit``
-(Script 347 — full-timestamp dedup + full longitudinal Tg/TgAb name coverage).
+Source of historical row contents was MotherDuck ``main.canonical_labs_thyroglobulin_v1``
+exported after ``scripts/347_lab_master_canonical_v1_build.py --commit``.
 
 Prereq:
-  1. Re-run Script 347 on MotherDuck with --commit.
-  2. Export parquet (example):
+  Export parquet … gcloud auth / ``bq`` CLI for thyroid-canonical-pub-2026
 
-       duckdb / MotherDuck: COPY (SELECT * FROM main.canonical_labs_thyroglobulin_v1)
-       TO 'exports/bq_mig329/canonical_labs_thyroglobulin_v1.parquet'
-       (FORMAT PARQUET, COMPRESSION ZSTD);
-
-  3. gcloud auth / ``bq`` CLI for thyroid-canonical-pub-2026
-
-Validation (BigQuery):
-
-  -- See Prompt 1 acceptance queries (src vs tgt patients = 3258, ~55k rows).
+Validation (historical Prompt 1): src vs tgt patients / joins.
 
 Usage:
 
@@ -60,6 +60,11 @@ def main() -> None:
     if not pq.is_file():
         raise SystemExit(f"Missing parquet: {pq}")
 
+    print(
+        "[mig_329 WARN] Deprecated MotherDuck parity load. Thyroglobulin refresh -> mig_340 "
+        "(qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py)."
+    )
+
     dest = f"{args.project}:{args.dataset}.{_TABLE}"
     cmd = [
         "bq",
@@ -89,7 +94,7 @@ def main() -> None:
         "  FROM `thyroid-canonical-pub-2026.pub_canonical."
         "canonical_labs_thyroglobulin_v1`;"
     )
-    print("[mig_329] Then run validation SQL (Prompt 1).")
+    print("[mig_329] Then run validation SQL (historical Prompt 1). Prefer mig_340 validation SQL thereafter.")
 
 
 if __name__ == "__main__":

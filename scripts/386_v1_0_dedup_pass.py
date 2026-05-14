@@ -2,6 +2,9 @@
 """
 Script 386 — post-387 v1_0 dedup pass (narrowed Phase D).
 
+NOT the thyroglobulin refresh path — 2026-05-14: Tg canonical rebuild is BigQuery
+mig_340 (qc_framework_v1/migrations/mig_340_thyroglobulin_analyst_bq_rebuild.py).
+
 Per cursor prompt 2026-04-22 §3 Phase D + user-confirmed softening:
 
 Pre-state checks (READ-ONLY; halt on failure):
