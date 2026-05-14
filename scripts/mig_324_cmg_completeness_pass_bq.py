@@ -8,6 +8,22 @@ Addresses genetics completeness audit (2026-05-13):
     semantic_test_cluster_key, completeness_pass_run_id
   - Preserve legacy molecular_episode_id
 
+Phase semantics (prompt alignment):
+  - Phase 1 (`--phase1-only`) sizes enrichment orphans + strong-signal counts for **manual**
+    decisions about optional orphan-recovery / manuscript refresh — it does **not** gate this
+    script's `--apply` path: snapshot, DDL, staging MERGE, fingerprints, and verification
+    always run when `--apply` is passed.
+  - Optional Phase 4 (row INSERT recovery into CMG from enrichment) is **not implemented**
+    here; low `n_strong_signal_pts` only means skip that separate recovery exercise.
+
+FNA join caveat (BQ verified 2026-05-13):
+  - CMG exposes `linked_fna_episode_id` (STRING) as numeric episode tokens (e.g. "3580").
+  - `canonical_fna_events_v1.fna_event_id` are 32-char hex IDs — equality join yields **0**
+    hits despite populated links; date lift from the FNA arm is ineffective until a bridge
+    (episode-token → fna_event_id) exists or lineage is rebuilt on BQ-native keys.
+  - There is **no** `fna_episode_id` INT64 column on CMG in this dataset — drafts using
+    `CAST(fna_episode_id AS STRING)` do not apply here.
+
 test_dedup_key:
   Row-stable fingerprint includes report_source_table + legacy molecular_episode_id so
   acceptance «no triples per patient» passes while semantic_test_cluster_key matches

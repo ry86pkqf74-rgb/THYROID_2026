@@ -1,0 +1,35 @@
+{
+  "run_note": "Live BigQuery thyroid-canonical-pub-2026 / pub_canonical — confirms CMG vs FNA/Surgery join viability after mig_324.",
+  "cmg_columns_relevant": {
+    "linked_fna_episode_id": "STRING",
+    "linked_surgery_episode_id": "INT64",
+    "fna_episode_id_on_cmg": null
+  },
+  "canonical_fna_events_v1.fna_event_id_sample_format": "32-char lowercase hex",
+  "canonical_cmg.linked_fna_episode_id_sample_format": "numeric string tokens",
+  "counts": {
+    "cmg_rows_total": 1384,
+    "cmg_rows_with_linked_fna_non_empty": 374,
+    "rows_inner_join_linked_fna_to_fna_events": 0,
+    "cmg_rows_with_linked_surgery_non_null": 0,
+    "rows_inner_join_linked_surgery_to_operative_events": 0
+  },
+  "resolved_test_date_source_distribution": {
+    "imported_at_fallback": 903,
+    "native": 481
+  },
+  "acceptance_fractions_post_fix": {
+    "frac_with_date": 1.0,
+    "frac_with_episode_id_v2": 1.0,
+    "frac_distinct_episode_v2_vs_rows": 0.974711,
+    "frac_distinct_dedup_vs_rows": 1.0,
+    "n_rows": 1384
+  },
+  "parse_status_distribution": {
+    "partial": 508,
+    "ok": 331,
+    "no_detailed_block": 297,
+    "minimal": 185,
+    "empty_block": 63
+  }
+}

@@ -75,10 +75,51 @@ Coverage delta gate satisfied per BQ checks:
 
 - Snapshot: `pub_archive.canonical_molecular_genetics_v2_pre_completeness_pass_20260514`
 - Staging: `pub_workspace.cmg_date_backfill_staging_20260514`
-- Backfills NULL `resolved_test_date` via `linked_fna_episode_id` → `canonical_fna_events_v1`, `linked_surgery_episode_id` → `canonical_operative_events_v1` (−14d proxy), then `thyroseq_molecular_enrichment.imported_at` (patient-level MAX dedupe).
+- **Join-path reality (post-fix verification queries, pasted 2026-05-13):**
+  - CMG has **`linked_fna_episode_id` (STRING)** only — **no `fna_episode_id`** column on `pub_canonical.canonical_molecular_genetics_v2` in this project.
+  - FNA linkage diagnostic (`linked_fna_episode_id` = `canonical_fna_events_v1.fna_event_id`):
+
+    ```
+    cmg_rows_total=1384  cmg_rows_with_link=374  rows_join_hit=0
+    ```
+
+    Interpretation: `linked_fna_episode_id` holds numeric tokens (e.g. `"3580"`); `fna_event_id` are **32-char hex** hashes — the equality join matches nothing until a bridge table or lineage rebuild aligns keys.
+
+  - Surgery linkage diagnostic (`linked_surgery_episode_id` INT64 join to `canonical_operative_events_v1` on `(surgery_episode_id, research_id)`):
+
+    ```
+    total=1384  cmg_rows_with_surg_link=0  rows_join_hit=0
+    ```
+
+    All CMG rows have **NULL** `linked_surgery_episode_id` in live BQ — surgery −14d arm inactive.
+
+  - **Resolved date source distribution** (explains how `frac_with_date=1` was achieved):
+
+    ```
+    imported_at_fallback 903
+    native             481
+    ```
+
+  - **Acceptance-style fractions** (gates ≥0.90 date coverage, ≥95% distinct `molecular_episode_id_v2`, zero row-level triple clusters on `test_dedup_key`, zero date regressions vs archive — script exits **1** if any fail after `--apply`):
+
+    ```
+    n_rows=1384  frac_with_date=1.0  frac_with_episode_id_v2=1.0
+    frac_distinct_episode_v2_vs_rows≈0.974711  frac_distinct_dedup_vs_rows=1.0
+    ```
+
+    Verdict for bump discipline: **PASS** — do **not** bump skill version if any of these miss after a future re-run.
+
+  - **`parse_status` distribution** (baseline quality snapshot; Phase 5 parser escalation still deferred):
+
+    ```
+    partial=508  ok=331  no_detailed_block=297  minimal=185  empty_block=63
+    ```
+
 - New columns: `resolved_test_date_source`, `molecular_episode_id_v2`, `test_dedup_key` (row-stable: includes legacy `molecular_episode_id` + `report_source_table`), `semantic_test_cluster_key` (patient|date|platform for duplicate-route clustering), `completeness_pass_run_id`, `parse_status_v2` (baseline copy of `parse_status`; parser escalation deferred).
-- Live verification (`scripts/output/mig_324_verification_20260514.json`): `frac_with_date=1.0`, distinct `molecular_episode_id_v2`=1349 / 1384 rows (≥95%), row-level triple collisions on `test_dedup_key`=0, date regression=0 vs snapshot.
-- Phase 1 orphan sizing post-fix (`scripts/output/mig_324_phase1_orphan_signal_20260514.json`): orphan enrichment-content patients still out of CMG **n=139**, **strong_signal_pts=1** → Phase 4 orphan recovery minimal; Phase 7 manuscript package refresh skipped.
+- **Phase discipline:** `--apply` does **not** skip date backfill / fingerprints on low Phase 1 counts — Phase 1 is sizing only for **optional** orphan INSERT recovery (Phase 4) outside this script.
+- Archived verification artifact: `scripts/output/mig_324_verification_20260514.json` (same thresholds as script gates).
+
+**Manuscript routing after this pass:** Phase 4 orphan recovery **not** materially executed (`strong_signal_pts=1`) → update **Notable Finding + executive summary** (date completeness % + parse-status baseline); **not** a full Table 3 cohort reconciliation unless Phase 4 recovery is run later after FNA/surgery key alignment.
 
 **Airtable (THYROID_MANUSCRIPT):** DFL `DFL-20260514-CMG-COMPLETENESS-PASS` (`recEYbeJEZM2B24uX`); MFL `MFL-20260514-EXT2-4-CANONICAL-COMPLETENESS-PASS` (`rec02870wrtwT563X`).
 
