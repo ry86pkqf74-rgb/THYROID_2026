@@ -187,12 +187,77 @@ User-reported **`motherduck_database` column** values (e.g. `md:thyroid_research
 
 ---
 
-## Explicit answer to acceptance criteria
+## Explicit answer to acceptance criteria (Prompt 8 snapshot)
 
-1. **Every reference classified** — via **taxonomy (a)/(b)/(c)** + **mechanical counts** above; per-file listing is **615** modules (union heuristic) / **221** maintained `connect_locked` scripts.  
-2. **N active MotherDuck build dependencies stated** — **221** maintained `scripts/` + `qc_framework_v1/` entrypoints calling `connect_locked()` **+ ~10 Round-2 merge/dedup scripts that publish via `_round2_helpers.connect_md()` / inline `md:` without going through `connect_locked`** **≈231 distinct high-impact publishers**, while **615** is the union footprint across all Python modules matching the heuristic above (includes studies, `snowflake_trial/`, submission packages, probes, and tests).  
+1. **Every reference classified** — via **taxonomy (a)/(b)/(c)** + **mechanical** greps above; Prompt 8 reported **615** Python modules on the union heuristic at audit time.  
+2. **N active MotherDuck build dependencies (Prompt 8)** — **221** maintained `scripts/` + `qc_framework_v1/` entrypoints calling `connect_locked()` **+ ~10** Round-2 merge/dedup scripts via `connect_md` / inline `md:` **≈231** high-impact publishers; **615** = full union across studies, `snowflake_trial/`, submission packages, probes, and tests.  
 3. **Each active family** has **PORT** or **RETIRE** in tables above.
 
 ---
 
-*Generated as part of repository hygiene after MotherDuck retirement; re-run grep block to refresh counts.*
+## Prompt 9 — Per-file decomposition + port backlog (2026-05-14)
+
+**Machine-readable hit list:** `studies/motherduck_duckdb_hits_20260514.tsv` (606 data rows + header).
+
+**Regenerator:** `studies/analyze_motherduck_publishers_20260514.py` — re-run after branch changes; requires `bq` CLI for live `pub_canonical` / `pub_semantic` / `pub_views_readable` object lists (~280 ids ingested).
+
+### Footprint definition (git-tracked `*.py` only)
+
+Union of files containing any of:
+
+- `connect_locked(`  
+- `MotherDuckClient`  
+- `_round2_helpers` / `connect_md(` / `_connect_md(`  
+- `duckdb.connect` **and** `md:` / `md?` somewhere in the same file  
+
+**Prompt 8 vs Prompt 9:** Prompt 8 cited **615** modules (union over the full working tree at that snapshot). Re-running the same intent on **git-tracked** Python only yields **606** rows — treat **606** as the reconciled decomposition denominator; the **Δ=9** is consistent with ignored/untracked paths or a drifted checkout.
+
+### Disposition counts (must sum to footprint)
+
+| Disposition | N | Rule |
+|-------------|---:|------|
+| **ACTIVE** | **498** | Referenced in `.github/workflows/*.yml` or `Makefile`, **or** substring-hit against a live BigQuery `pub_*` table/view id, **or** listed infra (`scripts/_md_connect.py`, `scripts/_round2_helpers.py`, `motherduck_client.py`, `utils/md_connect.py`). |
+| **DEAD** | **92** | Under superseded prefixes (`snowflake_trial/`, `M0xx_submission_package*`, `scripts/archive/`, `scripts/frozen/`, `M025_FINAL_PACKAGE/`) **or** no orchestrator ref and no BQ id substring. |
+| **COMMENT** | **0** | Would be: MotherDuck/DuckDB tokens **only** in `#` comments (none matched in this footprint). |
+| **UNCERTAIN** | **16** | `scripts/output/` probes, `studies/`, private `_` helpers under `scripts/` with real code coupling but no CI/BQ string proof. |
+| **Sum** | **606** | `498 + 92 + 0 + 16` |
+
+### “Publication-critical” column semantics (BQ crosswalk)
+
+The TSV column **`bq_tables_substring_mentions`** is the set intersection of (file text) ∩ (280 BigQuery object ids from `pub_canonical` + `pub_semantic` + `pub_views_readable`). It flags **reads or writes** or incidental mentions — not proof of authorship alone.
+
+**`publication_anchor_overlap`** = `yes` when those mentions include any of the **anchor** set used for prioritization:
+
+`canonical_patient_master`, `manuscript_cohort_v1`, `synoptic_tumor_long_v1`, `canonical_path_malignant_events_v1`, `canonical_tumor_characteristics_v1`, `tumor_episode_master_v2`, `thyroid_scoring_py_v1`, `path_synoptics`, `signoff_migration`.
+
+For **scripted** port ordering, use **`port_backlog_tier`** on ACTIVE rows (P0 = strongest: `connect_locked`/`connect_md` + `CREATE TABLE|VIEW` / `to_gbq` / `load_job` heuristic + anchor overlap).
+
+**ACTIVE × port tier (counts):** P0=155, P1=30, P2=105, P3=109, P4=94, P5=5.
+
+### High-impact coupling (connect_locked / connect_md), ACTIVE only
+
+| Coupling | ACTIVE files |
+|----------|-------------:|
+| `connect_locked` | **253** |
+| `connect_md` | **37** |
+| **Combined** | **290** |
+
+The Prompt 8 headline **~231** maintained publishers was a **narrower slice** (`connect_locked` under `scripts/` + `qc_framework_v1/` excluding `output/` / `archive` / `frozen`). The Prompt 9 figure **253** is **all git-tracked** ACTIVE `connect_locked` publishers (includes `llm_extraction/`, `dashboard.py`, `studies/` movers, etc.).
+
+### Prioritized port-or-retire backlog (operational order)
+
+1. **P0 — Port first (publication spine heuristic)** — 155 ACTIVE modules. Deterministic seeds for immediate engineering:
+   - **Infra:** `scripts/_md_connect.py`, `scripts/_round2_helpers.py`, `motherduck_client.py`, `utils/md_connect.py`
+   - **Round-2 Tier-2 publishers / verify / dedup:** `scripts/368_vasc_v2_merge_load_rollup.py`, `369_pathology_v2_merge_load_rollup.py`, `382_cervical_ln_clinical_merge_load_rollup.py`, `382_restore_7_cervical_ln_legacy_notes.py`, `383_tirads_granular_merge_load.py`, `384_esophageal_invasion_merge_load_rollup.py`, `385_round2_canonical_verify.py`, `386_v1_0_dedup_pass.py`, `386b_fix_round2_llm_model_tag.py`, `387_pub_v1_0_cleanup.py`
+   - **Canonical / CPM pipeline (filter TSV; sample):** `scripts/113_tg_lab_ingestion.py`, `224`–`300+` family (`245`, `247`, `250`, `266b`, `266c`, `272`–`278`, …). Full list: `awk -F'\\t' 'NR>1 && $8=="P0"' studies/motherduck_duckdb_hits_20260514.tsv`
+2. **P1–P2 — ACTIVE next** — `connect_locked` / `connect_md` with DDL/BQ-load heuristics but without anchor overlap, or with overlap but weaker coupling.
+3. **P3–P5 — ACTIVE hygiene** — `MotherDuckClient`-only dashboards/tests, string hits without `connect_locked`, etc.
+4. **DEAD — Bulk retire** — 92 files under historical prefixes; safe to archive after confirming no `main` CI target references the basename.
+
+### Batch retire queue (DEAD prefix families)
+
+All rows with `disposition==DEAD` are listed in the TSV; the majority consolidate under `snowflake_trial/`, `M0xx_submission_package*`, `M025_FINAL_PACKAGE/`, `scripts/archive/`, `scripts/frozen/`.
+
+---
+
+*Re-run `studies/analyze_motherduck_publishers_20260514.py` and the Prompt 8 grep block to refresh counts; `bq` must list datasets successfully for the BQ column.*
