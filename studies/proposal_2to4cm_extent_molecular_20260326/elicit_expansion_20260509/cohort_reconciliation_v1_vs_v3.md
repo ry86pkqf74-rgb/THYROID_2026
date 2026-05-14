@@ -78,6 +78,30 @@ The v1 prose says "preoperative imaging index nodule 2.0–4.0 cm" (singular). I
 
 ---
 
+## DECISION (2026-05-14, Logan)
+
+**Cohort definition: include any patient who had a preoperative ultrasound nodule measuring 2.0–4.0 cm.** This is the **broader "any preop nodule"** definition (n=765 on BQ as of 2026-05-13), not the narrower "largest preop nodule" definition (n=674) and not the v3 "resolved index nodule" definition (n=400).
+
+### Rationale
+- Clinical decision-making for thyroid lobectomy vs total thyroidectomy is driven by **any 2–4 cm nodule** in the preoperative ultrasound, not exclusively by the "index" lesion. Excluding patients with a 2–4 cm nodule because they also have a smaller "index" lesion is selection bias against multinodular goiter.
+- Reproduces (and slightly expands) the v1 N=635 framing.
+- Maximum statistical power; tightest Wilson 95% CIs.
+
+### What this triggers (v3 → v4 rebuild)
+
+1. **Cohort SQL refresh** — Add a CTE that defines `cohort_v4 = surgical_b34 WHERE ANY preop nodule in canonical_us_nodule_v2 has size_cm_max IN [2.0, 4.0] AND exam_date <= surg_first_date`. Replace `imaging_nodule_size_cm BETWEEN 2.0 AND 4.0` filter (patient-grain index) with this nodule-grain exists clause throughout `sql/04b_*.sql` and the Table 1/2 SQL.
+2. **Tables 1–4 refresh** — All cohort-N denominators shift from 400 (v3 preop_2to4cm) to 765 (v4 any-preop-2to4cm). Table 3 v3 head-to-head subsets (Afirma B3+B4 n=90, ThyroSeq n=222) are NOT bound by the cohort definition (those filter on B3+B4 only), but the 2–4 cm subgroup cell DOES shift (n=5 Afirma → likely ~10; n=30 ThyroSeq → likely ~50). Re-derive.
+3. **Figure regeneration** — `build_figures_v2.py` forest_rows for 2–4 cm cells refresh; cohort_flow figure refresh.
+4. **Manuscript prose pass** — Methods § "Inclusion criteria" + Results § cohort flow numbers shift; v3 → v4 supersession note added.
+5. **Strict-nodal-exclusion arm** — Apply the v1 strict nodal exclusion to v4 (any preop nodule 2–4 cm + strict nodal exclusion) to produce a sensitivity-analysis cohort comparable to v1's N=558.
+
+### Estimated effort
+- 1 Cursor handoff for SQL + canonical cell regeneration
+- 1 Cowork session for the manuscript prose pass + v3 → v4 supersession note + zip rebuild
+- Total: ~1 working day equivalent across the two tools.
+
+---
+
 ## Source queries (run 2026-05-13 against `thyroid-canonical-pub-2026.pub_canonical.*`)
 
 ```sql
