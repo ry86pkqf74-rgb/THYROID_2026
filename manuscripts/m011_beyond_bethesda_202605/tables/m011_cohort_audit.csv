@@ -1,0 +1,37 @@
+metric,n,detail
+01_registry_total_patients,10871,surgical thyroid registry with final pathology
+02_has_preop_fna_bethesda,5065,preoperative FNA with mappable Bethesda category
+03_has_preop_us,3786,preoperative ultrasound nodule before surgery
+04_has_surgery_date,10871,
+05_PRIMARY_COHORT,2479,preop US + preop Bethesda + surgical pathology
+06_primary_with_acr_tirads,2310,ACR TI-RADS imputed available
+07_primary_bethesda_III_IV,723,
+08_primary_bethesda_III,434,
+09_primary_bethesda_IV,289,
+10_primary_molecular_tested,458,Afirma or ThyroSeq preoperative
+11_primary_molecular_tested_III_IV,333,
+12_primary_any_malignancy,1175,
+13_primary_benign,1237,
+14_primary_NIFTP,48,handled separately
+15_primary_borderline_FTUMP,19,handled separately
+16_primary_clin_sig_malignancy,1168,
+17_primary_incidental_PTMC,235,
+20_frameA_link_rows,9846,one row per linked US-nodule/FNA pair
+21_frameA_cohort_rows,9317,preop US+FNA Bethesda present
+22_frameA_hiconf_rows,3904,linkage tier exact/high/plausible
+23_frameA_hiconf_patients,1449,
+30_missing_age,0,primary cohort
+31_missing_sex,0,primary cohort
+32_missing_acr_tirads,169,primary cohort (6.8%)
+33_missing_acr_strict,1677,primary cohort (67.6%)
+34_missing_eu_tirads,343,primary cohort
+35_missing_ata,414,primary cohort
+36_missing_ktirads,160,primary cohort
+37_missing_ctirads,169,primary cohort
+38_missing_nodule_size,63,primary cohort
+39_missing_path_tumor_size,0,among malignant
+40_not_molecular_tested,2021,primary cohort (81.5%)
+50_linktier_exact,32,Frame A cohort rows
+51_linktier_high,998,Frame A cohort rows
+52_linktier_plausible,2874,Frame A cohort rows
+53_linktier_weak,5413,Frame A cohort rows

@@ -1,0 +1,17 @@
+model,cohort,n,n_pos,n_neg,auc,auc_ci_lo,auc_ci_hi,boot_ci_lo,boot_ci_hi,brier,calib_slope,calib_intercept,delta_auc_vs_ref,ref_model,delong_p_vs_ref
+A_Bethesda_only,main,2245,1080,1165,0.8237,0.8063,0.8412,0.8063,0.8399,0.1631,1.006,0.006,,,
+B_TIRADS_only,main,2245,1080,1165,0.6329,0.6099,0.6558,0.6119,0.6550,0.2458,7.128,-0.055,-0.1908,A_Bethesda_only,
+C_Bethesda_TIRADS,main,2245,1080,1165,0.8390,0.8222,0.8558,0.8226,0.8550,0.1607,1.008,-0.014,0.0153,A_Bethesda_only,2.6e-06
+D_Bethesda_TIRADS_clinical,main,2245,1080,1165,0.8451,0.8286,0.8616,0.8294,0.8604,0.1588,1.017,-0.021,0.0214,A_Bethesda_only,2.1e-09
+E_Bethesda_USfeatures,main,2245,1080,1165,0.8399,0.8232,0.8567,0.8223,0.8548,0.1607,1.007,0.016,0.0162,A_Bethesda_only,1.2e-06
+F0_Bethesda_only_molcohort,molecular,411,234,177,0.6724,0.6210,0.7237,0.6265,0.7171,0.2158,1.057,0.022,,,
+F1_Bethesda_TIRADS_molcohort,molecular,411,234,177,0.6972,0.6473,0.7472,0.6487,0.7442,0.2120,1.047,-0.062,0.0249,F0_Bethesda_only_molcohort,0.132
+F_Bethesda_TIRADS_molecular,molecular,411,234,177,0.7601,0.7146,0.8055,0.7132,0.8060,0.1981,1.067,-0.133,0.0877,F0_Bethesda_only_molcohort,5.1e-05
+G_Bethesda_features_molecular,molecular,411,234,177,0.7336,0.6861,0.7811,0.6846,0.7780,0.2042,1.041,0.015,0.0612,F0_Bethesda_only_molcohort,
+SUB_Bethesda_ref,beth_III_IV,642,322,320,0.5190,0.4744,0.5637,0.4817,0.5552,0.2499,6.901,0.004,,,
+SUB_TIRADS_only,beth_III_IV,642,322,320,0.5499,0.5055,0.5943,0.5080,0.5916,0.2494,6.941,0.004,0.0309,SUB_Bethesda_ref,0.294
+SUB_USfeatures,beth_III_IV,642,322,320,0.5363,0.4917,0.5808,0.4925,0.5838,0.2492,4.750,0.005,0.0173,SUB_Bethesda_ref,0.574
+SUB_molecular_only,beth_III_IV_mol,297,144,153,0.6125,0.5486,0.6764,0.5574,0.6627,0.2463,7.039,-0.052,,,
+SUB_TIRADS_molecular,beth_III_IV_mol,297,144,153,0.6605,0.5987,0.7223,0.5976,0.7194,0.2451,7.887,-0.044,,,
+SUB_combined,beth_III_IV_mol,297,144,153,0.6567,0.5947,0.7187,0.5954,0.7184,0.2449,7.754,-0.044,,,
+NOTE,,,,,,,,,,,,,,,"calib_slope for single-categorical models (B and all SUB_*) is unstable (few unique predicted values) and not meaningful; delong_p is the paired DeLong test vs ref_model; F vs F1 (add molecular within mol cohort) DeLong p = 0.0009; LR tests: A->C p=2.9e-8, A->E p=1.8e-8, C->D p=8.9e-6, F0->F1 p=0.077, F1->F p=4.9e-5"

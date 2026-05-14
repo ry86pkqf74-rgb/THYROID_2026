@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .axb{font-size:13px;font-weight:bold;fill:#1f2d34}
+    .ax{font-size:12px;fill:#1f2d34}
+    .leg{font-size:12px;fill:#1f2d34}
+    polyline{fill:none;stroke-width:2.2}
+  </style>
+  <text x="20" y="26" class="cap">Figure 5. Decision-curve analysis — primary cohort (any malignancy)</text>
+  <rect x="70" y="80" width="320" height="300" fill="#fbfcfd" stroke="#9aa7ad"/>
+  <line x1="70" y1="80" x2="70" y2="380" stroke="#1f2d34"/>
+  <line x1="70" y1="380" x2="390" y2="380" stroke="#1f2d34"/>
+  <text x="230" y="412" text-anchor="middle" class="axb">Threshold probability</text>
+  <text x="28" y="230" text-anchor="middle" class="axb" transform="rotate(-90 28 230)">Net benefit</text>
+  <text x="66" y="394" text-anchor="end" class="ax">0.05</text>
+  <text x="230" y="394" text-anchor="middle" class="ax">0.25</text>
+  <text x="390" y="394" text-anchor="middle" class="ax">0.50</text>
+  <text x="62" y="105" text-anchor="end" class="ax">0.50</text>
+  <text x="62" y="356" text-anchor="end" class="ax">0</text>
+
+  <!-- treat none -->
+  <line x1="70" y1="352.7" x2="390" y2="352.7" stroke="#9aa7ad" stroke-dasharray="4,4" stroke-width="1.6"/>
+  <!-- treat all -->
+  <polyline points="70,105.3 105.6,121.9 141.1,140.4 176.7,161.2 212.2,184.7 247.8,211.7 283.3,242.8 318.9,279.1 354.4,322 390,373.5" stroke="#b0b7bb"/>
+  <!-- A Bethesda only -->
+  <polyline points="70,105.2 105.6,121.8 141.1,140.3 176.7,149.5 212.2,158.5 247.8,168.4 283.3,179.7 318.9,192.9 354.4,208.6 390,224.7" stroke="#3b6ea5"/>
+  <!-- C Bethesda + TI-RADS -->
+  <polyline points="70,105.2 105.6,121.8 141.1,137.1 176.7,150.8 212.2,158.2 247.8,168.4 283.3,179.7 318.9,193.9 354.4,207.3 390,220.6" stroke="#c0612b"/>
+  <!-- D Bethesda + TI-RADS + clinical -->
+  <polyline points="70,105.2 105.6,121.8 141.1,137.0 176.7,147.5 212.2,157.7 247.8,167.7 283.3,179.2 318.9,191.5 354.4,206.1 390,220.6" stroke="#2e7d5b"/>
+
+  <rect x="232" y="92" width="152" height="96" fill="#fff" stroke="#cfd6da"/>
+  <line x1="240" y1="110" x2="266" y2="110" stroke="#3b6ea5" stroke-width="2.2"/><text x="272" y="114" class="leg">A Bethesda</text>
+  <line x1="240" y1="130" x2="266" y2="130" stroke="#c0612b" stroke-width="2.2"/><text x="272" y="134" class="leg">C Beth + TI-RADS</text>
+  <line x1="240" y1="150" x2="266" y2="150" stroke="#2e7d5b" stroke-width="2.2"/><text x="272" y="154" class="leg">D + clinical</text>
+  <line x1="240" y1="170" x2="266" y2="170" stroke="#b0b7bb" stroke-width="2.2"/><text x="272" y="174" class="leg">Treat all / none</text>
+  <text x="20" y="432" class="ax">Bethesda-based curves (A) and Bethesda+TI-RADS (C, D) are visually superimposed across the clinically plausible 10–40% range — adding TI-RADS yields no separable net-benefit gain.</text>
+</svg>

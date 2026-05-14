@@ -1,0 +1,18 @@
+outcome,model,n,n_pos,n_neg,auc,brier,delta_auc_vs_A
+primary_any_malignancy,A_Bethesda,2245,1080,1165,0.8237,0.1631,0.0
+primary_any_malignancy,C_Bethesda_TIRADS,2245,1080,1165,0.8390,0.1607,0.0153
+primary_any_malignancy,D_Bethesda_TIRADS_clinical,2245,1080,1165,0.8451,0.1588,0.0214
+primary_any_malignancy,E_Bethesda_USfeatures,2245,1080,1165,0.8399,0.1607,0.0162
+clinsig_malignancy,A_Bethesda,2245,1074,1171,0.8233,0.1634,0.0
+clinsig_malignancy,C_Bethesda_TIRADS,2245,1074,1171,0.8377,0.1612,0.0145
+clinsig_malignancy,D_Bethesda_TIRADS_clinical,2245,1074,1171,0.8437,0.1595,0.0205
+clinsig_malignancy,E_Bethesda_USfeatures,2245,1074,1171,0.8389,0.1610,0.0156
+niftp_counted_benign,A_Bethesda,2310,1080,1230,0.8182,0.1658,0.0
+niftp_counted_benign,C_Bethesda_TIRADS,2310,1080,1230,0.8329,0.1633,0.0147
+niftp_counted_benign,D_Bethesda_TIRADS_clinical,2310,1080,1230,0.8390,0.1616,0.0208
+niftp_counted_benign,E_Bethesda_USfeatures,2310,1080,1230,0.8334,0.1635,0.0153
+niftp_counted_malignant,A_Bethesda,2310,1127,1183,0.8152,0.1677,0.0
+niftp_counted_malignant,C_Bethesda_TIRADS,2310,1127,1183,0.8287,0.1660,0.0135
+niftp_counted_malignant,D_Bethesda_TIRADS_clinical,2310,1127,1183,0.8355,0.1642,0.0203
+niftp_counted_malignant,E_Bethesda_USfeatures,2310,1127,1183,0.8296,0.1660,0.0144
+NOTE,,,,,,,"Primary = any malignancy with NIFTP/borderline excluded (the headline analysis). DeLong p-values for each C/D/E vs A within outcome are in m011_sensitivity_delong.csv. Conclusion: the TI-RADS increment is +0.013-0.016 and the +clinical increment +0.020-0.021 across ALL four outcome definitions - the 'TI-RADS adds little after Bethesda' finding is fully robust to NIFTP handling and to using clinically-significant malignancy instead of any malignancy."

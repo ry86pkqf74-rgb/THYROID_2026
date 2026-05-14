@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .axb{font-size:13px;font-weight:bold;fill:#1f2d34}
+    .ax{font-size:12px;fill:#1f2d34}
+    .leg{font-size:12px;fill:#1f2d34}
+    polyline{fill:none;stroke-width:2}
+  </style>
+  <text x="20" y="26" class="cap">Figure 4. Calibration plots (decile bins) — observed vs predicted malignancy</text>
+  <rect x="70" y="80" width="300" height="300" fill="#fbfcfd" stroke="#9aa7ad"/>
+  <line x1="70" y1="380" x2="370" y2="80" stroke="#b9c2c7" stroke-dasharray="5,4"/>
+  <line x1="70" y1="80" x2="70" y2="380" stroke="#1f2d34"/>
+  <line x1="70" y1="380" x2="370" y2="380" stroke="#1f2d34"/>
+  <text x="220" y="412" text-anchor="middle" class="axb">Predicted probability</text>
+  <text x="30" y="230" text-anchor="middle" class="axb" transform="rotate(-90 30 230)">Observed malignancy rate</text>
+  <text x="66" y="394" text-anchor="end" class="ax">0</text><text x="370" y="394" text-anchor="middle" class="ax">1.0</text>
+  <text x="62" y="384" text-anchor="end" class="ax">0</text><text x="62" y="84" text-anchor="end" class="ax">1.0</text>
+
+  <!-- A Bethesda only -->
+  <polyline points="115.9,340.1 115.9,344 115.9,318.8 131.2,318.8 215.2,220.1 219.7,244.7 249.1,197.9 322.6,133.7 322.6,126.8 333.4,110.9" stroke="#3b6ea5"/>
+  <g fill="#3b6ea5">
+    <circle cx="115.9" cy="340.1" r="3"/><circle cx="115.9" cy="344" r="3"/><circle cx="115.9" cy="318.8" r="3"/>
+    <circle cx="131.2" cy="318.8" r="3"/><circle cx="215.2" cy="220.1" r="3"/><circle cx="219.7" cy="244.7" r="3"/>
+    <circle cx="249.1" cy="197.9" r="3"/><circle cx="322.6" cy="133.7" r="3"/><circle cx="322.6" cy="126.8" r="3"/><circle cx="333.4" cy="110.9" r="3"/>
+  </g>
+  <!-- C Bethesda + TI-RADS -->
+  <polyline points="100.9,346.7 111.4,332 126.4,332 140.5,311.9 194.2,246.8 233.5,213.8 258.7,215.3 316.3,155 331.9,101.3 338.5,100.1" stroke="#c0612b"/>
+  <g fill="#c0612b">
+    <circle cx="100.9" cy="346.7" r="3"/><circle cx="140.5" cy="311.9" r="3"/><circle cx="194.2" cy="246.8" r="3"/>
+    <circle cx="233.5" cy="213.8" r="3"/><circle cx="258.7" cy="215.3" r="3"/><circle cx="316.3" cy="155" r="3"/>
+    <circle cx="331.9" cy="101.3" r="3"/><circle cx="338.5" cy="100.1" r="3"/>
+  </g>
+  <!-- F Bethesda + TI-RADS + molecular -->
+  <polyline points="148,301.4 183.7,277.4 203.8,263 220.9,263 237.1,233.6 252.1,211.7 270.1,160.4 295,145.7 327.1,145.7 352.3,87.2" stroke="#2e7d5b"/>
+  <g fill="#2e7d5b">
+    <circle cx="148" cy="301.4" r="3"/><circle cx="183.7" cy="277.4" r="3"/><circle cx="203.8" cy="263" r="3"/>
+    <circle cx="237.1" cy="233.6" r="3"/><circle cx="252.1" cy="211.7" r="3"/><circle cx="270.1" cy="160.4" r="3"/>
+    <circle cx="295" cy="145.7" r="3"/><circle cx="327.1" cy="145.7" r="3"/><circle cx="352.3" cy="87.2" r="3"/>
+  </g>
+
+  <rect x="395" y="120" width="150" height="92" fill="#fff" stroke="#cfd6da"/>
+  <line x1="405" y1="140" x2="430" y2="140" stroke="#3b6ea5" stroke-width="2"/><text x="436" y="144" class="leg">A Bethesda</text>
+  <line x1="405" y1="162" x2="430" y2="162" stroke="#c0612b" stroke-width="2"/><text x="436" y="166" class="leg">C Beth+TR</text>
+  <line x1="405" y1="184" x2="430" y2="184" stroke="#2e7d5b" stroke-width="2"/><text x="436" y="188" class="leg">F Beth+TR+mol</text>
+  <text x="20" y="432" class="ax">All three models track the 45° line well; adding TI-RADS or molecular shifts calibration little. Brier: A 0.163, C 0.161, F 0.198.</text>
+</svg>

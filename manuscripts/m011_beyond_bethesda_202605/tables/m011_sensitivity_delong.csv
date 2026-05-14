@@ -1,0 +1,10 @@
+outcome,ref,test,auc_ref,auc_test,delta,p_value
+niftp_malig,A_Bethesda,C_Bethesda_TIRADS,0.8152,0.8287,0.0135,3.551923610989327e-05
+niftp_malig,A_Bethesda,D_Bethesda_TIRADS_clinical,0.8152,0.8355,0.0203,7.86961473764336e-09
+niftp_malig,A_Bethesda,E_Bethesda_USfeatures,0.8152,0.8296,0.0144,1.485145313329106e-05
+niftp_benign,A_Bethesda,C_Bethesda_TIRADS,0.8182,0.8329,0.0147,2.917603449059669e-06
+niftp_benign,A_Bethesda,D_Bethesda_TIRADS_clinical,0.8182,0.839,0.0208,4.433494016353734e-09
+niftp_benign,A_Bethesda,E_Bethesda_USfeatures,0.8182,0.8334,0.0153,3.122920591236422e-06
+clinsig,A_Bethesda,C_Bethesda_TIRADS,0.8233,0.8377,0.0145,7.63473619702637e-06
+clinsig,A_Bethesda,D_Bethesda_TIRADS_clinical,0.8233,0.8437,0.0205,6.7433150174878165e-09
+clinsig,A_Bethesda,E_Bethesda_USfeatures,0.8233,0.8389,0.0156,2.457457020543785e-06

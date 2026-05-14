@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 440" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .axb{font-size:13px;font-weight:bold;fill:#1f2d34}
+    .ax{font-size:12px;fill:#1f2d34}
+    .val{font-size:11px;font-weight:bold;fill:#13242c}
+    .grp{font-size:12px;font-weight:bold;fill:#1f2d34}
+  </style>
+  <text x="20" y="26" class="cap">Figure 6. Malignancy risk by combined Bethesda III/IV × TI-RADS × molecular group</text>
+  <line x1="80" y1="80" x2="80" y2="360" stroke="#1f2d34"/>
+  <line x1="80" y1="360" x2="540" y2="360" stroke="#1f2d34"/>
+  <text x="34" y="220" text-anchor="middle" class="axb" transform="rotate(-90 34 220)">% any malignancy</text>
+  <text x="76" y="364" text-anchor="end" class="ax">0</text>
+  <text x="76" y="290" text-anchor="end" class="ax">25</text>
+  <text x="76" y="220" text-anchor="end" class="ax">50</text>
+  <text x="76" y="150" text-anchor="end" class="ax">75</text>
+  <text x="76" y="80" text-anchor="end" class="ax">100</text>
+  <line x1="80" y1="290" x2="540" y2="290" stroke="#e2e6e9"/>
+  <line x1="80" y1="220" x2="540" y2="220" stroke="#e2e6e9"/>
+  <line x1="80" y1="150" x2="540" y2="150" stroke="#e2e6e9"/>
+
+  <!-- III-low -->
+  <rect x="118" y="270.7" width="36" height="89.3" fill="#7fa9c4"/><text x="136" y="265" text-anchor="middle" class="val">31.9</text>
+  <rect x="162" y="216.1" width="36" height="143.9" fill="#c0612b"/><text x="180" y="210" text-anchor="middle" class="val">51.4</text>
+  <text x="158" y="378" text-anchor="middle" class="grp">III · low TR</text>
+  <!-- III-high -->
+  <rect x="228" y="237.9" width="36" height="122.1" fill="#7fa9c4"/><text x="246" y="232" text-anchor="middle" class="val">43.6</text>
+  <rect x="272" y="176.3" width="36" height="183.7" fill="#c0612b"/><text x="290" y="170" text-anchor="middle" class="val">65.6</text>
+  <text x="268" y="378" text-anchor="middle" class="grp">III · high TR</text>
+  <!-- IV-low -->
+  <rect x="338" y="273.8" width="36" height="86.2" fill="#7fa9c4"/><text x="356" y="268" text-anchor="middle" class="val">30.8</text>
+  <rect x="382" y="181.9" width="36" height="178.1" fill="#c0612b"/><text x="400" y="176" text-anchor="middle" class="val">63.6</text>
+  <text x="378" y="378" text-anchor="middle" class="grp">IV · low TR</text>
+  <!-- IV-high -->
+  <rect x="448" y="228.1" width="36" height="131.9" fill="#7fa9c4"/><text x="466" y="222" text-anchor="middle" class="val">47.1</text>
+  <rect x="492" y="140.8" width="36" height="219.2" fill="#c0612b"/><text x="510" y="135" text-anchor="middle" class="val">78.3</text>
+  <text x="488" y="378" text-anchor="middle" class="grp">IV · high TR</text>
+
+  <rect x="150" y="396" width="16" height="12" fill="#7fa9c4"/><text x="172" y="406" class="ax">molecular negative</text>
+  <rect x="320" y="396" width="16" height="12" fill="#c0612b"/><text x="342" y="406" class="ax">molecular positive</text>
+  <text x="20" y="430" class="ax">Within every Bethesda III/IV TI-RADS stratum, molecular status moves malignancy risk more than TI-RADS group does (e.g. IV low-TR: 30.8% → 63.6%).</text>
+</svg>

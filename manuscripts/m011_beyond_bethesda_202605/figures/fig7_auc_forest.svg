@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 470" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .row{font-size:11.5px;fill:#1f2d34}
+    .rowb{font-size:11.5px;font-weight:bold;fill:#13242c}
+    .ax{font-size:11px;fill:#5a5a5a}
+    .sec{font-size:11px;font-weight:bold;fill:#33576e}
+  </style>
+  <text x="20" y="24" class="cap">Figure 7. Model discrimination (AUROC, 95% CI) — sequential and subgroup models</text>
+  <!-- axis -->
+  <line x1="300" y1="50" x2="300" y2="430" stroke="#9aa7ad"/>
+  <line x1="100" y1="430" x2="540" y2="430" stroke="#1f2d34"/>
+  <text x="100" y="446" text-anchor="middle" class="ax">0.40</text>
+  <text x="180" y="446" text-anchor="middle" class="ax">0.50</text>
+  <text x="300" y="446" text-anchor="middle" class="ax">0.65</text>
+  <text x="420" y="446" text-anchor="middle" class="ax">0.80</text>
+  <text x="540" y="446" text-anchor="middle" class="ax">0.90</text>
+  <text x="320" y="462" class="ax">AUROC  (dashed line = 0.65 reference)</text>
+
+  <!-- helper: x = 100 + (auc-0.40)*800 ; CI bars -->
+  <g stroke="#3b6ea5" stroke-width="2.4">
+    <!-- A 0.824 (.806-.841) -->
+    <line x1="424.8" y1="70" x2="452.8" y2="70"/><circle cx="439.2" cy="70" r="3.5" fill="#3b6ea5"/>
+    <!-- B 0.633 (.610-.656) -->
+    <line x1="268" y1="92" x2="304.8" y2="92"/><circle cx="286.4" cy="92" r="3.5" fill="#3b6ea5"/>
+    <!-- C 0.839 (.822-.856) -->
+    <line x1="437.6" y1="114" x2="464.8" y2="114"/><circle cx="451.2" cy="114" r="3.5" fill="#3b6ea5"/>
+    <!-- D 0.845 (.829-.862) -->
+    <line x1="443.2" y1="136" x2="469.6" y2="136"/><circle cx="456" cy="136" r="3.5" fill="#3b6ea5"/>
+    <!-- E 0.840 (.823-.857) -->
+    <line x1="438.4" y1="158" x2="465.6" y2="158"/><circle cx="452" cy="158" r="3.5" fill="#3b6ea5"/>
+  </g>
+  <g stroke="#2e7d5b" stroke-width="2.4">
+    <!-- F0 0.672 (.621-.724) -->
+    <line x1="276.8" y1="196" x2="359.2" y2="196"/><circle cx="317.6" cy="196" r="3.5" fill="#2e7d5b"/>
+    <!-- F1 0.697 (.647-.747) -->
+    <line x1="297.6" y1="218" x2="377.6" y2="218"/><circle cx="337.6" cy="218" r="3.5" fill="#2e7d5b"/>
+    <!-- F 0.760 (.715-.806) -->
+    <line x1="352" y1="240" x2="424.8" y2="240"/><circle cx="388" cy="240" r="3.5" fill="#2e7d5b"/>
+    <!-- G 0.734 (.686-.781) -->
+    <line x1="328.8" y1="262" x2="404.8" y2="262"/><circle cx="367.2" cy="262" r="3.5" fill="#2e7d5b"/>
+  </g>
+  <g stroke="#9a6b1f" stroke-width="2.4">
+    <!-- Beth-ref 0.519 (.474-.564) -->
+    <line x1="159.2" y1="300" x2="231.2" y2="300"/><circle cx="195.2" cy="300" r="3.5" fill="#9a6b1f"/>
+    <!-- TIRADS 0.550 (.506-.594) -->
+    <line x1="184.8" y1="322" x2="255.2" y2="322"/><circle cx="220" cy="322" r="3.5" fill="#9a6b1f"/>
+    <!-- feats 0.536 (.492-.581) -->
+    <line x1="173.6" y1="344" x2="244.8" y2="344"/><circle cx="208.8" cy="344" r="3.5" fill="#9a6b1f"/>
+  </g>
+  <g stroke="#8a3a6b" stroke-width="2.4">
+    <!-- mol-only 0.613 (.549-.676) -->
+    <line x1="219.2" y1="382" x2="320.8" y2="382"/><circle cx="270.4" cy="382" r="3.5" fill="#8a3a6b"/>
+    <!-- TIRADS+mol 0.661 (.599-.722) -->
+    <line x1="259.2" y1="404" x2="357.6" y2="404"/><circle cx="308.8" cy="404" r="3.5" fill="#8a3a6b"/>
+    <!-- combined 0.657 (.595-.719) -->
+    <line x1="256" y1="426" x2="355.2" y2="426"/><circle cx="305.6" cy="426" r="3.5" fill="#8a3a6b"/>
+  </g>
+
+  <!-- labels -->
+  <text x="14" y="60" class="sec">PRIMARY COHORT (n=2,245)</text>
+  <text x="14" y="74" class="rowb">A  Bethesda only</text><text x="548" y="74" class="row">0.824</text>
+  <text x="14" y="96" class="row">B  ACR TI-RADS only</text><text x="548" y="96" class="row">0.633</text>
+  <text x="14" y="118" class="row">C  Bethesda + TI-RADS</text><text x="548" y="118" class="row">0.839</text>
+  <text x="14" y="140" class="row">D  Bethesda + TI-RADS + clinical</text><text x="548" y="140" class="row">0.845</text>
+  <text x="14" y="162" class="row">E  Bethesda + US features</text><text x="548" y="162" class="row">0.840</text>
+  <text x="14" y="186" class="sec">MOLECULAR SUBGROUP (n=411)</text>
+  <text x="14" y="200" class="rowb">F0  Bethesda only</text><text x="548" y="200" class="row">0.672</text>
+  <text x="14" y="222" class="row">F1  Bethesda + TI-RADS</text><text x="548" y="222" class="row">0.697</text>
+  <text x="14" y="244" class="row">F  Bethesda + TI-RADS + molecular</text><text x="548" y="244" class="row">0.760</text>
+  <text x="14" y="266" class="row">G  Bethesda + features + molecular</text><text x="548" y="266" class="row">0.734</text>
+  <text x="14" y="290" class="sec">BETHESDA III/IV (n=642)</text>
+  <text x="14" y="304" class="rowb">Bethesda reference</text><text x="548" y="304" class="row">0.519</text>
+  <text x="14" y="326" class="row">ACR TI-RADS only</text><text x="548" y="326" class="row">0.550</text>
+  <text x="14" y="348" class="row">Individual US features</text><text x="548" y="348" class="row">0.536</text>
+  <text x="14" y="372" class="sec">BETHESDA III/IV, MOLECULAR-TESTED (n=297)</text>
+  <text x="14" y="386" class="row">Molecular only</text><text x="548" y="386" class="row">0.613</text>
+  <text x="14" y="408" class="row">TI-RADS + molecular</text><text x="548" y="408" class="row">0.661</text>
+  <text x="14" y="430" class="row">TI-RADS + features + molecular</text><text x="548" y="430" class="row">0.657</text>
+</svg>

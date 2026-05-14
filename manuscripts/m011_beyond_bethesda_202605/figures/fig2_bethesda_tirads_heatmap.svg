@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .ax{font-size:13px;font-weight:bold;fill:#1f2d34}
+    .lab{font-size:12px;fill:#1f2d34}
+    .pct{font-size:14px;font-weight:bold;fill:#13242c}
+    .n{font-size:10px;fill:#3a4a52}
+    .note{font-size:11px;fill:#5a5a5a}
+  </style>
+  <text x="20" y="26" class="cap">Figure 2. Bethesda × ACR TI-RADS malignancy-risk heat map (primary cohort, n=2,310)</text>
+  <text x="320" y="52" text-anchor="middle" class="ax">ACR TI-RADS category</text>
+  <!-- column headers -->
+  <text x="170" y="78" text-anchor="middle" class="lab">TR1</text>
+  <text x="258" y="78" text-anchor="middle" class="lab">TR2</text>
+  <text x="346" y="78" text-anchor="middle" class="lab">TR3</text>
+  <text x="434" y="78" text-anchor="middle" class="lab">TR4</text>
+  <text x="522" y="78" text-anchor="middle" class="lab">TR5</text>
+  <text x="40" y="250" class="ax" transform="rotate(-90 40 250)">Bethesda category</text>
+
+  <!-- Row I -->
+  <text x="100" y="112" text-anchor="middle" class="lab">I</text>
+  <rect x="130" y="88" width="80" height="48" fill="#fde3c8"/><text x="170" y="111" text-anchor="middle" class="pct">28.6%</text><text x="170" y="127" text-anchor="middle" class="n">n=7</text>
+  <rect x="218" y="88" width="80" height="48" fill="#fdecd4"/><text x="258" y="111" text-anchor="middle" class="pct">20.0%</text><text x="258" y="127" text-anchor="middle" class="n">n=5</text>
+  <rect x="306" y="88" width="80" height="48" fill="#fef2de"/><text x="346" y="111" text-anchor="middle" class="pct">14.3%</text><text x="346" y="127" text-anchor="middle" class="n">n=14</text>
+  <rect x="394" y="88" width="80" height="48" fill="#fef0db"/><text x="434" y="111" text-anchor="middle" class="pct">15.4%</text><text x="434" y="127" text-anchor="middle" class="n">n=13</text>
+  <rect x="482" y="88" width="80" height="48" fill="#fcdcbe"/><text x="522" y="111" text-anchor="middle" class="pct">30.4%</text><text x="522" y="127" text-anchor="middle" class="n">n=23</text>
+
+  <!-- Row II -->
+  <text x="100" y="164" text-anchor="middle" class="lab">II</text>
+  <rect x="130" y="140" width="80" height="48" fill="#fef3e0"/><text x="170" y="163" text-anchor="middle" class="pct">13.2%</text><text x="170" y="179" text-anchor="middle" class="n">n=77</text>
+  <rect x="218" y="140" width="80" height="48" fill="#fdecd4"/><text x="258" y="163" text-anchor="middle" class="pct">19.8%</text><text x="258" y="179" text-anchor="middle" class="n">n=133</text>
+  <rect x="306" y="140" width="80" height="48" fill="#fff6e7"/><text x="346" y="163" text-anchor="middle" class="pct">11.2%</text><text x="346" y="179" text-anchor="middle" class="n">n=254</text>
+  <rect x="394" y="140" width="80" height="48" fill="#fef2de"/><text x="434" y="163" text-anchor="middle" class="pct">14.0%</text><text x="434" y="179" text-anchor="middle" class="n">n=111</text>
+  <rect x="482" y="140" width="80" height="48" fill="#fdeed7"/><text x="522" y="163" text-anchor="middle" class="pct">18.2%</text><text x="522" y="179" text-anchor="middle" class="n">n=258</text>
+
+  <!-- Row III -->
+  <text x="100" y="216" text-anchor="middle" class="lab">III</text>
+  <rect x="130" y="192" width="80" height="48" fill="#f08a4b"/><text x="170" y="215" text-anchor="middle" class="pct">50.0%</text><text x="170" y="231" text-anchor="middle" class="n">n=21</text>
+  <rect x="218" y="192" width="80" height="48" fill="#f29355"/><text x="258" y="215" text-anchor="middle" class="pct">47.2%</text><text x="258" y="231" text-anchor="middle" class="n">n=57</text>
+  <rect x="306" y="192" width="80" height="48" fill="#f6a468"/><text x="346" y="215" text-anchor="middle" class="pct">40.6%</text><text x="346" y="231" text-anchor="middle" class="n">n=101</text>
+  <rect x="394" y="192" width="80" height="48" fill="#ec7e3e"/><text x="434" y="215" text-anchor="middle" class="pct">56.2%</text><text x="434" y="231" text-anchor="middle" class="n">n=75</text>
+  <rect x="482" y="192" width="80" height="48" fill="#ef884a"/><text x="522" y="215" text-anchor="middle" class="pct">50.3%</text><text x="522" y="231" text-anchor="middle" class="n">n=160</text>
+
+  <!-- Row IV -->
+  <text x="100" y="268" text-anchor="middle" class="lab">IV</text>
+  <rect x="130" y="244" width="80" height="48" fill="#f7ab72"/><text x="170" y="267" text-anchor="middle" class="pct">31.6%</text><text x="170" y="283" text-anchor="middle" class="n">n=21</text>
+  <rect x="218" y="244" width="80" height="48" fill="#ea7838"/><text x="258" y="267" text-anchor="middle" class="pct">58.3%</text><text x="258" y="283" text-anchor="middle" class="n">n=36</text>
+  <rect x="306" y="244" width="80" height="48" fill="#f08a4b"/><text x="346" y="267" text-anchor="middle" class="pct">50.0%</text><text x="346" y="283" text-anchor="middle" class="n">n=59</text>
+  <rect x="394" y="244" width="80" height="48" fill="#eb7c3c"/><text x="434" y="267" text-anchor="middle" class="pct">57.1%</text><text x="434" y="283" text-anchor="middle" class="n">n=42</text>
+  <rect x="482" y="244" width="80" height="48" fill="#ee8345"/><text x="522" y="267" text-anchor="middle" class="pct">53.9%</text><text x="522" y="283" text-anchor="middle" class="n">n=109</text>
+
+  <!-- Row V -->
+  <text x="100" y="320" text-anchor="middle" class="lab">V</text>
+  <rect x="130" y="296" width="80" height="48" fill="#a01813"/><text x="170" y="319" text-anchor="middle" class="pct" fill="#fff">100%</text><text x="170" y="335" text-anchor="middle" class="n" fill="#fbe0d8">n=6</text>
+  <rect x="218" y="296" width="80" height="48" fill="#ab2018"/><text x="258" y="319" text-anchor="middle" class="pct" fill="#fff">94.7%</text><text x="258" y="335" text-anchor="middle" class="n" fill="#fbe0d8">n=19</text>
+  <rect x="306" y="296" width="80" height="48" fill="#c4402a"/><text x="346" y="319" text-anchor="middle" class="pct" fill="#fff">80.0%</text><text x="346" y="335" text-anchor="middle" class="n" fill="#fbe0d8">n=20</text>
+  <rect x="394" y="296" width="80" height="48" fill="#b62c1f"/><text x="434" y="319" text-anchor="middle" class="pct" fill="#fff">87.5%</text><text x="434" y="335" text-anchor="middle" class="n" fill="#fbe0d8">n=16</text>
+  <rect x="482" y="296" width="80" height="48" fill="#ac2118"/><text x="522" y="319" text-anchor="middle" class="pct" fill="#fff">94.0%</text><text x="522" y="335" text-anchor="middle" class="n" fill="#fbe0d8">n=69</text>
+
+  <!-- Row VI -->
+  <text x="100" y="372" text-anchor="middle" class="lab">VI</text>
+  <rect x="130" y="348" width="80" height="48" fill="#dd6336"/><text x="170" y="371" text-anchor="middle" class="pct" fill="#fff">63.6%</text><text x="170" y="387" text-anchor="middle" class="n" fill="#fbe0d8">n=22</text>
+  <rect x="218" y="348" width="80" height="48" fill="#d85a31"/><text x="258" y="371" text-anchor="middle" class="pct" fill="#fff">69.1%</text><text x="258" y="387" text-anchor="middle" class="n" fill="#fbe0d8">n=55</text>
+  <rect x="306" y="348" width="80" height="48" fill="#df6838"/><text x="346" y="371" text-anchor="middle" class="pct" fill="#fff">61.8%</text><text x="346" y="387" text-anchor="middle" class="n" fill="#fbe0d8">n=92</text>
+  <rect x="394" y="348" width="80" height="48" fill="#b32a1e"/><text x="434" y="371" text-anchor="middle" class="pct" fill="#fff">86.1%</text><text x="434" y="387" text-anchor="middle" class="n" fill="#fbe0d8">n=81</text>
+  <rect x="482" y="348" width="80" height="48" fill="#aa2018"/><text x="522" y="371" text-anchor="middle" class="pct" fill="#fff">93.2%</text><text x="522" y="387" text-anchor="middle" class="n" fill="#fbe0d8">n=354</text>
+
+  <text x="20" y="424" class="note">Cell = % any malignancy on final pathology. Within Bethesda II and within indeterminate Bethesda III/IV the TI-RADS</text>
+  <text x="20" y="440" class="note">gradient is flat / non-monotonic; a monotone TI-RADS gradient appears only in Bethesda VI, where management is</text>
+  <text x="20" y="456" class="note">already determined by cytology. Colour scale: pale = low risk, deep red = high risk.</text>
+</svg>

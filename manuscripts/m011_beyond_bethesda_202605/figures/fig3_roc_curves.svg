@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 470" font-family="Helvetica,Arial,sans-serif">
+  <style>
+    .cap{font-size:15px;font-weight:bold;fill:#13242c}
+    .ax{font-size:12px;fill:#1f2d34}
+    .axb{font-size:13px;font-weight:bold;fill:#1f2d34}
+    .leg{font-size:12px;fill:#1f2d34}
+    polyline{fill:none;stroke-width:2.4}
+  </style>
+  <text x="20" y="26" class="cap">Figure 3. ROC curves — sequential models, primary cohort (any malignancy)</text>
+  <!-- axes -->
+  <rect x="70" y="90" width="330" height="330" fill="#fbfcfd" stroke="#9aa7ad"/>
+  <line x1="70" y1="420" x2="400" y2="90" stroke="#b9c2c7" stroke-dasharray="5,4"/>
+  <line x1="70" y1="90" x2="70" y2="420" stroke="#1f2d34"/>
+  <line x1="70" y1="420" x2="400" y2="420" stroke="#1f2d34"/>
+  <text x="235" y="452" text-anchor="middle" class="axb">1 − Specificity (false-positive rate)</text>
+  <text x="30" y="255" text-anchor="middle" class="axb" transform="rotate(-90 30 255)">Sensitivity</text>
+  <text x="66" y="435" text-anchor="end" class="ax">0</text><text x="400" y="435" text-anchor="middle" class="ax">1.0</text>
+  <text x="62" y="424" text-anchor="end" class="ax">0</text><text x="62" y="94" text-anchor="end" class="ax">1.0</text>
+
+  <!-- B TI-RADS only -->
+  <polyline points="400,90 175.3,245.1 70,420" stroke="#b0b7bb"/>
+  <!-- A Bethesda only -->
+  <polyline points="400,90 204,128.3 190.5,132.6 134,190 99.7,230.9 73,384.4 70,420" stroke="#3b6ea5"/>
+  <!-- C Bethesda + TI-RADS -->
+  <polyline points="400,90 314.9,102.2 257.8,115.4 194.7,130.3 190.5,132.6 171.6,147.1 160.1,157.6 152.2,165.2 139,184 112.9,214.1 99.7,230.9 90.1,247.7 87.8,252 78.9,289.3 72,391 70,420" stroke="#c0612b"/>
+  <!-- D Bethesda + TI-RADS + clinical -->
+  <polyline points="400,90 364.7,94 299,104.8 239.3,116.4 206.3,125.6 191.8,130.9 179.9,137.8 170,145.4 158.8,157.3 146.2,171.5 131.1,188.3 118.2,206.5 107,222.7 98.7,232.2 92.4,240.5 85.2,258.6 79.2,298.2 72,370.2 70,417 70,420" stroke="#2e7d5b"/>
+
+  <!-- legend -->
+  <rect x="240" y="300" width="155" height="108" fill="#fff" stroke="#cfd6da"/>
+  <line x1="250" y1="318" x2="278" y2="318" stroke="#3b6ea5" stroke-width="2.4"/><text x="284" y="322" class="leg">A Bethesda  0.824</text>
+  <line x1="250" y1="338" x2="278" y2="338" stroke="#b0b7bb" stroke-width="2.4"/><text x="284" y="342" class="leg">B TI-RADS   0.633</text>
+  <line x1="250" y1="358" x2="278" y2="358" stroke="#c0612b" stroke-width="2.4"/><text x="284" y="362" class="leg">C Beth+TR   0.839</text>
+  <line x1="250" y1="378" x2="278" y2="378" stroke="#2e7d5b" stroke-width="2.4"/><text x="284" y="382" class="leg">D +clinical  0.845</text>
+  <text x="250" y="400" class="leg" font-style="italic">AUC; ΔAUC vs A ≤ +0.021</text>
+</svg>
