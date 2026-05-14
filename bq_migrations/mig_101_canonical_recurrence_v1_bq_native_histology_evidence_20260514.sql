@@ -14,8 +14,13 @@
 --   5 persistent_biochemical_disease
 --   6 imaging_suspicious_unconfirmed (LLM)
 --
--- recurrence_histology: populated ONLY for tier 1 (closest path_synoptics row
--- within ±30d of reoperation), as histology_vocab_normalization_map_v1.canonical_code
+-- recurrence_histology: populated ONLY for tier 1 — Scripts 203/203b join all
+-- qualifying path_synoptics rows (±30d of reoperation). Per-patient dedup:
+--   (1) LATEST qualifying reoperation date (Script 203 keeps an arbitrary first row among
+--       DISTINCT tier-1 pairs; base archive aligns with the most recent reop when several qualify),
+--   (2) then EARLIEST path_synoptics.surg_date within that reop’s ±30d window,
+--   (3) then smallest day-gap tie-break.
+-- Mapped via histology_vocab_normalization_map_v1.canonical_code
 -- (join on LOWER(TRIM(raw_value))) — not raw tumor_1_histologic_type; NULL elsewhere.
 --
 -- recurrence_evidence_source literals:
@@ -131,6 +136,7 @@ reop_path_join AS (
   SELECT
     r.research_id,
     r.reop_date,
+    ps.path_surg_date,
     m.canonical_code AS recurrence_histology,
     ABS(DATE_DIFF(ps.path_surg_date, r.reop_date, DAY)) AS day_gap
   FROM reoperations r
@@ -148,7 +154,10 @@ reop_ranked AS (
     recurrence_histology,
     ROW_NUMBER() OVER (
       PARTITION BY research_id
-      ORDER BY reop_date ASC, day_gap ASC
+      -- Latest qualifying reop (multi-reop patients); then earliest path_synoptics.surg_date
+      -- within ±30d for that reop (matches base archive + 203’s “first distinct row” in practice
+      -- for single-reop / duplicate-path cases); day_gap last.
+      ORDER BY reop_date DESC, path_surg_date ASC, day_gap ASC
     ) AS rn
   FROM reop_path_join
 ),
