@@ -1,5 +1,9 @@
 # thyroid-integration skill — changelog
 
+## mig_325 — canonical_molecular_genetics_v2 reported_text guard cleanup (2026-05-14)
+
+**BigQuery** (`thyroid-canonical-pub-2026`): 13 fabricated ThyroSeq rows (mig_323 guard set) marked `platform_reclass_status = superseded_by_afirma_row`, `overall_result_class = superseded`, `rom_descriptor = NULL`; rid 5724 both rows `non_diagnostic` + `non_diagnostic_cancelled`; rid 11156 `platform = Other` (Quest panel); five Afirma rows `other → negative`; rid 9991 both Afirma rows `non_diagnostic`; rid 8729 untouched. Pre-merge snapshot: `pub_archive.canonical_molecular_genetics_v2_pre_guard_cleanup_20260514`. Script: `scripts/mig_325_reported_text_guard_cleanup_bq.py`. Table 3 SQL `04b_table3_v2_actual_reported_call.sql` updated to exclude superseded/cancelled rows. **Residual:** rids 8218 and 9154 have superseded ThyroSeq but no Afirma row in CMG (expected per matrix; optional future Afirma INSERT).
+
 ## v2.3.0 — 2026-05-13
 
 **Canonical master v1_2 → v1_6 cascade build (parse-but-not-propagated bug remediation).**

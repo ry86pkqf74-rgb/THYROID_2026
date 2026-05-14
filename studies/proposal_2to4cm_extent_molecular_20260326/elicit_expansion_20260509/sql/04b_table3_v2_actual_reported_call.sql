@@ -54,6 +54,15 @@ mol AS (
     END AS reported_call
   FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_molecular_genetics_v2`
   WHERE platform IN ('Afirma','ThyroSeq')
+    -- mig_325 (2026-05-13): exclude fabricated ThyroSeq superseded / cancelled tests
+    AND NOT (
+      platform = 'ThyroSeq'
+      AND (
+        overall_result_class = 'superseded'
+        OR IFNULL(platform_reclass_status, '') = 'superseded_by_afirma_row'
+      )
+    )
+    AND IFNULL(platform_reclass_status, '') != 'non_diagnostic_cancelled'
 ),
 joined AS (
   SELECT

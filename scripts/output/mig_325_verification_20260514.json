@@ -1,0 +1,273 @@
+{
+  "run_id": "mig_325_20260514_f8efd4ac",
+  "n_thyroseq_superseded": 13,
+  "n_5724_non_diag": 2,
+  "n_11156_other": 1,
+  "8729_thyroseq_unchanged": {
+    "rid": 8729,
+    "platform": "ThyroSeq",
+    "overall_result_class": "positive",
+    "rom_descriptor": "INTERMEDIATE-HIGH",
+    "platform_reclass_status": null,
+    "band_backfill_source": "reported_text"
+  },
+  "afirma_negative_repairs": 5,
+  "supersede_without_afirma_row": [
+    8218,
+    9154
+  ],
+  "expected_orphan_warnings": [
+    8218,
+    9154
+  ],
+  "detail_rows": [
+    {
+      "rid": 5724,
+      "platform": "Afirma",
+      "overall_result_class": "non_diagnostic",
+      "rom_descriptor": null,
+      "platform_reclass_status": "non_diagnostic_cancelled",
+      "band_backfill_source": null
+    },
+    {
+      "rid": 5724,
+      "platform": "ThyroSeq",
+      "overall_result_class": "non_diagnostic",
+      "rom_descriptor": null,
+      "platform_reclass_status": "non_diagnostic_cancelled",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 5999,
+      "platform": "Afirma",
+      "overall_result_class": "suspicious",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 5999,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 7012,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 7012,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 8218,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 8233,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": "afirma_result_field"
+    },
+    {
+      "rid": 8233,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 8729,
+      "platform": "Afirma",
+      "overall_result_class": "suspicious",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 8729,
+      "platform": "ThyroSeq",
+      "overall_result_class": "positive",
+      "rom_descriptor": "INTERMEDIATE-HIGH",
+      "platform_reclass_status": null,
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 9154,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 9991,
+      "platform": "Afirma",
+      "overall_result_class": "non_diagnostic",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 9991,
+      "platform": "Afirma",
+      "overall_result_class": "non_diagnostic",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 9991,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 10174,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": "afirma_result_field"
+    },
+    {
+      "rid": 10174,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 10237,
+      "platform": "Afirma",
+      "overall_result_class": "suspicious",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 10237,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 10699,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": "afirma_result_field"
+    },
+    {
+      "rid": 10699,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 10926,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": "afirma_result_field"
+    },
+    {
+      "rid": 10926,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 10939,
+      "platform": "Afirma",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": "afirma_result_field"
+    },
+    {
+      "rid": 10939,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 11039,
+      "platform": "Afirma",
+      "overall_result_class": "suspicious",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 11039,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 11087,
+      "platform": "Afirma",
+      "overall_result_class": "suspicious",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 11087,
+      "platform": "Afirma",
+      "overall_result_class": "other",
+      "rom_descriptor": null,
+      "platform_reclass_status": null,
+      "band_backfill_source": null
+    },
+    {
+      "rid": 11087,
+      "platform": "ThyroSeq",
+      "overall_result_class": "superseded",
+      "rom_descriptor": null,
+      "platform_reclass_status": "superseded_by_afirma_row",
+      "band_backfill_source": "reported_text"
+    },
+    {
+      "rid": 11156,
+      "platform": "Other",
+      "overall_result_class": "negative",
+      "rom_descriptor": null,
+      "platform_reclass_status": "quest_in_house_panel",
+      "band_backfill_source": "reported_text"
+    }
+  ]
+}
