@@ -18,8 +18,20 @@ config {
 --   E. consolidating the pub_signoff.master_drift_gate_v1 row/feature-count gates
 --
 -- Output columns: violation_type, severity, research_id, detail
--- Pipeline: cowork_qc_nonblocking_pipeline_v1 (rewire to v2 in the BQ Studio
--- console). Scheduled daily 06:00 CDT via "cowork_qc_daily_check".
+--
+-- DEPLOYMENT (clarified 2026-05-15): the live "non-blocking QC pipeline" is the
+-- BigQuery scheduled query "qc_daily_runner" (transferConfig
+-- 69fb562d-0000-285a-a4a4-34c7e904b8bb, us-central1, every 24h) which runs
+-- CALL pub_signoff.run_qc_assertions(); that stored procedure iterates the
+-- pub_signoff.qc_assertions_v1 table. There is no separate Dataform pipeline
+-- object. The v2 coverage was deployed on 2026-05-15 by registering the new
+-- molecular / pathology / structural checks as rows in qc_assertions_v1
+-- (assertions MOL01, MOL02, PATH01, COMPL01; added_by =
+-- mig_cw_qc_v2_fulldataset_20260515; logged in pub_signoff.bq_migration_log_v1,
+-- snapshot pub_archive.qc_assertions_v1_pre_cw_qc_v2_20260515). The daily
+-- scheduled query now executes full-dataset coverage automatically.
+-- This .sqlx is the reproducible, consolidated reference of that coverage
+-- (it also rolls up the whole qc_assertions_v1 catalogue + master_drift_gate_v1).
 -- Non-blocking: surfaces issues, does NOT gate canonical publishing.
 -- =============================================================================
 

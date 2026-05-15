@@ -70,7 +70,9 @@ Built by driving the console; not reproducible from SQL alone.
 - **CATALOG_\*** — consolidates every rule in `pub_signoff.qc_assertions_v1` via its latest daily run, so this single gate is a superset of the whole QC framework
 - **DRIFT_\*** — consolidates the `pub_signoff.master_drift_gate_v1` row/feature-count gates
 
-Because it is scheduled, these issues now surface every morning instead of being discovered inside a manuscript. **To deploy:** rewire the `cowork_qc_nonblocking_pipeline_v1` pipeline to v2 in the BigQuery Studio console (the `.sqlx` file is the reproducible source; the console pipeline object is built by hand). `cowork_pipeline_qc_assertions_v1.sqlx` is retained for history.
+Because it is scheduled, these issues now surface every morning instead of being discovered inside a manuscript.
+
+**Deployment status (2026-05-15): live.** The "non-blocking QC pipeline" is implemented as the BigQuery scheduled query **`qc_daily_runner`** (`transferConfig 69fb562d-0000-285a-a4a4-34c7e904b8bb`, us-central1, every 24h) → `CALL pub_signoff.run_qc_assertions()` → which iterates the **`pub_signoff.qc_assertions_v1`** table. There is no separate Dataform pipeline object. v2 coverage was deployed by registering the new molecular / pathology / structural checks as rows in `qc_assertions_v1` (`MOL01`, `MOL02`, `PATH01`, `COMPL01`; `added_by = mig_cw_qc_v2_fulldataset_20260515`; snapshot `pub_archive.qc_assertions_v1_pre_cw_qc_v2_20260515`; logged in `bq_migration_log_v1`). Verified end-to-end via `CALL run_qc_assertions()`: 22 rules ran clean; `MOL01` flags the 376 `builder_version IS NULL` rows, `PATH01` flags 1 NIFTP-as-malignant case. This `.sqlx` is the reproducible, consolidated reference of the coverage; `cowork_pipeline_qc_assertions_v1.sqlx` is retained for history.
 
 ---
 
