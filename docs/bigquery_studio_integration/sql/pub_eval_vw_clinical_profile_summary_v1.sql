@@ -4,10 +4,14 @@
 -- with clinical depth (LN pathology, LN imaging, histopath findings, diagnoses,
 -- histologic variants) beyond the modality-coverage workup census.
 -- Built 2026-05-15, migration mig_cw_clinical_profile_qc_20260515.
+-- Refined 2026-05-15, migration mig_cw_ln04_path02_refine_20260515:
+--   ln_ene is now a present / absent (evaluated) / not-evaluated tri-state from
+--   ene_positive; final_diagnosis added under the diagnosis group so benign
+--   cases are sub-typed.
 
 CREATE OR REPLACE VIEW `thyroid-canonical-pub-2026.pub_eval.vw_clinical_profile_summary_v1`
 OPTIONS (
-  description = "Long-format roll-up of vw_cohort_clinical_profile_v1 for the Looker dashboard: one row per (metric_group, metric, category) with patient count and percent of the full canonical cohort. Built 2026-05-15 (mig_cw_clinical_profile_qc_20260515) so the pub_eval dashboard has clinical depth (LN path/imaging, histopath findings, diagnoses, variants) beyond modality coverage."
+  description = "Long-format roll-up of vw_cohort_clinical_profile_v1 for the Looker dashboard: one row per (metric_group, metric, category) with patient count and percent of the full canonical cohort. Built 2026-05-15 (mig_cw_clinical_profile_qc_20260515); refined same day (mig_cw_ln04_path02_refine_20260515) - ln_ene now a present/absent/not-evaluated tri-state from ene_positive, and final_diagnosis added so benign cases are sub-typed."
 ) AS
 WITH base AS (
   SELECT * FROM `thyroid-canonical-pub-2026.pub_eval.vw_cohort_clinical_profile_v1`
@@ -18,6 +22,8 @@ rolled AS (
   SELECT 'diagnosis' AS metric_group, 'is_malignant' AS metric,
          CASE WHEN is_malignant THEN 'malignant' WHEN is_malignant IS FALSE THEN 'non-malignant' ELSE '(unknown)' END AS category,
          COUNT(*) AS n FROM base GROUP BY 3
+  UNION ALL
+  SELECT 'diagnosis', 'final_diagnosis', COALESCE(final_diagnosis,'(null)'), COUNT(*) FROM base GROUP BY 3
   UNION ALL
   SELECT 'diagnosis', 'diagnosis_primary', COALESCE(diagnosis_primary,'(null)'), COUNT(*) FROM base GROUP BY 3
   UNION ALL
@@ -41,7 +47,8 @@ rolled AS (
   UNION ALL
   SELECT 'ln_pathology', 'ln_lateral_positive', CASE WHEN ln_lateral_positive_n > 0 THEN 'lateral positive' ELSE 'no lateral positive / NA' END, COUNT(*) FROM base GROUP BY 3
   UNION ALL
-  SELECT 'ln_pathology', 'ln_ene_present', CASE WHEN ln_ene_present THEN 'ENE documented present' ELSE 'ENE not documented (absent or not evaluated)' END, COUNT(*) FROM base GROUP BY 3
+  -- ENE tri-state from ene_positive (present / evaluated-absent / not evaluated)
+  SELECT 'ln_pathology', 'ln_ene', CASE WHEN ln_ene_positive = TRUE THEN 'ENE present' WHEN ln_ene_positive = FALSE THEN 'ENE absent (evaluated)' ELSE 'ENE not evaluated' END, COUNT(*) FROM base GROUP BY 3
   UNION ALL
   -- Lymph nodes: imaging
   SELECT 'ln_imaging', 'us_ln_suspicious', CASE WHEN us_ln_suspicious THEN 'US suspicious node(s)' ELSE 'no US suspicious node' END, COUNT(*) FROM base GROUP BY 3

@@ -148,16 +148,22 @@ WHERE actual < expected_min
 -- Surfaced while building the pub_eval clinical-profile views
 -- (mig_cw_clinical_profile_qc_20260515): vw_cohort_clinical_profile_v1 +
 -- vw_clinical_profile_summary_v1. Also registered as rows LN04 / PATH02 in
--- pub_signoff.qc_assertions_v1. Both warning severity - structural completeness
--- gaps in the canonical layer, not row-level correctness errors.
+-- pub_signoff.qc_assertions_v1. Both warning severity.
+-- Refined 2026-05-15 (mig_cw_ln04_path02_refine_20260515): both originally
+-- pointed at the wrong column. LN04 now uses ene_positive (a proper
+-- TRUE/FALSE/NULL field) instead of tp_ln_ene (1/NULL only) - 34 genuinely
+-- not-evaluated node-positive patients (was 47). PATH02 now also checks
+-- diagnosis_primary, where benign pathology is actually sub-typed - all 6,734
+-- benign "missing histology" cases carry a diagnosis_primary, so the rule now
+-- flags only patients with no classification anywhere (0 today).
 UNION ALL
 SELECT 'LN04_ene_indeterminate_node_positive' AS violation_type, 'warn' AS severity,
        research_id,
-       'node-positive patient with tp_ln_ene IS NULL - ENE cannot be distinguished between absent and not-evaluated (source column holds 1/NULL only, no encoded FALSE)' AS detail
+       'node-positive patient with ene_positive IS NULL - ENE genuinely not evaluated (ene_positive is the proper TRUE/FALSE/NULL column; tp_ln_ene held 1/NULL only)' AS detail
 FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
-WHERE ln_positive_final = 1 AND tp_ln_ene IS NULL
+WHERE ln_positive_final = 1 AND ene_positive IS NULL
 UNION ALL
 SELECT 'PATH02_benign_missing_histology_subtype', 'warn', research_id,
-       'non-malignant resected patient with histology_final IS NULL - benign pathology is not sub-typed in this column'
+       'resected patient with no diagnosis classification - histology_final AND diagnosis_primary both NULL (benign pathology is sub-typed in diagnosis_primary, not histology_final)'
 FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
-WHERE is_malignant = FALSE AND histology_final IS NULL
+WHERE is_malignant = FALSE AND histology_final IS NULL AND diagnosis_primary IS NULL

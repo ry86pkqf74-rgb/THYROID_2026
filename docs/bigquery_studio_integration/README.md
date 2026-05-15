@@ -18,7 +18,7 @@ A new dataset, **views only**, isolated from production datasets. Answers "what 
 | `pub_eval.vw_nuclear_med_dated_v1` | view | 2,220 | Nuclear-medicine scans with scan dates parsed from the raw `scandate` string (the upstream `scandate_parsed` was unpopulated — see Linear THY-86). `scandate_quality` flags blank / unparseable / implausible-year rows. |
 | `pub_eval.vw_patient_workup_census_v1` | view | 10,871 | One row per patient. Preop/postop performed flags + day intervals for ultrasound, CT, MRI, FNA, nuclear medicine; reoperation signals; prior-thyroid-procedure pathology-gap review flags; a preop-workup completeness tier. |
 | `pub_eval.vw_workup_census_summary_v1` | view | 15 | Long-format aggregate roll-up (one row per metric) for dashboards. |
-| `pub_eval.vw_cohort_clinical_profile_v1` | view | 10,871 | One row per patient. Clinical depth beyond modality coverage: lymph-node pathology (positive/burden band/central+lateral/ENE), lymph-node imaging (US + CT), histopathologic/operative findings (ETE + grade, LVI, margins, multifocality, bilaterality, tumor size), diagnosis, and histologic variants. Added 2026-05-15 (`mig_cw_clinical_profile_qc_20260515`). |
+| `pub_eval.vw_cohort_clinical_profile_v1` | view | 10,871 | One row per patient. Clinical depth beyond modality coverage: lymph-node pathology (positive/burden band/central+lateral/ENE), lymph-node imaging (US + CT), histopathologic/operative findings (ETE + grade, LVI, margins, multifocality, bilaterality, tumor size), diagnosis, and histologic variants. `final_diagnosis` = `COALESCE(histology_final, diagnosis_primary)` (benign cases sub-typed); `ln_ene_positive` = `ene_positive` tri-state. Added 2026-05-15 (`mig_cw_clinical_profile_qc_20260515`, refined `mig_cw_ln04_path02_refine_20260515`). |
 | `pub_eval.vw_clinical_profile_summary_v1` | view | 149 | Long-format roll-up of the clinical profile (one row per `metric_group` / `metric` / `category`, with count and percent of cohort) for the Looker dashboard. Added 2026-05-15. |
 
 DDL: `sql/pub_eval_vw_nuclear_med_dated_v1.sql`, `sql/pub_eval_vw_patient_workup_census_v1.sql`, `sql/pub_eval_vw_workup_census_summary_v1.sql`, `sql/pub_eval_vw_cohort_clinical_profile_v1.sql`, `sql/pub_eval_vw_clinical_profile_summary_v1.sql`
@@ -69,8 +69,8 @@ Built by driving the console; not reproducible from SQL alone.
 - **MOL02** — molecular records with a `research_id` not in `canonical_patient_master`
 - **PATH01** — `is_malignant = TRUE` while `histology_final = NIFTP` (NIFTP must be analysed separately from malignancy)
 - **COMPL01** — completion-thyroidectomy records orphaned from the patient master
-- **LN04** — node-positive patients with indeterminate ENE (`tp_ln_ene` holds `1`/`NULL` only — no encoded "evaluated, absent")
-- **PATH02** — benign resections with `histology_final IS NULL` (benign pathology is not sub-typed in that column)
+- **LN04** — node-positive patients with ENE genuinely not evaluated (`ene_positive IS NULL`). Refined 2026-05-15: originally pointed at `tp_ln_ene` (`1`/`NULL` only); `ene_positive` is the proper `TRUE`/`FALSE`/`NULL` column — 34 patients (was 47).
+- **PATH02** — resected patients with no diagnosis classification anywhere (`histology_final` *and* `diagnosis_primary` both `NULL`). Refined 2026-05-15: originally flagged 6,734 benign cases with `NULL histology_final`, but all are fully sub-typed in `diagnosis_primary` — benign histology was never missing, just in a different column. 0 violations today.
 - **CATALOG_\*** — consolidates every rule in `pub_signoff.qc_assertions_v1` via its latest daily run, so this single gate is a superset of the whole QC framework
 - **DRIFT_\*** — consolidates the `pub_signoff.master_drift_gate_v1` row/feature-count gates
 
