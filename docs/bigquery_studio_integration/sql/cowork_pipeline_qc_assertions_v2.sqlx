@@ -16,6 +16,9 @@ config {
 --   D. consolidating the entire pub_signoff.qc_assertions_v1 catalogue
 --      (every documented rule) via its latest daily run
 --   E. consolidating the pub_signoff.master_drift_gate_v1 row/feature-count gates
+--   F. NEW (2026-05-15) clinical-completeness checks surfaced while building the
+--      pub_eval clinical-profile views (assertions LN04, PATH02; added_by =
+--      mig_cw_clinical_profile_qc_20260515)
 --
 -- Output columns: violation_type, severity, research_id, detail
 --
@@ -139,3 +142,22 @@ SELECT CONCAT('DRIFT_', check_name) AS violation_type, 'warn' AS severity,
               COALESCE(CONCAT('; ', note), '')) AS detail
 FROM `thyroid-canonical-pub-2026.pub_signoff.master_drift_gate_v1`
 WHERE actual < expected_min
+
+
+-- ---- F. NEW (2026-05-15): clinical-completeness checks ----------------------
+-- Surfaced while building the pub_eval clinical-profile views
+-- (mig_cw_clinical_profile_qc_20260515): vw_cohort_clinical_profile_v1 +
+-- vw_clinical_profile_summary_v1. Also registered as rows LN04 / PATH02 in
+-- pub_signoff.qc_assertions_v1. Both warning severity - structural completeness
+-- gaps in the canonical layer, not row-level correctness errors.
+UNION ALL
+SELECT 'LN04_ene_indeterminate_node_positive' AS violation_type, 'warn' AS severity,
+       research_id,
+       'node-positive patient with tp_ln_ene IS NULL - ENE cannot be distinguished between absent and not-evaluated (source column holds 1/NULL only, no encoded FALSE)' AS detail
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
+WHERE ln_positive_final = 1 AND tp_ln_ene IS NULL
+UNION ALL
+SELECT 'PATH02_benign_missing_histology_subtype', 'warn', research_id,
+       'non-malignant resected patient with histology_final IS NULL - benign pathology is not sub-typed in this column'
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
+WHERE is_malignant = FALSE AND histology_final IS NULL
