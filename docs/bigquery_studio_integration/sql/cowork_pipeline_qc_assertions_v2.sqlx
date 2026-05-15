@@ -1,0 +1,129 @@
+config {
+  type: "assertion",
+  name: "cowork_pipeline_qc_assertions_v2",
+}
+
+-- =============================================================================
+-- Non-blocking QC assertion - FULL-DATASET coverage. One row per integrity
+-- violation; 0 rows = pass. Supersedes cowork_pipeline_qc_assertions_v1, which
+-- only covered the pub_eval layer + surgery-date + lymph-node checks.
+--
+-- v2 extends coverage to the whole canonical dataset by:
+--   A. keeping the original pub_eval / surgery-date / lymph-node checks
+--   B. NEW molecular-layer checks  (the gap that let the M006 drift through:
+--      canonical_molecular_genetics_v2 had ZERO QC coverage)
+--   C. NEW pathology / cross-table structural-integrity checks
+--   D. consolidating the entire pub_signoff.qc_assertions_v1 catalogue
+--      (every documented rule) via its latest daily run
+--   E. consolidating the pub_signoff.master_drift_gate_v1 row/feature-count gates
+--
+-- Output columns: violation_type, severity, research_id, detail
+-- Pipeline: cowork_qc_nonblocking_pipeline_v1 (rewire to v2 in the BQ Studio
+-- console). Scheduled daily 06:00 CDT via "cowork_qc_daily_check".
+-- Non-blocking: surfaces issues, does NOT gate canonical publishing.
+-- =============================================================================
+
+-- ---- A. pub_eval evaluation layer + surgery-date + lymph-node (from v1) ------
+SELECT 'pub_eval_negative_preop_interval' AS violation_type, 'error' AS severity,
+       research_id, 'negative preoperative imaging interval' AS detail
+FROM `thyroid-canonical-pub-2026.pub_eval.vw_patient_workup_census_v1`
+WHERE LEAST(COALESCE(us_preop_interval_days,0), COALESCE(ct_preop_interval_days,0),
+            COALESCE(mri_preop_interval_days,0), COALESCE(fna_preop_interval_days,0),
+            COALESCE(nucmed_preop_interval_days,0)) < 0
+UNION ALL
+SELECT 'pub_eval_null_surgery_anchor', 'error', research_id, 'surgery_anchor_date IS NULL'
+FROM `thyroid-canonical-pub-2026.pub_eval.vw_patient_workup_census_v1`
+WHERE surgery_anchor_date IS NULL
+UNION ALL
+SELECT 'SURG01_surgery_date_divergence', 'warn', CAST(research_id AS STRING),
+       'first_surgery_date / surg_first_date / surgery_date disagree'
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE DATE(first_surgery_date) <> DATE(surg_first_date)
+   OR DATE(first_surgery_date) <> DATE(surgery_date)
+   OR DATE(surg_first_date) <> DATE(surgery_date)
+UNION ALL
+SELECT 'LN01_ln_positive_gt_examined', 'error', CAST(research_id AS STRING),
+       'ln_positive_final > path_ln_examined_raw (impossible)'
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE ln_positive_final > path_ln_examined_raw
+UNION ALL
+SELECT 'LN02_ln_positive_without_examined', 'warn', CAST(research_id AS STRING),
+       'ln_positive_final > 0 with no examined count'
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE ln_positive_final > 0 AND COALESCE(path_ln_examined_raw, 0) = 0
+UNION ALL
+SELECT 'LN03_ln_raw_vs_final_disagree', 'warn', CAST(research_id AS STRING),
+       'path_ln_positive_raw <> ln_positive_final'
+FROM `thyroid-canonical-pub-2026.pub_canonical.manuscript_cohort_v1`
+WHERE path_ln_positive_raw IS NOT NULL AND ln_positive_final IS NOT NULL
+  AND path_ln_positive_raw <> ln_positive_final
+
+-- ---- B. NEW: molecular layer (canonical_molecular_genetics_v2) ---------------
+-- This layer had NO QC coverage; that is why the M006 manuscript drifted when
+-- 376 rows were inserted on 2026-05-14 with builder_version = NULL.
+UNION ALL
+SELECT 'MOL01_null_builder_version', 'error', CAST(NULL AS STRING),
+       CONCAT('canonical_molecular_genetics_v2 has ', CAST(COUNT(*) AS STRING),
+              ' row(s) with builder_version IS NULL (non-standard insert). ',
+              'Confirm provenance with the canonical owner before they reach a cohort/manuscript.')
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_molecular_genetics_v2`
+WHERE builder_version IS NULL
+HAVING COUNT(*) > 0
+UNION ALL
+SELECT 'MOL02_molecular_orphan_patient', 'error', CAST(NULL AS STRING),
+       CONCAT(CAST(COUNT(*) AS STRING),
+              ' research_id(s) in canonical_molecular_genetics_v2 not present in canonical_patient_master')
+FROM (
+  SELECT DISTINCT g.research_id
+  FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_molecular_genetics_v2` g
+  LEFT JOIN `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master` m USING (research_id)
+  WHERE m.research_id IS NULL
+)
+HAVING COUNT(*) > 0
+
+-- ---- C. NEW: pathology + cross-table structural integrity -------------------
+UNION ALL
+SELECT 'PATH01_niftp_flagged_malignant', 'error', research_id,
+       'is_malignant = TRUE while histology_final = NIFTP - NIFTP must be analysed separately from malignancy'
+FROM `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master`
+WHERE is_malignant = TRUE AND UPPER(histology_final) = 'NIFTP'
+UNION ALL
+SELECT 'COMPL01_completion_orphan_patient', 'warn', CAST(NULL AS STRING),
+       CONCAT(CAST(COUNT(*) AS STRING),
+              ' research_id(s) in completion_thyroidectomy_resolved_v1 not present in canonical_patient_master')
+FROM (
+  SELECT DISTINCT c.research_id
+  FROM `thyroid-canonical-pub-2026.pub_workspace.completion_thyroidectomy_resolved_v1` c
+  LEFT JOIN `thyroid-canonical-pub-2026.pub_canonical.canonical_patient_master` m USING (research_id)
+  WHERE m.research_id IS NULL
+)
+HAVING COUNT(*) > 0
+
+-- ---- D. consolidate the whole pub_signoff.qc_assertions_v1 catalogue --------
+-- Surfaces every documented QC rule that failed in the latest daily run, so
+-- this single gate is a superset of the entire qc framework.
+UNION ALL
+SELECT CONCAT('CATALOG_', v.assertion_id) AS violation_type,
+       COALESCE(a.severity, 'unknown') AS severity,
+       CAST(NULL AS STRING) AS research_id,
+       CONCAT('qc_assertions_v1 rule failed in latest daily run; ',
+              'category=', COALESCE(a.category,'?'), '; object=', COALESCE(a.affected_object,'?'),
+              '; violation_count=', CAST(v.violation_count AS STRING),
+              COALESCE(CONCAT('; error=', v.error_message), '')) AS detail
+FROM `thyroid-canonical-pub-2026.pub_signoff.qc_violations_v1` v
+LEFT JOIN `thyroid-canonical-pub-2026.pub_signoff.qc_assertions_v1` a USING (assertion_id)
+WHERE v.run_id = (
+  SELECT run_id FROM `thyroid-canonical-pub-2026.pub_signoff.qc_violations_v1`
+  ORDER BY ran_at DESC LIMIT 1
+)
+AND v.passed = FALSE
+
+-- ---- E. consolidate the pub_signoff master drift gate -----------------------
+UNION ALL
+SELECT CONCAT('DRIFT_', check_name) AS violation_type, 'warn' AS severity,
+       CAST(NULL AS STRING) AS research_id,
+       CONCAT('master_drift_gate_v1: actual=', CAST(actual AS STRING),
+              ' < expected_min=', CAST(expected_min AS STRING),
+              COALESCE(CONCAT('; ', note), '')) AS detail
+FROM `thyroid-canonical-pub-2026.pub_signoff.master_drift_gate_v1`
+WHERE actual < expected_min
