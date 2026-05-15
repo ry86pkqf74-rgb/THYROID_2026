@@ -58,15 +58,19 @@ Built by driving the console; not reproducible from SQL alone.
 
 ### QC pipeline assertion
 
-The pipeline's assertion (`sql/cowork_pipeline_qc_assertions_v1.sqlx`) returns one row per integrity violation; 0 rows = pass. It covers:
+**`sql/cowork_pipeline_qc_assertions_v2.sqlx`** — full-dataset coverage. Supersedes v1, which only covered `pub_eval` + surgery-date + lymph-node. Returns one row per integrity violation; 0 rows = pass. Columns: `violation_type, severity, research_id, detail`. Coverage:
 
-- `pub_eval` integrity (negative preop intervals, null surgery anchor)
+- `pub_eval` integrity — negative preop intervals, null surgery anchor
 - **SURG01** — the three surgery-date columns disagree
-- **LN01** — `ln_positive_final` > `path_ln_examined_raw` (impossible)
-- **LN02** — positive count with no examined count
-- **LN03** — `path_ln_positive_raw` ≠ `ln_positive_final`
+- **LN01 / LN02 / LN03** — lymph-node positive-vs-examined inconsistencies
+- **MOL01** — `canonical_molecular_genetics_v2` rows with `builder_version IS NULL` (non-standard inserts — the exact gap that let the M006 manuscript drift in May 2026; the molecular layer previously had **zero** QC coverage). Catches the 376-row 2026-05-14 batch today.
+- **MOL02** — molecular records with a `research_id` not in `canonical_patient_master`
+- **PATH01** — `is_malignant = TRUE` while `histology_final = NIFTP` (NIFTP must be analysed separately from malignancy)
+- **COMPL01** — completion-thyroidectomy records orphaned from the patient master
+- **CATALOG_\*** — consolidates every rule in `pub_signoff.qc_assertions_v1` via its latest daily run, so this single gate is a superset of the whole QC framework
+- **DRIFT_\*** — consolidates the `pub_signoff.master_drift_gate_v1` row/feature-count gates
 
-Because it is scheduled, these issues now surface every morning instead of being discovered inside a manuscript.
+Because it is scheduled, these issues now surface every morning instead of being discovered inside a manuscript. **To deploy:** rewire the `cowork_qc_nonblocking_pipeline_v1` pipeline to v2 in the BigQuery Studio console (the `.sqlx` file is the reproducible source; the console pipeline object is built by hand). `cowork_pipeline_qc_assertions_v1.sqlx` is retained for history.
 
 ---
 
