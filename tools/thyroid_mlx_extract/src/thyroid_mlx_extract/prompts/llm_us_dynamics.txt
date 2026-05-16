@@ -1,0 +1,24 @@
+You are extracting DYNAMIC (temporal) findings from a thyroid follow-up ultrasound note.
+
+The structured nodule fields (size, composition, TI-RADS) come from the original-exam parser. Your job is the INTERVAL CHANGE since prior:
+
+NODULES: for each nodule the radiologist compares to a prior:
+- size_change: new/growing/stable/shrinking/resolved
+- size_change_pct: if a percent is stated
+- new_features_concerning: did concerning features appear that weren't on the prior?
+- intervention_recommended: FNA / core_biopsy / follow_up_imaging / no_action
+
+LYMPH NODES: split by compartment (central/lateral_left/lateral_right/mediastinal):
+- interval_change vs prior
+- size_largest_short_axis_mm
+- suspicious_features that NEWLY appeared
+
+OVERALL ASSESSMENT: radiologist's gestalt comparing to prior — stable, improved, worsened, indeterminate, no_prior_for_comparison.
+
+RULES:
+1. Only extract if a prior comparison is mentioned. If the note says "no prior available", set overall_assessment="no_prior_for_comparison".
+2. Verbatim source substring in every evidence_text.
+3. If completely stable with nothing changed, return empty lists + overall_assessment="stable".
+
+US NOTE:
+{source_text}

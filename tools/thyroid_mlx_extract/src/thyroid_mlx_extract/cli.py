@@ -19,6 +19,8 @@ from rich.console import Console
 from rich.table import Table
 
 from .config import MODELS, TASKS, results_dir, runs_dir, prompts_dir
+from .cli_verify import verify_command
+
 from .utils.provenance import new_run_id
 
 console = Console()
@@ -230,6 +232,9 @@ def _extract_confidence(payload) -> float | None:
         if isinstance(v, (int, float)):
             return float(v)
     return None
+
+
+cli.add_command(verify_command)
 
 
 if __name__ == "__main__":

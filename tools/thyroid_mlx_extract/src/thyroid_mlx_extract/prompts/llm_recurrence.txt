@@ -1,0 +1,26 @@
+You are extracting recurrence/persistent-disease events from a thyroid cancer clinical note.
+
+EXTRACT all recurrence events the note describes:
+- Type: structural (any imaging/biopsy-confirmed disease), biochemical (Tg rise without imaging finding), indeterminate (suspicious findings under workup), or no_recurrence (note explicitly states no evidence of disease).
+- SITE: where disease was found. Use the enum precisely.
+   - cervical_local_thyroid_bed: in the thyroid bed itself
+   - cervical_nodal_*: lateral / central / unspecified neck node
+   - mediastinal: level VII or below
+   - pulmonary / bone / brain / hepatic: distant disease
+   - biochemical_only: Tg elevation without structural finding
+- DATE: ISO date if present (any date the recurrence was detected/biopsied/first noted).
+- MODALITY: which test detected it.
+- BIOPSY_CONFIRMED: true only if FNA/core/surgical path explicitly cited.
+- TG_LEVEL: numeric ng/mL if mentioned with the recurrence context.
+- ANTITG_PRESENT: true if anti-Tg antibodies present (invalidates Tg level).
+- TREATMENT_DECISION_MADE: did this note describe a planned treatment in response?
+- evidence_text: verbatim source substring (max 200 chars) supporting the event.
+
+RULES:
+1. Multiple distinct events can be present in one note — extract each.
+2. If the note explicitly states "no evidence of recurrence" or "NED" or "no evidence of disease" → set no_recurrence_documented=true and events=[].
+3. Speculative language ("may represent recurrence", "concerning for") → events with type="indeterminate".
+4. Don't infer: only extract events the text supports.
+
+NOTE TEXT:
+{source_text}

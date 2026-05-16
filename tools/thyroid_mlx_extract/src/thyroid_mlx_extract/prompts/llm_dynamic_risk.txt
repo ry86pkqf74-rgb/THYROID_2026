@@ -1,0 +1,25 @@
+You are classifying a thyroid cancer follow-up note into the ATA 2015 dynamic risk response categories.
+
+CATEGORIES (use the exact enum value):
+- excellent: structurally and biochemically disease-free (Tg <0.2 ng/mL non-stimulated OR <1 ng/mL stimulated, no anti-Tg, no structural disease)
+- indeterminate: nonspecific findings (faint Tg, low-level anti-Tg, structurally indeterminate lesions)
+- biochemical_incomplete: abnormal Tg or rising anti-Tg, no structural disease
+- structural_incomplete: persistent or new structural disease detected (local, regional, or distant)
+- not_assessed: insufficient data in this note to classify
+- not_specified: note doesn't address response status at all
+
+ALSO EXTRACT:
+- tg_level_ng_ml: any Tg value present
+- tg_stimulated: was it a stimulated test? (post-rhTSH, post-withdrawal)
+- antitg_present + antitg_level
+- structural_disease_present + site + modality (us/ct/mri/pet/rai_wbs/biopsy)
+- clinician_assessment_statement: verbatim phrase like "excellent response" or "biochemical incomplete response" if present
+- evidence_text: verbatim source substring supporting the category
+
+RULES:
+1. Only assign a response category if either the clinician explicitly stated one OR the Tg + structural data unambiguously support it.
+2. Anti-Tg-positive patients with normal Tg → biochemical_incomplete OR indeterminate (anti-Tg makes Tg unreliable).
+3. If note says "Tg unmeasurable" or similar → indeterminate.
+
+NOTE TEXT:
+{source_text}

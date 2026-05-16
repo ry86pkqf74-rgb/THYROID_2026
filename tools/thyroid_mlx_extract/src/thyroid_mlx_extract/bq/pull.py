@@ -157,6 +157,49 @@ def _build_sql(task_id: str, *, limit: int | None, where: str | None) -> str:
         FROM `{BQ_CANONICAL}.clinical_notes_long`
         WHERE note_type = 'HP' AND note_text IS NOT NULL
         """
+
+    elif task_id == "llm_dynamic_risk":
+        sql = f"""
+        SELECT
+          CONCAT(research_id, '|', CAST(note_index AS STRING)) AS source_pk,
+          research_id, note_type, note_index, note_text AS source_text
+        FROM `{BQ_CANONICAL}.clinical_notes_long`
+        WHERE note_type IN ('HP', 'ENDOCRINE_FM', 'OTHER_HISTORY')
+          AND note_text IS NOT NULL
+        """
+    elif task_id == "llm_recurrence":
+        sql = f"""
+        SELECT
+          CONCAT(research_id, '|', CAST(note_index AS STRING)) AS source_pk,
+          research_id, note_type, note_index, note_text AS source_text
+        FROM `{BQ_CANONICAL}.clinical_notes_long`
+        WHERE note_type IN ('HP', 'ENDOCRINE_FM', 'OTHER_HISTORY', 'OPNOTE')
+          AND note_text IS NOT NULL
+        """
+    elif task_id == "llm_us_dynamics":
+        sql = f"""
+        SELECT
+          us_report_number AS source_pk,
+          research_id, ultrasound_date AS event_date,
+          CONCAT(COALESCE(source_us_impression, ''), '\\n---\\n', COALESCE(clinical_impression, '')) AS source_text
+        FROM `{BQ_CANONICAL}.ultrasound_reports`
+        WHERE (source_us_impression IS NOT NULL OR clinical_impression IS NOT NULL)
+        """
+    elif task_id == "llm_synoptic_enrich":
+        # Reuse synoptic source SQL
+        sql = f"""
+        SELECT
+          CONCAT(research_id, '|', CAST(surg_date AS STRING)) AS source_pk,
+          research_id, surg_date AS event_date,
+          CONCAT(COALESCE(synoptic_diagnosis, ''), '\\n---\\n',
+                 COALESCE(path_diagnosis_comment, ''), '\\n---\\n',
+                 COALESCE(microscopic_description, '')) AS source_text
+        FROM `{BQ_CANONICAL}.path_synoptics`
+        WHERE (synoptic_diagnosis IS NOT NULL
+            OR path_diagnosis_comment IS NOT NULL
+            OR microscopic_description IS NOT NULL)
+        """
+
     else:
         raise NotImplementedError(f"No SQL builder for task '{task_id}'")
 
