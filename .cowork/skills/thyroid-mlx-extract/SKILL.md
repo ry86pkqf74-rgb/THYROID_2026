@@ -1,21 +1,6 @@
 ---
 name: thyroid-mlx-extract
-description: |
-  On-device MLX-based clinical text extraction for the THYROID_2026 BigQuery
-  database. Use this skill ANY TIME the user wants to extract structured data
-  from clinical free text in the thyroid cohort — pathology synoptic
-  enrichment, molecular variant parsing, ultrasound nodule features,
-  CT/MRI/NM staging, FNA cytology subtype, complications subtyping,
-  cause-of-death adjudication, or pre-existing risk factors. Trigger on
-  mentions of: MLX, on-device, local LLM, Llama 3.3, MedGemma, Qwen3,
-  extraction harness, Ki-67, mitotic count, capsular invasion, ETE, ENE,
-  PNI, angioinvasion, ThyroSeq, Afirma, raw_payload_json, synoptic_diagnosis,
-  Bethesda subcategory, halo, microcalcification, ACR TI-RADS features,
-  hypoparathyroidism subtyping, RLN injury classification, cause of death,
-  childhood radiation, family history. Also enforces: model selection by
-  task tier, gold-set evaluation before corpus runs, Philter for any PHI
-  scrubbing (NOT an LLM), and the standard provenance pattern matching
-  pub_canonical's note_entities_llm_* tables.
+description: On-device MLX clinical text extraction for THYROID_2026 BigQuery (tools/thyroid_mlx_extract). Use whenever extracting structured data from clinical free text in the thyroid cohort: pathology synoptic enrichment, molecular variant parsing, ultrasound nodule features, CT/MRI/NM staging, FNA cytology subtype, complications subtyping, cause-of-death adjudication, pre-existing risk factors. Triggers: MLX, on-device, local LLM, mlx-lm, Outlines, Llama 3.3, MedGemma, Qwen3, DeepSeek R1, Phi-4, extraction harness, Ki-67, mitotic count, capsular invasion, ETE, ENE, PNI, angioinvasion, ThyroSeq, Afirma, raw_payload_json, synoptic_diagnosis, Bethesda subcategory, halo, microcalcification, ACR TI-RADS, hypoparathyroidism subtyping, RLN injury, cause of death, childhood radiation, family history. Enforces: model selection by task tier, gold-set F1 eval before corpus runs, Philter (NOT an LLM) for PHI, provenance matching note_entities_llm_*.
 ---
 
 # thyroid-mlx-extract — operational playbook
