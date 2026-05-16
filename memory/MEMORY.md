@@ -11,6 +11,7 @@ per topic (citations, cross-references, future audit).
 
 ## Index
 
+- [MLX local model selection for thyroid extraction](reference_mlx_model_selection.md) — 2026-05-16: model-task matrix for on-device extraction (MedGemma 27B for templated medical, Llama 3.3 70B for hard semantics, R1 distill for adjudication, Philter for de-id). Skill: thyroid-mlx-extract. Commit 30edf986.
 - [Manuscript iterative-build process (BQ)](feedback_manuscript_iterative_build_process.md) — 2026-05-14: per-iteration diff + cohort-scoped QC + AI column source-of-truth check; codified as skill manuscript-iterative-build.
 - [mig_222 multi-nodule attribution triage](project_multi_nodule_attribution_triage_20260430.md) — 2026-04-30: 448 TIR03 exams + 825 deferred LLM patients triaged; 10,570 US nodule rows flagged unresolved; queues emptied after archive + ledger.
 - [Lane E Round 2 TIRADS views + conflict resolution + ACR completeness doc](../qc_framework_v1/migrations/219_tirads_cohort_views_20260430.sql) — 2026-04-30: `mig_219` four `vw_us_nodule_tirads_*_VIEW_v1` cohort views on `canonical_us_nodule_v2_filtered`; `mig_220` prefer-`tirads_v2` batch fix + `tirads_conflict_resolution_source`; `mig_221` clarifies `acr2017_feature_points_complete` vs imputed `*_pts`. Memory: [feedback_acr2017_feature_points_complete_semantic.md](feedback_acr2017_feature_points_complete_semantic.md). Methods stub: `docs/methods_acr2017_feature_points_complete_20260430.md`.
