@@ -1,0 +1,13 @@
+source_pk,field_path,gold_value,gold_evidence_substring
+EXAMPLE_PK_1,tumors[0].tumor_index,1,
+EXAMPLE_PK_1,tumors[0].histologic_type,papillary thyroid carcinoma,"classic papillary thyroid carcinoma"
+EXAMPLE_PK_1,tumors[0].mitotic_count_per_2mm2,2,"2 mitoses per 10 HPF"
+EXAMPLE_PK_1,tumors[0].ki67_labeling_index_pct,3,"Ki-67 labeling index 3%"
+EXAMPLE_PK_1,tumors[0].capsule_status,encapsulated,"completely encapsulated"
+EXAMPLE_PK_1,tumors[0].capsular_invasion,focal,"focal capsular invasion"
+EXAMPLE_PK_1,tumors[0].angioinvasion_present,true,"angioinvasion identified"
+EXAMPLE_PK_1,tumors[0].angioinvasion_vessels_count,2,"2 vessels involved"
+EXAMPLE_PK_1,tumors[0].perineural_invasion,absent,"no perineural invasion"
+EXAMPLE_PK_1,tumors[0].ete_grade,microscopic_only,"microscopic extrathyroidal extension"
+EXAMPLE_PK_1,tumors[0].margin_status,negative,"margins negative for tumor"
+EXAMPLE_PK_1,tumors[0].extranodal_extension_present,false,"no extranodal extension"

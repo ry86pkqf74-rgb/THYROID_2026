@@ -1,0 +1,8 @@
+source_pk,field_path,gold_value,gold_evidence_substring
+EXAMPLE_PK_1,assay_name,ThyroSeq GC v3,"ThyroSeq Genomic Classifier v3"
+EXAMPLE_PK_1,no_alterations_detected,false,
+EXAMPLE_PK_1,variants[0].gene,BRAF,"BRAF V600E"
+EXAMPLE_PK_1,variants[0].protein_change,V600E,"BRAF V600E"
+EXAMPLE_PK_1,variants[0].variant_allele_frequency_pct,32.5,"VAF 32.5%"
+EXAMPLE_PK_1,risk_call.band,positive,"positive for thyroid malignancy"
+EXAMPLE_PK_1,risk_call.risk_pct,85,"85% probability of malignancy"

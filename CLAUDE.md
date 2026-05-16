@@ -59,6 +59,19 @@ Any of: thyroid, TGDC, M-codes (M001–M999), Mo36, H1, H2, manuscript, draft, a
 - Don't bulk-create issues without first checking Issue Ledger for duplicates.
 - Don't change schema (add/rename/drop fields) without bumping skill version and updating `airtable_ids.md`.
 
+## MLX local extraction stack (added 2026-05-16)
+
+For any task that involves extracting structured data from clinical free text — pathology, molecular, ultrasound, imaging, FNA, complications, cause-of-death, risk factors — load the `thyroid-mlx-extract` skill at `.cowork/skills/thyroid-mlx-extract/`. It encodes:
+
+- Model selection rules per task tier (MedGemma 1.5 27B for templated medical, Llama 3.3 70B for hard semantics, DeepSeek-R1 distill for adjudication)
+- Gold-set evaluation discipline before any corpus run
+- Workspace-first BQ writes preserving the `note_entities_llm_*` provenance pattern
+- **Philter (NOT an LLM) as the only acceptable de-identification tool**
+
+The runnable harness lives at `tools/thyroid_mlx_extract/` with a CLI: `thyroid-mlx pull|eval|run|push <task>`. Empirical gap analysis and the comprehensive model-task matrix are in `docs/mlx/`.
+
+Triggers for this skill: MLX, on-device, local LLM, Llama 3.3, MedGemma, Qwen3, extraction harness, Ki-67, mitotic count, capsular invasion, ETE grade, ENE, raw_payload_json, synoptic_diagnosis, Bethesda subcategory, halo, microcalcification, hypoparathyroidism subtyping, RLN injury, cause of death, childhood radiation, ThyroSeq, Afirma.
+
 ## Where to find more
 
 - Architecture: `INTEGRATION_PROPOSAL.md` (this folder)
