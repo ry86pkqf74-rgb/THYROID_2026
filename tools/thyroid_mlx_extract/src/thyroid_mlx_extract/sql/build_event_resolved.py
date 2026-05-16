@@ -52,8 +52,8 @@ FEATURES: dict[str, FeatureSpec] = {
         key="angioinvasion",
         description="Angioinvasion / vascular invasion per tumor, with vessel count",
         synoptic_column="tumor_1_angioinvasion",
-        llm_table="note_entities_llm_vascular_invasion_v2",
-        llm_json_path="$.angioinvasion_present",
+        llm_table="note_entities_llm_synoptic_pathology_enrichment",
+        llm_json_path="$.tumors[0].angioinvasion_present",
         resolution_priority=("synoptic", "llm"),
     ),
     "extranodal_extension": FeatureSpec(
@@ -79,7 +79,7 @@ WITH synoptic_candidate AS (
   SELECT
     research_id,
     1 AS tumor_ordinal,
-    surg_date,
+    SAFE_CAST(surg_date AS DATE) AS surg_date,
     {feature.synoptic_column} AS synoptic_value,
     'synoptic' AS synoptic_source_label
   FROM `{BQ_CANONICAL}.path_synoptics`
@@ -89,7 +89,7 @@ llm_candidate AS (
   SELECT
     research_id,
     1 AS tumor_ordinal,
-    note_date AS surg_date,
+    SAFE_CAST(note_date AS DATE) AS surg_date,
     JSON_VALUE(result_json, '{feature.llm_json_path}') AS llm_value,
     'llm' AS llm_source_label
   FROM `{BQ_CANONICAL}.{feature.llm_table}`

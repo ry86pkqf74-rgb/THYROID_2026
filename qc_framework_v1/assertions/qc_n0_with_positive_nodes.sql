@@ -7,7 +7,7 @@ INSERT INTO `thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1`
 SELECT
   'qc_n0_with_positive_nodes' AS assertion_id,
   t.research_id,
-  t.surgery_date AS event_date,
+  SAFE_CAST(t.surgery_date AS DATE) AS event_date,
   CONCAT(
     'tumor_1_n_stage_ajcc8=', COALESCE(t.histology_1_n_stage_ajcc8, '(null)'),
     ' ln_total_positive_from_locations=', CAST(COALESCE(t.ln_total_positive_from_locations, 0) AS STRING),

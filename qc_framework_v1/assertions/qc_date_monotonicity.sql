@@ -6,8 +6,8 @@ INSERT INTO `thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1`
   (assertion_id, research_id, event_date, detail, detected_at)
 WITH events AS (
   SELECT research_id,
-         MIN(fna_date) AS first_fna_date,
-         (SELECT MIN(surgery_date) FROM `thyroid-canonical-pub-2026.pub_canonical.tumor_pathology` p
+         MIN(SAFE_CAST(fna_date AS DATE)) AS first_fna_date,
+         (SELECT MIN(SAFE_CAST(surgery_date AS DATE)) FROM `thyroid-canonical-pub-2026.pub_canonical.tumor_pathology` p
           WHERE p.research_id = f.research_id) AS first_surgery_date
   FROM `thyroid-canonical-pub-2026.pub_canonical.fna_cytology` f
   GROUP BY research_id

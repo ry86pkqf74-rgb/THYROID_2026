@@ -5,15 +5,13 @@ WHERE assertion_id = 'qc_m0_with_distant_mets';
 INSERT INTO `thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1`
   (assertion_id, research_id, event_date, detail, detected_at)
 WITH staged AS (
-  SELECT research_id, surgery_date, histology_1_m_stage_ajcc8
+  SELECT research_id, SAFE_CAST(surgery_date AS DATE) AS surgery_date, histology_1_m_stage_ajcc8
   FROM `thyroid-canonical-pub-2026.pub_canonical.tumor_pathology`
   WHERE histology_1_m_stage_ajcc8 = 'M0'
 ),
 distant_imaging AS (
-  -- CT/MRI/NM with any distant disease indicator
-  SELECT research_id, date_of_exam AS event_date,
-         CONCAT('ct: ', COALESCE(thyroid_other_abnormality, ''), ' lymph_node_details: ',
-                COALESCE(lymph_node_details, '')) AS finding
+  SELECT research_id, SAFE_CAST(date_of_exam AS DATE) AS event_date,
+         SUBSTR(COALESCE(original_report, ''), 1, 200) AS finding
   FROM `thyroid-canonical-pub-2026.pub_canonical.ct_imaging`
   WHERE REGEXP_CONTAINS(LOWER(COALESCE(original_report, '')),
                         r'pulmonary metast|lung metast|bone metast|hepatic metast|brain metast|distant metast')

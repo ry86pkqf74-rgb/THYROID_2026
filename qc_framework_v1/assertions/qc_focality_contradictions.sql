@@ -7,7 +7,7 @@ INSERT INTO `thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1`
 SELECT
   'qc_focality_contradictions' AS assertion_id,
   research_id,
-  surgery_date AS event_date,
+  SAFE_CAST(surgery_date AS DATE) AS event_date,
   CONCAT(
     'tumor_focality_overall=', COALESCE(tumor_focality_overall, '(null)'),
     ' num_tumors_identified=', CAST(COALESCE(num_tumors_identified, 0) AS STRING)

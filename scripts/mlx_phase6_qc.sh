@@ -11,7 +11,7 @@ echo "=== Phase 6: deterministic QC assertions ==="
 echo
 
 # Ensure table exists
-bq query --use_legacy_sql=false --quiet --max_rows=0 \
+bq --location=us-central1 query --use_legacy_sql=false --quiet --max_rows=0 \
   "CREATE TABLE IF NOT EXISTS \`thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1\` (
     assertion_id STRING,
     research_id STRING,
@@ -23,9 +23,9 @@ bq query --use_legacy_sql=false --quiet --max_rows=0 \
 for sql in "$ASSERTIONS_DIR"/qc_*.sql; do
     name=$(basename "$sql" .sql)
     echo "----- $name -----"
-    bq query --use_legacy_sql=false --quiet --max_rows=0 < "$sql"
+    bq --location=us-central1 query --use_legacy_sql=false --quiet --max_rows=0 < "$sql"
     # Count what landed
-    count=$(bq query --use_legacy_sql=false --quiet --format=csv --max_rows=1 \
+    count=$(bq --location=us-central1 query --use_legacy_sql=false --quiet --format=csv --max_rows=1 \
       "SELECT COUNT(*) FROM \`thyroid-canonical-pub-2026.pub_eval.qc_assertions_v1\`
        WHERE assertion_id = '$name'" | tail -1)
     echo "  -> $count offending rows in pub_eval.qc_assertions_v1"
