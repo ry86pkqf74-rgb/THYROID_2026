@@ -33,22 +33,40 @@ def pull_unverified(
     entity_types: list[str] | None = None,
     project: str | None = None,
 ) -> Iterator[VerificationInput]:
+    """Pull rows missing real verification (status NULL or 'unverified')."""
     if table not in SUPPORTED_TABLES:
         raise ValueError(f"Table {table} not supported. Choose from: {SUPPORTED_TABLES}")
 
-    where = ["e.verification_status IS NULL"]
+    where = ["(e.verification_status IS NULL OR e.verification_status = 'unverified')"]
     if entity_types:
         types_list = ", ".join(f"'{t}'" for t in entity_types)
         where.append(f"e.entity_type IN ({types_list})")
     where_sql = " AND ".join(where)
     limit_sql = f"LIMIT {limit}" if limit else ""
 
+    # Entity tables use lowercase note_type (h_p, op_note, dc_sum, endocrine_note...);
+    # clinical_notes_long uses uppercase (HP, OPNOTE, DC_SUM, ENDOCRINE_FM...).
+    # And entity.note_index is often NULL. So we normalize note_type and aggregate
+    # all notes of the matching type per patient.
     sql = f"""
+    WITH notes_agg AS (
+      SELECT
+        research_id,
+        UPPER(REPLACE(note_type, '_', '')) AS note_type_key,
+        STRING_AGG(note_text, ' ||| NOTE BREAK ||| ' ORDER BY note_index) AS combined_text
+      FROM `{BQ_CANONICAL}.clinical_notes_long`
+      WHERE note_text IS NOT NULL
+      GROUP BY research_id, note_type_key
+    )
     SELECT
       e.research_id,
-      CONCAT(e.research_id, '|', CAST(e.note_row_id AS STRING), '|', e.entity_type, '|',
-             COALESCE(CAST(e.evidence_global_start AS STRING),
-                      CAST(e.evidence_start AS STRING), '0')) AS source_pk,
+      CONCAT(
+        e.research_id, '|',
+        CAST(e.note_row_id AS STRING), '|',
+        e.entity_type, '|',
+        COALESCE(CAST(e.evidence_global_start AS STRING),
+                 CAST(e.evidence_start AS STRING), '0')
+      ) AS source_pk,
       e.entity_type,
       COALESCE(e.entity_value_raw, '') AS entity_value_raw,
       COALESCE(e.entity_value_norm, '') AS entity_value_norm,
@@ -56,12 +74,11 @@ def pull_unverified(
       COALESCE(e.confidence_score, 0.0) AS original_confidence,
       COALESCE(e.evidence_span, '') AS evidence_span,
       CAST(e.entity_date AS STRING) AS entity_date,
-      n.note_text AS source_text
+      COALESCE(n.combined_text, '') AS source_text
     FROM `{BQ_CANONICAL}.{table}` e
-    LEFT JOIN `{BQ_CANONICAL}.clinical_notes_long` n
+    LEFT JOIN notes_agg n
       ON n.research_id = e.research_id
-     AND n.note_type = e.note_type
-     AND n.note_index = e.note_index
+     AND n.note_type_key = UPPER(REPLACE(e.note_type, '_', ''))
     WHERE {where_sql}
     {limit_sql}
     """
