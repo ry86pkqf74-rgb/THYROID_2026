@@ -27,6 +27,7 @@ import duckdb  # noqa: E402
 import pandas as pd  # noqa: E402
 from motherduck_client import get_token  # type: ignore  # noqa: E402
 from thyroseq_detailed_parser import parse  # noqa: E402
+from utils.molecular_report_derivation import derive_platform_from_report_header  # noqa: E402
 
 DB = "thyroid_canonical_publication_v1_0"
 BUILDER_VERSION = "v3_2026-04-21"
@@ -429,7 +430,12 @@ def main() -> None:
     for r in src.itertuples(index=False):
         text, src_label = pick_report_text(r)
         text_source_counts[src_label or "EMPTY"] = text_source_counts.get(src_label or "EMPTY", 0) + 1
-        parsed = parse(text or "", platform=r.platform)
+        derived_platform, derived_version = derive_platform_from_report_header(
+            text or "",
+            fallback_platform=_s(r.platform),
+            fallback_version=_i(r.platform_version),
+        )
+        parsed = parse(text or "", platform=derived_platform or r.platform)
         parsed_variants = parsed.get("gene_mutations_variants") or []
         parsed_fusions  = parsed.get("gene_fusions_list") or []
         extra_v, extra_f = synthesize_from_flags(r, parsed_variants, parsed_fusions)
@@ -456,9 +462,9 @@ def main() -> None:
             "molecular_episode_id": _i(r.molecular_episode_id),
             "test_date_native": None if pd.isna(r.test_date_native) else r.test_date_native,
             "resolved_test_date": _s(r.resolved_test_date),
-            "platform": _s(r.platform),
+            "platform": derived_platform or _s(r.platform),
             "platform_raw": _s(r.platform_raw, 200),
-            "platform_version": _i(r.platform_version),
+            "platform_version": derived_version,
             "bethesda_category": _i(r.bethesda_category),
             "specimen_site_normalized": _s(r.specimen_site_normalized),
             "linked_fna_episode_id": _s(r.linked_fna_episode_id),
@@ -516,7 +522,11 @@ def main() -> None:
             "high_risk_marker_flag": _b(r.high_risk_marker_flag),
             "inadequate_flag":       _b(r.inadequate_flag),
             "cancelled_flag":        _b(r.cancelled_flag),
-            "overall_result_class":  _norm_str(r.overall_result_class),
+            "overall_result_class": (
+                parsed.get("overall_result_class")
+                or parsed.get("overall_result_class_inferred")
+                or _norm_str(r.overall_result_class)
+            ),
             "report_text_ref": f"molecular_test_episode_v2#{_i(r.molecular_episode_id)}",
             "report_text_source": src_label or None,
             "report_text_length": int(len(text)) if text else 0,

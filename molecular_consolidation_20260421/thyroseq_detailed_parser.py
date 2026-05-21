@@ -21,6 +21,8 @@ import re
 import sys
 from typing import Dict, List, Pattern, Tuple
 
+from utils.molecular_report_derivation import derive_overall_result_class
+
 
 # ---------- OCR normalization ----------
 def normalize(text: str) -> str:
@@ -331,6 +333,17 @@ def _apply_band_fallbacks(out: Dict, full_text: str = "") -> Dict:
     return out
 
 
+def _apply_result_class_derivation(out: Dict, full_text: str = "") -> Dict:
+    """Populate parser-level overall_result_class when report text is unambiguous."""
+    derived = derive_overall_result_class(
+        test_result_summary=out.get("test_result_summary"),
+        headline_text=full_text,
+    )
+    if derived:
+        out["overall_result_class"] = derived
+    return out
+
+
 # ---------- Header parsing ----------
 ROM_PCT_RX = re.compile(r"""
     [\(\[]?\s*(?P<approx>[~\-])?\s*(?P<op>[<>])?\s*
@@ -545,6 +558,7 @@ def parse_afirma(text: str) -> Dict:
     filled = sum(1 for v in (mut_status, med_status, para_status, fus_status) if v)
     out["n_fields_parsed"] = filled
     out["parse_status"] = "ok" if filled >= 3 else ("partial" if filled >= 1 else "minimal")
+    _apply_result_class_derivation(out, text or "")
     return out
 
 
@@ -661,10 +675,12 @@ def parse_block(text: str) -> Dict:
             out["n_fields_parsed"] = filled
             # mig_321 Fallback A/B: infer ROM band even for partial/freeform results
             _apply_band_fallbacks(out, text or "")
+            _apply_result_class_derivation(out, text or "")
             return out
         no_block_out: Dict = {"parse_status": "no_detailed_block", "parser": "thyroseq", **header_out}
         # mig_321 Fallback B: scan full text for ROM band (no DETAILED RESULTS block)
         _apply_band_fallbacks(no_block_out, text or "")
+        _apply_result_class_derivation(no_block_out, text or "")
         return no_block_out
     start = text.upper().find("DETAILED RESULTS")
     block = text[start + len("DETAILED RESULTS"):]
@@ -759,6 +775,7 @@ def parse_block(text: str) -> Dict:
     out["parse_status"] = "ok" if filled >= 6 else ("partial" if filled >= 1 else "minimal")
     # mig_321 Fallback A/B: ensure rom_descriptor + band_source are always populated
     _apply_band_fallbacks(out, text or "")
+    _apply_result_class_derivation(out, text or "")
     return out
 
 

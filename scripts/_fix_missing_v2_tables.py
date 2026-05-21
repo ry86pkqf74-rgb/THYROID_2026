@@ -281,10 +281,16 @@ WITH mt AS (
         CAST(research_id AS INTEGER) AS research_id,
         ROW_NUMBER() OVER (PARTITION BY CAST(research_id AS INTEGER)
                            ORDER BY COALESCE(
+                               CAST(try_strptime(CAST(date AS VARCHAR), '%m/%d/%y') AS DATE),
+                               CAST(try_strptime(CAST(date AS VARCHAR), '%m/%d/%Y') AS DATE),
                                TRY_CAST(date AS DATE),
                                DATE '2099-01-01')) AS molecular_episode_id,
         thyroseq_afirma AS platform_raw,
         CASE
+            WHEN LOWER(COALESCE(detailed_findings, '') || ' ' || COALESCE(result, ''))
+                 ~ '(afirma thyroid|afirma genomic|afirma gsc|afirma gec|veracyte|xpression atlas|genomic sequencing classifier)' THEN 'Afirma'
+            WHEN LOWER(COALESCE(detailed_findings, '') || ' ' || COALESCE(result, ''))
+                 ~ '(thyroseq|upmc)' THEN 'ThyroSeq'
             WHEN LOWER(thyroseq_afirma) LIKE '%thyroseq%' THEN 'ThyroSeq'
             WHEN LOWER(thyroseq_afirma) LIKE '%afirma%' THEN 'Afirma'
             ELSE 'Other'
@@ -292,16 +298,34 @@ WITH mt AS (
         result,
         mutation,
         COALESCE(detailed_findings, '') AS detailed_findings_raw,
-        TRY_CAST(date AS DATE) AS test_date_native,
+        COALESCE(
+            CAST(try_strptime(CAST(date AS VARCHAR), '%m/%d/%y') AS DATE),
+            CAST(try_strptime(CAST(date AS VARCHAR), '%m/%d/%Y') AS DATE),
+            TRY_CAST(date AS DATE)
+        ) AS test_date_native,
         CASE
+            WHEN try_strptime(CAST(date AS VARCHAR), '%m/%d/%y') IS NOT NULL THEN 'exact_source_date'
+            WHEN try_strptime(CAST(date AS VARCHAR), '%m/%d/%Y') IS NOT NULL THEN 'exact_source_date'
             WHEN TRY_CAST(date AS DATE) IS NOT NULL THEN 'exact_source_date'
             ELSE 'unresolved_date'
         END AS date_status,
         CASE
+            WHEN try_strptime(CAST(date AS VARCHAR), '%m/%d/%y') IS NOT NULL THEN 100
+            WHEN try_strptime(CAST(date AS VARCHAR), '%m/%d/%Y') IS NOT NULL THEN 100
             WHEN TRY_CAST(date AS DATE) IS NOT NULL THEN 100
             ELSE 0
         END AS date_confidence,
         CASE
+            WHEN LOWER(REPLACE(TRIM(COALESCE(result, '')), ' ', '_')) IN ('negative', 'currently_negative') THEN 'negative'
+            WHEN LOWER(TRIM(COALESCE(result, ''))) = 'positive' THEN 'positive'
+            WHEN LOWER(TRIM(COALESCE(result, ''))) = 'suspicious' THEN 'suspicious'
+            WHEN LOWER(TRIM(COALESCE(result, ''))) LIKE '%cancel%' THEN 'cancelled'
+            WHEN LOWER(COALESCE(detailed_findings, '') || ' ' || COALESCE(result, ''))
+                 ~ 'currently[[:space:]_]*negative|performed analysis was negative|negative for all tested|test result.{0,120}\\bnegative\\b' THEN 'negative'
+            WHEN LOWER(COALESCE(detailed_findings, '') || ' ' || COALESCE(result, ''))
+                 ~ 'afirma.{0,220}suspicious|genomic sequencing classifier.{0,220}suspicious|\\bsuspicious\\b' THEN 'suspicious'
+            WHEN LOWER(COALESCE(detailed_findings, '') || ' ' || COALESCE(result, ''))
+                 ~ 'test result.{0,120}\\bpositive\\b|probability of cancer.{0,120}\\bpositive\\b|fusion (was )?identified|mutation (was )?identified' THEN 'positive'
             WHEN LOWER(result) IN ('positive', 'detected', 'abnormal') THEN 'positive'
             WHEN LOWER(result) IN ('negative', 'not detected', 'normal', 'benign') THEN 'negative'
             WHEN LOWER(result) LIKE '%suspicious%' THEN 'suspicious'
@@ -372,7 +396,13 @@ SELECT
     NULL::VARCHAR AS specimen_site_raw,
     NULL::VARCHAR AS specimen_site_normalized,
     NULL::INTEGER AS bethesda_category,
-    NULL::VARCHAR AS platform_version,
+    CASE
+        WHEN LOWER(COALESCE(mt.detailed_findings_raw, '') || ' ' || COALESCE(mt.result, '') || ' ' || COALESCE(mt.platform_raw, ''))
+             ~ 'thyroseq[^\\n]{0,30}v\\s*3|thyroseq\\s*v?3|\\(thyroseq v3\\)' THEN 3
+        WHEN LOWER(COALESCE(mt.detailed_findings_raw, '') || ' ' || COALESCE(mt.result, '') || ' ' || COALESCE(mt.platform_raw, ''))
+             ~ 'thyroseq[^\\n]{0,30}v\\s*2|thyroseq\\s*v?2|\\(thyroseq v2\\)' THEN 2
+        ELSE NULL
+    END AS platform_version,
     NULL::VARCHAR AS risk_language_raw,
     NULL::DOUBLE  AS molecular_confidence,
     'pending' AS adjudication_status

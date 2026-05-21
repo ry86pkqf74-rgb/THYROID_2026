@@ -16,6 +16,8 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import pandas as pd
 
+from utils.molecular_report_derivation import parse_native_report_date
+
 try:
     import yaml  # type: ignore
 except ImportError:  # pragma: no cover
@@ -300,9 +302,9 @@ def parse_test_date_iso_and_native(val: Any) -> tuple[str | None, Any]:
     s = str(val).strip()
     if not s or s.lower() in ("nan", "nat", "none"):
         return None, s or None
-    dt = pd.to_datetime(s, errors="coerce", dayfirst=False)
-    if pd.notna(dt):
-        return dt.strftime("%Y-%m-%d"), s
+    d = parse_native_report_date(s)
+    if d is not None:
+        return d.isoformat(), s
     return None, s
 
 
@@ -321,9 +323,9 @@ def parse_thyroseq_workbook_test_date_cell(
         test_date_parsed = td_cell.date()
         test_date_native = str(td_cell)[:120]
     else:
-        dt = pd.to_datetime(td_cell, errors="coerce")
-        if pd.notna(dt):
-            test_date_parsed = dt.date()
+        parsed_date = parse_native_report_date(td_cell)
+        if parsed_date is not None:
+            test_date_parsed = parsed_date
             test_date_native = str(td_cell).strip()[:120]
     return test_date_native, test_date_parsed
 
