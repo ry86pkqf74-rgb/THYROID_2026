@@ -1,0 +1,22 @@
+                             comparison             test    p_raw  p_fdr_bh      method  sig_fdr_05
+        Gene (single-only) × Malignancy  χ² (2df) = 2.09 0.351929  0.557829        chi2       False
+Gene (single-only) × ROM (malig+border)  χ² (2df) = 1.88 0.390480  0.557829        chi2       False
+         Co-mutation group × Malignancy  χ² (3df) = 7.70 0.052645  0.150415        chi2       False
+           Any co-mutation × Malignancy  χ² (1df) = 5.99 0.014380  0.062831        chi2       False
+                TERT (any) × Malignancy  χ² (1df) = 5.84 0.015708  0.062831        chi2       False
+                BRAF (any) × Malignancy       Fisher 2×2 0.651429  0.766387      fisher       False
+            Co-mutation × ATA-2025 high χ² (3df) = 14.97 0.001839  0.018388        chi2        True
+     Co-mutation × ATA-2025 int-or-high  χ² (3df) = 0.10 0.991291  0.991291        chi2       False
+                   TERT × ATA-2025 high χ² (1df) = 12.30 0.000452  0.009042        chi2        True
+             Co-mutation × Surgery (TT)  χ² (3df) = 5.48 0.139633  0.253879        chi2       False
+              Co-mutation × LN positive  χ² (3df) = 1.29 0.730422  0.811580        chi2       False
+                  Bethesda × Malignancy  χ² (6df) = 6.40 0.380160  0.557829        chi2       False
+               Age × Gene (single-only)        KW H=0.03 0.985823  0.991291     kruskal       False
+                      Age × Co-mutation        KW H=6.57 0.037533  0.125111     kruskal       False
+              Age × Malignant-vs-Benign        MW U=8736 0.447656  0.569476 mannwhitney       False
+   Tumor size × Gene (malignant subset)        KW H=8.86 0.011900  0.062831     kruskal       False
+   Tumor size × Co-mutation (malignant)        KW H=4.00 0.135575  0.253879     kruskal       False
+      Tumor size × ATA-2025 (malignant)        MW U=2844 0.068415  0.171037 mannwhitney       False
+      Max RAS VAF × Malignant-vs-Benign          MW U=82 0.085978  0.191062 mannwhitney       False
+              Max RAS VAF × Co-mutation          MW U=32 0.455580  0.569476 mannwhitney       False
+                     Max RAS VAF × Gene     insufficient      NaN       NaN          na       False

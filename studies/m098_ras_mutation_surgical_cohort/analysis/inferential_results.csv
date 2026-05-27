@@ -1,0 +1,22 @@
+comparison,test,p_raw,p_fdr_bh,method,sig_fdr_05
+Gene (single-only) × Malignancy,χ² (2df) = 2.09,0.3519290568365191,0.5578285996957866,chi2,False
+Gene (single-only) × ROM (malig+border),χ² (2df) = 1.88,0.39048001978705055,0.5578285996957866,chi2,False
+Co-mutation group × Malignancy,χ² (3df) = 7.70,0.0526451831211935,0.1504148089176957,chi2,False
+Any co-mutation × Malignancy,χ² (1df) = 5.99,0.014379993876340029,0.06283094996993624,chi2,False
+TERT (any) × Malignancy,χ² (1df) = 5.84,0.01570773749248406,0.06283094996993624,chi2,False
+BRAF (any) × Malignancy,Fisher 2×2,0.6514287004970929,0.7663867064671681,fisher,False
+Co-mutation × ATA-2025 high,χ² (3df) = 14.97,0.0018388178715987781,0.01838817871598778,chi2,True
+Co-mutation × ATA-2025 int-or-high,χ² (3df) = 0.10,0.991290660952457,0.991290660952457,chi2,False
+TERT × ATA-2025 high,χ² (1df) = 12.30,0.0004521086715528254,0.009042173431056507,chi2,True
+Co-mutation × Surgery (TT),χ² (3df) = 5.48,0.13963346623296238,0.25387902951447705,chi2,False
+Co-mutation × LN positive,χ² (3df) = 1.29,0.7304215807227099,0.8115795341363443,chi2,False
+Bethesda × Malignancy,χ² (6df) = 6.40,0.3801603484830298,0.5578285996957866,chi2,False
+Age × Gene (single-only),KW H=0.03,0.9858227927838132,0.991290660952457,kruskal,False
+Age × Co-mutation,KW H=6.57,0.03753316151409783,0.1251105383803261,kruskal,False
+Age × Malignant-vs-Benign,MW U=8736,0.4476562796416622,0.5694755364911513,mannwhitney,False
+Tumor size × Gene (malignant subset),KW H=8.86,0.011900164973841968,0.06283094996993624,kruskal,False
+Tumor size × Co-mutation (malignant),KW H=4.00,0.13557543009342626,0.25387902951447705,kruskal,False
+Tumor size × ATA-2025 (malignant),MW U=2844,0.06841480770948384,0.1710370192737096,mannwhitney,False
+Max RAS VAF × Malignant-vs-Benign,MW U=82,0.08597788398379679,0.19106196440843728,mannwhitney,False
+Max RAS VAF × Co-mutation,MW U=32,0.4555804291929211,0.5694755364911513,mannwhitney,False
+Max RAS VAF × Gene,insufficient,,,na,False

@@ -1,0 +1,29 @@
+item,value
+Total thyroidectomy,149 (51.0%)
+Hemithyroidectomy (lobectomy),142 (48.6%)
+Isthmusectomy,1 (0.3%)
+Lateral neck dissection,7 (2.4%)
+Surgery × ATA-2025: hemithyroidectomy × high,33
+Surgery × ATA-2025: hemithyroidectomy × intermediate,42
+Surgery × ATA-2025: hemithyroidectomy × low,1
+Surgery × ATA-2025: hemithyroidectomy × uncalculable,3
+Surgery × ATA-2025: hemithyroidectomy × nan,63
+Surgery × ATA-2025: isthmusectomy × high,0
+Surgery × ATA-2025: isthmusectomy × intermediate,0
+Surgery × ATA-2025: isthmusectomy × low,0
+Surgery × ATA-2025: isthmusectomy × uncalculable,0
+Surgery × ATA-2025: isthmusectomy × nan,1
+Surgery × ATA-2025: total_thyroidectomy × high,51
+Surgery × ATA-2025: total_thyroidectomy × intermediate,43
+Surgery × ATA-2025: total_thyroidectomy × low,0
+Surgery × ATA-2025: total_thyroidectomy × uncalculable,8
+Surgery × ATA-2025: total_thyroidectomy × nan,47
+Surgery × Histology: hemithyroidectomy × Benign,54
+Surgery × Histology: hemithyroidectomy × Borderline,14
+Surgery × Histology: hemithyroidectomy × Malignant,74
+Surgery × Histology: isthmusectomy × Benign,1
+Surgery × Histology: isthmusectomy × Borderline,0
+Surgery × Histology: isthmusectomy × Malignant,0
+Surgery × Histology: total_thyroidectomy × Benign,39
+Surgery × Histology: total_thyroidectomy × Borderline,8
+Surgery × Histology: total_thyroidectomy × Malignant,102

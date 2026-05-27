@@ -1,0 +1,22 @@
+item,value
+ATA 2015 (3-tier) — low,0 (0.0%)
+ATA 2015 (3-tier) — intermediate,12 (6.6%)
+ATA 2015 (3-tier) — high,84 (46.4%)
+ATA 2015 (3-tier) — uncalculable,85 (47.0%)
+ATA 2015 — not scored (non-DTC),111 (38.0%)
+ATA 2025 (4-tier) — low,1 (0.6%)
+ATA 2025 (4-tier) — intermediate,85 (47.0%)
+ATA 2025 (4-tier) — high,84 (46.4%)
+ATA 2025 (4-tier) — uncalculable,11 (6.1%)
+Reclassification direction — Up,79 (43.6%)
+Reclassification direction — Same,64 (35.4%)
+Reclassification direction — Down,38 (21.0%)
+— 2015 × 2025 Cross-tab —,
+  2015=high × 2025=high,46
+  2015=high × 2025=intermediate,38
+  2015=intermediate × 2025=high,5
+  2015=intermediate × 2025=intermediate,7
+  2015=uncalculable × 2025=high,33
+  2015=uncalculable × 2025=intermediate,40
+  2015=uncalculable × 2025=low,1
+  2015=uncalculable × 2025=uncalculable,11

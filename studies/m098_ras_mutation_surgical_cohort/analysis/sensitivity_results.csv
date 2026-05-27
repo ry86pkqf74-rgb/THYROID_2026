@@ -1,0 +1,12 @@
+sensitivity,comparison,n,p
+1. Drop MTC,Gene×Malig,206,0.35060082187885555
+1. Drop MTC,Comut×Malig,287,0.045806321357208545
+2. DTC-only (drop MTC/PDTC/HG),Gene×Malig,202,0.3823886575402674
+2. DTC-only (drop MTC/PDTC/HG),Comut×Malig,281,0.0537372160875211
+3. Drop NIFTP+FTUMP,Gene×Malig,196,0.3519584715671713
+3. Drop NIFTP+FTUMP,Comut×Malig,270,0.06167172092510532
+4a. ThyroSeq only,Gene×Malig,128,0.36724020685601444
+4a. ThyroSeq only,Comut×Malig,201,0.051752334660942506
+4b. Afirma only,Comut×Malig,36,0.2787557426907897
+5. Complete cases,Gene×Malig,163,0.14147095384954095
+5. Complete cases,Comut×Malig,233,0.14350805020813093

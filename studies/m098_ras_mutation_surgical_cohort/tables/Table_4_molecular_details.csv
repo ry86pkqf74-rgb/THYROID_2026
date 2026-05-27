@@ -1,0 +1,19 @@
+item,value
+Total RAS+ patients with variant-level detail,32
+RAS gene (variant-level v13) — NRAS,18 (56.2%)
+RAS gene (variant-level v13) — HRAS,8 (25.0%)
+RAS gene (variant-level v13) — KRAS,6 (18.8%)
+RAS protein change (top 10) — Q61R,14 (82.4%)
+RAS protein change (top 10) — Q61K,2 (11.8%)
+RAS protein change (top 10) — G13R,1 (5.9%)
+"Max RAS VAF — median (IQR), %",600.0 (400.0-1000.0)
+"Max RAS VAF — mean ± SD, %",1028.0 ± 1073.4
+Max VAF <5%,0 (0.0%)
+Max VAF 5-9%,0 (0.0%)
+Max VAF 10-19%,0 (0.0%)
+Max VAF 20-29%,0 (0.0%)
+Max VAF 30-49%,0 (0.0%)
+Max VAF ≥50%,25 (8.6%)
+Max VAF missing,267 (91.4%)
+Co-mutation — TERT,15 (5.1%)
+Co-mutation — BRAF,5 (1.7%)
